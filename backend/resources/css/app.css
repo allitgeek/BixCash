@@ -14,6 +14,19 @@
     --bix-black: #000000;
 }
 
+/* Performance: Will-change hints for animated elements */
+.dashboard-card,
+.promotion-card,
+.social-link,
+.nav-button {
+    will-change: transform;
+}
+
+.chat-dots span,
+.green-sparkle {
+    will-change: opacity, transform;
+}
+
 body {
     font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
@@ -111,6 +124,11 @@ body {
     padding: 4rem 2rem 2rem;
     text-align: center;
     background-color: var(--bix-white);
+}
+
+.brands-container {
+    max-width: 1400px;
+    margin: 0 auto;
 }
 .category-container {
     display: flex;
@@ -1184,4 +1202,44 @@ body {
     .footer-social {
         justify-content: center;
     }
+}
+
+/* Performance: Reduce animations for users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .chat-dots span,
+    .green-sparkle,
+    .sparkle-1,
+    .sparkle-2,
+    .sparkle-3,
+    .sparkle-4 {
+        animation: none;
+    }
+
+    .dashboard-card:hover,
+    .promotion-card:hover,
+    .social-link:hover,
+    .nav-button:hover,
+    .form-submit-btn:hover {
+        transform: none;
+    }
+
+    * {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+    }
+}
+
+/* Performance: Optimize layout stability */
+img {
+    height: auto;
+    max-width: 100%;
+}
+
+/* Ensure proper aspect ratios to prevent layout shift */
+.promotion-logo {
+    aspect-ratio: 150/80;
+}
+
+.brand-slide {
+    aspect-ratio: 300/120;
 }

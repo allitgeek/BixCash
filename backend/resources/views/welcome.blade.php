@@ -2,10 +2,21 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BixCash</title>
-<link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
-        @vite(['resources/css/app.css'])
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#021c47">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <title>BixCash - Shop to Earn</title>
+
+    <!-- Performance Optimization: Resource Hints -->
+    <link rel="dns-prefetch" href="//unpkg.com">
+    <link rel="preconnect" href="https://unpkg.com" crossorigin>
+    <link rel="preload" href="/images/logos/logos-01.png" as="image">
+    <link rel="preload" href="/images/elements/dashboard icons.jpg" as="image">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+    @vite(['resources/css/app.css'])
 </head>
 <body>
 
@@ -36,13 +47,15 @@
     </section>
 
     <section class="brands-section">
-        <div class="category-container">
-            <!-- Categories will be injected by JavaScript -->
-        </div>
-        <h2><span class="green-text">Explore</span> Brands</h2>
-        <div class="brands-carousel-container">
-            <div class="swiper-wrapper">
-                <!-- Brands will be injected by JavaScript -->
+        <div class="brands-container">
+            <div class="category-container">
+                <!-- Categories will be injected by JavaScript -->
+            </div>
+            <h2><span class="green-text">Explore</span> Brands</h2>
+            <div class="brands-carousel-container">
+                <div class="swiper-wrapper">
+                    <!-- Brands will be injected by JavaScript -->
+                </div>
             </div>
         </div>
     </section>
@@ -303,7 +316,7 @@
                 <!-- Row 1 -->
                 <div class="promotion-card">
                     <div class="promotion-logo">
-                        <img src="https://via.placeholder.com/150x80/ffffff/000000?text=SAYA" alt="SAYA" data-brand="saya">
+                        <img src="https://via.placeholder.com/150x80/ffffff/000000?text=SAYA" alt="SAYA" data-brand="saya" loading="lazy" decoding="async">
                     </div>
                     <div class="promotion-discount">
                         <span class="discount-text">Upto 20% Off</span>
@@ -312,7 +325,7 @@
 
                 <div class="promotion-card">
                     <div class="promotion-logo">
-                        <img src="https://via.placeholder.com/150x80/ffffff/000000?text=JUNAID+JAMSHED" alt="Junaid Jamshed" data-brand="junaid-jamshed">
+                        <img src="https://via.placeholder.com/150x80/ffffff/000000?text=JUNAID+JAMSHED" alt="Junaid Jamshed" data-brand="junaid-jamshed" loading="lazy" decoding="async">
                     </div>
                     <div class="promotion-discount">
                         <span class="discount-text">Upto 30% Off</span>
@@ -321,7 +334,7 @@
 
                 <div class="promotion-card">
                     <div class="promotion-logo">
-                        <img src="https://via.placeholder.com/150x80/ffffff/000000?text=GUL+AHMED" alt="Gul Ahmed" data-brand="gul-ahmed">
+                        <img src="https://via.placeholder.com/150x80/ffffff/000000?text=GUL+AHMED" alt="Gul Ahmed" data-brand="gul-ahmed" loading="lazy" decoding="async">
                     </div>
                     <div class="promotion-discount">
                         <span class="discount-text">Flat 20% Off</span>
@@ -330,7 +343,7 @@
 
                 <div class="promotion-card">
                     <div class="promotion-logo">
-                        <img src="https://via.placeholder.com/150x80/ffffff/dd0000?text=Bata" alt="Bata" data-brand="bata">
+                        <img src="https://via.placeholder.com/150x80/ffffff/dd0000?text=Bata" alt="Bata" data-brand="bata" loading="lazy" decoding="async">
                     </div>
                     <div class="promotion-discount">
                         <span class="discount-text">Flat 50% Off</span>
@@ -340,7 +353,7 @@
                 <!-- Row 2 -->
                 <div class="promotion-card">
                     <div class="promotion-logo">
-                        <img src="https://via.placeholder.com/150x80/ffd700/000000?text=Tayto" alt="Tayto" data-brand="tayto">
+                        <img src="https://via.placeholder.com/150x80/ffd700/000000?text=Tayto" alt="Tayto" data-brand="tayto" loading="lazy" decoding="async">
                     </div>
                     <div class="promotion-discount">
                         <span class="discount-text">Upto 30% Off</span>
@@ -349,7 +362,7 @@
 
                 <div class="promotion-card">
                     <div class="promotion-logo">
-                        <img src="https://via.placeholder.com/150x80/dc143c/ffffff?text=KFC" alt="KFC" data-brand="kfc">
+                        <img src="https://via.placeholder.com/150x80/dc143c/ffffff?text=KFC" alt="KFC" data-brand="kfc" loading="lazy" decoding="async">
                     </div>
                     <div class="promotion-discount">
                         <span class="discount-text">Upto 20% Off</span>
@@ -358,7 +371,7 @@
 
                 <div class="promotion-card">
                     <div class="promotion-logo">
-                        <img src="https://via.placeholder.com/150x80/ffffff/000000?text=Joyland" alt="Joyland" data-brand="joyland">
+                        <img src="https://via.placeholder.com/150x80/ffffff/000000?text=Joyland" alt="Joyland" data-brand="joyland" loading="lazy" decoding="async">
                     </div>
                     <div class="promotion-discount">
                         <span class="discount-text">Flat 50% Off</span>
@@ -367,7 +380,7 @@
 
                 <div class="promotion-card">
                     <div class="promotion-logo">
-                        <img src="https://via.placeholder.com/150x80/ffffff/000000?text=SAPPHIRE" alt="Sapphire" data-brand="sapphire">
+                        <img src="https://via.placeholder.com/150x80/ffffff/000000?text=SAPPHIRE" alt="Sapphire" data-brand="sapphire" loading="lazy" decoding="async">
                     </div>
                     <div class="promotion-discount">
                         <span class="discount-text">Flat 50% Off</span>
@@ -479,62 +492,75 @@
         </div>
     </footer>
 
-    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js" defer></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // --- Hero Slider --- 
-            fetch('/api/slides')
-                .then(response => response.json())
-                .then(data => {
-                    const swiperWrapper = document.querySelector('#hero .swiper-wrapper');
-                    if(data.length === 0) {
-                        swiperWrapper.innerHTML = `<div class="swiper-slide" style="background-color: var(--bix-green);">
-                            <div class="slide-content"><h1>Welcome to BixCash</h1><p>No slides found.</p></div>
-                        </div>`;
-                    } else {
-                        data.forEach(slide => {
-                            const slideElement = document.createElement('div');
-                            slideElement.classList.add('swiper-slide');
-                            slideElement.style.backgroundImage = `url(${slide.media_path})`;
-                            slideElement.innerHTML = `<div class="slide-content"><h1>${slide.title}</h1><p>${slide.description}</p></div>`;
-                            swiperWrapper.appendChild(slideElement);
-                        });
-                    }
-                    new Swiper('#hero .swiper-container', {
-                        loop: true,
-                        autoplay: { delay: 5000 },
-                        pagination: { el: '.swiper-pagination', clickable: true },
-                        navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
-                    });
-                })
-                .catch(error => console.error('Error fetching slides:', error));
+            // Performance Optimization: Parallel API calls
+            Promise.all([
+                fetch('/api/slides'),
+                fetch('/api/categories'),
+                fetch('/api/brands')
+            ]).then(responses => {
+                return Promise.all(responses.map(response => response.json()));
+            }).then(([slides, categories, brands]) => {
+                // Initialize all content simultaneously
+                initializeHeroSlider(slides);
+                populateCategories(categories);
+                populateBrands(brands);
+                initializeCarousels();
+            }).catch(error => {
+                console.error('Error loading data:', error);
+                // Fallback content
+                initializeFallbackContent();
+            });
 
-            // --- Brands Section --- 
+            // Initialize Hero Slider
+            function initializeHeroSlider(slides) {
+                const swiperWrapper = document.querySelector('#hero .swiper-wrapper');
+                if(!slides || slides.length === 0) {
+                    swiperWrapper.innerHTML = `<div class="swiper-slide" style="background-color: var(--bix-green);">
+                        <div class="slide-content"><h1>Welcome to BixCash</h1><p>Shop to Earn</p></div>
+                    </div>`;
+                } else {
+                    slides.forEach(slide => {
+                        const slideElement = document.createElement('div');
+                        slideElement.classList.add('swiper-slide');
+                        slideElement.style.backgroundImage = `url(${slide.media_path})`;
+                        slideElement.innerHTML = `<div class="slide-content"><h1>${slide.title}</h1><p>${slide.description}</p></div>`;
+                        swiperWrapper.appendChild(slideElement);
+                    });
+                }
+            }
+
+            // Initialize all carousels
+            function initializeCarousels() {
+                // Hero carousel
+                new Swiper('#hero .swiper-container', {
+                    loop: true,
+                    autoplay: { delay: 5000, disableOnInteraction: false },
+                    pagination: { el: '.swiper-pagination', clickable: true },
+                    navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
+                    lazy: true,
+                });
+
+                // Brands carousel
+                new Swiper('.brands-carousel-container', {
+                    loop: true,
+                    slidesPerView: 5,
+                    spaceBetween: 30,
+                    autoplay: { delay: 3000, disableOnInteraction: false },
+                    lazy: true,
+                    breakpoints: {
+                        320: { slidesPerView: 2, spaceBetween: 10 },
+                        640: { slidesPerView: 3, spaceBetween: 20 },
+                        1024: { slidesPerView: 5, spaceBetween: 30 },
+                    }
+                });
+            }
+
+            // Get container references
             const categoryContainer = document.querySelector('.category-container');
             const brandsSwiperWrapper = document.querySelector('.brands-carousel-container .swiper-wrapper');
-
-            fetch('/api/categories')
-                .then(response => response.json())
-                .then(populateCategories)
-                .catch(error => console.error('Error fetching categories:', error));
-
-            fetch('/api/brands')
-                .then(response => response.json())
-                .then(data => {
-                    populateBrands(data);
-                    new Swiper('.brands-carousel-container', {
-                        loop: true,
-                        slidesPerView: 5,
-                        spaceBetween: 30,
-                        autoplay: { delay: 3000 },
-                        breakpoints: {
-                            320: { slidesPerView: 2, spaceBetween: 10 },
-                            640: { slidesPerView: 3, spaceBetween: 20 },
-                            1024: { slidesPerView: 5, spaceBetween: 30 },
-                        }
-                    });
-                })
-                .catch(error => console.error('Error fetching brands:', error));
 
             function populateCategories(categories) {
                 if (!categories || categories.length === 0) return;
@@ -543,7 +569,7 @@
                     const categoryElement = document.createElement('div');
                     categoryElement.classList.add('category-item');
                     categoryElement.innerHTML = `
-                        <img src="${category.icon_path}" alt="${category.name}">
+                        <img src="${category.icon_path}" alt="${category.name}" loading="lazy" decoding="async">
                         <span>${category.name}</span>
                     `;
                     categoryContainer.appendChild(categoryElement);
@@ -556,38 +582,65 @@
                 brands.forEach(brand => {
                     const brandElement = document.createElement('div');
                     brandElement.classList.add('swiper-slide', 'brand-slide');
-                    brandElement.innerHTML = `<img src="${brand.logo_path}" alt="${brand.name}">`;
+                    brandElement.innerHTML = `<img src="${brand.logo_path}" alt="${brand.name}" loading="lazy" decoding="async">`;
                     brandsSwiperWrapper.appendChild(brandElement);
                 });
             }
 
-            // Handle promotion images loading
+            function initializeFallbackContent() {
+                // Fallback for hero slider
+                const swiperWrapper = document.querySelector('#hero .swiper-wrapper');
+                if (swiperWrapper) {
+                    swiperWrapper.innerHTML = `<div class="swiper-slide" style="background-color: var(--bix-green);">
+                        <div class="slide-content"><h1>Welcome to BixCash</h1><p>Shop to Earn</p></div>
+                    </div>`;
+                }
+                initializeCarousels();
+            }
+
+            // Optimized promotion images loading
             function loadPromotionImages() {
                 const promotionImages = document.querySelectorAll('.promotion-logo img[data-brand]');
+                const imagePromises = [];
 
                 promotionImages.forEach(img => {
                     const brandName = img.getAttribute('data-brand');
-                    const testImg = new Image();
+                    const promise = checkImageExists(brandName).then(imagePath => {
+                        if (imagePath) {
+                            img.src = imagePath;
+                            img.loading = 'lazy';
+                            img.decoding = 'async';
+                        }
+                    });
+                    imagePromises.push(promise);
+                });
 
-                    testImg.onload = function() {
-                        // Image exists, replace the placeholder
-                        img.src = `/images/promotions/${brandName}.png`;
-                    };
+                return Promise.all(imagePromises);
+            }
 
-                    testImg.onerror = function() {
-                        // Try .jpg if .png fails
-                        const testImgJpg = new Image();
-                        testImgJpg.onload = function() {
-                            img.src = `/images/promotions/${brandName}.jpg`;
+            function checkImageExists(brandName) {
+                return new Promise((resolve) => {
+                    const extensions = ['webp', 'png', 'jpg', 'jpeg'];
+                    let index = 0;
+
+                    function tryNext() {
+                        if (index >= extensions.length) {
+                            resolve(null);
+                            return;
+                        }
+
+                        const img = new Image();
+                        const path = `/images/promotions/${brandName}.${extensions[index]}`;
+
+                        img.onload = () => resolve(path);
+                        img.onerror = () => {
+                            index++;
+                            tryNext();
                         };
-                        testImgJpg.onerror = function() {
-                            // Keep placeholder if both fail
-                            console.log(`No image found for ${brandName}`);
-                        };
-                        testImgJpg.src = `/images/promotions/${brandName}.jpg`;
-                    };
+                        img.src = path;
+                    }
 
-                    testImg.src = `/images/promotions/${brandName}.png`;
+                    tryNext();
                 });
             }
 

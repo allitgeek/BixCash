@@ -13,15 +13,30 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::query()->delete();
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        // Seed roles first (required for users)
+        $this->call([
+            RoleSeeder::class,
         ]);
 
-                $this->call([
+        // Clear existing users (except keep existing data)
+        // User::query()->delete(); // Commented out to preserve existing data
+
+        // Create admin users
+        $this->call([
+            AdminUserSeeder::class,
+        ]);
+
+        // Create test user if it doesn't exist
+        User::firstOrCreate(
+            ['email' => 'test@example.com'],
+            [
+                'name' => 'Test User',
+                'password' => bcrypt('password')
+            ]
+        );
+
+        // Seed content data
+        $this->call([
             SlideSeeder::class,
             CategorySeeder::class,
             BrandSeeder::class,
