@@ -56,4 +56,10 @@ class DashboardController extends Controller
         // Placeholder for reports page
         return view('admin.dashboard.reports');
     }
+
+    public function settings()
+    {
+        // Placeholder for settings page
+        return view('admin.dashboard.settings');
+    }
 }

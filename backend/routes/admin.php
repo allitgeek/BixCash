@@ -65,5 +65,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('analytics', [DashboardController::class, 'analytics'])->name('analytics');
             Route::get('reports', [DashboardController::class, 'reports'])->name('reports');
         });
+
+        // Settings (Super Admin only)
+        Route::middleware(['role.permission:manage_settings'])->group(function () {
+            Route::get('settings', [DashboardController::class, 'settings'])->name('settings');
+        });
     });
 });
