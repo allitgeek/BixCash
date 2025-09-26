@@ -192,34 +192,64 @@
 
                     <!-- Bottom Navigation Icons -->
                     <div class="bottom-nav-icons">
+                        <!-- Cash Back Button -->
                         <div class="nav-icon-item">
-                            <div class="nav-icon-rectangle">
-                                <span class="nav-icon-text">CASH BACK</span>
-                                <div class="nav-arrow">←</div>
+                            <div class="nav-button cash-back-btn">
+                                <img src="/images/elements/dashboard icons.jpg" alt="Cash Back" class="dashboard-icon-img">
                             </div>
                             <span class="nav-label">Cash Back</span>
                         </div>
+
+                        <!-- Wallet Button -->
                         <div class="nav-icon-item">
-                            <div class="nav-icon-rectangle">
-                                <span class="nav-icon-text">WALLET</span>
+                            <div class="nav-button wallet-btn">
+                                <div class="wallet-icon">
+                                    <div class="wallet-body"></div>
+                                    <div class="wallet-flap"></div>
+                                </div>
                             </div>
                             <span class="nav-label">Wallet</span>
                         </div>
+
+                        <!-- Transaction Button -->
                         <div class="nav-icon-item">
-                            <div class="nav-icon-rectangle">
-                                <span class="nav-icon-text">TRANSACTION</span>
+                            <div class="nav-button transaction-btn">
+                                <div class="transaction-icon">
+                                    <div class="dollar-sign">$</div>
+                                    <div class="transaction-lines">
+                                        <div class="line"></div>
+                                        <div class="line"></div>
+                                    </div>
+                                </div>
                             </div>
                             <span class="nav-label">Transaction</span>
                         </div>
+
+                        <!-- Receipt Button -->
                         <div class="nav-icon-item">
-                            <div class="nav-icon-rectangle">
-                                <span class="nav-icon-text">RECEIPT</span>
+                            <div class="nav-button receipt-btn">
+                                <div class="receipt-icon">
+                                    <div class="receipt-paper">
+                                        <div class="receipt-line"></div>
+                                        <div class="receipt-line"></div>
+                                        <div class="receipt-line short"></div>
+                                    </div>
+                                </div>
                             </div>
                             <span class="nav-label">Receipt</span>
                         </div>
+
+                        <!-- Withdrawal Button -->
                         <div class="nav-icon-item">
-                            <div class="nav-icon-rectangle">
-                                <span class="nav-icon-text">WITHDRAWAL</span>
+                            <div class="nav-button withdrawal-btn">
+                                <div class="withdrawal-icon">
+                                    <div class="money-stack">
+                                        <div class="bill"></div>
+                                        <div class="bill"></div>
+                                        <div class="bill"></div>
+                                    </div>
+                                    <div class="down-arrow">↓</div>
+                                </div>
                             </div>
                             <span class="nav-label">Withdrawal</span>
                         </div>
@@ -259,6 +289,90 @@
                     </div>
                 </div>
 
+            </div>
+        </div>
+    </section>
+
+    <!-- Promotions Section -->
+    <section class="promotions-section">
+        <div class="promotions-container">
+            <h2 class="promotions-title">Promotions</h2>
+            <p class="promotions-description">Enjoy Up To 60% OFF on your favorite brands nationwide, all year long.</p>
+
+            <div class="promotions-grid">
+                <!-- Row 1 -->
+                <div class="promotion-card">
+                    <div class="promotion-logo">
+                        <img src="https://via.placeholder.com/150x80/ffffff/000000?text=SAYA" alt="SAYA" data-brand="saya">
+                    </div>
+                    <div class="promotion-discount">
+                        <span class="discount-text">Upto 20% Off</span>
+                    </div>
+                </div>
+
+                <div class="promotion-card">
+                    <div class="promotion-logo">
+                        <img src="https://via.placeholder.com/150x80/ffffff/000000?text=JUNAID+JAMSHED" alt="Junaid Jamshed" data-brand="junaid-jamshed">
+                    </div>
+                    <div class="promotion-discount">
+                        <span class="discount-text">Upto 30% Off</span>
+                    </div>
+                </div>
+
+                <div class="promotion-card">
+                    <div class="promotion-logo">
+                        <img src="https://via.placeholder.com/150x80/ffffff/000000?text=GUL+AHMED" alt="Gul Ahmed" data-brand="gul-ahmed">
+                    </div>
+                    <div class="promotion-discount">
+                        <span class="discount-text">Flat 20% Off</span>
+                    </div>
+                </div>
+
+                <div class="promotion-card">
+                    <div class="promotion-logo">
+                        <img src="https://via.placeholder.com/150x80/ffffff/dd0000?text=Bata" alt="Bata" data-brand="bata">
+                    </div>
+                    <div class="promotion-discount">
+                        <span class="discount-text">Flat 50% Off</span>
+                    </div>
+                </div>
+
+                <!-- Row 2 -->
+                <div class="promotion-card">
+                    <div class="promotion-logo">
+                        <img src="https://via.placeholder.com/150x80/ffd700/000000?text=Tayto" alt="Tayto" data-brand="tayto">
+                    </div>
+                    <div class="promotion-discount">
+                        <span class="discount-text">Upto 30% Off</span>
+                    </div>
+                </div>
+
+                <div class="promotion-card">
+                    <div class="promotion-logo">
+                        <img src="https://via.placeholder.com/150x80/dc143c/ffffff?text=KFC" alt="KFC" data-brand="kfc">
+                    </div>
+                    <div class="promotion-discount">
+                        <span class="discount-text">Upto 20% Off</span>
+                    </div>
+                </div>
+
+                <div class="promotion-card">
+                    <div class="promotion-logo">
+                        <img src="https://via.placeholder.com/150x80/ffffff/000000?text=Joyland" alt="Joyland" data-brand="joyland">
+                    </div>
+                    <div class="promotion-discount">
+                        <span class="discount-text">Flat 50% Off</span>
+                    </div>
+                </div>
+
+                <div class="promotion-card">
+                    <div class="promotion-logo">
+                        <img src="https://via.placeholder.com/150x80/ffffff/000000?text=SAPPHIRE" alt="Sapphire" data-brand="sapphire">
+                    </div>
+                    <div class="promotion-discount">
+                        <span class="discount-text">Flat 50% Off</span>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -344,6 +458,39 @@
                     brandsSwiperWrapper.appendChild(brandElement);
                 });
             }
+
+            // Handle promotion images loading
+            function loadPromotionImages() {
+                const promotionImages = document.querySelectorAll('.promotion-logo img[data-brand]');
+
+                promotionImages.forEach(img => {
+                    const brandName = img.getAttribute('data-brand');
+                    const testImg = new Image();
+
+                    testImg.onload = function() {
+                        // Image exists, replace the placeholder
+                        img.src = `/images/promotions/${brandName}.png`;
+                    };
+
+                    testImg.onerror = function() {
+                        // Try .jpg if .png fails
+                        const testImgJpg = new Image();
+                        testImgJpg.onload = function() {
+                            img.src = `/images/promotions/${brandName}.jpg`;
+                        };
+                        testImgJpg.onerror = function() {
+                            // Keep placeholder if both fail
+                            console.log(`No image found for ${brandName}`);
+                        };
+                        testImgJpg.src = `/images/promotions/${brandName}.jpg`;
+                    };
+
+                    testImg.src = `/images/promotions/${brandName}.png`;
+                });
+            }
+
+            // Load promotion images after DOM is ready
+            loadPromotionImages();
         });
     </script>
 

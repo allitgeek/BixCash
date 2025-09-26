@@ -508,43 +508,187 @@ body {
     gap: 0.5rem;
 }
 
-.nav-icon-rectangle {
+/* Navigation Button Base Styles */
+.nav-button {
     background: var(--bix-dark-blue);
     border-radius: 15px;
-    padding: 0.8rem 1.2rem;
+    padding: 1rem;
     display: flex;
     align-items: center;
     justify-content: center;
     box-shadow: 0 4px 15px rgba(2, 28, 71, 0.2);
     position: relative;
     min-width: 120px;
+    min-height: 80px;
+    cursor: pointer;
     transition: transform 0.3s ease;
 }
 
-.nav-icon-rectangle:hover {
+/* Dashboard Icon Image */
+.dashboard-icon-img {
+    width: 90px;
+    height: 65px;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+.nav-button:hover {
     transform: translateY(-3px);
 }
 
-.nav-icon-text {
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: var(--bix-light-green);
-    text-align: center;
+/* Cash Back Button */
+.cash-back-btn {
+    background: transparent;
+    padding: 1rem;
+    min-width: 120px;
+    min-height: 80px;
 }
 
-.nav-arrow {
+/* Wallet Button */
+.wallet-icon {
+    position: relative;
+    width: 32px;
+    height: 24px;
+}
+
+.wallet-body {
+    background: var(--bix-light-green);
+    width: 28px;
+    height: 20px;
+    border-radius: 4px;
     position: absolute;
-    left: 10px;
-    font-size: 1.2rem;
-    color: var(--bix-dark-blue);
-    background: white;
-    width: 25px;
-    height: 25px;
-    border-radius: 50%;
+    bottom: 0;
+    left: 2px;
+}
+
+.wallet-flap {
+    background: var(--bix-light-green);
+    width: 32px;
+    height: 12px;
+    border-radius: 6px 6px 0 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0.8;
+}
+
+/* Transaction Button */
+.transaction-icon {
     display: flex;
     align-items: center;
-    justify-content: center;
+    gap: 0.5rem;
 }
+
+.dollar-sign {
+    color: var(--bix-light-green);
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.transaction-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.transaction-lines .line {
+    background: var(--bix-light-green);
+    width: 16px;
+    height: 2px;
+    border-radius: 1px;
+}
+
+/* Receipt Button */
+.receipt-icon {
+    position: relative;
+}
+
+.receipt-paper {
+    background: var(--bix-light-green);
+    width: 24px;
+    height: 32px;
+    border-radius: 4px;
+    position: relative;
+    padding: 4px;
+    box-sizing: border-box;
+}
+
+.receipt-paper::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: repeating-linear-gradient(
+        to right,
+        transparent 0px,
+        transparent 2px,
+        var(--bix-dark-blue) 2px,
+        var(--bix-dark-blue) 4px
+    );
+}
+
+.receipt-line {
+    background: var(--bix-dark-blue);
+    height: 1px;
+    margin: 2px 0;
+    border-radius: 0.5px;
+}
+
+.receipt-line.short {
+    width: 60%;
+}
+
+/* Withdrawal Button */
+.withdrawal-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.money-stack {
+    position: relative;
+    width: 28px;
+    height: 20px;
+}
+
+.money-stack .bill {
+    background: var(--bix-light-green);
+    width: 24px;
+    height: 6px;
+    border-radius: 2px;
+    position: absolute;
+    border: 1px solid rgba(2, 28, 71, 0.2);
+}
+
+.money-stack .bill:nth-child(1) {
+    top: 0;
+    left: 0;
+    z-index: 3;
+}
+
+.money-stack .bill:nth-child(2) {
+    top: 4px;
+    left: 2px;
+    z-index: 2;
+    opacity: 0.8;
+}
+
+.money-stack .bill:nth-child(3) {
+    top: 8px;
+    left: 4px;
+    z-index: 1;
+    opacity: 0.6;
+}
+
+.down-arrow {
+    color: var(--bix-light-green);
+    font-size: 1rem;
+    font-weight: bold;
+}
+
 
 .nav-label {
     font-size: 0.7rem;
@@ -617,6 +761,96 @@ body {
     }
 }
 
+/* Promotions Section Styles */
+.promotions-section {
+    padding: 3rem 2rem 6rem;
+    background-color: var(--bix-white);
+    text-align: center;
+}
+
+.promotions-container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.promotions-title {
+    font-size: 5rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    color: var(--bix-dark-blue);
+}
+
+.promotions-description {
+    font-size: 1.2rem;
+    color: var(--bix-medium-gray);
+    margin-bottom: 4rem;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.promotions-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.promotion-card {
+    background: var(--bix-white);
+    border-radius: 20px;
+    border: 2px solid var(--bix-light-gray-2);
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.promotion-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+    border-color: var(--bix-light-green);
+}
+
+.promotion-logo {
+    padding: 2rem 1.5rem 1rem;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bix-white);
+}
+
+.promotion-logo img {
+    max-width: 100%;
+    max-height: 80px;
+    object-fit: contain;
+    filter: grayscale(20%);
+    transition: filter 0.3s ease;
+}
+
+.promotion-card:hover .promotion-logo img {
+    filter: grayscale(0%);
+}
+
+.promotion-discount {
+    background: var(--bix-light-green);
+    padding: 1rem;
+    position: relative;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.discount-text {
+    color: var(--bix-white);
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-transform: capitalize;
+}
+
 /* Responsive Design */
 @media (max-width: 1024px) {
     .dashboard-content-grid {
@@ -632,6 +866,16 @@ body {
         grid-template-areas:
             "profile profile"
             "chat charts";
+    }
+
+    /* Promotions Responsive */
+    .promotions-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+
+    .promotions-title {
+        font-size: 3.5rem;
     }
 }
 
@@ -655,5 +899,33 @@ body {
             "chat"
             "charts";
         grid-template-columns: 1fr;
+    }
+
+    /* Promotions Mobile */
+    .promotions-section {
+        padding: 4rem 1rem;
+    }
+
+    .promotions-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .promotions-title {
+        font-size: 2.5rem;
+    }
+
+    .promotions-description {
+        font-size: 1rem;
+        margin-bottom: 3rem;
+    }
+
+    .promotion-logo {
+        height: 100px;
+        padding: 1.5rem 1rem 0.5rem;
+    }
+
+    .promotion-logo img {
+        max-height: 60px;
     }
 }
