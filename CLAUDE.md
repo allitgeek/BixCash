@@ -49,24 +49,50 @@ The main frontend is served through Laravel's Blade templating:
 
 ### Database Schema
 
-Three main entities with established relationships:
-- **Slides**: Hero carousel content (`slides` table)
-- **Categories**: Brand categorization (`categories` table)
-- **Brands**: Partner brand information (`brands` table)
+### Core Content Entities
+- **Slides**: Hero carousel content with scheduling and targeting features
+- **Categories**: Brand categorization with activation status and metadata
+- **Brands**: Partner brand information with commission rates and partner associations
+
+### Admin System Entities (Phase 2)
+- **Roles**: Role-based permission system (super_admin, admin, moderator, partner, customer)
+- **Users**: Extended with role relationships, activity tracking, and status management
+- **AdminProfile**: Admin-specific data (department, permissions, login history)
+- **CustomerProfile**: Customer data (earnings, referrals, verification status)
+- **PartnerProfile**: Business partner information (approvals, commission rates, sales data)
 
 ### API Endpoints
 
-RESTful API structure in `/backend/routes/api.php`:
+#### Public API Endpoints (`/backend/routes/api.php`)
 - `GET /api/slides` - Hero carousel data
 - `GET /api/categories` - Brand categories with icons
 - `GET /api/brands` - Brand information and logos
 
+#### Admin Panel Routes (`/backend/routes/admin.php`)
+- `GET /admin/login` - Admin login page
+- `POST /admin/login` - Admin authentication
+- `GET /admin/dashboard` - Main admin dashboard (protected)
+- `POST /admin/logout` - Admin logout
+- **Content Management**: `/admin/slides`, `/admin/categories`, `/admin/brands` (CRUD operations)
+- **User Management**: `/admin/users` (super admin only)
+- **Analytics**: `/admin/analytics`, `/admin/reports` (view permissions required)
+
 ### Models and Controllers
 
-Laravel API-only architecture:
-- Models: `Slide`, `Category`, `Brand` (basic Eloquent models)
-- Controllers: Located in `App\Http\Controllers\Api\` namespace
-- All controllers extend base `Controller` class
+#### Core Models
+- **Slide**, **Category**, **Brand**: Enhanced with admin features, relationships, and scopes
+- **User**: Extended with role-based access control and profile relationships
+- **Role**: Permission-based access control system
+
+#### Admin Models (Phase 2)
+- **AdminProfile**, **CustomerProfile**, **PartnerProfile**: User-specific profile data
+- All models include proper relationships, fillable attributes, and helper methods
+
+#### Controllers
+- **API Controllers**: Located in `App\Http\Controllers\Api\` (public endpoints)
+- **Admin Controllers**: Located in `App\Http\Controllers\Admin\` (protected admin functionality)
+  - `AuthController`: Admin authentication and session management
+  - `DashboardController`: Admin dashboard and analytics
 
 ### Frontend-Backend Integration
 
@@ -133,6 +159,33 @@ The single-page website includes the following sections in order:
 - **Easy Management**: Drop brand images in `/backend/public/images/promotions/`
 - **Responsive Design**: 4 columns → 2 columns → 1 column based on screen size
 - **Hover Effects**: Cards lift and enhance on hover
+
+## Admin Panel System (Phase 2)
+
+### Authentication & Security
+- **Middleware**: AdminAuth and RolePermission for secure access control
+- **Session Management**: Secure login/logout with session regeneration
+- **Role-Based Access**: 5-tier role system (super_admin, admin, moderator, partner, customer)
+- **Admin Dashboard**: Statistics overview with user management and recent activity
+
+### Demo Accounts
+- **Super Admin**: admin@bixcash.com / admin123
+- **Manager**: manager@bixcash.com / manager123
+
+### Permission System
+Roles are defined with JSON permissions for granular access control:
+- `super_admin`: Full system access
+- `admin`: User and content management
+- `moderator`: Content management only
+- `partner`: Own profile and sales data
+- `customer`: Profile and transaction history
+
+### Security Features
+- Account status validation (active/inactive users)
+- Admin privilege verification for panel access
+- Last login tracking and display
+- Secure credential validation with proper error messages
+- Session invalidation on logout
 
 ## Image Management
 
