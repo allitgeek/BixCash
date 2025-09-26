@@ -4,10 +4,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-BixCash is a "Shop to Earn" platform with a hybrid architecture:
-- **Frontend**: Static HTML landing page with Tailwind CSS and vanilla JavaScript
+BixCash is a "Shop to Earn" platform with a modern single-page website architecture:
+- **Frontend**: Laravel Blade-based single-page website with Tailwind CSS and JavaScript
 - **Backend**: Laravel 12 API server with MySQL database
-- **Structure**: Frontend and backend are separate but related components
+- **Structure**: Unified Laravel application with both frontend views and API endpoints
 
 ## Development Commands
 
@@ -37,12 +37,13 @@ cd backend && npm run build              # Production build
 cd backend && npm run dev                # Development with hot reload
 ```
 
-### Frontend (Static HTML)
+### Frontend (Blade View)
 
-The main frontend is a single `index.html` file. For development:
-- Open directly in browser or use a simple HTTP server
-- Uses CDN Tailwind CSS (no build process required)
-- Custom fonts loaded from `./fonts/` directory
+The main frontend is served through Laravel's Blade templating:
+- **Route**: `GET /` serves `welcome.blade.php`
+- **View**: `resources/views/welcome.blade.php` (single-page application)
+- **Assets**: Compiled via Vite from `resources/css/app.css`
+- **Scripts**: Inline JavaScript for API integration and UI interactions
 
 ## Architecture
 
@@ -69,10 +70,11 @@ Laravel API-only architecture:
 
 ### Frontend-Backend Integration
 
-The static HTML frontend fetches data from Laravel API endpoints. JavaScript in `index.html` handles:
-- Dynamic slideshow content from `/api/slides`
-- Category and brand data rendering
-- Carousel navigation and smooth scrolling
+The Blade frontend fetches data from Laravel API endpoints via JavaScript. The main view handles:
+- Dynamic hero slideshow content from `/api/slides`
+- Category and brand data rendering from `/api/categories` and `/api/brands`
+- Swiper.js carousels for hero slides and brand showcase
+- Smart image loading for promotion brand logos
 
 ## Database Configuration
 
@@ -86,26 +88,71 @@ MySQL database setup:
 
 ### Backend Assets
 - Vite configuration for Laravel asset compilation
-- Tailwind CSS 4.0 integration via Vite plugin
-- Assets located in `resources/css/` and `resources/js/`
+- Tailwind CSS with custom BixCash color variables
+- Main stylesheet: `resources/css/app.css`
+- Assets compiled and served through Laravel
 
-### Frontend Assets
-- Mockup images in `/mockups/` directory
-- Custom fonts in `/fonts/` directory (referenced but files not present)
-- Static logo and brand assets expected in `/mockups/`
+### Image Assets
+- **Mockups**: `/backend/mockups/` directory (design references)
+- **Brand Logos**: `/backend/public/images/brands/` (dynamically loaded)
+- **Category Icons**: `/backend/public/images/categories/` (UI elements)
+- **Dashboard Elements**: `/backend/public/images/elements/` (UI components)
+- **Promotions**: `/backend/public/images/promotions/` (brand promotion logos)
 
 ## Development Workflow
 
 1. **Backend Development**: Work in `/backend` directory using Laravel conventions
-2. **Frontend Updates**: Modify `index.html` directly or work within Laravel's Blade views
+2. **Frontend Updates**: Modify `resources/views/welcome.blade.php` and `resources/css/app.css`
 3. **Database Changes**: Use Laravel migrations and seeders
 4. **API Development**: Add controllers in `Api` namespace, update routes
+5. **Image Management**: Add brand/promotion images to respective `/public/images/` folders
 
-## Known Issues
+## Website Sections
 
-- Missing logo and brand icon assets (referenced but files not provided)
-- Custom font files referenced but not present in `/fonts/` directory
-- Frontend expects specific image assets from mockups
+The single-page website includes the following sections in order:
+
+1. **Header**: Navigation bar with BixCash logo
+2. **Hero Slider**: Dynamic carousel powered by Swiper.js (API: `/api/slides`)
+3. **Brands Section**: Category icons and brand carousel (API: `/api/categories`, `/api/brands`)
+4. **How It Works**: Two-column explanation for customers and vendors
+5. **Why BixCash**: Benefits breakdown for both user types
+6. **Customer Dashboard**: Interactive mockup with monitor interface and navigation icons
+7. **Promotions**: 4x2 grid of brand promotions with smart image loading
+
+## Current Features
+
+### Navigation Icons (Customer Dashboard)
+- **Cash Back**: Uses exact image from `/images/elements/dashboard icons.jpg`
+- **Wallet**: CSS-created 3D wallet icon with flap
+- **Transaction**: Dollar sign with document lines
+- **Receipt**: Paper with perforated edges and text lines
+- **Withdrawal**: Stacked money bills with down arrow
+
+### Promotions System
+- **Smart Loading**: Tries `.png` first, falls back to `.jpg`, shows placeholder if neither exists
+- **Easy Management**: Drop brand images in `/backend/public/images/promotions/`
+- **Responsive Design**: 4 columns → 2 columns → 1 column based on screen size
+- **Hover Effects**: Cards lift and enhance on hover
+
+## Image Management
+
+### Adding Promotional Brand Images
+```
+/backend/public/images/promotions/
+├── saya.png (or saya.jpg)
+├── junaid-jamshed.png
+├── gul-ahmed.png
+├── bata.png
+├── tayto.png
+├── kfc.png
+├── joyland.png
+└── sapphire.png
+```
+
+- Images automatically replace placeholders when present
+- Supports PNG, JPG, JPEG formats
+- Recommended size: 150-300px width, 80-120px height
+- PNG with transparency preferred for logos
 
 ## Testing
 
