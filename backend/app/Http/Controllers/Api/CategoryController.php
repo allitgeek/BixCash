@@ -13,7 +13,40 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        return Category::orderBy('order')->get();
+        try {
+            $categories = Category::where('is_active', true)
+                ->orderBy('order', 'asc')
+                ->select([
+                    'id', 'name', 'description', 'icon_path', 'color',
+                    'order', 'meta_title', 'meta_description'
+                ])
+                ->get()
+                ->map(function ($category) {
+                    return [
+                        'id' => $category->id,
+                        'name' => $category->name,
+                        'description' => $category->description,
+                        'icon_path' => $category->icon_path,
+                        'color' => $category->color ?: '#3498db',
+                        'order' => $category->order,
+                        'meta_title' => $category->meta_title,
+                        'meta_description' => $category->meta_description,
+                        'brands_count' => $category->brands()->where('is_active', true)->count()
+                    ];
+                });
+
+            return response()->json([
+                'success' => true,
+                'data' => $categories,
+                'count' => $categories->count()
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to load categories',
+                'error' => config('app.debug') ? $e->getMessage() : null
+            ], 500);
+        }
     }
 
     /**

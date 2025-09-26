@@ -17,6 +17,131 @@
     <!-- Stylesheets -->
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
     @vite(['resources/css/app.css'])
+
+    <!-- Dynamic Content Loading Styles -->
+    <style>
+        /* Loading spinner animation */
+        .loading-spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 2s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Loading states */
+        .loading-slide {
+            background: linear-gradient(135deg, var(--bix-green) 0%, var(--bix-navy) 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            min-height: 500px;
+        }
+
+        .loading-categories,
+        .loading-brands {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+            font-style: italic;
+        }
+
+        /* Smooth transitions for dynamic content */
+        .category-item,
+        .brand-slide {
+            opacity: 0;
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .category-item:nth-child(1) { animation-delay: 0.1s; }
+        .category-item:nth-child(2) { animation-delay: 0.2s; }
+        .category-item:nth-child(3) { animation-delay: 0.3s; }
+        .category-item:nth-child(4) { animation-delay: 0.4s; }
+        .category-item:nth-child(5) { animation-delay: 0.5s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Enhanced hover effects */
+        .category-item:hover {
+            transform: translateY(-5px) scale(1.02);
+        }
+
+        .brand-slide:hover {
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        /* Loading shimmer effect */
+        .shimmer {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        /* Error states */
+        .error-message {
+            background: #fee;
+            color: #c53030;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #fed7d7;
+            text-align: center;
+            margin: 1rem 0;
+        }
+
+        /* Navigation active state enhancement */
+        nav a.active {
+            color: var(--bix-green);
+            font-weight: 600;
+            position: relative;
+        }
+
+        nav a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--bix-green);
+            border-radius: 1px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .loading-spinner {
+                width: 30px;
+                height: 30px;
+            }
+
+            .category-item {
+                margin: 0.25rem;
+                padding: 0.75rem;
+            }
+        }
+    </style>
 </head>
 <body>
 
@@ -56,6 +181,8 @@
                 <div class="swiper-wrapper">
                     <!-- Brands will be injected by JavaScript -->
                 </div>
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
             </div>
         </div>
     </section>
@@ -495,96 +622,426 @@
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js" defer></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Performance Optimization: Parallel API calls
+            // Performance Optimization: Parallel API calls with loading states
+            showLoadingStates();
+
             Promise.all([
-                fetch('/api/slides'),
-                fetch('/api/categories'),
-                fetch('/api/brands')
-            ]).then(responses => {
-                return Promise.all(responses.map(response => response.json()));
-            }).then(([slides, categories, brands]) => {
+                fetch('/api/slides').then(handleResponse),
+                fetch('/api/categories').then(handleResponse),
+                fetch('/api/brands').then(handleResponse)
+            ]).then(([slidesData, categoriesData, brandsData]) => {
                 // Initialize all content simultaneously
-                initializeHeroSlider(slides);
-                populateCategories(categories);
-                populateBrands(brands);
+                initializeHeroSlider(slidesData.success ? slidesData.data : []);
+                populateCategories(categoriesData.success ? categoriesData.data : []);
+                populateBrands(brandsData.success ? brandsData.data : []);
                 initializeCarousels();
+                hideLoadingStates();
             }).catch(error => {
                 console.error('Error loading data:', error);
-                // Fallback content
+                hideLoadingStates();
                 initializeFallbackContent();
             });
 
-            // Initialize Hero Slider
+            // Handle API response format
+            function handleResponse(response) {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            }
+
+            // Loading state management
+            function showLoadingStates() {
+                // Hero slider loading
+                const heroWrapper = document.querySelector('#hero .swiper-wrapper');
+                if (heroWrapper) {
+                    heroWrapper.innerHTML = `
+                        <div class="swiper-slide loading-slide">
+                            <div class="slide-content">
+                                <div class="loading-spinner"></div>
+                                <p>Loading hero content...</p>
+                            </div>
+                        </div>`;
+                }
+
+                // Categories loading
+                const categoryContainer = document.querySelector('.category-container');
+                if (categoryContainer) {
+                    categoryContainer.innerHTML = '<div class="loading-categories">Loading categories...</div>';
+                }
+
+                // Brands loading
+                const brandsWrapper = document.querySelector('.brands-carousel-container .swiper-wrapper');
+                if (brandsWrapper) {
+                    brandsWrapper.innerHTML = '<div class="loading-brands">Loading brands...</div>';
+                }
+            }
+
+            function hideLoadingStates() {
+                // Remove any loading indicators
+                document.querySelectorAll('.loading-slide, .loading-categories, .loading-brands').forEach(el => {
+                    el.style.display = 'none';
+                });
+            }
+
+            // Initialize Hero Slider with enhanced functionality
             function initializeHeroSlider(slides) {
                 const swiperWrapper = document.querySelector('#hero .swiper-wrapper');
-                if(!slides || slides.length === 0) {
-                    swiperWrapper.innerHTML = `<div class="swiper-slide" style="background-color: var(--bix-green);">
-                        <div class="slide-content"><h1>Welcome to BixCash</h1><p>Shop to Earn</p></div>
-                    </div>`;
+                if (!swiperWrapper) return;
+
+                swiperWrapper.innerHTML = '';
+
+                if (!slides || slides.length === 0) {
+                    // Default slide
+                    const defaultSlide = document.createElement('div');
+                    defaultSlide.classList.add('swiper-slide');
+                    defaultSlide.style.cssText = `
+                        background: linear-gradient(135deg, var(--bix-green) 0%, var(--bix-navy) 100%);
+                        color: white;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        text-align: center;
+                        min-height: 500px;
+                    `;
+                    defaultSlide.innerHTML = `
+                        <div class="slide-content">
+                            <h1 style="font-size: 3rem; margin-bottom: 1rem;">Welcome to BixCash</h1>
+                            <p style="font-size: 1.5rem; opacity: 0.9;">Shop to Earn - Real Profit Sharing</p>
+                            <button style="background: white; color: var(--bix-navy); padding: 1rem 2rem; border: none; border-radius: 25px; font-weight: bold; margin-top: 2rem; cursor: pointer;">Get Started</button>
+                        </div>
+                    `;
+                    swiperWrapper.appendChild(defaultSlide);
                 } else {
                     slides.forEach(slide => {
                         const slideElement = document.createElement('div');
                         slideElement.classList.add('swiper-slide');
-                        slideElement.style.backgroundImage = `url(${slide.media_path})`;
-                        slideElement.innerHTML = `<div class="slide-content"><h1>${slide.title}</h1><p>${slide.description}</p></div>`;
+
+                        // Handle different media types
+                        if (slide.media_type === 'video') {
+                            slideElement.innerHTML = `
+                                <video autoplay muted loop style="width: 100%; height: 100%; object-fit: cover;">
+                                    <source src="${slide.media_path}" type="video/mp4">
+                                </video>
+                                <div class="slide-content" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; color: white; z-index: 2;">
+                                    <h1>${slide.title}</h1>
+                                    <p>${slide.description}</p>
+                                    ${slide.button_text ? `<button onclick="window.open('${slide.target_url}', '_blank')" style="background: ${slide.button_color}; color: white; padding: 1rem 2rem; border: none; border-radius: 25px; font-weight: bold; margin-top: 1rem; cursor: pointer;">${slide.button_text}</button>` : ''}
+                                </div>
+                            `;
+                        } else {
+                            slideElement.style.cssText = `
+                                background-image: url('${slide.media_path}');
+                                background-size: cover;
+                                background-position: center;
+                                background-repeat: no-repeat;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                text-align: center;
+                                color: white;
+                                min-height: 500px;
+                                position: relative;
+                            `;
+                            slideElement.innerHTML = `
+                                <div class="slide-overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.3); z-index: 1;"></div>
+                                <div class="slide-content" style="position: relative; z-index: 2;">
+                                    <h1 style="font-size: 3rem; margin-bottom: 1rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.7);">${slide.title}</h1>
+                                    <p style="font-size: 1.2rem; margin-bottom: 2rem; text-shadow: 1px 1px 2px rgba(0,0,0,0.7);">${slide.description}</p>
+                                    ${slide.button_text ? `<button onclick="window.open('${slide.target_url}', '_blank')" style="background: ${slide.button_color}; color: white; padding: 1rem 2rem; border: none; border-radius: 25px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.3);">${slide.button_text}</button>` : ''}
+                                </div>
+                            `;
+                        }
+
                         swiperWrapper.appendChild(slideElement);
                     });
                 }
             }
 
-            // Initialize all carousels
+            // Initialize all carousels with enhanced error handling
             function initializeCarousels() {
-                // Hero carousel
-                new Swiper('#hero .swiper-container', {
-                    loop: true,
-                    autoplay: { delay: 5000, disableOnInteraction: false },
-                    pagination: { el: '.swiper-pagination', clickable: true },
-                    navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
-                    lazy: true,
-                });
+                try {
+                    // Hero carousel with enhanced options
+                    const heroSwiper = new Swiper('#hero .swiper-container', {
+                        loop: true,
+                        autoplay: {
+                            delay: 5000,
+                            disableOnInteraction: false,
+                            pauseOnMouseEnter: true
+                        },
+                        pagination: {
+                            el: '.swiper-pagination',
+                            clickable: true,
+                            dynamicBullets: true
+                        },
+                        navigation: {
+                            nextEl: '.swiper-button-next',
+                            prevEl: '.swiper-button-prev'
+                        },
+                        lazy: true,
+                        effect: 'fade',
+                        fadeEffect: {
+                            crossFade: true
+                        },
+                        speed: 1000,
+                        on: {
+                            init: function () {
+                                console.log('Hero carousel initialized');
+                            },
+                            slideChange: function () {
+                                // Add any slide change analytics here
+                            }
+                        }
+                    });
 
-                // Brands carousel
-                new Swiper('.brands-carousel-container', {
-                    loop: true,
-                    slidesPerView: 5,
-                    spaceBetween: 30,
-                    autoplay: { delay: 3000, disableOnInteraction: false },
-                    lazy: true,
-                    breakpoints: {
-                        320: { slidesPerView: 2, spaceBetween: 10 },
-                        640: { slidesPerView: 3, spaceBetween: 20 },
-                        1024: { slidesPerView: 5, spaceBetween: 30 },
+                    // Initialize brands carousel separately
+                    initializeBrandsCarousel();
+
+                } catch (error) {
+                    console.error('Error initializing carousels:', error);
+                }
+            }
+
+            // Separate brands carousel initialization for reuse during filtering
+            function initializeBrandsCarousel() {
+                try {
+                    // Wait for brands to be populated first
+                    const brandsContainer = document.querySelector('.brands-carousel-container');
+                    const brandsWrapper = document.querySelector('.brands-carousel-container .swiper-wrapper');
+
+                    if (!brandsContainer || !brandsWrapper) {
+                        console.log('Brands container not found');
+                        return null;
                     }
-                });
+
+                    // Check if there are any brand slides
+                    const brandSlides = brandsWrapper.querySelectorAll('.brand-slide');
+                    if (brandSlides.length === 0) {
+                        console.log('No brand slides found');
+                        return null;
+                    }
+
+                    // Destroy existing brands carousel if it exists
+                    const existingBrandsCarousel = brandsContainer.swiper;
+                    if (existingBrandsCarousel) {
+                        existingBrandsCarousel.destroy(true, true);
+                    }
+
+                    // Initialize new brands carousel
+                    const brandsSwiper = new Swiper('.brands-carousel-container', {
+                        loop: brandSlides.length > 3 ? true : false,
+                        slidesPerView: 'auto',
+                        spaceBetween: 20,
+                        centeredSlides: false,
+                        freeMode: true,
+                        autoplay: brandSlides.length > 3 ? {
+                            delay: 3000,
+                            disableOnInteraction: false,
+                            pauseOnMouseEnter: true
+                        } : false,
+                        navigation: {
+                            nextEl: '.brands-carousel-container .swiper-button-next',
+                            prevEl: '.brands-carousel-container .swiper-button-prev'
+                        },
+                        lazy: {
+                            loadPrevNext: true,
+                        },
+                        grabCursor: true,
+                        breakpoints: {
+                            320: {
+                                slidesPerView: 2,
+                                spaceBetween: 10,
+                                freeMode: false
+                            },
+                            640: {
+                                slidesPerView: 3,
+                                spaceBetween: 15,
+                                freeMode: false
+                            },
+                            768: {
+                                slidesPerView: 4,
+                                spaceBetween: 20,
+                                freeMode: true
+                            },
+                            1024: {
+                                slidesPerView: 'auto',
+                                spaceBetween: 20,
+                                freeMode: true
+                            },
+                        },
+                        on: {
+                            init: function () {
+                                console.log('Brands carousel initialized with', brandSlides.length, 'slides');
+                            },
+                            slideChange: function () {
+                                // Optional: Add analytics or other slide change events
+                            }
+                        }
+                    });
+
+                    return brandsSwiper;
+                } catch (error) {
+                    console.error('Error initializing brands carousel:', error);
+                    return null;
+                }
             }
 
             // Get container references
             const categoryContainer = document.querySelector('.category-container');
             const brandsSwiperWrapper = document.querySelector('.brands-carousel-container .swiper-wrapper');
 
+            // Enhanced Categories Population with error handling
             function populateCategories(categories) {
-                if (!categories || categories.length === 0) return;
+                const categoryContainer = document.querySelector('.category-container');
+                if (!categoryContainer) return;
+
+                if (!categories || categories.length === 0) {
+                    categoryContainer.innerHTML = '<div class="no-categories">No categories available</div>';
+                    return;
+                }
+
                 categoryContainer.innerHTML = '';
                 categories.forEach(category => {
                     const categoryElement = document.createElement('div');
                     categoryElement.classList.add('category-item');
-                    categoryElement.innerHTML = `
-                        <img src="${category.icon_path}" alt="${category.name}" loading="lazy" decoding="async">
-                        <span>${category.name}</span>
+                    categoryElement.style.cssText = `
+                        cursor: pointer;
+                        transition: transform 0.3s ease, box-shadow 0.3s ease;
+                        text-align: center;
+                        padding: 1rem;
+                        border-radius: 10px;
+                        background: white;
+                        margin: 0.5rem;
+                        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
                     `;
+
+                    // Image with error handling
+                    const img = document.createElement('img');
+                    img.src = category.icon_path;
+                    img.alt = category.name;
+                    img.loading = 'lazy';
+                    img.decoding = 'async';
+                    img.style.cssText = 'width: 60px; height: 60px; object-fit: cover; border-radius: 50%; margin-bottom: 0.5rem;';
+
+                    img.onerror = function() {
+                        this.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMzAiIGZpbGw9IiNmMGYwZjAiLz4KPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJMMTMuMDkgOC4yNkwyMCA5TDEzLjA5IDE1Ljc0TDEyIDIyTDEwLjkxIDE1Ljc0TDQgOUwxMC45MSA4LjI2TDEyIDJaIiBmaWxsPSIjY2NjIi8+Cjwvc3ZnPgo8L3N2Zz4K';
+                    };
+
+                    const span = document.createElement('span');
+                    span.textContent = category.name;
+                    span.style.cssText = 'display: block; font-weight: 500; color: var(--bix-navy); font-size: 0.9rem;';
+
+                    categoryElement.appendChild(img);
+                    categoryElement.appendChild(span);
+
+                    // Add hover effects
+                    categoryElement.addEventListener('mouseenter', function() {
+                        this.style.transform = 'translateY(-5px)';
+                        this.style.boxShadow = '0 8px 25px rgba(0,0,0,0.15)';
+                    });
+
+                    categoryElement.addEventListener('mouseleave', function() {
+                        this.style.transform = 'translateY(0)';
+                        this.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
+                    });
+
+                    // Add click handler for category filtering
+                    categoryElement.addEventListener('click', function() {
+                        filterBrandsByCategory(category.id, category.name);
+                    });
+
                     categoryContainer.appendChild(categoryElement);
                 });
             }
 
+            // Enhanced Brands Population with carousel support
             function populateBrands(brands) {
-                if (!brands || brands.length === 0) return;
+                const brandsSwiperWrapper = document.querySelector('.brands-carousel-container .swiper-wrapper');
+                if (!brandsSwiperWrapper) return;
+
+                if (!brands || brands.length === 0) {
+                    brandsSwiperWrapper.innerHTML = '<div class="no-brands">No brands available</div>';
+                    return;
+                }
+
                 brandsSwiperWrapper.innerHTML = '';
                 brands.forEach(brand => {
                     const brandElement = document.createElement('div');
                     brandElement.classList.add('swiper-slide', 'brand-slide');
-                    brandElement.innerHTML = `<img src="${brand.logo_path}" alt="${brand.name}" loading="lazy" decoding="async">`;
+                    brandElement.style.cssText = `
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        padding: 1rem;
+                        background: white;
+                        border-radius: 10px;
+                        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                        transition: transform 0.3s ease;
+                        cursor: pointer;
+                        width: 200px;
+                        height: 120px;
+                        flex-shrink: 0;
+                    `;
+
+                    const img = document.createElement('img');
+                    img.src = brand.logo_path;
+                    img.alt = brand.name;
+                    img.loading = 'lazy';
+                    img.decoding = 'async';
+                    img.style.cssText = `
+                        max-width: 100%;
+                        max-height: 80px;
+                        object-fit: contain;
+                        filter: grayscale(20%);
+                        transition: filter 0.3s ease;
+                    `;
+
+                    // Error handling for brand images
+                    img.onerror = function() {
+                        this.src = `data:image/svg+xml;charset=UTF-8,%3Csvg width='120' height='80' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='120' height='80' fill='%23f0f0f0'/%3E%3Ctext x='60' y='45' font-family='Arial' font-size='12' text-anchor='middle' fill='%23999'%3E${brand.name}%3C/text%3E%3C/svg%3E`;
+                    };
+
+                    // Add hover effects
+                    brandElement.addEventListener('mouseenter', function() {
+                        this.style.transform = 'scale(1.05)';
+                        img.style.filter = 'grayscale(0%)';
+                    });
+
+                    brandElement.addEventListener('mouseleave', function() {
+                        this.style.transform = 'scale(1)';
+                        img.style.filter = 'grayscale(20%)';
+                    });
+
+                    // Add click handler for brand details
+                    brandElement.addEventListener('click', function() {
+                        if (brand.website_url) {
+                            window.open(brand.website_url, '_blank');
+                        }
+                    });
+
+                    brandElement.appendChild(img);
                     brandsSwiperWrapper.appendChild(brandElement);
                 });
+            }
+
+            // Category filtering function
+            function filterBrandsByCategory(categoryId, categoryName) {
+                fetch(`/api/brands?category_id=${categoryId}`)
+                    .then(handleResponse)
+                    .then(data => {
+                        if (data.success) {
+                            populateBrands(data.data);
+                            // Reinitialize brands carousel after filtering
+                            initializeBrandsCarousel();
+
+                            // Show filter notification
+                            showNotification(`Showing brands for: ${categoryName}`);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error filtering brands:', error);
+                        showNotification('Error filtering brands');
+                    });
             }
 
             function initializeFallbackContent() {
@@ -647,7 +1104,13 @@
             // Load promotion images after DOM is ready
             loadPromotionImages();
 
-            // Contact form handling
+            // Initialize smooth scroll navigation
+            initializeSmoothScroll();
+
+            // Initialize notification system
+            createNotificationContainer();
+
+            // Contact form handling with enhanced validation
             const contactForm = document.getElementById('contactForm');
             if (contactForm) {
                 contactForm.addEventListener('submit', function(e) {
@@ -655,22 +1118,166 @@
 
                     // Get form data
                     const formData = new FormData(contactForm);
-                    const name = formData.get('name');
-                    const email = formData.get('email');
-                    const message = formData.get('message');
+                    const name = formData.get('name').trim();
+                    const email = formData.get('email').trim();
+                    const message = formData.get('message').trim();
 
-                    // Simple validation
-                    if (!name || !email || !message) {
-                        alert('Please fill in all fields');
+                    // Enhanced validation
+                    if (!name) {
+                        showNotification('Please enter your name', 'error');
+                        return;
+                    }
+                    if (!email || !isValidEmail(email)) {
+                        showNotification('Please enter a valid email address', 'error');
+                        return;
+                    }
+                    if (!message || message.length < 10) {
+                        showNotification('Please enter a message (at least 10 characters)', 'error');
                         return;
                     }
 
-                    // Show success message (placeholder for now)
-                    alert('Thank you for your message! We will get back to you soon.');
+                    // Show loading state
+                    const submitBtn = contactForm.querySelector('.form-submit-btn');
+                    const originalText = submitBtn.textContent;
+                    submitBtn.textContent = 'Sending...';
+                    submitBtn.disabled = true;
 
-                    // Reset form
-                    contactForm.reset();
+                    // Simulate form submission (replace with actual API call)
+                    setTimeout(() => {
+                        showNotification('Thank you for your message! We will get back to you soon.', 'success');
+                        contactForm.reset();
+                        submitBtn.textContent = originalText;
+                        submitBtn.disabled = false;
+                    }, 1500);
                 });
+            }
+
+            // Smooth scroll navigation system
+            function initializeSmoothScroll() {
+                // Add smooth scroll behavior to navigation links
+                document.querySelectorAll('nav a[href^="#"], .footer-link[href^="#"]').forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+
+                        const targetId = this.getAttribute('href').substring(1);
+                        const targetElement = document.getElementById(targetId);
+
+                        if (targetElement) {
+                            // Remove active class from all nav links
+                            document.querySelectorAll('nav a').forEach(navLink => {
+                                navLink.classList.remove('active');
+                            });
+
+                            // Add active class to clicked link
+                            this.classList.add('active');
+
+                            // Smooth scroll to target
+                            targetElement.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'start'
+                            });
+                        }
+                    });
+                });
+
+                // Update active navigation on scroll
+                window.addEventListener('scroll', throttle(updateActiveNavigation, 100));
+            }
+
+            // Update active navigation based on scroll position
+            function updateActiveNavigation() {
+                const sections = ['hero', 'brands', 'promotions', 'contact'];
+                const scrollPosition = window.scrollY + 100;
+
+                for (let i = sections.length - 1; i >= 0; i--) {
+                    const section = document.getElementById(sections[i]);
+                    if (section && section.offsetTop <= scrollPosition) {
+                        // Remove active class from all nav links
+                        document.querySelectorAll('nav a').forEach(link => {
+                            link.classList.remove('active');
+                        });
+
+                        // Add active class to current section link
+                        const activeLink = document.querySelector(`nav a[href="#${sections[i]}"]`);
+                        if (activeLink) {
+                            activeLink.classList.add('active');
+                        }
+                        break;
+                    }
+                }
+            }
+
+            // Notification system
+            function createNotificationContainer() {
+                if (document.getElementById('notification-container')) return;
+
+                const container = document.createElement('div');
+                container.id = 'notification-container';
+                container.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    z-index: 10000;
+                    pointer-events: none;
+                `;
+                document.body.appendChild(container);
+            }
+
+            function showNotification(message, type = 'info') {
+                const container = document.getElementById('notification-container');
+                if (!container) return;
+
+                const notification = document.createElement('div');
+                notification.style.cssText = `
+                    background: ${type === 'error' ? '#e74c3c' : type === 'success' ? '#27ae60' : '#3498db'};
+                    color: white;
+                    padding: 1rem 1.5rem;
+                    border-radius: 8px;
+                    margin-bottom: 10px;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                    transform: translateX(100%);
+                    transition: transform 0.3s ease;
+                    pointer-events: auto;
+                    font-weight: 500;
+                    max-width: 300px;
+                `;
+                notification.textContent = message;
+
+                container.appendChild(notification);
+
+                // Animate in
+                setTimeout(() => {
+                    notification.style.transform = 'translateX(0)';
+                }, 10);
+
+                // Animate out and remove
+                setTimeout(() => {
+                    notification.style.transform = 'translateX(100%)';
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.parentNode.removeChild(notification);
+                        }
+                    }, 300);
+                }, 4000);
+            }
+
+            // Utility functions
+            function isValidEmail(email) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return emailRegex.test(email);
+            }
+
+            function throttle(func, limit) {
+                let inThrottle;
+                return function() {
+                    const args = arguments;
+                    const context = this;
+                    if (!inThrottle) {
+                        func.apply(context, args);
+                        inThrottle = true;
+                        setTimeout(() => inThrottle = false, limit);
+                    }
+                }
             }
         });
     </script>

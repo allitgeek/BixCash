@@ -11,9 +11,58 @@ class BrandController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return Brand::orderBy('order')->get();
+        try {
+            $query = Brand::where('is_active', true)
+                ->with('category:id,name')
+                ->select([
+                    'id', 'name', 'description', 'logo_path', 'website',
+                    'commission_rate', 'category_id', 'order', 'is_featured'
+                ]);
+
+            // Filter by category if requested
+            if ($request->filled('category_id')) {
+                $query->where('category_id', $request->category_id);
+            }
+
+            // Filter featured brands if requested
+            if ($request->boolean('featured')) {
+                $query->where('is_featured', true);
+            }
+
+            $brands = $query->orderBy('order', 'asc')
+                ->get()
+                ->map(function ($brand) {
+                    return [
+                        'id' => $brand->id,
+                        'name' => $brand->name,
+                        'description' => $brand->description,
+                        'logo_path' => $brand->logo_path,
+                        'website_url' => $brand->website,
+                        'commission_rate' => $brand->commission_rate,
+                        'category' => $brand->category ? [
+                            'id' => $brand->category->id,
+                            'name' => $brand->category->name
+                        ] : null,
+                        'order' => $brand->order,
+                        'is_featured' => $brand->is_featured
+                    ];
+                });
+
+            return response()->json([
+                'success' => true,
+                'data' => $brands,
+                'count' => $brands->count(),
+                'featured_count' => $brands->where('is_featured', true)->count()
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to load brands',
+                'error' => config('app.debug') ? $e->getMessage() : null
+            ], 500);
+        }
     }
 
     /**

@@ -13,7 +13,41 @@ class SlideController extends Controller
      */
     public function index()
     {
-        return Slide::where('is_active', true)->orderBy('order')->get();
+        try {
+            $slides = Slide::where('is_active', true)
+                ->scheduled()
+                ->orderBy('order', 'asc')
+                ->select([
+                    'id', 'title', 'description', 'media_type', 'media_path',
+                    'target_url', 'button_text', 'button_color', 'order'
+                ])
+                ->get()
+                ->map(function ($slide) {
+                    return [
+                        'id' => $slide->id,
+                        'title' => $slide->title,
+                        'description' => $slide->description,
+                        'media_type' => $slide->media_type,
+                        'media_path' => $slide->media_path,
+                        'target_url' => $slide->target_url,
+                        'button_text' => $slide->button_text,
+                        'button_color' => $slide->button_color ?: '#3498db',
+                        'order' => $slide->order
+                    ];
+                });
+
+            return response()->json([
+                'success' => true,
+                'data' => $slides,
+                'count' => $slides->count()
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to load slides',
+                'error' => config('app.debug') ? $e->getMessage() : null
+            ], 500);
+        }
     }
 
     /**
