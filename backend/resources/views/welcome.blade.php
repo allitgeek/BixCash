@@ -152,8 +152,8 @@
         <nav>
             <ul>
                 <li><a href="#home" class="active">Home</a></li>
-                <li><a href="#partner">Partner with us</a></li>
                 <li><a href="#brands">Brands</a></li>
+                <li><a href="#partner">Partner with us</a></li>
                 <li><a href="#promotions">Promotions</a></li>
                 <li><a href="#contact">Contact Us</a></li>
             </ul>
@@ -1186,7 +1186,7 @@
 
             // Update active navigation based on scroll position
             function updateActiveNavigation() {
-                const sections = ['hero', 'brands', 'promotions', 'contact'];
+                const sections = ['home', 'brands', 'partner', 'promotions', 'contact'];
                 const scrollPosition = window.scrollY + 100;
 
                 for (let i = sections.length - 1; i >= 0; i--) {
