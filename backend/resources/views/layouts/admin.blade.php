@@ -6,11 +6,25 @@
     <title>@yield('title', 'BixCash Admin Panel')</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <style>
+        /* BixCash Brand Colors - CSS Variables */
+        :root {
+            --bix-dark-blue: #021c47;
+            --bix-navy: #021c47;
+            --bix-green: #76d37a;
+            --bix-light-green: #93db4d;
+            --bix-white: #ffffff;
+            --bix-light-gray-1: #f8f8f8;
+            --bix-light-gray-2: #eef2f5;
+            --bix-medium-gray: #707070;
+            --bix-black: #000000;
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f8f9fa;
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bix-light-gray-2);
             line-height: 1.6;
+            color: var(--bix-dark-blue);
         }
 
         /* Layout Structure */
@@ -22,27 +36,28 @@
         /* Sidebar */
         .sidebar {
             width: 260px;
-            background: #2c3e50;
-            color: white;
+            background: var(--bix-dark-blue);
+            color: var(--bix-white);
             position: fixed;
             height: 100vh;
             overflow-y: auto;
             z-index: 1000;
         }
         .sidebar-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid #34495e;
+            padding: 2rem 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
             text-align: center;
         }
         .sidebar-header h2 {
-            color: #ecf0f1;
+            color: var(--bix-white);
             font-size: 1.5rem;
-            font-weight: 600;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
         }
         .sidebar-header p {
-            color: #bdc3c7;
+            color: rgba(255,255,255,0.7);
             font-size: 0.9rem;
-            margin-top: 0.25rem;
+            font-weight: 500;
         }
 
         /* Navigation Menu */
@@ -51,19 +66,26 @@
             margin-top: 1rem;
         }
         .nav-item {
-            border-bottom: 1px solid #34495e;
+            margin: 0.25rem 0;
         }
         .nav-link {
             display: flex;
             align-items: center;
             padding: 1rem 1.5rem;
-            color: #ecf0f1;
+            color: rgba(255,255,255,0.8);
             text-decoration: none;
             transition: all 0.3s ease;
+            font-weight: 500;
         }
-        .nav-link:hover, .nav-link.active {
-            background: #34495e;
-            color: #3498db;
+        .nav-link:hover {
+            background: rgba(255,255,255,0.1);
+            color: var(--bix-light-green);
+            transform: translateX(5px);
+        }
+        .nav-link.active {
+            background: var(--bix-green);
+            color: var(--bix-dark-blue);
+            font-weight: 600;
         }
         .nav-icon {
             width: 20px;
@@ -72,6 +94,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 1.2rem;
         }
 
         /* Main Content */
@@ -80,12 +103,13 @@
             margin-left: 260px;
             display: flex;
             flex-direction: column;
+            min-height: 100vh;
         }
 
         /* Header */
         .main-header {
-            background: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            background: var(--bix-white);
+            box-shadow: 0 2px 8px rgba(2, 28, 71, 0.1);
             padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
@@ -93,11 +117,12 @@
             position: sticky;
             top: 0;
             z-index: 999;
+            border-bottom: 2px solid var(--bix-light-gray-2);
         }
         .page-title {
-            color: #2c3e50;
+            color: var(--bix-dark-blue);
             font-size: 1.5rem;
-            font-weight: 600;
+            font-weight: 700;
         }
         .header-actions {
             display: flex;
@@ -108,128 +133,190 @@
             display: flex;
             align-items: center;
             gap: 0.75rem;
+            color: var(--bix-dark-blue);
+            font-weight: 600;
         }
         .role-badge {
             display: inline-block;
-            padding: 0.25rem 0.75rem;
-            background: #3498db;
-            color: white;
-            border-radius: 20px;
+            padding: 0.35rem 0.85rem;
+            background: var(--bix-green);
+            color: var(--bix-dark-blue);
+            border-radius: 25px;
             font-size: 0.8rem;
-            text-transform: capitalize;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         .logout-btn {
-            background: #e74c3c;
-            color: white;
+            background: var(--bix-dark-blue);
+            color: var(--bix-white);
             border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
+            padding: 0.65rem 1.25rem;
+            border-radius: 8px;
             cursor: pointer;
             text-decoration: none;
             font-size: 0.9rem;
-            transition: background 0.3s;
+            font-weight: 600;
+            transition: all 0.3s ease;
         }
         .logout-btn:hover {
-            background: #c0392b;
+            background: var(--bix-green);
+            color: var(--bix-dark-blue);
+            transform: translateY(-2px);
         }
 
         /* Content Area */
         .content-area {
             flex: 1;
             padding: 2rem;
+            background: var(--bix-light-gray-2);
         }
 
         /* Cards and Components */
         .card {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            background: var(--bix-white);
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(2, 28, 71, 0.08);
             overflow: hidden;
+            border: 1px solid rgba(2, 28, 71, 0.05);
         }
         .card-header {
-            background: #f8f9fa;
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid #dee2e6;
+            background: var(--bix-light-gray-1);
+            padding: 1.25rem 1.5rem;
+            border-bottom: 2px solid var(--bix-light-gray-2);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
         .card-title {
-            color: #2c3e50;
-            font-size: 1.1rem;
-            font-weight: 600;
+            color: var(--bix-dark-blue);
+            font-size: 1.2rem;
+            font-weight: 700;
             margin: 0;
         }
         .card-body {
             padding: 1.5rem;
         }
 
-        /* Buttons */
+        /* Buttons - BixCash Theme */
         .btn {
             display: inline-block;
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
+            padding: 0.65rem 1.25rem;
+            border-radius: 8px;
             text-decoration: none;
             cursor: pointer;
             border: none;
             font-size: 0.9rem;
-            transition: all 0.3s;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 0.25rem;
         }
         .btn-primary {
-            background: #3498db;
-            color: white;
+            background: var(--bix-green);
+            color: var(--bix-dark-blue);
         }
         .btn-primary:hover {
-            background: #2980b9;
+            background: var(--bix-light-green);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(118, 211, 122, 0.3);
         }
         .btn-success {
-            background: #27ae60;
-            color: white;
+            background: var(--bix-green);
+            color: var(--bix-dark-blue);
         }
         .btn-success:hover {
-            background: #229954;
+            background: var(--bix-light-green);
+            transform: translateY(-2px);
         }
         .btn-warning {
             background: #f39c12;
-            color: white;
+            color: var(--bix-white);
         }
         .btn-warning:hover {
             background: #e67e22;
+            transform: translateY(-2px);
         }
         .btn-danger {
             background: #e74c3c;
-            color: white;
+            color: var(--bix-white);
         }
         .btn-danger:hover {
             background: #c0392b;
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            background: var(--bix-medium-gray);
+            color: var(--bix-white);
+        }
+        .btn-secondary:hover {
+            background: var(--bix-dark-blue);
+            transform: translateY(-2px);
+        }
+        .btn-info {
+            background: var(--bix-dark-blue);
+            color: var(--bix-white);
+        }
+        .btn-info:hover {
+            background: var(--bix-green);
+            color: var(--bix-dark-blue);
+            transform: translateY(-2px);
         }
 
-        /* Alerts */
+        /* Alerts - BixCash Theme */
         .alert {
-            padding: 1rem;
-            margin-bottom: 1rem;
-            border-radius: 5px;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.5rem;
+            border-radius: 10px;
             border: 1px solid transparent;
+            font-weight: 500;
         }
         .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border-color: #c3e6cb;
+            background: rgba(118, 211, 122, 0.15);
+            color: var(--bix-dark-blue);
+            border-color: var(--bix-green);
         }
         .alert-danger {
-            background: #f8d7da;
+            background: rgba(231, 76, 60, 0.15);
             color: #721c24;
-            border-color: #f5c6cb;
+            border-color: #e74c3c;
         }
         .alert-warning {
-            background: #fff3cd;
+            background: rgba(243, 156, 18, 0.15);
             color: #856404;
-            border-color: #ffeaa7;
+            border-color: #f39c12;
         }
         .alert-info {
-            background: #d1ecf1;
-            color: #0c5460;
-            border-color: #bee5eb;
+            background: rgba(2, 28, 71, 0.15);
+            color: var(--bix-dark-blue);
+            border-color: var(--bix-dark-blue);
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--bix-dark-blue);
+            font-weight: 600;
+        }
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--bix-light-gray-2);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            background: var(--bix-white);
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: var(--bix-green);
+            box-shadow: 0 0 0 3px rgba(118, 211, 122, 0.1);
+        }
+        .form-control.is-invalid {
+            border-color: #e74c3c;
         }
 
         /* Mobile Responsive */
@@ -252,7 +339,7 @@
             }
         }
 
-        /* Icons (Font Awesome alternative using CSS) */
+        /* Icons - BixCash Style */
         .icon-dashboard::before { content: "📊"; }
         .icon-users::before { content: "👥"; }
         .icon-slides::before { content: "🖼️"; }
@@ -261,6 +348,161 @@
         .icon-analytics::before { content: "📈"; }
         .icon-reports::before { content: "📄"; }
         .icon-settings::before { content: "⚙️"; }
+
+        /* Table Styles */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1rem;
+        }
+        .table th,
+        .table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--bix-light-gray-2);
+            text-align: left;
+        }
+        .table th {
+            background: var(--bix-light-gray-1);
+            font-weight: 600;
+            color: var(--bix-dark-blue);
+        }
+
+        /* Badge Styles */
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-radius: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .badge-success {
+            background: var(--bix-green);
+            color: var(--bix-dark-blue);
+        }
+        .badge-secondary {
+            background: var(--bix-medium-gray);
+            color: var(--bix-white);
+        }
+        .badge-warning {
+            background: #f39c12;
+            color: var(--bix-white);
+        }
+        .badge-primary {
+            background: var(--bix-dark-blue);
+            color: var(--bix-white);
+        }
+
+        /* Layout Utilities */
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -0.75rem;
+        }
+        .col-md-4,
+        .col-md-6,
+        .col-md-8,
+        .col-md-12 {
+            padding: 0 0.75rem;
+            box-sizing: border-box;
+        }
+        .col-md-4 { flex: 0 0 33.333333%; max-width: 33.333333%; }
+        .col-md-6 { flex: 0 0 50%; max-width: 50%; }
+        .col-md-8 { flex: 0 0 66.666667%; max-width: 66.666667%; }
+        .col-md-12 { flex: 0 0 100%; max-width: 100%; }
+
+        /* Form Actions */
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            padding-top: 1.5rem;
+            margin-top: 1.5rem;
+            border-top: 2px solid var(--bix-light-gray-2);
+        }
+
+        /* Text Utilities */
+        .text-center { text-align: center; }
+        .text-muted { color: var(--bix-medium-gray); }
+        .text-sm { font-size: 0.875rem; }
+        .small { font-size: 0.875rem; }
+
+        /* Spacing Utilities */
+        .mb-1 { margin-bottom: 0.25rem; }
+        .mb-2 { margin-bottom: 0.5rem; }
+        .mb-3 { margin-bottom: 1rem; }
+        .mb-4 { margin-bottom: 1.5rem; }
+        .mt-2 { margin-top: 0.5rem; }
+        .mt-3 { margin-top: 1rem; }
+        .mt-4 { margin-top: 1.5rem; }
+        .py-5 { padding: 3rem 0; }
+        .d-block { display: block; }
+        .d-grid { display: grid; }
+        .gap-2 { gap: 0.5rem; }
+
+        /* Button Sizes */
+        .btn-sm {
+            padding: 0.45rem 0.85rem;
+            font-size: 0.8rem;
+        }
+        .w-100 { width: 100%; }
+
+        /* Invalid Feedback */
+        .invalid-feedback {
+            display: block;
+            color: #e74c3c;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            font-weight: 500;
+        }
+
+        /* Additional Form Elements */
+        .form-check {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        .form-check-input {
+            margin-right: 0.5rem;
+            width: 16px;
+            height: 16px;
+        }
+        .form-check-label {
+            margin-bottom: 0;
+            font-weight: 500;
+        }
+
+        /* List Styles */
+        .list-unstyled {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        /* Button Groups */
+        .btn + .btn {
+            margin-left: 0.5rem;
+        }
+
+        /* Mobile Responsive Columns */
+        @media (max-width: 768px) {
+            .col-md-4,
+            .col-md-6,
+            .col-md-8,
+            .col-md-12 {
+                flex: 0 0 100%;
+                max-width: 100%;
+                margin-bottom: 1rem;
+            }
+            .form-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .form-actions .btn {
+                width: 100%;
+                margin: 0.25rem 0;
+            }
+        }
     </style>
 </head>
 <body>
