@@ -17,7 +17,7 @@
             </div>
         </div>
         <div class="card-body">
-            <form method="POST" action="{{ route('admin.categories.update', $category) }}" id="categoryForm">
+            <form method="POST" action="{{ route('admin.categories.update', $category) }}" id="categoryForm" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
 
@@ -49,17 +49,46 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="icon_path">Icon URL</label>
-                            <input type="url"
-                                   class="form-control @error('icon_path') is-invalid @enderror"
-                                   id="icon_path"
-                                   name="icon_path"
-                                   value="{{ old('icon_path', $category->icon_path) }}"
-                                   placeholder="https://example.com/icon.png">
-                            @error('icon_path')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                            <small class="text-muted">Enter the full URL to the category icon</small>
+                            <label>Category Icon</label>
+
+                            <!-- Current Icon Display -->
+                            @if($category->icon_path)
+                                <div class="mb-3">
+                                    <label class="form-label"><strong>Current Icon</strong></label>
+                                    <div style="padding: 1rem; background: #f8f9fa; border-radius: 8px; text-align: center;">
+                                        <img src="{{ $category->icon_path }}" alt="{{ $category->name }}" style="max-height: 60px; max-width: 60px; object-fit: contain;">
+                                    </div>
+                                </div>
+                            @endif
+
+                            <!-- File Upload Option -->
+                            <div class="mb-3">
+                                <label for="icon_file" class="form-label"><strong>Upload New Icon File</strong></label>
+                                <input type="file"
+                                       class="form-control @error('icon_file') is-invalid @enderror"
+                                       id="icon_file"
+                                       name="icon_file"
+                                       accept="image/*">
+                                @error('icon_file')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                                <small class="text-muted">Upload PNG, JPG, or SVG file (max 2MB) - will replace current icon</small>
+                            </div>
+
+                            <!-- URL Option -->
+                            <div class="mb-3">
+                                <label for="icon_path" class="form-label"><strong>Or Enter Icon URL</strong></label>
+                                <input type="url"
+                                       class="form-control @error('icon_path') is-invalid @enderror"
+                                       id="icon_path"
+                                       name="icon_path"
+                                       value="{{ old('icon_path', $category->icon_path) }}"
+                                       placeholder="https://example.com/icon.png">
+                                @error('icon_path')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                                <small class="text-muted">Enter the full URL to the category icon (if not uploading file)</small>
+                            </div>
                         </div>
 
                         <div class="row">
@@ -207,6 +236,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             const nameInput = document.getElementById('name');
             const iconPathInput = document.getElementById('icon_path');
+            const iconFileInput = document.getElementById('icon_file');
             const colorInput = document.getElementById('color');
 
             const previewName = document.getElementById('previewName');
@@ -217,7 +247,14 @@
                 previewName.textContent = nameInput.value || 'Category Name';
                 categoryPreview.style.borderColor = colorInput.value || '#021c47';
 
-                if (iconPathInput.value) {
+                // Update icon - prioritize file upload over URL
+                if (iconFileInput.files && iconFileInput.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        previewIcon.innerHTML = `<img src="${e.target.result}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 4px;">`;
+                    };
+                    reader.readAsDataURL(iconFileInput.files[0]);
+                } else if (iconPathInput.value) {
                     previewIcon.innerHTML = `<img src="${iconPathInput.value}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 4px;" onerror="this.style.display='none'; this.parentNode.innerHTML='Icon'; this.parentNode.style.background='#f0f0f0'; this.parentNode.style.color='#999';">`;
                 } else {
                     previewIcon.innerHTML = 'Icon';
@@ -226,8 +263,23 @@
                 }
             }
 
+            // Clear URL when file is selected
+            iconFileInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    iconPathInput.value = '';
+                }
+                updatePreview();
+            });
+
+            // Clear file when URL is entered
+            iconPathInput.addEventListener('input', function() {
+                if (this.value) {
+                    iconFileInput.value = '';
+                }
+                updatePreview();
+            });
+
             nameInput.addEventListener('input', updatePreview);
-            iconPathInput.addEventListener('input', updatePreview);
             colorInput.addEventListener('input', updatePreview);
         });
     </script>

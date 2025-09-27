@@ -153,6 +153,7 @@
             <ul>
                 <li><a href="#home" class="active">Home</a></li>
                 <li><a href="#brands">Brands</a></li>
+                <li><a href="#how-it-works">How It Works</a></li>
                 <li><a href="#partner">Partner with us</a></li>
                 <li><a href="#promotions">Promotions</a></li>
                 <li><a href="#contact">Contact Us</a></li>
@@ -177,7 +178,7 @@
                 <!-- Categories will be injected by JavaScript -->
             </div>
             <h2><span class="green-text">Explore</span> Brands</h2>
-            <div class="brands-carousel-container">
+            <div class="swiper brands-carousel-container">
                 <div class="swiper-wrapper">
                     <!-- Brands will be injected by JavaScript -->
                 </div>
@@ -187,7 +188,7 @@
         </div>
     </section>
 
-    <section id="partner" class="how-it-works-section">
+    <section id="how-it-works" class="how-it-works-section">
         <h2 class="main-heading"><span class="green-text">How it</span> Works</h2>
 
         <div class="content-wrapper">
@@ -232,7 +233,7 @@
     </section>
 
     <!-- Customer Dashboard Section -->
-    <section class="customer-dashboard-section">
+    <section id="partner" class="customer-dashboard-section">
         <div class="dashboard-container">
             <!-- Dashboard Title -->
             <h2 class="dashboard-main-title">
@@ -968,49 +969,45 @@
                 brands.forEach(brand => {
                     const brandElement = document.createElement('div');
                     brandElement.classList.add('swiper-slide', 'brand-slide');
-                    brandElement.style.cssText = `
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        padding: 1rem;
-                        background: white;
-                        border-radius: 10px;
-                        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-                        transition: transform 0.3s ease;
-                        cursor: pointer;
-                        width: 200px;
-                        height: 120px;
-                        flex-shrink: 0;
-                    `;
 
                     const img = document.createElement('img');
-                    img.src = brand.logo_path;
                     img.alt = brand.name;
                     img.loading = 'lazy';
                     img.decoding = 'async';
-                    img.style.cssText = `
-                        max-width: 100%;
-                        max-height: 80px;
-                        object-fit: contain;
-                        filter: grayscale(20%);
-                        transition: filter 0.3s ease;
-                    `;
 
-                    // Error handling for brand images
+                    // Better error handling for brand images
                     img.onerror = function() {
-                        this.src = `data:image/svg+xml;charset=UTF-8,%3Csvg width='120' height='80' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='120' height='80' fill='%23f0f0f0'/%3E%3Ctext x='60' y='45' font-family='Arial' font-size='12' text-anchor='middle' fill='%23999'%3E${brand.name}%3C/text%3E%3C/svg%3E`;
+                        console.log(`Failed to load brand logo: ${brand.logo_path} for ${brand.name}`);
+                        // Create a simple placeholder div instead of SVG with text
+                        const placeholder = document.createElement('div');
+                        placeholder.style.cssText = `
+                            width: 120px;
+                            height: 80px;
+                            background: #f8f9fa;
+                            border: 2px dashed #dee2e6;
+                            border-radius: 8px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            color: #6c757d;
+                            font-size: 10px;
+                            text-align: center;
+                            font-family: Arial, sans-serif;
+                        `;
+                        placeholder.textContent = 'Logo';
+                        this.parentNode.replaceChild(placeholder, this);
                     };
 
-                    // Add hover effects
-                    brandElement.addEventListener('mouseenter', function() {
-                        this.style.transform = 'scale(1.05)';
-                        img.style.filter = 'grayscale(0%)';
-                    });
+                    // Set the image source after error handler is attached
+                    if (brand.logo_path && brand.logo_path.trim() !== '') {
+                        img.src = brand.logo_path;
+                    } else {
+                        // If no logo path, trigger error handler to show placeholder
+                        img.onerror();
+                        return;
+                    }
 
-                    brandElement.addEventListener('mouseleave', function() {
-                        this.style.transform = 'scale(1)';
-                        img.style.filter = 'grayscale(20%)';
-                    });
+                    // Hover effects are handled by CSS
 
                     // Add click handler for brand details
                     brandElement.addEventListener('click', function() {
@@ -1186,7 +1183,7 @@
 
             // Update active navigation based on scroll position
             function updateActiveNavigation() {
-                const sections = ['home', 'brands', 'partner', 'promotions', 'contact'];
+                const sections = ['home', 'brands', 'how-it-works', 'partner', 'promotions', 'contact'];
                 const scrollPosition = window.scrollY + 100;
 
                 for (let i = sections.length - 1; i >= 0; i--) {

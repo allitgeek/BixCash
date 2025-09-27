@@ -14,7 +14,7 @@
             </div>
         </div>
         <div class="card-body">
-            <form method="POST" action="{{ route('admin.brands.store') }}" id="brandForm">
+            <form method="POST" action="{{ route('admin.brands.store') }}" id="brandForm" enctype="multipart/form-data">
                 @csrf
 
                 <div class="row">
@@ -62,17 +62,36 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="logo_path">Logo URL</label>
-                            <input type="url"
-                                   class="form-control @error('logo_path') is-invalid @enderror"
-                                   id="logo_path"
-                                   name="logo_path"
-                                   value="{{ old('logo_path') }}"
-                                   placeholder="https://example.com/logo.png">
-                            @error('logo_path')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                            <small class="text-muted">Enter the full URL to the brand logo</small>
+                            <label>Brand Logo</label>
+
+                            <!-- File Upload Option -->
+                            <div class="mb-3">
+                                <label for="logo_file" class="form-label"><strong>Upload Logo File</strong></label>
+                                <input type="file"
+                                       class="form-control @error('logo_file') is-invalid @enderror"
+                                       id="logo_file"
+                                       name="logo_file"
+                                       accept="image/*">
+                                @error('logo_file')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                                <small class="text-muted">Upload PNG, JPG, or SVG file (max 2MB)</small>
+                            </div>
+
+                            <!-- URL Option -->
+                            <div class="mb-3">
+                                <label for="logo_path" class="form-label"><strong>Or Enter Logo URL</strong></label>
+                                <input type="url"
+                                       class="form-control @error('logo_path') is-invalid @enderror"
+                                       id="logo_path"
+                                       name="logo_path"
+                                       value="{{ old('logo_path') }}"
+                                       placeholder="https://example.com/logo.png">
+                                @error('logo_path')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                                <small class="text-muted">Enter the full URL to the brand logo (if not uploading file)</small>
+                            </div>
                         </div>
 
                         <div class="form-group">
@@ -217,6 +236,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             const nameInput = document.getElementById('name');
             const logoPathInput = document.getElementById('logo_path');
+            const logoFileInput = document.getElementById('logo_file');
             const categorySelect = document.getElementById('category_id');
 
             const previewName = document.getElementById('previewName');
@@ -230,8 +250,14 @@
                 const selectedCategory = categorySelect.options[categorySelect.selectedIndex];
                 previewCategory.textContent = selectedCategory.value ? selectedCategory.text : 'No category';
 
-                // Update logo
-                if (logoPathInput.value) {
+                // Update logo - prioritize file upload over URL
+                if (logoFileInput.files && logoFileInput.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        previewLogo.innerHTML = `<img src="${e.target.result}" style="max-width: 100%; max-height: 100%; object-fit: contain;">`;
+                    };
+                    reader.readAsDataURL(logoFileInput.files[0]);
+                } else if (logoPathInput.value) {
                     previewLogo.innerHTML = `<img src="${logoPathInput.value}" style="max-width: 100%; max-height: 100%; object-fit: contain;" onerror="this.style.display='none'; this.parentNode.innerHTML='Brand Logo'; this.parentNode.style.background='#f0f0f0';">`;
                 } else {
                     previewLogo.innerHTML = 'Brand Logo';
@@ -239,8 +265,23 @@
                 }
             }
 
+            // Clear URL when file is selected
+            logoFileInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    logoPathInput.value = '';
+                }
+                updatePreview();
+            });
+
+            // Clear file when URL is entered
+            logoPathInput.addEventListener('input', function() {
+                if (this.value) {
+                    logoFileInput.value = '';
+                }
+                updatePreview();
+            });
+
             nameInput.addEventListener('input', updatePreview);
-            logoPathInput.addEventListener('input', updatePreview);
             categorySelect.addEventListener('change', updatePreview);
         });
     </script>

@@ -8,7 +8,7 @@
         <div class="card-header">
             <h3 class="card-title">Manage Brands</h3>
             <div>
-                <a href="#" class="btn btn-primary">
+                <a href="{{ route('admin.brands.create') }}" class="btn btn-primary">
                     Add New Brand
                 </a>
             </div>
@@ -58,12 +58,16 @@
                                     </td>
                                     <td style="padding: 0.75rem; text-align: center;">
                                         <div style="display: flex; gap: 0.25rem; justify-content: center;">
-                                            <a href="#" class="btn btn-warning" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">
+                                            <a href="{{ route('admin.brands.edit', $brand) }}" class="btn btn-warning" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">
                                                 Edit
                                             </a>
-                                            <button class="btn btn-danger" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">
-                                                Delete
-                                            </button>
+                                            <form method="POST" action="{{ route('admin.brands.destroy', $brand) }}" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this brand?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">
+                                                    Delete
+                                                </button>
+                                            </form>
                                         </div>
                                     </td>
                                 </tr>
@@ -80,7 +84,7 @@
                 <div style="text-align: center; padding: 3rem; color: #666;">
                     <h4>No brands found</h4>
                     <p>Get started by creating your first brand.</p>
-                    <a href="#" class="btn btn-primary" style="margin-top: 1rem;">
+                    <a href="{{ route('admin.brands.create') }}" class="btn btn-primary" style="margin-top: 1rem;">
                         Create First Brand
                     </a>
                 </div>

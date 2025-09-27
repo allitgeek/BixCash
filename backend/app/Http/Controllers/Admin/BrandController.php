@@ -76,6 +76,7 @@ class BrandController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'logo_file' => 'nullable|image|mimes:png,jpg,jpeg,svg,webp|max:2048',
             'logo_path' => 'nullable|string|max:500',
             'website' => 'nullable|url|max:500',
             'commission_rate' => 'nullable|numeric|min:0|max:100',
@@ -86,9 +87,23 @@ class BrandController extends Controller
             'partner_id' => 'nullable|exists:users,id',
         ]);
 
+        // Handle logo upload or URL
+        if ($request->hasFile('logo_file')) {
+            $logoFile = $request->file('logo_file');
+            $logoName = time() . '_' . $logoFile->getClientOriginalName();
+            $logoPath = $logoFile->storeAs('brands', $logoName, 'public');
+            $validated['logo_path'] = '/storage/' . $logoPath;
+        } elseif (!$request->filled('logo_path')) {
+            // If neither file nor URL provided, set to null
+            $validated['logo_path'] = null;
+        }
+
         $validated['is_active'] = $request->boolean('is_active');
         $validated['is_featured'] = $request->boolean('is_featured');
         $validated['created_by'] = Auth::id();
+
+        // Remove logo_file from validated data as it's not a database field
+        unset($validated['logo_file']);
 
         $brand = Brand::create($validated);
 
@@ -122,6 +137,7 @@ class BrandController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'logo_file' => 'nullable|image|mimes:png,jpg,jpeg,svg,webp|max:2048',
             'logo_path' => 'nullable|string|max:500',
             'website' => 'nullable|url|max:500',
             'commission_rate' => 'nullable|numeric|min:0|max:100',
@@ -132,8 +148,22 @@ class BrandController extends Controller
             'partner_id' => 'nullable|exists:users,id',
         ]);
 
+        // Handle logo upload or URL
+        if ($request->hasFile('logo_file')) {
+            $logoFile = $request->file('logo_file');
+            $logoName = time() . '_' . $logoFile->getClientOriginalName();
+            $logoPath = $logoFile->storeAs('brands', $logoName, 'public');
+            $validated['logo_path'] = '/storage/' . $logoPath;
+        } elseif (!$request->filled('logo_path')) {
+            // If neither file nor URL provided, keep current logo
+            unset($validated['logo_path']);
+        }
+
         $validated['is_active'] = $request->boolean('is_active');
         $validated['is_featured'] = $request->boolean('is_featured');
+
+        // Remove logo_file from validated data as it's not a database field
+        unset($validated['logo_file']);
 
         $brand->update($validated);
 

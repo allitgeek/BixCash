@@ -17,7 +17,7 @@
             </div>
         </div>
         <div class="card-body">
-            <form method="POST" action="{{ route('admin.brands.update', $brand) }}" id="brandForm">
+            <form method="POST" action="{{ route('admin.brands.update', $brand) }}" id="brandForm" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
 
@@ -66,17 +66,46 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="logo_path">Logo URL</label>
-                            <input type="url"
-                                   class="form-control @error('logo_path') is-invalid @enderror"
-                                   id="logo_path"
-                                   name="logo_path"
-                                   value="{{ old('logo_path', $brand->logo_path) }}"
-                                   placeholder="https://example.com/logo.png">
-                            @error('logo_path')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                            <small class="text-muted">Enter the full URL to the brand logo</small>
+                            <label>Brand Logo</label>
+
+                            <!-- Current Logo Display -->
+                            @if($brand->logo_path)
+                                <div class="mb-3">
+                                    <label class="form-label"><strong>Current Logo</strong></label>
+                                    <div style="padding: 1rem; background: #f8f9fa; border-radius: 8px; text-align: center;">
+                                        <img src="{{ $brand->logo_path }}" alt="{{ $brand->name }}" style="max-height: 80px; max-width: 150px; object-fit: contain;">
+                                    </div>
+                                </div>
+                            @endif
+
+                            <!-- File Upload Option -->
+                            <div class="mb-3">
+                                <label for="logo_file" class="form-label"><strong>Upload New Logo File</strong></label>
+                                <input type="file"
+                                       class="form-control @error('logo_file') is-invalid @enderror"
+                                       id="logo_file"
+                                       name="logo_file"
+                                       accept="image/*">
+                                @error('logo_file')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                                <small class="text-muted">Upload PNG, JPG, or SVG file (max 2MB) - will replace current logo</small>
+                            </div>
+
+                            <!-- URL Option -->
+                            <div class="mb-3">
+                                <label for="logo_path" class="form-label"><strong>Or Enter Logo URL</strong></label>
+                                <input type="url"
+                                       class="form-control @error('logo_path') is-invalid @enderror"
+                                       id="logo_path"
+                                       name="logo_path"
+                                       value="{{ old('logo_path', $brand->logo_path) }}"
+                                       placeholder="https://example.com/logo.png">
+                                @error('logo_path')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                                <small class="text-muted">Enter the full URL to the brand logo (if not uploading file)</small>
+                            </div>
                         </div>
 
                         <div class="form-group">

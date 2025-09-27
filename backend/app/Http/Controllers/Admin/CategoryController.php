@@ -57,6 +57,7 @@ class CategoryController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:categories',
             'description' => 'nullable|string',
+            'icon_file' => 'nullable|image|mimes:png,jpg,jpeg,svg,webp|max:2048',
             'icon_path' => 'nullable|string|max:500',
             'color' => 'nullable|string|max:7',
             'order' => 'required|integer|min:0',
@@ -65,8 +66,22 @@ class CategoryController extends Controller
             'meta_description' => 'nullable|string|max:500',
         ]);
 
+        // Handle icon upload or URL
+        if ($request->hasFile('icon_file')) {
+            $iconFile = $request->file('icon_file');
+            $iconName = time() . '_' . $iconFile->getClientOriginalName();
+            $iconPath = $iconFile->storeAs('categories', $iconName, 'public');
+            $validated['icon_path'] = '/storage/' . $iconPath;
+        } elseif (!$request->filled('icon_path')) {
+            // If neither file nor URL provided, set to null
+            $validated['icon_path'] = null;
+        }
+
         $validated['is_active'] = $request->boolean('is_active');
         $validated['created_by'] = Auth::id();
+
+        // Remove icon_file from validated data as it's not a database field
+        unset($validated['icon_file']);
 
         $category = Category::create($validated);
 
@@ -102,6 +117,7 @@ class CategoryController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
             'description' => 'nullable|string',
+            'icon_file' => 'nullable|image|mimes:png,jpg,jpeg,svg,webp|max:2048',
             'icon_path' => 'nullable|string|max:500',
             'color' => 'nullable|string|max:7',
             'order' => 'required|integer|min:0',
@@ -110,7 +126,21 @@ class CategoryController extends Controller
             'meta_description' => 'nullable|string|max:500',
         ]);
 
+        // Handle icon upload or URL
+        if ($request->hasFile('icon_file')) {
+            $iconFile = $request->file('icon_file');
+            $iconName = time() . '_' . $iconFile->getClientOriginalName();
+            $iconPath = $iconFile->storeAs('categories', $iconName, 'public');
+            $validated['icon_path'] = '/storage/' . $iconPath;
+        } elseif (!$request->filled('icon_path')) {
+            // If neither file nor URL provided, keep current icon
+            unset($validated['icon_path']);
+        }
+
         $validated['is_active'] = $request->boolean('is_active');
+
+        // Remove icon_file from validated data as it's not a database field
+        unset($validated['icon_file']);
 
         $category->update($validated);
 
