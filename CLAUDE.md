@@ -228,19 +228,24 @@ Roles are defined with JSON permissions for granular access control:
 - Last login tracking and display
 - Bulk status operations
 
-**Categories Management** (`/admin/categories`) - ✅ COMPLETE
+**Categories Management** (`/admin/categories`) - ✅ COMPLETE + FILE UPLOAD
 - Professional table listing with status indicators and search
 - Complete CRUD operations with SEO fields (meta_title, meta_description)
-- Live preview with color picker and icon URL support
+- **Dual Icon Input System**: File upload + URL input with live preview
+- File upload support: PNG, JPG, JPEG, SVG, WEBP (max 2MB)
+- Current icon display in edit forms with replacement options
+- Live preview with color picker and icon management
 - Status management and ordering functionality
 - Complete views: `index.blade.php`, `create.blade.php`, `edit.blade.php`, `show.blade.php`
 - Associated brands display and relationship management
 
-**Brands Management** (`/admin/brands`) - ✅ COMPLETE
+**Brands Management** (`/admin/brands`) - ✅ COMPLETE + FILE UPLOAD
 - Professional table listing with commission rates and category filtering
 - Complete CRUD operations with category association
 - Commission rate management and featured status
-- Logo URL support with live preview functionality
+- **Dual Logo Input System**: File upload + URL input with live preview
+- File upload support: PNG, JPG, JPEG, SVG, WEBP (max 2MB)
+- Current logo display in edit forms with replacement options
 - Website integration and partner assignment
 - Complete views: `index.blade.php`, `create.blade.php`, `edit.blade.php`, `show.blade.php`
 - Status toggles for active/inactive and featured/non-featured
@@ -270,10 +275,40 @@ Roles are defined with JSON permissions for granular access control:
 
 **Controllers Completed**:
 - `SlideController` - Complete CRUD with search, validation, status toggle, live preview
-- `CategoryController` - Complete CRUD with SEO fields, color management, brand relationships
-- `BrandController` - Complete CRUD with category association, commission rates, featured status
+- `CategoryController` - Complete CRUD with SEO fields, color management, brand relationships, **file upload support**
+- `BrandController` - Complete CRUD with category association, commission rates, featured status, **file upload support**
 - `UserController` - Full user management with role assignments
 - `DashboardController` - Enhanced with settings route
+
+### File Upload System (Phase 7) - ✅ FULLY IMPLEMENTED
+
+**Complete File Upload Implementation**:
+- **Dual Input System**: Users can upload files OR enter URLs for logos/icons
+- **File Validation**: PNG, JPG, JPEG, SVG, WEBP formats with 2MB size limit
+- **Storage Integration**: Files stored in `storage/app/public/brands/` and `storage/app/public/categories/`
+- **Database Schema**: Made `brands.logo_path` and `categories.icon_path` nullable
+- **Live Preview**: Real-time preview for both file uploads and URL inputs
+- **Form Enhancement**: Added `enctype="multipart/form-data"` to all relevant forms
+
+**Smart Input Handling**:
+- Auto-clears URL input when file is selected
+- Auto-clears file input when URL is entered
+- Maintains current assets if no new file or URL provided during edits
+- Professional error handling and validation messages
+
+**Frontend Logo Display Fix**:
+- ✅ **Fixed brand logo display issue** where brand names appeared instead of images
+- Enhanced JavaScript error handling for failed image loads
+- Clean "Logo" placeholder instead of confusing brand name text
+- Debug logging for image loading failures
+- Robust image loading logic with proper path validation
+
+**Technical Implementation**:
+- Laravel Storage facade with public disk configuration
+- Unique filename generation with timestamp prefixes
+- Proper error handling and file validation
+- Form field handling in controllers (store/update methods)
+- Frontend JavaScript improvements for image loading reliability
 
 ### Admin Panel Status: ✅ ERROR-FREE & PRODUCTION READY
 **All Systems Verified**:
