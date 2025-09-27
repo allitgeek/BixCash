@@ -4,17 +4,6 @@
 @section('page-title', 'Dashboard')
 
 @section('content')
-    <div class="welcome-section card">
-        <div class="card-body">
-            <h2>Dashboard Overview</h2>
-            <p>Welcome to the BixCash admin panel. Here you can manage users, content, brands, and system settings.</p>
-            @if($user->adminProfile)
-                <p><strong>Department:</strong> {{ $user->adminProfile->department }}</p>
-                <p><strong>Last Login:</strong> {{ $user->last_login_at ? $user->last_login_at->format('M j, Y \\a\\t g:i A') : 'Never' }}</p>
-            @endif
-        </div>
-    </div>
-
     <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
         <div class="stat-card card">
             <div class="card-body" style="text-align: center;">
