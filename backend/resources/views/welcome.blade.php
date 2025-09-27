@@ -160,7 +160,7 @@
         </nav>
     </header>
 
-    <section id="hero" class="hero-slider">
+    <section id="home" class="hero-slider">
         <div class="swiper-container">
             <div class="swiper-wrapper">
                 <!-- Slides will be injected here by JavaScript -->
@@ -171,7 +171,7 @@
         </div>
     </section>
 
-    <section class="brands-section">
+    <section id="brands" class="brands-section">
         <div class="brands-container">
             <div class="category-container">
                 <!-- Categories will be injected by JavaScript -->
@@ -187,7 +187,7 @@
         </div>
     </section>
 
-    <section class="how-it-works-section">
+    <section id="partner" class="how-it-works-section">
         <h2 class="main-heading"><span class="green-text">How it</span> Works</h2>
 
         <div class="content-wrapper">
@@ -434,7 +434,7 @@
     </section>
 
     <!-- Promotions Section -->
-    <section class="promotions-section">
+    <section id="promotions" class="promotions-section">
         <div class="promotions-container">
             <h2 class="promotions-title">Promotions</h2>
             <p class="promotions-description">Enjoy Up To 60% OFF on your favorite brands nationwide, all year long.</p>
@@ -518,7 +518,7 @@
     </section>
 
     <!-- Contact Us Section -->
-    <section class="contact-section">
+    <section id="contact" class="contact-section">
         <div class="contact-container">
             <div class="contact-content">
                 <!-- Left Side - Title -->
