@@ -426,6 +426,28 @@
                     </button>
                 </div>
 
+                <!-- Step 4: Reset T-Pin (Forgot T-Pin Flow) -->
+                <div class="auth-step" id="step-reset-tpin">
+                    <h1 class="auth-title">Set New T-Pin</h1>
+                    <p class="auth-subtitle">Please create a new 4-digit T-Pin for your account</p>
+
+                    <div class="pin-input-group">
+                        <div class="pin-inputs" id="new-tpin-inputs">
+                            <input type="tel" class="pin-input" maxlength="1" data-index="0">
+                            <input type="tel" class="pin-input" maxlength="1" data-index="1">
+                            <input type="tel" class="pin-input" maxlength="1" data-index="2">
+                            <input type="tel" class="pin-input" maxlength="1" data-index="3">
+                        </div>
+                        <p class="auth-subtitle" style="font-size: 0.85rem; margin-top: 1rem;">
+                            Remember this T-Pin - you'll use it for future logins
+                        </p>
+                    </div>
+
+                    <button type="button" class="continue-btn" id="save-new-tpin" disabled>
+                        Save New T-Pin
+                    </button>
+                </div>
+
                 <!-- Success Step -->
                 <div class="auth-step" id="step-success">
                     <h1 class="auth-title">Welcome to BixCash!</h1>
@@ -524,6 +546,7 @@
                 this.isExistingUser = false;
                 this.otpTimer = null;
                 this.otpCountdown = 60;
+                this.isResettingTpin = false; // Track if we're in forgot T-Pin flow
 
                 // Demo existing users (for testing)
                 this.existingUsers = JSON.parse(localStorage.getItem('bixcash_users') || '{}');
@@ -550,6 +573,7 @@
                 document.getElementById('tpin-continue').addEventListener('click', () => this.handleTpinContinue());
                 document.getElementById('otp-continue').addEventListener('click', () => this.handleOtpContinue());
                 document.getElementById('create-account-btn').addEventListener('click', () => this.handleCreateAccount());
+                document.getElementById('save-new-tpin').addEventListener('click', () => this.handleSaveNewTpin());
 
                 // Navigation links
                 document.getElementById('signup-link').addEventListener('click', (e) => {
@@ -567,6 +591,12 @@
                     e.preventDefault();
                     this.startOtpTimer();
                 });
+
+                // Forgot T-Pin link
+                document.querySelector('.helper-link').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.handleForgotTpin();
+                });
             }
 
             initPinInputs() {
@@ -577,6 +607,10 @@
                 // OTP inputs
                 const otpInputs = document.querySelectorAll('#otp-inputs .pin-input');
                 this.setupPinInputBehavior(otpInputs, 'otp-continue');
+
+                // New T-Pin inputs (for reset)
+                const newTpinInputs = document.querySelectorAll('#new-tpin-inputs .pin-input');
+                this.setupPinInputBehavior(newTpinInputs, 'save-new-tpin');
             }
 
             initButtonStates() {
@@ -678,11 +712,23 @@
                 // Check if user exists (demo logic)
                 this.isExistingUser = this.existingUsers[this.userPhone] !== undefined;
 
-                if (this.isExistingUser) {
-                    this.showStep('tpin');
+                if (this.isResettingTpin) {
+                    // For forgot T-Pin flow, always go to OTP verification regardless of user status
+                    if (this.isExistingUser) {
+                        this.showStep('otp');
+                        this.startOtpTimer();
+                    } else {
+                        this.showError('This mobile number is not registered. Please sign up first.');
+                        return;
+                    }
                 } else {
-                    this.showStep('otp');
-                    this.startOtpTimer();
+                    // Normal login flow
+                    if (this.isExistingUser) {
+                        this.showStep('tpin');
+                    } else {
+                        this.showStep('otp');
+                        this.startOtpTimer();
+                    }
                 }
             }
 
@@ -708,8 +754,13 @@
                     // Simulate successful OTP verification
                     this.clearOtpTimer();
 
-                    // For new users, prompt to set T-Pin
-                    this.promptSetTpin();
+                    if (this.isResettingTpin) {
+                        // For forgot T-Pin flow, go to reset T-Pin step
+                        this.showStep('reset-tpin');
+                    } else {
+                        // For new users, prompt to set T-Pin
+                        this.promptSetTpin();
+                    }
                 } else {
                     this.showError('Invalid OTP. Please try again.');
                     this.clearPinInputs(otpInputs);
@@ -738,6 +789,45 @@
                 } else {
                     alert('Please enter a valid 4-digit T-Pin');
                     this.promptSetTpin(); // Retry
+                }
+            }
+
+            handleForgotTpin() {
+                // Set flag for forgot T-Pin flow
+                this.isResettingTpin = true;
+
+                // Reset user phone to start fresh verification
+                this.userPhone = '';
+
+                // Go back to mobile number input for identity verification
+                this.showStep('mobile');
+
+                // Update UI to show it's for T-Pin reset
+                document.querySelector('#step-mobile .auth-title').textContent = 'Reset T-Pin';
+                document.querySelector('#step-mobile .auth-subtitle').textContent = 'Enter your mobile number to verify your identity';
+            }
+
+            handleSaveNewTpin() {
+                const newTpinInputs = document.querySelectorAll('#new-tpin-inputs .pin-input');
+                const newTpin = Array.from(newTpinInputs).map(input => input.value).join('');
+
+                if (newTpin.length === 4) {
+                    // Update user's T-Pin in storage
+                    this.existingUsers[this.userPhone] = newTpin;
+                    localStorage.setItem('bixcash_users', JSON.stringify(this.existingUsers));
+
+                    // Reset the flag
+                    this.isResettingTpin = false;
+
+                    // Show success
+                    this.showStep('success');
+
+                    // Update success message for T-Pin reset
+                    document.querySelector('#step-success .auth-title').textContent = 'T-Pin Reset Successful!';
+                    document.querySelector('#step-success .auth-subtitle').textContent = 'Your new T-Pin has been saved. You can now use it to login.';
+                } else {
+                    this.showError('Please enter a valid 4-digit T-Pin');
+                    this.clearPinInputs(newTpinInputs);
                 }
             }
 
@@ -781,6 +871,12 @@
                 document.getElementById(`step-${stepName}`).classList.add('active');
                 this.currentStep = stepName;
 
+                // Reset UI text to default when going back to mobile step
+                if (stepName === 'mobile' && !this.isResettingTpin) {
+                    document.querySelector('#step-mobile .auth-title').textContent = 'Welcome back.';
+                    document.querySelector('#step-mobile .auth-subtitle').textContent = 'Please sign in with your account.';
+                }
+
                 // Clear any previous inputs when switching steps
                 if (stepName === 'tpin') {
                     this.clearPinInputs(document.querySelectorAll('#tpin-inputs .pin-input'));
@@ -788,6 +884,15 @@
                 } else if (stepName === 'otp') {
                     this.clearPinInputs(document.querySelectorAll('#otp-inputs .pin-input'));
                     document.getElementById('otp-continue').disabled = true;
+                } else if (stepName === 'reset-tpin') {
+                    this.clearPinInputs(document.querySelectorAll('#new-tpin-inputs .pin-input'));
+                    document.getElementById('save-new-tpin').disabled = true;
+                } else if (stepName === 'success') {
+                    // Reset success message to default if not in reset flow
+                    if (!this.isResettingTpin) {
+                        document.querySelector('#step-success .auth-title').textContent = 'Welcome to BixCash!';
+                        document.querySelector('#step-success .auth-subtitle').textContent = 'Your account has been successfully verified.';
+                    }
                 }
             }
 
