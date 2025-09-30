@@ -129,6 +129,43 @@
             border-radius: 1px;
         }
 
+        /* Header Layout Override */
+        .main-header {
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+        }
+
+        .main-header nav {
+            display: flex !important;
+            margin-left: auto !important;
+            margin-right: 2rem !important;
+        }
+
+        .auth-btn {
+            background: linear-gradient(135deg, #93db4d 0%, #76d37a 100%);
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.8rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            box-shadow: 0 2px 8px rgba(147, 219, 77, 0.25);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .auth-btn:hover {
+            background: linear-gradient(135deg, #85c441 0%, #68c26a 100%);
+            box-shadow: 0 4px 15px rgba(147, 219, 77, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .auth-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(147, 219, 77, 0.25);
+        }
+
         /* Responsive adjustments */
         @media (max-width: 768px) {
             .loading-spinner {
@@ -139,6 +176,15 @@
             .category-item {
                 margin: 0.25rem;
                 padding: 0.75rem;
+            }
+
+            .auth-btn {
+                font-size: 0.7rem;
+                padding: 0.4rem 0.8rem;
+            }
+
+            .main-header nav {
+                margin-right: 1rem !important;
             }
         }
     </style>
@@ -159,6 +205,7 @@
                 <li><a href="#contact">Contact Us</a></li>
             </ul>
         </nav>
+        <a href="{{ route('login') }}" class="auth-btn">Sign In</a>
     </header>
 
     <section id="home" class="hero-slider">

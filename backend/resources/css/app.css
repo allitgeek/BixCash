@@ -284,21 +284,20 @@ body {
     height: 40px;
     margin-top: -20px;
     z-index: 20; /* Ensure arrows are above other elements */
-    transition: all 0.3s ease;
+    transition: color 0.3s ease;
 }
 
 .brands-carousel-container .swiper-button-next:hover,
 .brands-carousel-container .swiper-button-prev:hover {
     color: var(--bix-light-green);
-    transform: rotate(360deg) scale(1.2);
 }
 
 .brands-carousel-container .swiper-button-next {
-    right: -25px; /* Position outside the container to avoid overlap */
+    right: 10px; /* Position inside the container for full visibility */
 }
 
 .brands-carousel-container .swiper-button-prev {
-    left: -25px; /* Position outside the container to avoid overlap */
+    left: 10px; /* Position inside the container for full visibility */
 }
 
 .brands-carousel-container .swiper-button-next:after,
@@ -1112,11 +1111,11 @@ body {
     }
 
     .brands-carousel-container .swiper-button-next {
-        right: -20px; /* Adjust for smaller mobile arrows */
+        right: -10px; /* Adjusted for mobile visibility */
     }
 
     .brands-carousel-container .swiper-button-prev {
-        left: -20px; /* Adjust for smaller mobile arrows */
+        left: -10px; /* Adjusted for mobile visibility */
     }
 
     .brands-carousel-container .swiper-button-next:after,
