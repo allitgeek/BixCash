@@ -4,183 +4,229 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#021c47">
-    <title>Sign In - BixCash</title>
+    <title>BixCash - Shop to Earn</title>
 
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="/build/assets/app-Bx26URkf.css" />
+    @vite(['resources/css/app.css'])
 
     <!-- Auth Page Specific Styles -->
     <style>
-        /* Auth Page Layout */
+        /* Auth Page Layout Override */
         body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f8f9fa;
+            background: #f5f5f5 !important;
             min-height: 100vh;
         }
 
-        .auth-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 1000;
+        /* Auth-specific header styles removed - using main website header */
+
+        /* Main Content - adjusted for fixed header from main CSS */
+        .main-content {
+            min-height: calc(100vh - 120px);
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1.5rem 2rem;
-            box-sizing: border-box;
-            background-color: var(--bix-white);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-
-        .auth-header .logo {
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-            gap: 0.5rem;
-        }
-
-        .auth-header .logo img {
-            height: 60px;
-        }
-
-        .auth-header .tagline {
-            font-size: 1.1rem;
-            color: var(--bix-light-green);
-            font-weight: 500;
-        }
-
-        .auth-header nav ul {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            gap: 2rem;
-            align-items: center;
-        }
-
-        .auth-header nav a {
-            color: var(--bix-medium-gray);
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 1rem;
-            transition: color 0.3s ease;
-        }
-
-        .auth-header nav a.active,
-        .auth-header nav a:hover {
-            color: var(--bix-black);
-        }
-
-        .user-icon {
-            width: 40px;
-            height: 40px;
-            background: var(--bix-light-gray-2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--bix-medium-gray);
+            flex-direction: column;
+            padding-top: 0;
         }
 
         /* Auth Form Container */
         .auth-container {
-            min-height: 100vh;
+            flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 140px 2rem 2rem;
+            padding: 2rem;
             box-sizing: border-box;
         }
 
         .auth-form-wrapper {
-            background: var(--bix-white);
+            background: transparent;
             border-radius: 0;
             box-shadow: none;
-            padding: 4rem 3rem;
+            padding: 2rem 1rem;
             width: 100%;
             max-width: 450px;
             text-align: center;
             border: none;
         }
 
+        /* Steps */
+        .auth-step {
+            display: none;
+        }
+
+        .auth-step.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .auth-title {
-            font-size: 1.5rem;
+            font-size: 1.75rem;
             font-weight: 400;
             color: var(--bix-dark-blue);
             margin-bottom: 0.5rem;
         }
 
         .auth-subtitle {
-            font-size: 1.1rem;
+            font-size: 1rem;
             color: var(--bix-medium-gray);
             margin-bottom: 3rem;
             font-weight: 400;
+            line-height: 1.5;
         }
 
-        .form-group {
-            margin-bottom: 2rem;
-            text-align: left;
+        /* Phone Input */
+        .phone-input-group {
+            margin-bottom: 3rem;
+            text-align: center;
         }
 
-        .form-label {
+        .phone-label {
             display: block;
             font-size: 0.9rem;
             color: var(--bix-medium-gray);
-            margin-bottom: 0.8rem;
+            margin-bottom: 1.5rem;
             font-weight: 500;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
         }
 
-        .form-input {
-            width: 100%;
-            padding: 1rem 1.5rem;
-            border: 2px solid #e5e7eb;
+        .phone-input-wrapper {
+            position: relative;
+            background: var(--bix-white);
+            border: 1px solid #e1e5e9;
             border-radius: 8px;
+            max-width: 500px;
+            width: 90%;
+            margin: 0 auto;
+            padding: 0;
+        }
+
+        .phone-prefix {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-weight: 500;
+            color: var(--bix-dark-blue);
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .phone-input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3.5rem;
+            border: none;
             font-size: 1rem;
             font-family: inherit;
-            background: var(--bix-white);
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-            box-sizing: border-box;
+            background: transparent;
             color: var(--bix-dark-blue);
+            outline: none;
+            box-sizing: border-box;
         }
 
-        .form-input:focus {
+        .phone-input::placeholder {
+            color: #9ca3af;
+        }
+
+        .phone-input-wrapper:focus-within {
+            border-color: var(--bix-light-green);
+            box-shadow: 0 0 0 1px rgba(147, 219, 77, 0.2);
+        }
+
+        /* PIN/OTP Input */
+        .pin-input-group {
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+
+        .pin-inputs {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .pin-input {
+            width: 50px;
+            height: 50px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--bix-dark-blue);
+            background: var(--bix-white);
             outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .pin-input:focus {
             border-color: var(--bix-light-green);
             box-shadow: 0 0 0 3px rgba(147, 219, 77, 0.1);
         }
 
-        .form-input::placeholder {
-            color: #9ca3af;
+        .pin-input.filled {
+            border-color: var(--bix-light-green);
+            background: rgba(147, 219, 77, 0.05);
         }
 
-        .signin-btn {
-            width: 100%;
-            background: var(--bix-light-green);
-            color: var(--bix-white);
+        /* Buttons */
+        .continue-btn {
+            width: 90%;
+            max-width: 500px;
+            background: #93db4d !important;
+            color: #ffffff !important;
             border: none;
             padding: 1rem 2rem;
-            border-radius: 8px;
+            border-radius: 25px;
             font-size: 1rem;
-            font-weight: 700;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
             margin-bottom: 2rem;
         }
 
-        .signin-btn:hover {
-            background: #85c441;
+        .continue-btn:hover {
+            background: #85c441 !important;
             transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(147, 219, 77, 0.3);
         }
 
-        .signup-link {
+        .continue-btn:disabled {
+            background: #d1d5db !important;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .secondary-btn, .signup-btn {
+            display: inline-block;
+            background: #93db4d !important;
+            color: #ffffff !important;
+            padding: 0.8rem 2rem;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            border: none;
+            cursor: pointer;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .secondary-btn:hover, .signup-btn:hover {
+            background: #85c441 !important;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(147, 219, 77, 0.3);
+        }
+
+        .signin-btn {
             display: inline-block;
             background: var(--bix-dark-blue);
             color: var(--bix-white);
@@ -190,127 +236,588 @@
             font-weight: 600;
             transition: all 0.3s ease;
             font-size: 0.95rem;
+            border: none;
+            cursor: pointer;
         }
 
-        .signup-link:hover {
+        .signin-btn:hover {
             background: #032a5a;
             transform: translateY(-1px);
         }
 
-        .forgot-password {
+        /* Helper Links */
+        .helper-link {
             color: var(--bix-light-green);
             text-decoration: none;
             font-size: 0.9rem;
-            margin-bottom: 1.5rem;
+            margin: 1rem 0;
             display: inline-block;
         }
 
-        .forgot-password:hover {
+        .helper-link:hover {
             text-decoration: underline;
         }
 
+        /* Timer */
+        .timer-text {
+            font-size: 0.9rem;
+            color: var(--bix-medium-gray);
+            margin: 1rem 0;
+        }
+
+        /* Footer styles removed - using main website footer */
+
         /* Mobile Responsive */
         @media (max-width: 768px) {
-            .auth-header {
-                padding: 1rem 1.5rem;
-            }
-
-            .auth-header nav ul {
-                gap: 1rem;
-            }
-
-            .auth-header nav a {
-                font-size: 0.9rem;
-            }
-
             .auth-container {
-                padding: 120px 1rem 1rem;
+                padding: 1rem;
             }
 
             .auth-form-wrapper {
-                padding: 3rem 2rem;
+                padding: 1rem;
             }
 
             .auth-title {
-                font-size: 1.3rem;
+                font-size: 1.5rem;
             }
 
             .auth-subtitle {
-                font-size: 1rem;
+                font-size: 0.95rem;
                 margin-bottom: 2.5rem;
+            }
+
+            .pin-inputs {
+                gap: 0.8rem;
+            }
+
+            .pin-input {
+                width: 45px;
+                height: 45px;
+                font-size: 1.1rem;
             }
         }
     </style>
 </head>
 <body>
     <!-- Header -->
-    <header class="auth-header">
+    <header class="main-header">
         <a href="/" class="logo">
-            <img src="/images/logos/logos-01.png" alt="BixCash">
-            <span class="tagline">Shop to Earn</span>
+            <img src="/images/logos/logos-01.png" alt="BixCash Logo">
         </a>
-
         <nav>
             <ul>
-                <li><a href="/" class="active">Home</a></li>
-                <li><a href="/#partner">Partner with us</a></li>
+                <li><a href="/#home">Home</a></li>
                 <li><a href="/#brands">Brands</a></li>
+                <li><a href="/#how-it-works">How It Works</a></li>
+                <li><a href="/#partner">Partner with us</a></li>
                 <li><a href="/#promotions">Promotions</a></li>
                 <li><a href="/#contact">Contact Us</a></li>
             </ul>
         </nav>
-
-        <div class="user-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-            </svg>
-        </div>
+        <!-- No Sign In button since we're on the login page -->
     </header>
 
     <!-- Main Content -->
-    <div class="auth-container">
-        <div class="auth-form-wrapper">
-            <h1 class="auth-title">Welcome back!</h1>
-            <p class="auth-subtitle">Please sign in to your account.</p>
+    <div class="main-content">
+        <div class="auth-container">
+            <div class="auth-form-wrapper">
 
-            <form action="#" method="POST">
-                @csrf
+                <!-- Step 1: Mobile Number Input -->
+                <div class="auth-step active" id="step-mobile">
+                    <h1 class="auth-title">Welcome back.</h1>
+                    <p class="auth-subtitle">Please sign in with your account.</p>
 
-                <div class="form-group">
-                    <label for="mobile" class="form-label">Enter Mobile Number</label>
-                    <input
-                        type="tel"
-                        id="mobile"
-                        name="mobile"
-                        class="form-input"
-                        placeholder=""
-                        required
-                    >
+                    <div class="phone-input-group">
+                        <label class="phone-label">Mobile Number</label>
+                        <div class="phone-input-wrapper">
+                            <div class="phone-prefix">+92</div>
+                            <input
+                                type="tel"
+                                id="mobile-input"
+                                class="phone-input"
+                                placeholder="3xxxxxxxxx"
+                                maxlength="10"
+                            >
+                        </div>
+                    </div>
+
+                    <button type="button" class="continue-btn" id="mobile-continue">
+                        Continue
+                    </button>
+
+                    <button type="button" class="signup-btn" id="signup-link">
+                        Don't have an account? Sign up
+                    </button>
                 </div>
 
-                <div class="form-group">
-                    <label for="password" class="form-label">Password</label>
-                    <input
-                        type="password"
-                        id="password"
-                        name="password"
-                        class="form-input"
-                        placeholder=""
-                        required
-                    >
+                <!-- Step 2A: T-Pin Input (Existing Users) -->
+                <div class="auth-step" id="step-tpin">
+                    <h1 class="auth-title">Enter your T-Pin</h1>
+                    <p class="auth-subtitle">Only the T-Pin will be required to login, next time</p>
+
+                    <div class="pin-input-group">
+                        <div class="pin-inputs" id="tpin-inputs">
+                            <input type="tel" class="pin-input" maxlength="1" data-index="0">
+                            <input type="tel" class="pin-input" maxlength="1" data-index="1">
+                            <input type="tel" class="pin-input" maxlength="1" data-index="2">
+                            <input type="tel" class="pin-input" maxlength="1" data-index="3">
+                        </div>
+                        <a href="#" class="helper-link">Forgot T-Pin?</a>
+                    </div>
+
+                    <button type="button" class="continue-btn" id="tpin-continue" disabled>
+                        Continue
+                    </button>
                 </div>
 
-                <a href="#" class="forgot-password">Forgot your password?</a>
+                <!-- Step 2B: OTP Verification (New Users) -->
+                <div class="auth-step" id="step-otp">
+                    <h1 class="auth-title">Enter your OTP</h1>
+                    <p class="auth-subtitle">One time password (OTP) send on your number</p>
 
-                <button type="submit" class="signin-btn">
-                    Sign In
-                </button>
+                    <div class="pin-input-group">
+                        <div class="pin-inputs" id="otp-inputs">
+                            <input type="tel" class="pin-input" maxlength="1" data-index="0">
+                            <input type="tel" class="pin-input" maxlength="1" data-index="1">
+                            <input type="tel" class="pin-input" maxlength="1" data-index="2">
+                            <input type="tel" class="pin-input" maxlength="1" data-index="3">
+                            <input type="tel" class="pin-input" maxlength="1" data-index="4">
+                            <input type="tel" class="pin-input" maxlength="1" data-index="5">
+                        </div>
+                        <div class="timer-text" id="otp-timer">Resend OTP in <span id="timer-count">60</span>s</div>
+                        <a href="#" class="helper-link" id="resend-otp" style="display: none;">Resend OTP</a>
+                    </div>
 
-                <a href="{{ route('signup') }}" class="signup-link">
-                    New customer? Create account
-                </a>
-            </form>
+                    <button type="button" class="continue-btn" id="otp-continue" disabled>
+                        Continue
+                    </button>
+                </div>
+
+                <!-- Step 3: Set T-Pin (New Users) -->
+                <div class="auth-step" id="step-set-tpin">
+                    <h1 class="auth-title">New customer?</h1>
+                    <p class="auth-subtitle">Please create your account first.</p>
+
+                    <div class="phone-input-group">
+                        <label class="phone-label">Enter Mobile Number</label>
+                        <div class="phone-input-wrapper">
+                            <div class="phone-prefix">+92</div>
+                            <input
+                                type="tel"
+                                id="signup-mobile-input"
+                                class="phone-input"
+                                placeholder="3xxxxxxxxx"
+                                maxlength="10"
+                            >
+                        </div>
+                    </div>
+
+                    <button type="button" class="continue-btn" id="create-account-btn" disabled>
+                        Create Your Account
+                    </button>
+
+                    <p class="auth-subtitle" style="font-size: 0.85rem; margin-top: 1rem;">
+                        By clicking "Create Your Account", you agree to our
+                        <a href="#" class="helper-link">Terms & Conditions</a> and <a href="#" class="helper-link">Privacy Policy</a>.
+                    </p>
+
+                    <button type="button" class="secondary-btn" id="signin-link">
+                        Have an account? Sign in
+                    </button>
+                </div>
+
+                <!-- Success Step -->
+                <div class="auth-step" id="step-success">
+                    <h1 class="auth-title">Welcome to BixCash!</h1>
+                    <p class="auth-subtitle">Your account has been successfully verified.</p>
+
+                    <button type="button" class="continue-btn" onclick="window.location.href='/'">
+                        Continue to Dashboard
+                    </button>
+                </div>
+
+            </div>
         </div>
+
+        <!-- Footer -->
+        <footer class="footer-section">
+            <div class="footer-container">
+                <div class="footer-content">
+                    <!-- Left Side - Logo and Social Media -->
+                    <div class="footer-brand">
+                        <div class="footer-logo">
+                            <img src="/images/logos/logos-01.png" alt="BixCash Logo" class="footer-logo-img">
+                        </div>
+                        <div class="footer-social">
+                            <a href="#" class="social-link linkedin">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                                </svg>
+                            </a>
+                            <a href="#" class="social-link instagram">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                                </svg>
+                            </a>
+                            <a href="#" class="social-link twitter">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                                </svg>
+                            </a>
+                            <a href="#" class="social-link youtube">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                                </svg>
+                            </a>
+                            <a href="#" class="social-link tiktok">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Footer Links -->
+                    <div class="footer-links">
+                        <!-- About Us Column -->
+                        <div class="footer-column">
+                            <h3 class="footer-column-title">About Us</h3>
+                            <ul class="footer-menu">
+                                <li><a href="/#home" class="footer-link">Home</a></li>
+                                <li><a href="/#partner" class="footer-link">Partner with us</a></li>
+                                <li><a href="/#promotions" class="footer-link">Promotions</a></li>
+                            </ul>
+                        </div>
+
+                        <!-- Brands Column -->
+                        <div class="footer-column">
+                            <h3 class="footer-column-title">Brands</h3>
+                            <ul class="footer-menu">
+                                <li><a href="/#brands" class="footer-link">Clothing</a></li>
+                                <li><a href="/#brands" class="footer-link">Home Appliances</a></li>
+                                <li><a href="/#brands" class="footer-link">Entertainment</a></li>
+                                <li><a href="/#brands" class="footer-link">Food</a></li>
+                            </ul>
+                        </div>
+
+                        <!-- Contact Us Column -->
+                        <div class="footer-column">
+                            <h3 class="footer-column-title">Contact Us</h3>
+                            <div class="footer-contact">
+                                <p class="contact-item">021 111 222 333</p>
+                                <p class="contact-item">info@bixcash.com</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
     </div>
+
+    <!-- JavaScript -->
+    <script>
+        // Auth System State Management
+        class BixCashAuth {
+            constructor() {
+                this.currentStep = 'mobile';
+                this.userPhone = '';
+                this.isExistingUser = false;
+                this.otpTimer = null;
+                this.otpCountdown = 60;
+
+                // Demo existing users (for testing)
+                this.existingUsers = JSON.parse(localStorage.getItem('bixcash_users') || '{}');
+
+                this.initEventListeners();
+                this.initPinInputs();
+                this.initButtonStates();
+            }
+
+            initEventListeners() {
+                // Mobile input validation
+                const mobileInput = document.getElementById('mobile-input');
+                const signupMobileInput = document.getElementById('signup-mobile-input');
+
+                [mobileInput, signupMobileInput].forEach(input => {
+                    if (input) {
+                        input.addEventListener('input', (e) => this.handlePhoneInput(e));
+                        input.addEventListener('keypress', (e) => this.handlePhoneKeypress(e));
+                    }
+                });
+
+                // Button click handlers
+                document.getElementById('mobile-continue').addEventListener('click', () => this.handleMobileContinue());
+                document.getElementById('tpin-continue').addEventListener('click', () => this.handleTpinContinue());
+                document.getElementById('otp-continue').addEventListener('click', () => this.handleOtpContinue());
+                document.getElementById('create-account-btn').addEventListener('click', () => this.handleCreateAccount());
+
+                // Navigation links
+                document.getElementById('signup-link').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.showStep('set-tpin');
+                });
+
+                document.getElementById('signin-link').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.showStep('mobile');
+                });
+
+                // Resend OTP
+                document.getElementById('resend-otp').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.startOtpTimer();
+                });
+            }
+
+            initPinInputs() {
+                // T-Pin inputs
+                const tpinInputs = document.querySelectorAll('#tpin-inputs .pin-input');
+                this.setupPinInputBehavior(tpinInputs, 'tpin-continue');
+
+                // OTP inputs
+                const otpInputs = document.querySelectorAll('#otp-inputs .pin-input');
+                this.setupPinInputBehavior(otpInputs, 'otp-continue');
+            }
+
+            initButtonStates() {
+                // Set buttons to match mockup - Continue button should be active (green) by default
+                document.getElementById('mobile-continue').disabled = false;
+                const createBtn = document.getElementById('create-account-btn');
+                if (createBtn) {
+                    createBtn.disabled = true;
+                }
+            }
+
+            setupPinInputBehavior(inputs, buttonId) {
+                inputs.forEach((input, index) => {
+                    input.addEventListener('input', (e) => {
+                        const value = e.target.value;
+
+                        // Only allow numbers
+                        if (!/^\d*$/.test(value)) {
+                            e.target.value = '';
+                            return;
+                        }
+
+                        // Auto-focus next input
+                        if (value && index < inputs.length - 1) {
+                            inputs[index + 1].focus();
+                        }
+
+                        // Update visual state
+                        e.target.classList.toggle('filled', value.length > 0);
+
+                        // Check if all inputs are filled
+                        const allFilled = Array.from(inputs).every(inp => inp.value.length > 0);
+                        document.getElementById(buttonId).disabled = !allFilled;
+                    });
+
+                    input.addEventListener('keydown', (e) => {
+                        // Handle backspace
+                        if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                            inputs[index - 1].focus();
+                        }
+                    });
+
+                    input.addEventListener('paste', (e) => {
+                        e.preventDefault();
+                        const pastedData = e.clipboardData.getData('text');
+                        const digits = pastedData.replace(/\D/g, '').slice(0, inputs.length);
+
+                        digits.split('').forEach((digit, i) => {
+                            if (inputs[i]) {
+                                inputs[i].value = digit;
+                                inputs[i].classList.add('filled');
+                            }
+                        });
+
+                        // Check if all inputs are filled
+                        const allFilled = Array.from(inputs).every(inp => inp.value.length > 0);
+                        document.getElementById(buttonId).disabled = !allFilled;
+                    });
+                });
+            }
+
+            handlePhoneInput(e) {
+                let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+
+                // Limit to 10 digits and must start with 3
+                if (value.length > 0 && !value.startsWith('3')) {
+                    value = '';
+                }
+
+                if (value.length > 10) {
+                    value = value.slice(0, 10);
+                }
+
+                e.target.value = value;
+
+                // For mobile-input, keep continue button always enabled to match mockup
+                // For signup-mobile-input, enable create-account-btn only with valid input
+                if (e.target.id === 'signup-mobile-input') {
+                    const isValid = value.length === 10 && value.startsWith('3');
+                    const button = document.getElementById('create-account-btn');
+                    if (button) {
+                        button.disabled = !isValid;
+                    }
+                }
+                // mobile-input keeps mobile-continue always enabled (matches mockup)
+            }
+
+            handlePhoneKeypress(e) {
+                // Only allow digits
+                if (!/\d/.test(e.key) && !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'].includes(e.key)) {
+                    e.preventDefault();
+                }
+            }
+
+            handleMobileContinue() {
+                const mobileInput = document.getElementById('mobile-input');
+                this.userPhone = '+92' + mobileInput.value;
+
+                // Check if user exists (demo logic)
+                this.isExistingUser = this.existingUsers[this.userPhone] !== undefined;
+
+                if (this.isExistingUser) {
+                    this.showStep('tpin');
+                } else {
+                    this.showStep('otp');
+                    this.startOtpTimer();
+                }
+            }
+
+            handleTpinContinue() {
+                const tpinInputs = document.querySelectorAll('#tpin-inputs .pin-input');
+                const enteredPin = Array.from(tpinInputs).map(input => input.value).join('');
+                const storedPin = this.existingUsers[this.userPhone];
+
+                if (enteredPin === storedPin) {
+                    this.showStep('success');
+                } else {
+                    this.showError('Invalid T-Pin. Please try again.');
+                    this.clearPinInputs(tpinInputs);
+                }
+            }
+
+            handleOtpContinue() {
+                const otpInputs = document.querySelectorAll('#otp-inputs .pin-input');
+                const enteredOtp = Array.from(otpInputs).map(input => input.value).join('');
+
+                // Demo: Accept any 6-digit OTP for testing
+                if (enteredOtp.length === 6) {
+                    // Simulate successful OTP verification
+                    this.clearOtpTimer();
+
+                    // For new users, prompt to set T-Pin
+                    this.promptSetTpin();
+                } else {
+                    this.showError('Invalid OTP. Please try again.');
+                    this.clearPinInputs(otpInputs);
+                }
+            }
+
+            handleCreateAccount() {
+                const signupMobileInput = document.getElementById('signup-mobile-input');
+                this.userPhone = '+92' + signupMobileInput.value;
+
+                // Go to OTP verification for new account
+                this.showStep('otp');
+                this.startOtpTimer();
+            }
+
+            promptSetTpin() {
+                // Create a simple T-Pin setup dialog
+                const tpin = prompt('Set your 4-digit T-Pin for future logins:');
+
+                if (tpin && /^\d{4}$/.test(tpin)) {
+                    // Store user with T-Pin
+                    this.existingUsers[this.userPhone] = tpin;
+                    localStorage.setItem('bixcash_users', JSON.stringify(this.existingUsers));
+
+                    this.showStep('success');
+                } else {
+                    alert('Please enter a valid 4-digit T-Pin');
+                    this.promptSetTpin(); // Retry
+                }
+            }
+
+            startOtpTimer() {
+                this.clearOtpTimer();
+                this.otpCountdown = 60;
+
+                const timerElement = document.getElementById('timer-count');
+                const resendLink = document.getElementById('resend-otp');
+                const timerText = document.getElementById('otp-timer');
+
+                timerText.style.display = 'block';
+                resendLink.style.display = 'none';
+
+                this.otpTimer = setInterval(() => {
+                    this.otpCountdown--;
+                    timerElement.textContent = this.otpCountdown;
+
+                    if (this.otpCountdown <= 0) {
+                        this.clearOtpTimer();
+                        timerText.style.display = 'none';
+                        resendLink.style.display = 'inline-block';
+                    }
+                }, 1000);
+            }
+
+            clearOtpTimer() {
+                if (this.otpTimer) {
+                    clearInterval(this.otpTimer);
+                    this.otpTimer = null;
+                }
+            }
+
+            showStep(stepName) {
+                // Hide all steps
+                document.querySelectorAll('.auth-step').forEach(step => {
+                    step.classList.remove('active');
+                });
+
+                // Show target step
+                document.getElementById(`step-${stepName}`).classList.add('active');
+                this.currentStep = stepName;
+
+                // Clear any previous inputs when switching steps
+                if (stepName === 'tpin') {
+                    this.clearPinInputs(document.querySelectorAll('#tpin-inputs .pin-input'));
+                    document.getElementById('tpin-continue').disabled = true;
+                } else if (stepName === 'otp') {
+                    this.clearPinInputs(document.querySelectorAll('#otp-inputs .pin-input'));
+                    document.getElementById('otp-continue').disabled = true;
+                }
+            }
+
+            clearPinInputs(inputs) {
+                inputs.forEach(input => {
+                    input.value = '';
+                    input.classList.remove('filled');
+                });
+            }
+
+            showError(message) {
+                // Simple error display (you can enhance this)
+                alert(message);
+            }
+        }
+
+        // Initialize the authentication system when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new BixCashAuth();
+        });
+
+        // Add some demo users for testing
+        if (!localStorage.getItem('bixcash_users')) {
+            const demoUsers = {
+                '+923001234567': '1234',
+                '+923121234567': '5678',
+                '+923331234567': '9999'
+            };
+            localStorage.setItem('bixcash_users', JSON.stringify(demoUsers));
+        }
+    </script>
 </body>
 </html>
