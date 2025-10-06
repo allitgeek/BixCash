@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\SlideController;
+use App\Http\Controllers\Admin\PromotionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -53,6 +54,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::resource('categories', CategoryController::class);
             Route::patch('categories/{category}/toggle-status', [CategoryController::class, 'toggleStatus'])->name('categories.toggle-status');
             Route::post('categories/reorder', [CategoryController::class, 'reorder'])->name('categories.reorder');
+
+            Route::resource('promotions', PromotionController::class);
+            Route::patch('promotions/{promotion}/toggle-status', [PromotionController::class, 'toggleStatus'])->name('promotions.toggle-status');
+            Route::post('promotions/reorder', [PromotionController::class, 'reorder'])->name('promotions.reorder');
         });
 
         // Brand Management

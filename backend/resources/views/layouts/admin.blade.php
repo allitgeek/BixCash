@@ -345,6 +345,7 @@
         .icon-slides::before { content: "🖼️"; }
         .icon-categories::before { content: "📂"; }
         .icon-brands::before { content: "🏪"; }
+        .icon-promotions::before { content: "🎁"; }
         .icon-analytics::before { content: "📈"; }
         .icon-reports::before { content: "📄"; }
         .icon-settings::before { content: "⚙️"; }
@@ -548,6 +549,12 @@
                     <a href="{{ route('admin.brands.index') }}" class="nav-link {{ request()->routeIs('admin.brands.*') ? 'active' : '' }}">
                         <span class="nav-icon icon-brands"></span>
                         Brands
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('admin.promotions.index') }}" class="nav-link {{ request()->routeIs('admin.promotions.*') ? 'active' : '' }}">
+                        <span class="nav-icon icon-promotions"></span>
+                        Promotions
                     </a>
                 </li>
                 @endif

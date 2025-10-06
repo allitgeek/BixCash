@@ -279,6 +279,70 @@
                 font-size: 20px;
             }
         }
+        /* Promotions Loading Styles */
+        .promotions-loading {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 4rem 2rem;
+            min-height: 200px;
+        }
+
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+            border: 0.25em solid currentColor;
+            border-right-color: transparent;
+            border-radius: 50%;
+            animation: spinner-border 0.75s linear infinite;
+        }
+
+        .text-success {
+            color: var(--bix-green) !important;
+        }
+
+        @keyframes spinner-border {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        .promotions-error {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+            grid-column: 1 / -1;
+        }
+
+        .promotions-error button {
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            background: var(--bix-green);
+            color: var(--bix-dark-blue);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .promotions-error button:hover {
+            background: var(--bix-light-green);
+            transform: translateY(-2px);
+        }
     </style>
 </head>
 <body>
@@ -564,78 +628,11 @@
             <h2 class="promotions-title">Promotions</h2>
             <p class="promotions-description">Enjoy Up To 60% OFF on your favorite brands nationwide, all year long.</p>
 
-            <div class="promotions-grid">
-                <!-- Row 1 -->
-                <div class="promotion-card">
-                    <div class="promotion-logo">
-                        <img src="https://via.placeholder.com/150x80/ffffff/000000?text=SAYA" alt="SAYA" data-brand="saya" loading="lazy" decoding="async">
-                    </div>
-                    <div class="promotion-discount">
-                        <span class="discount-text">Upto 20% Off</span>
-                    </div>
-                </div>
-
-                <div class="promotion-card">
-                    <div class="promotion-logo">
-                        <img src="https://via.placeholder.com/150x80/ffffff/000000?text=JUNAID+JAMSHED" alt="Junaid Jamshed" data-brand="junaid-jamshed" loading="lazy" decoding="async">
-                    </div>
-                    <div class="promotion-discount">
-                        <span class="discount-text">Upto 30% Off</span>
-                    </div>
-                </div>
-
-                <div class="promotion-card">
-                    <div class="promotion-logo">
-                        <img src="https://via.placeholder.com/150x80/ffffff/000000?text=GUL+AHMED" alt="Gul Ahmed" data-brand="gul-ahmed" loading="lazy" decoding="async">
-                    </div>
-                    <div class="promotion-discount">
-                        <span class="discount-text">Flat 20% Off</span>
-                    </div>
-                </div>
-
-                <div class="promotion-card">
-                    <div class="promotion-logo">
-                        <img src="https://via.placeholder.com/150x80/ffffff/dd0000?text=Bata" alt="Bata" data-brand="bata" loading="lazy" decoding="async">
-                    </div>
-                    <div class="promotion-discount">
-                        <span class="discount-text">Flat 50% Off</span>
-                    </div>
-                </div>
-
-                <!-- Row 2 -->
-                <div class="promotion-card">
-                    <div class="promotion-logo">
-                        <img src="https://via.placeholder.com/150x80/ffd700/000000?text=Tayto" alt="Tayto" data-brand="tayto" loading="lazy" decoding="async">
-                    </div>
-                    <div class="promotion-discount">
-                        <span class="discount-text">Upto 30% Off</span>
-                    </div>
-                </div>
-
-                <div class="promotion-card">
-                    <div class="promotion-logo">
-                        <img src="https://via.placeholder.com/150x80/dc143c/ffffff?text=KFC" alt="KFC" data-brand="kfc" loading="lazy" decoding="async">
-                    </div>
-                    <div class="promotion-discount">
-                        <span class="discount-text">Upto 20% Off</span>
-                    </div>
-                </div>
-
-                <div class="promotion-card">
-                    <div class="promotion-logo">
-                        <img src="https://via.placeholder.com/150x80/ffffff/000000?text=Joyland" alt="Joyland" data-brand="joyland" loading="lazy" decoding="async">
-                    </div>
-                    <div class="promotion-discount">
-                        <span class="discount-text">Flat 50% Off</span>
-                    </div>
-                </div>
-
-                <div class="promotion-card">
-                    <div class="promotion-logo">
-                        <img src="https://via.placeholder.com/150x80/ffffff/000000?text=SAPPHIRE" alt="Sapphire" data-brand="sapphire" loading="lazy" decoding="async">
-                    </div>
-                    <div class="promotion-discount">
-                        <span class="discount-text">Flat 50% Off</span>
+            <div class="promotions-grid" id="promotions-grid">
+                <!-- Loading placeholder -->
+                <div class="promotions-loading" id="promotions-loading">
+                    <div class="spinner-border text-success" role="status">
+                        <span class="sr-only">Loading promotions...</span>
                     </div>
                 </div>
             </div>
@@ -1320,6 +1317,89 @@
                 initializeCarousels();
             }
 
+            // Load promotions from API and render them
+            async function loadPromotions() {
+                try {
+                    const response = await fetch('/api/promotions');
+                    const result = await response.json();
+
+                    if (result.success && result.data) {
+                        renderPromotions(result.data);
+                    } else {
+                        showPromotionError('Failed to load promotions');
+                    }
+                } catch (error) {
+                    console.error('Error loading promotions:', error);
+                    showPromotionError('Unable to load promotions at this time');
+                }
+            }
+
+            // Render promotions dynamically
+            function renderPromotions(promotions) {
+                const promotionsGrid = document.getElementById('promotions-grid');
+                const loadingElement = document.getElementById('promotions-loading');
+
+                if (!promotionsGrid) return;
+
+                // Remove loading spinner
+                if (loadingElement) {
+                    loadingElement.remove();
+                }
+
+                // Clear existing content
+                promotionsGrid.innerHTML = '';
+
+                // Generate promotion cards
+                promotions.forEach((promotion, index) => {
+                    const brandSlug = promotion.brand_name.toLowerCase()
+                        .replace(/[^a-z0-9]/g, '-')
+                        .replace(/-+/g, '-')
+                        .replace(/^-|-$/g, '');
+
+                    const promotionCard = document.createElement('div');
+                    promotionCard.className = 'promotion-card';
+                    promotionCard.innerHTML = `
+                        <div class="promotion-logo">
+                            <img src="${promotion.logo_url || `https://via.placeholder.com/150x80/ffffff/000000?text=${encodeURIComponent(promotion.brand_name)}`}"
+                                 alt="${promotion.brand_name}"
+                                 data-brand="${brandSlug}"
+                                 loading="lazy"
+                                 decoding="async"
+                                 onerror="this.src='https://via.placeholder.com/150x80/ffffff/000000?text=${encodeURIComponent(promotion.brand_name)}'">
+                        </div>
+                        <div class="promotion-discount">
+                            <span class="discount-text">${promotion.discount_text}</span>
+                        </div>
+                    `;
+
+                    promotionsGrid.appendChild(promotionCard);
+                });
+
+                // Load promotion images after rendering
+                loadPromotionImages();
+            }
+
+            // Show promotion loading error
+            function showPromotionError(message) {
+                const promotionsGrid = document.getElementById('promotions-grid');
+                const loadingElement = document.getElementById('promotions-loading');
+
+                if (loadingElement) {
+                    loadingElement.remove();
+                }
+
+                if (promotionsGrid) {
+                    promotionsGrid.innerHTML = `
+                        <div class="promotions-error" style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: #666;">
+                            <p>${message}</p>
+                            <button onclick="loadPromotions()" style="margin-top: 1rem; padding: 0.5rem 1rem; background: var(--bix-green); color: var(--bix-dark-blue); border: none; border-radius: 5px; cursor: pointer;">
+                                Retry
+                            </button>
+                        </div>
+                    `;
+                }
+            }
+
             // Optimized promotion images loading
             function loadPromotionImages() {
                 const promotionImages = document.querySelectorAll('.promotion-logo img[data-brand]');
@@ -1366,8 +1446,8 @@
                 });
             }
 
-            // Load promotion images after DOM is ready
-            loadPromotionImages();
+            // Load promotions from API after DOM is ready
+            loadPromotions();
 
             // Initialize smooth scroll navigation
             initializeSmoothScroll();

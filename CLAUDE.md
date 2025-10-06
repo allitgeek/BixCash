@@ -71,20 +71,21 @@ The main frontend is served through Laravel's Blade templating:
 - `GET /api/slides` - Hero carousel data
 - `GET /api/categories` - Brand categories with icons
 - `GET /api/brands` - Brand information and logos
+- `GET /api/promotions` - Active promotions with discount information
 
 #### Admin Panel Routes (`/backend/routes/admin.php`)
 - `GET /admin/login` - Admin login page
 - `POST /admin/login` - Admin authentication
 - `GET /admin/dashboard` - Main admin dashboard (protected)
 - `POST /admin/logout` - Admin logout
-- **Content Management**: `/admin/slides`, `/admin/categories`, `/admin/brands` (CRUD operations)
+- **Content Management**: `/admin/slides`, `/admin/categories`, `/admin/brands`, `/admin/promotions` (CRUD operations)
 - **User Management**: `/admin/users` (super admin only)
 - **Analytics**: `/admin/analytics`, `/admin/reports` (view permissions required)
 
 ### Models and Controllers
 
 #### Core Models
-- **Slide**, **Category**, **Brand**: Enhanced with admin features, relationships, and scopes
+- **Slide**, **Category**, **Brand**, **Promotion**: Enhanced with admin features, relationships, and scopes
 - **User**: Extended with role-based access control and profile relationships
 - **Role**: Permission-based access control system
 
@@ -101,14 +102,16 @@ The main frontend is served through Laravel's Blade templating:
   - `UserController`: User management with role assignments and filtering
   - `CategoryController`: Categories management (basic implementation)
   - `BrandController`: Brands management (basic implementation)
+  - `PromotionController`: Complete CRUD for promotions with drag-and-drop reordering
 
 ### Frontend-Backend Integration
 
 The Blade frontend fetches data from Laravel API endpoints via JavaScript. The main view handles:
 - Dynamic hero slideshow content from `/api/slides`
 - Category and brand data rendering from `/api/categories` and `/api/brands`
+- **Dynamic promotions loading from `/api/promotions` with visual consistency preservation**
 - Swiper.js carousels for hero slides and brand showcase
-- Smart image loading for promotion brand logos
+- Smart image loading for promotion brand logos with fallback system
 
 ## Database Configuration
 
@@ -249,6 +252,23 @@ Roles are defined with JSON permissions for granular access control:
 - Website integration and partner assignment
 - Complete views: `index.blade.php`, `create.blade.php`, `edit.blade.php`, `show.blade.php`
 - Status toggles for active/inactive and featured/non-featured
+- **Drag-and-Drop Reordering**: Reliable JavaScript implementation for brand order management
+
+**Promotions Management** (`/admin/promotions`) - ✅ COMPLETE + DYNAMIC FRONTEND
+- **Complete CRUD Operations**: Create, read, update, delete promotions with professional interface
+- **Dual Logo Input System**: File upload + URL input with live preview functionality
+- **Discount Configuration**: Support for "UPTO" and "FLAT" discount types matching frontend styling
+- **Drag-and-Drop Reordering**: Simple 70-line JavaScript implementation for promotion ordering
+- **Auto-Generation**: Automatic discount text generation with manual override capability
+- **Dynamic Frontend Integration**: Hardcoded promotions section converted to API-driven system
+- **Visual Consistency**: Maintains exact same frontend appearance while database-driven
+- **Professional Loading States**: Spinner animations with BixCash brand colors
+- **Error Handling**: Graceful fallbacks with retry functionality
+- **Image Management**: Smart fallback system for promotion logos
+- Complete views: `index.blade.php`, `create.blade.php`, `edit.blade.php`, `show.blade.php`
+- API endpoint: `/api/promotions` for frontend consumption
+- Database migration: `create_promotions_table` with proper schema
+- Model: `Promotion` with auto-generation and flexible logo URL handling
 
 ### Database Integration
 **Current Data Status**:
@@ -257,6 +277,7 @@ Roles are defined with JSON permissions for granular access control:
 - **Slides**: 2 (clean production data after testing)
 - **Categories**: 5 (Food & Beverage, Health & Beauty, Fashion, Clothing, Bags)
 - **Brands**: 6 (alkaram, almirah, Cotton & Silk, GulAhmed, J., Khaadi)
+- **Promotions**: 8 (SAYA, Junaid Jamshed, Gul Ahmed, Bata, Tayto, KFC, Joyland, Sapphire)
 
 **Fixed Issues**:
 - ✅ Corrected slide model field mappings to match database schema
@@ -277,6 +298,7 @@ Roles are defined with JSON permissions for granular access control:
 - `SlideController` - Complete CRUD with search, validation, status toggle, live preview
 - `CategoryController` - Complete CRUD with SEO fields, color management, brand relationships, **file upload support**
 - `BrandController` - Complete CRUD with category association, commission rates, featured status, **file upload support**
+- `PromotionController` - Complete CRUD with discount configuration, drag-and-drop reordering, **dual logo input system**
 - `UserController` - Full user management with role assignments
 - `DashboardController` - Enhanced with settings route
 
@@ -357,6 +379,7 @@ Roles are defined with JSON permissions for granular access control:
 - `SlideController`: Enhanced error handling, proper JSON responses, scheduled filtering
 - `CategoryController`: Fixed column mapping (`meta_title`, `meta_description` vs `meta_data`)
 - `BrandController`: Corrected field references (`website` vs `website_url`)
+- `PromotionController`: Added API endpoint with proper JSON structure and active promotion filtering
 - All endpoints return proper `{"success": true, "data": [...]}` structure
 
 **Frontend JavaScript Architecture**:
