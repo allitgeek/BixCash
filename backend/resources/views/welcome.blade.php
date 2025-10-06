@@ -12,7 +12,7 @@
     <link rel="dns-prefetch" href="//unpkg.com">
     <link rel="preconnect" href="https://unpkg.com" crossorigin>
     <link rel="preload" href="/images/logos/logos-01.png" as="image">
-    <link rel="preload" href="/images/elements/dashboard icons.jpg" as="image">
+    <link rel="preload" href="/images/elements/cash back.png" as="image">
 
     <!-- Stylesheets -->
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
@@ -186,6 +186,20 @@
             .main-header nav {
                 margin-right: 1rem !important;
             }
+        }
+
+        /* Navigation Icons - White Background Fix */
+        .nav-button {
+            background: white !important;
+            border-radius: 12px;
+            padding: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .nav-button img.dashboard-icon-img {
+            background: white;
+            border-radius: 8px;
+            padding: 4px;
         }
     </style>
 </head>
@@ -383,7 +397,7 @@
                         <!-- Cash Back Button -->
                         <div class="nav-icon-item">
                             <div class="nav-button cash-back-btn">
-                                <img src="/images/elements/dashboard icons.jpg" alt="Cash Back" class="dashboard-icon-img">
+                                <img src="/images/elements/dashboard icons.png" alt="Cash Back" class="dashboard-icon-img">
                             </div>
                             <span class="nav-label">Cash Back</span>
                         </div>
@@ -391,10 +405,7 @@
                         <!-- Wallet Button -->
                         <div class="nav-icon-item">
                             <div class="nav-button wallet-btn">
-                                <div class="wallet-icon">
-                                    <div class="wallet-body"></div>
-                                    <div class="wallet-flap"></div>
-                                </div>
+                                <img src="/images/elements/wallet icon.png" alt="Wallet" class="dashboard-icon-img">
                             </div>
                             <span class="nav-label">Wallet</span>
                         </div>
@@ -402,13 +413,7 @@
                         <!-- Transaction Button -->
                         <div class="nav-icon-item">
                             <div class="nav-button transaction-btn">
-                                <div class="transaction-icon">
-                                    <div class="dollar-sign">$</div>
-                                    <div class="transaction-lines">
-                                        <div class="line"></div>
-                                        <div class="line"></div>
-                                    </div>
-                                </div>
+                                <img src="/images/elements/transaction icon.png" alt="Transaction" class="dashboard-icon-img">
                             </div>
                             <span class="nav-label">Transaction</span>
                         </div>
@@ -416,13 +421,7 @@
                         <!-- Receipt Button -->
                         <div class="nav-icon-item">
                             <div class="nav-button receipt-btn">
-                                <div class="receipt-icon">
-                                    <div class="receipt-paper">
-                                        <div class="receipt-line"></div>
-                                        <div class="receipt-line"></div>
-                                        <div class="receipt-line short"></div>
-                                    </div>
-                                </div>
+                                <img src="/images/elements/receipt icon.png" alt="Receipt" class="dashboard-icon-img">
                             </div>
                             <span class="nav-label">Receipt</span>
                         </div>
@@ -430,14 +429,7 @@
                         <!-- Withdrawal Button -->
                         <div class="nav-icon-item">
                             <div class="nav-button withdrawal-btn">
-                                <div class="withdrawal-icon">
-                                    <div class="money-stack">
-                                        <div class="bill"></div>
-                                        <div class="bill"></div>
-                                        <div class="bill"></div>
-                                    </div>
-                                    <div class="down-arrow">↓</div>
-                                </div>
+                                <img src="/images/elements/withdrawal icon.png" alt="Withdrawal" class="dashboard-icon-img">
                             </div>
                             <span class="nav-label">Withdrawal</span>
                         </div>
@@ -448,7 +440,7 @@
                 <div class="dashboard-right-content">
                     <!-- Grow Your Money Card -->
                     <div class="dashboard-card grow-money">
-                        <img src="/images/elements/grow your money icon.jpg" alt="Grow your Money" class="card-full-image">
+                        <img src="/images/elements/grow your money icon.png" alt="Grow your Money" class="card-full-image">
                         <div class="card-sparkles">
                             <div class="green-sparkle sparkle-1">✦</div>
                             <div class="green-sparkle sparkle-2">✦</div>
@@ -459,7 +451,7 @@
 
                     <!-- Rewards Card -->
                     <div class="dashboard-card rewards">
-                        <img src="/images/elements/rewards icon.jpg" alt="Rewards" class="card-full-image">
+                        <img src="/images/elements/rewards icon.png" alt="Rewards" class="card-full-image">
                         <div class="card-sparkles">
                             <div class="green-sparkle sparkle-1">✦</div>
                             <div class="green-sparkle sparkle-2">✦</div>
@@ -469,7 +461,7 @@
 
                     <!-- Shop & Earn Card -->
                     <div class="dashboard-card shop-earn">
-                        <img src="/images/elements/shop and earn.jpg" alt="Shop & Earn" class="card-full-image">
+                        <img src="/images/elements/shop and earn.png" alt="Shop & Earn" class="card-full-image">
                         <div class="card-sparkles">
                             <div class="green-sparkle sparkle-1">✦</div>
                             <div class="green-sparkle sparkle-2">✦</div>
