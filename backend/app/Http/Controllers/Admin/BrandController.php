@@ -211,4 +211,42 @@ class BrandController extends Controller
         return redirect()->back()
             ->with('success', "Brand {$status} successfully.");
     }
+
+    /**
+     * Reorder brands via AJAX drag-and-drop.
+     */
+    public function reorder(Request $request)
+    {
+        try {
+            // Validate the request
+            $validated = $request->validate([
+                'brands' => 'required|array',
+                'brands.*.id' => 'required|integer|exists:brands,id',
+                'brands.*.order' => 'required|integer|min:1'
+            ]);
+
+            // Update each brand's order
+            foreach ($validated['brands'] as $brandData) {
+                Brand::where('id', $brandData['id'])
+                    ->update(['order' => $brandData['order']]);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Brand order updated successfully!'
+            ]);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid data provided',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while updating brand order: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }

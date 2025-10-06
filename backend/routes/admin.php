@@ -48,9 +48,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::middleware(['role.permission:manage_content'])->group(function () {
             Route::resource('slides', SlideController::class);
             Route::patch('slides/{slide}/toggle-status', [SlideController::class, 'toggleStatus'])->name('slides.toggle-status');
+            Route::post('slides/reorder', [SlideController::class, 'reorder'])->name('slides.reorder');
 
             Route::resource('categories', CategoryController::class);
             Route::patch('categories/{category}/toggle-status', [CategoryController::class, 'toggleStatus'])->name('categories.toggle-status');
+            Route::post('categories/reorder', [CategoryController::class, 'reorder'])->name('categories.reorder');
         });
 
         // Brand Management
@@ -58,6 +60,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::resource('brands', BrandController::class);
             Route::patch('brands/{brand}/toggle-status', [BrandController::class, 'toggleStatus'])->name('brands.toggle-status');
             Route::patch('brands/{brand}/toggle-featured', [BrandController::class, 'toggleFeatured'])->name('brands.toggle-featured');
+            Route::post('brands/reorder', [BrandController::class, 'reorder'])->name('brands.reorder');
         });
 
         // Analytics (view only for most admins)
