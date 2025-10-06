@@ -201,6 +201,84 @@
             border-radius: 8px;
             padding: 4px;
         }
+
+        /* Category Carousel Navigation - Clean Design Matching Brands Section */
+        .category-carousel-wrapper {
+            position: relative;
+            width: 100%;
+            padding: 0 4rem; /* Add padding for arrow space */
+        }
+
+        .category-nav-buttons {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            z-index: 20;
+            pointer-events: none;
+            transform: translateY(-50%);
+        }
+
+        .category-button-prev,
+        .category-button-next {
+            color: var(--bix-dark-blue);
+            background: none;
+            width: 40px;
+            height: 40px;
+            margin-top: -20px;
+            z-index: 20;
+            transition: color 0.3s ease;
+            position: absolute;
+            top: 50%;
+            pointer-events: auto;
+            cursor: pointer;
+        }
+
+        .category-button-prev:hover,
+        .category-button-next:hover {
+            color: var(--bix-light-green);
+        }
+
+        .category-button-prev {
+            left: 10px;
+        }
+
+        .category-button-next {
+            right: 10px;
+        }
+
+        .category-button-prev:after,
+        .category-button-next:after {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        /* Responsive adjustments for category navigation */
+        @media (max-width: 768px) {
+            .category-carousel-wrapper {
+                padding: 0 3rem;
+            }
+
+            .category-button-prev,
+            .category-button-next {
+                width: 35px;
+                height: 35px;
+                margin-top: -17.5px;
+            }
+
+            .category-button-prev {
+                left: -10px;
+            }
+
+            .category-button-next {
+                right: -10px;
+            }
+
+            .category-button-prev:after,
+            .category-button-next:after {
+                font-size: 20px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -235,8 +313,15 @@
 
     <section id="brands" class="brands-section">
         <div class="brands-container">
-            <div class="category-container">
-                <!-- Categories will be injected by JavaScript -->
+            <div class="category-carousel-wrapper">
+                <div class="category-container">
+                    <!-- Categories will be injected by JavaScript -->
+                </div>
+                <!-- Navigation buttons (hidden by default, shown only when carousel is active) -->
+                <div class="category-nav-buttons" style="display: none;">
+                    <div class="swiper-button-prev category-button-prev"></div>
+                    <div class="swiper-button-next category-button-next"></div>
+                </div>
             </div>
             <h2><span class="green-text">Explore</span> Brands</h2>
             <div class="swiper brands-carousel-container">
@@ -972,9 +1057,10 @@
             const categoryContainer = document.querySelector('.category-container');
             const brandsSwiperWrapper = document.querySelector('.brands-carousel-container .swiper-wrapper');
 
-            // Enhanced Categories Population with error handling
+            // Enhanced Categories Population with dynamic carousel/static display
             function populateCategories(categories) {
                 const categoryContainer = document.querySelector('.category-container');
+                const categoryNavButtons = document.querySelector('.category-nav-buttons');
                 if (!categoryContainer) return;
 
                 if (!categories || categories.length === 0) {
@@ -982,58 +1068,159 @@
                     return;
                 }
 
+                // Determine if we need carousel (more than 5 categories) or static display
+                const needsCarousel = categories.length > 5;
+
+                // Destroy existing carousel if it exists
+                const existingCarousel = categoryContainer.swiper;
+                if (existingCarousel) {
+                    existingCarousel.destroy(true, true);
+                }
+
                 categoryContainer.innerHTML = '';
-                categories.forEach(category => {
-                    const categoryElement = document.createElement('div');
+
+                if (needsCarousel) {
+                    // CAROUSEL MODE: Convert to Swiper carousel for 6+ categories
+                    console.log(`Categories (${categories.length}): Using carousel mode`);
+
+                    // Set up carousel structure
+                    categoryContainer.classList.add('swiper');
+                    const swiperWrapper = document.createElement('div');
+                    swiperWrapper.classList.add('swiper-wrapper');
+
+                    categories.forEach(category => {
+                        const categoryElement = createCategoryElement(category, true); // true = carousel mode
+                        swiperWrapper.appendChild(categoryElement);
+                    });
+
+                    categoryContainer.appendChild(swiperWrapper);
+
+                    // Show navigation buttons
+                    if (categoryNavButtons) {
+                        categoryNavButtons.style.display = 'block';
+                    }
+
+                    // Initialize Swiper carousel with FIXED width to respect original CSS
+                    setTimeout(() => {
+                        const categoryCarousel = new Swiper(categoryContainer, {
+                            slidesPerView: 'auto', // Let slides maintain their CSS width
+                            spaceBetween: 96, // 6rem gap as per original CSS (96px)
+                            centeredSlides: false,
+                            loop: categories.length > 5,
+                            navigation: {
+                                nextEl: '.category-button-next',
+                                prevEl: '.category-button-prev'
+                            },
+                            breakpoints: {
+                                320: {
+                                    slidesPerView: 'auto',
+                                    spaceBetween: 32 // 2rem for mobile
+                                },
+                                640: {
+                                    slidesPerView: 'auto',
+                                    spaceBetween: 48 // 3rem for tablet
+                                },
+                                768: {
+                                    slidesPerView: 'auto',
+                                    spaceBetween: 64 // 4rem for larger tablet
+                                },
+                                1024: {
+                                    slidesPerView: 'auto',
+                                    spaceBetween: 96 // 6rem for desktop
+                                }
+                            },
+                            on: {
+                                init: function () {
+                                    console.log('Categories carousel initialized with', categories.length, 'categories');
+                                }
+                            }
+                        });
+                    }, 100);
+
+                } else {
+                    // STATIC MODE: Use flex layout for 5 or fewer categories
+                    console.log(`Categories (${categories.length}): Using static mode`);
+
+                    // Remove carousel classes and set up static layout
+                    categoryContainer.classList.remove('swiper');
+                    categoryContainer.style.cssText = 'display: flex; justify-content: center; flex-wrap: wrap; gap: 6rem; margin-bottom: 3rem;';
+
+                    categories.forEach(category => {
+                        const categoryElement = createCategoryElement(category, false); // false = static mode
+                        categoryContainer.appendChild(categoryElement);
+                    });
+
+                    // Hide navigation buttons
+                    if (categoryNavButtons) {
+                        categoryNavButtons.style.display = 'none';
+                    }
+                }
+            }
+
+            // Helper function to create category elements (used by both modes) - ORIGINAL DESIGN PRESERVED
+            function createCategoryElement(category, isCarouselMode = false) {
+                const categoryElement = document.createElement('div');
+
+                if (isCarouselMode) {
+                    categoryElement.classList.add('swiper-slide', 'category-item');
+                } else {
                     categoryElement.classList.add('category-item');
-                    categoryElement.style.cssText = `
-                        cursor: pointer;
-                        transition: transform 0.3s ease, box-shadow 0.3s ease;
-                        text-align: center;
-                        padding: 1rem;
-                        border-radius: 10px;
-                        background: white;
-                        margin: 0.5rem;
-                        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-                    `;
+                }
 
-                    // Image with error handling
-                    const img = document.createElement('img');
-                    img.src = category.icon_path;
-                    img.alt = category.name;
-                    img.loading = 'lazy';
-                    img.decoding = 'async';
-                    img.style.cssText = 'width: 60px; height: 60px; object-fit: cover; border-radius: 50%; margin-bottom: 0.5rem;';
+                // CORRECT ORIGINAL CSS STYLING FROM app.css
+                categoryElement.style.cssText = `
+                    background-color: var(--bix-white);
+                    border: 2px solid var(--bix-dark-blue);
+                    border-radius: 8px;
+                    padding: 1.2rem;
+                    width: 120px;
+                    height: 160px;
+                    text-align: center;
+                    transition: all 0.3s ease;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    cursor: pointer;
+                `;
 
-                    img.onerror = function() {
-                        this.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMzAiIGZpbGw9IiNmMGYwZjAiLz4KPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJMMTMuMDkgOC4yNkwyMCA5TDEzLjA5IDE1Ljc0TDEyIDIyTDEwLjkxIDE1Ljc0TDQgOUwxMC45MSA4LjI2TDEyIDJaIiBmaWxsPSIjY2NjIi8+Cjwvc3ZnPgo8L3N2Zz4K';
-                    };
+                // CORRECT ORIGINAL IMAGE STYLING - 90px height as per CSS
+                const img = document.createElement('img');
+                img.src = category.icon_path;
+                img.alt = category.name;
+                img.loading = 'lazy';
+                img.decoding = 'async';
+                img.style.cssText = 'height: 90px; margin-bottom: 0.5rem;';
 
-                    const span = document.createElement('span');
-                    span.textContent = category.name;
-                    span.style.cssText = 'display: block; font-weight: 500; color: var(--bix-navy); font-size: 0.9rem;';
+                img.onerror = function() {
+                    this.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMzAiIGZpbGw9IiNmMGYwZjAiLz4KPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJMMTMuMDkgOC4yNkwyMCA5TDEzLjA5IDE1Ljc0TDEyIDIyTDEwLjkxIDE1Ljc0TDQgOUwxMC45MSA4LjI2TDEyIDJaIiBmaWxsPSIjY2NjIi8+Cjwvc3ZnPgo8L3N2Zz4K';
+                };
 
-                    categoryElement.appendChild(img);
-                    categoryElement.appendChild(span);
+                // CORRECT ORIGINAL SPAN STYLING - bold font weight as per CSS
+                const span = document.createElement('span');
+                span.textContent = category.name;
+                span.style.cssText = 'color: var(--bix-dark-blue); font-weight: bold;';
 
-                    // Add hover effects
-                    categoryElement.addEventListener('mouseenter', function() {
-                        this.style.transform = 'translateY(-5px)';
-                        this.style.boxShadow = '0 8px 25px rgba(0,0,0,0.15)';
-                    });
+                categoryElement.appendChild(img);
+                categoryElement.appendChild(span);
 
-                    categoryElement.addEventListener('mouseleave', function() {
-                        this.style.transform = 'translateY(0)';
-                        this.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
-                    });
-
-                    // Add click handler for category filtering
-                    categoryElement.addEventListener('click', function() {
-                        filterBrandsByCategory(category.id, category.name);
-                    });
-
-                    categoryContainer.appendChild(categoryElement);
+                // CORRECT ORIGINAL HOVER EFFECTS - border color change as per CSS
+                categoryElement.addEventListener('mouseenter', function() {
+                    this.style.borderColor = 'var(--bix-green)';
+                    this.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
                 });
+
+                categoryElement.addEventListener('mouseleave', function() {
+                    this.style.borderColor = 'var(--bix-dark-blue)';
+                    this.style.boxShadow = 'none';
+                });
+
+                // Add click handler for category filtering
+                categoryElement.addEventListener('click', function() {
+                    filterBrandsByCategory(category.id, category.name);
+                });
+
+                return categoryElement;
             }
 
             // Enhanced Brands Population with carousel support
