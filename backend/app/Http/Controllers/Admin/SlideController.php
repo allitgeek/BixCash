@@ -47,11 +47,11 @@ class SlideController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        // Determine validation rules based on whether file or URL is provided
+        $rules = [
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'media_type' => 'required|in:image,video',
-            'media_path' => 'required|string|max:500',
             'target_url' => 'nullable|url|max:500',
             'button_text' => 'nullable|string|max:100',
             'button_color' => 'nullable|string|max:7',
@@ -59,7 +59,24 @@ class SlideController extends Controller
             'is_active' => 'boolean',
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date|after:start_date',
-        ]);
+        ];
+
+        // Add validation for either file or URL
+        if ($request->hasFile('media_file')) {
+            $rules['media_file'] = 'required|file|mimes:jpg,jpeg,png,gif,webp,mp4,avi,mov,wmv|max:20480'; // 20MB max
+        } else {
+            $rules['media_path'] = 'required|url|max:500';
+        }
+
+        $validated = $request->validate($rules);
+
+        // Handle file upload or URL
+        if ($request->hasFile('media_file')) {
+            $file = $request->file('media_file');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $path = $file->storeAs('slides', $filename, 'public');
+            $validated['media_path'] = '/storage/' . $path;
+        }
 
         $validated['created_by'] = Auth::id();
         $validated['is_active'] = $request->boolean('is_active');
@@ -83,11 +100,11 @@ class SlideController extends Controller
 
     public function update(Request $request, Slide $slide)
     {
-        $validated = $request->validate([
+        // Determine validation rules for update
+        $rules = [
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'media_type' => 'required|in:image,video',
-            'media_path' => 'required|string|max:500',
             'target_url' => 'nullable|url|max:500',
             'button_text' => 'nullable|string|max:100',
             'button_color' => 'nullable|string|max:7',
@@ -95,7 +112,32 @@ class SlideController extends Controller
             'is_active' => 'boolean',
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date|after:start_date',
-        ]);
+        ];
+
+        // Add validation for file upload or URL (both optional for update)
+        if ($request->hasFile('media_file')) {
+            $rules['media_file'] = 'required|file|mimes:jpg,jpeg,png,gif,webp,mp4,avi,mov,wmv|max:20480'; // 20MB max
+        } elseif ($request->filled('media_path')) {
+            $rules['media_path'] = 'required|url|max:500';
+        }
+
+        $validated = $request->validate($rules);
+
+        // Handle file upload if provided
+        if ($request->hasFile('media_file')) {
+            // Delete old file if it exists and is not a URL
+            if ($slide->media_path && !filter_var($slide->media_path, FILTER_VALIDATE_URL)) {
+                Storage::disk('public')->delete(str_replace('/storage/', '', $slide->media_path));
+            }
+
+            $file = $request->file('media_file');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $path = $file->storeAs('slides', $filename, 'public');
+            $validated['media_path'] = '/storage/' . $path;
+        } elseif (!$request->filled('media_path') && !$request->hasFile('media_file')) {
+            // Keep existing media_path if neither file nor URL provided
+            unset($validated['media_path']);
+        }
 
         $validated['is_active'] = $request->boolean('is_active');
 

@@ -91,7 +91,7 @@ body {
     height: calc(100vh - 120px); /* Subtract header height */
     min-height: 500px;
     position: relative;
-    background-color: var(--bix-green);
+    background-color: var(--bix-white);
     overflow: hidden;
     margin-top: -120px; /* Pull up to account for body padding */
     padding-top: 120px; /* Add internal padding for header space */
@@ -830,6 +830,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+    background: transparent;
 }
 
 .dashboard-card {
@@ -839,6 +840,7 @@ body {
     border-radius: 25px;
     overflow: hidden;
     box-shadow: 0 10px 30px rgba(2, 28, 71, 0.15);
+    background: transparent;
 }
 
 .dashboard-card:hover {
@@ -851,6 +853,28 @@ body {
     height: auto;
     display: block;
     border-radius: 25px;
+    background: none !important;
+    background-color: transparent !important;
+    object-fit: contain;
+}
+
+/* Specific fix for grow money card transparency */
+.dashboard-card.grow-money {
+    background: transparent !important;
+    background-color: transparent !important;
+}
+
+.dashboard-card.grow-money .card-full-image {
+    background: none !important;
+    background-color: transparent !important;
+    /* SVG specific constraints to keep it within card area */
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    /* Prevent SVG from scaling beyond card boundaries */
+    overflow: hidden;
 }
 
 

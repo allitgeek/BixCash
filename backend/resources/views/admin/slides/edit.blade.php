@@ -17,7 +17,7 @@
             </div>
         </div>
         <div class="card-body">
-            <form method="POST" action="{{ route('admin.slides.update', $slide) }}" id="slideForm">
+            <form method="POST" action="{{ route('admin.slides.update', $slide) }}" id="slideForm" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
 
@@ -63,15 +63,74 @@
                             @enderror
                         </div>
 
+                        <!-- Media Input Type Toggle -->
                         <div class="form-group">
-                            <label for="media_path">Media URL *</label>
+                            <label>Media Source *</label>
+                            <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                                <label style="display: flex; align-items: center; cursor: pointer;">
+                                    <input type="radio" name="media_source" value="file"
+                                           style="margin-right: 0.5rem;" onchange="toggleMediaInputEdit('file')">
+                                    <span>Upload New File</span>
+                                </label>
+                                <label style="display: flex; align-items: center; cursor: pointer;">
+                                    <input type="radio" name="media_source" value="url"
+                                           {{ filter_var($slide->media_path, FILTER_VALIDATE_URL) ? 'checked' : '' }}
+                                           style="margin-right: 0.5rem;" onchange="toggleMediaInputEdit('url')">
+                                    <span>External URL</span>
+                                </label>
+                                <label style="display: flex; align-items: center; cursor: pointer;">
+                                    <input type="radio" name="media_source" value="keep"
+                                           {{ !filter_var($slide->media_path, FILTER_VALIDATE_URL) ? 'checked' : '' }}
+                                           style="margin-right: 0.5rem;" onchange="toggleMediaInputEdit('keep')">
+                                    <span>Keep Current</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Current Media Display -->
+                        <div id="current-media-section" class="form-group">
+                            <label>Current Media</label>
+                            <div style="padding: 1rem; background: #f8f9fa; border-radius: 5px; margin-bottom: 1rem;">
+                                @if(filter_var($slide->media_path, FILTER_VALIDATE_URL))
+                                    <p><strong>External URL:</strong> {{ $slide->media_path }}</p>
+                                @else
+                                    <p><strong>Uploaded File:</strong> {{ basename($slide->media_path) }}</p>
+                                @endif
+                                @if($slide->media_type === 'image')
+                                    <img src="{{ $slide->media_path }}" alt="Current slide media" style="max-height: 100px; border-radius: 5px;">
+                                @else
+                                    <video controls style="max-height: 100px; border-radius: 5px;">
+                                        <source src="{{ $slide->media_path }}" type="video/mp4">
+                                    </video>
+                                @endif
+                            </div>
+                        </div>
+
+                        <!-- File Upload Option (Hidden by default) -->
+                        <div id="file-upload-section-edit" class="form-group" style="display: none;">
+                            <label for="media_file">Upload New Media File</label>
+                            <input type="file" id="media_file" name="media_file"
+                                   accept="image/*,video/*"
+                                   class="form-control @error('media_file') is-invalid @enderror">
+                            @error('media_file')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                            <small class="text-muted">
+                                <strong>Supported formats:</strong> JPG, PNG, GIF, WebP, MP4, AVI, MOV, WMV (Max: 20MB)<br>
+                                <strong>📸 Best for Images:</strong> WebP/JPG at 1920x1080px (500KB-1MB) |
+                                <strong>🎥 Best for Videos:</strong> MP4 H.264 at 1920x1080p (3-7MB)
+                            </small>
+                        </div>
+
+                        <!-- URL Input Option (Hidden by default) -->
+                        <div id="url-input-section-edit" class="form-group" style="display: none;">
+                            <label for="media_path">Media URL</label>
                             <input type="url"
                                    class="form-control @error('media_path') is-invalid @enderror"
                                    id="media_path"
                                    name="media_path"
                                    value="{{ old('media_path', $slide->media_path) }}"
-                                   placeholder="https://example.com/image.jpg"
-                                   required>
+                                   placeholder="https://example.com/image.jpg">
                             @error('media_path')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -233,6 +292,39 @@
     </div>
 
     <script>
+        // Toggle between media input options for edit form
+        function toggleMediaInputEdit(type) {
+            const fileSection = document.getElementById('file-upload-section-edit');
+            const urlSection = document.getElementById('url-input-section-edit');
+            const currentSection = document.getElementById('current-media-section');
+            const fileInput = document.getElementById('media_file');
+            const urlInput = document.getElementById('media_path');
+
+            // Hide all sections first
+            fileSection.style.display = 'none';
+            urlSection.style.display = 'none';
+            currentSection.style.display = 'block';
+
+            // Reset requirements
+            fileInput.required = false;
+            urlInput.required = false;
+
+            if (type === 'file') {
+                fileSection.style.display = 'block';
+                fileInput.required = true;
+                fileInput.value = ''; // Clear file input
+                urlInput.value = ''; // Clear URL input
+            } else if (type === 'url') {
+                urlSection.style.display = 'block';
+                urlInput.required = true;
+                fileInput.value = ''; // Clear file input
+            } else if (type === 'keep') {
+                // Keep current - no additional inputs required
+                fileInput.value = ''; // Clear file input
+                urlInput.value = ''; // Clear URL input
+            }
+        }
+
         // Live preview updates
         document.addEventListener('DOMContentLoaded', function() {
             const titleInput = document.getElementById('title');

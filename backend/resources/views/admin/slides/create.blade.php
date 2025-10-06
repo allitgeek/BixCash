@@ -14,7 +14,7 @@
             </div>
         </div>
         <div class="card-body">
-            <form method="POST" action="{{ route('admin.slides.store') }}">
+            <form method="POST" action="{{ route('admin.slides.store') }}" enctype="multipart/form-data">
                 @csrf
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
@@ -52,12 +52,46 @@
                             </select>
                         </div>
 
-                        <!-- Media Path -->
-                        <div style="margin-bottom: 1.5rem;">
+                        <!-- Media Input Type Toggle -->
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: #333;">
+                                Media Source <span style="color: #e74c3c;">*</span>
+                            </label>
+                            <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                                <label style="display: flex; align-items: center; cursor: pointer;">
+                                    <input type="radio" name="media_source" value="file" checked
+                                           style="margin-right: 0.5rem;" onchange="toggleMediaInput('file')">
+                                    <span>Upload File</span>
+                                </label>
+                                <label style="display: flex; align-items: center; cursor: pointer;">
+                                    <input type="radio" name="media_source" value="url"
+                                           style="margin-right: 0.5rem;" onchange="toggleMediaInput('url')">
+                                    <span>External URL</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- File Upload Option -->
+                        <div id="file-upload-section" style="margin-bottom: 1.5rem;">
+                            <label for="media_file" style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: #333;">
+                                Upload Media File <span style="color: #e74c3c;">*</span>
+                            </label>
+                            <input type="file" id="media_file" name="media_file"
+                                   accept="image/*,video/*"
+                                   style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem;">
+                            <small style="color: #666;">
+                                <strong>Supported formats:</strong> JPG, PNG, GIF, WebP, MP4, AVI, MOV, WMV (Max: 20MB)<br>
+                                <strong>📸 Best for Images:</strong> WebP/JPG at 1920x1080px (500KB-1MB) |
+                                <strong>🎥 Best for Videos:</strong> MP4 H.264 at 1920x1080p (3-7MB)
+                            </small>
+                        </div>
+
+                        <!-- URL Input Option (Hidden by default) -->
+                        <div id="url-input-section" style="margin-bottom: 1.5rem; display: none;">
                             <label for="media_path" style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: #333;">
                                 Media URL <span style="color: #e74c3c;">*</span>
                             </label>
-                            <input type="url" id="media_path" name="media_path" value="{{ old('media_path') }}" required
+                            <input type="url" id="media_path" name="media_path" value="{{ old('media_path') }}"
                                    style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem;"
                                    placeholder="https://example.com/image.jpg">
                             <small style="color: #666;">Enter the full URL to your image or video file</small>
@@ -163,6 +197,28 @@
 
 @push('scripts')
 <script>
+    // Toggle between file upload and URL input
+    function toggleMediaInput(type) {
+        const fileSection = document.getElementById('file-upload-section');
+        const urlSection = document.getElementById('url-input-section');
+        const fileInput = document.getElementById('media_file');
+        const urlInput = document.getElementById('media_path');
+
+        if (type === 'file') {
+            fileSection.style.display = 'block';
+            urlSection.style.display = 'none';
+            fileInput.required = true;
+            urlInput.required = false;
+            urlInput.value = ''; // Clear URL when switching to file
+        } else {
+            fileSection.style.display = 'none';
+            urlSection.style.display = 'block';
+            fileInput.required = false;
+            urlInput.required = true;
+            fileInput.value = ''; // Clear file when switching to URL
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         // Live preview functionality
         const titleInput = document.getElementById('title');
@@ -186,12 +242,12 @@
         buttonTextInput.addEventListener('input', updatePreview);
         buttonColorInput.addEventListener('input', updatePreview);
 
-        // Form validation
+        // Enhanced form validation
         const form = document.querySelector('form');
         form.addEventListener('submit', function(e) {
             const title = titleInput.value.trim();
-            const mediaPath = document.getElementById('media_path').value.trim();
             const order = document.getElementById('order').value;
+            const mediaSource = document.querySelector('input[name="media_source"]:checked').value;
 
             if (!title) {
                 e.preventDefault();
@@ -200,11 +256,23 @@
                 return;
             }
 
-            if (!mediaPath) {
-                e.preventDefault();
-                alert('Please enter a media URL.');
-                document.getElementById('media_path').focus();
-                return;
+            // Check media input based on selected source
+            if (mediaSource === 'file') {
+                const fileInput = document.getElementById('media_file');
+                if (!fileInput.files || !fileInput.files[0]) {
+                    e.preventDefault();
+                    alert('Please select a media file to upload.');
+                    fileInput.focus();
+                    return;
+                }
+            } else {
+                const mediaPath = document.getElementById('media_path').value.trim();
+                if (!mediaPath) {
+                    e.preventDefault();
+                    alert('Please enter a media URL.');
+                    document.getElementById('media_path').focus();
+                    return;
+                }
             }
 
             if (order === '' || order < 0) {
@@ -212,6 +280,22 @@
                 alert('Please enter a valid display order (0 or higher).');
                 document.getElementById('order').focus();
                 return;
+            }
+        });
+
+        // File upload preview
+        const fileInput = document.getElementById('media_file');
+        fileInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const fileSize = (file.size / 1024 / 1024).toFixed(2); // Convert to MB
+                if (fileSize > 20) {
+                    alert('File size must be less than 20MB');
+                    this.value = '';
+                    return;
+                }
+
+                console.log(`Selected file: ${file.name} (${fileSize}MB)`);
             }
         });
     });

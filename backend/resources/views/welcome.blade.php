@@ -693,7 +693,7 @@
             // Loading state management
             function showLoadingStates() {
                 // Hero slider loading
-                const heroWrapper = document.querySelector('#hero .swiper-wrapper');
+                const heroWrapper = document.querySelector('#home .swiper-wrapper');
                 if (heroWrapper) {
                     heroWrapper.innerHTML = `
                         <div class="swiper-slide loading-slide">
@@ -724,9 +724,33 @@
                 });
             }
 
+            // YouTube URL conversion function
+            function convertToYouTubeEmbed(url) {
+                if (!url) return null;
+
+                // Check if it's already an embed URL
+                if (url.includes('youtube.com/embed/')) {
+                    return url + (url.includes('?') ? '&' : '?') + 'autoplay=1&mute=1&loop=1&playlist=' + extractVideoId(url);
+                }
+
+                // Extract video ID from different YouTube URL formats
+                const videoId = extractVideoId(url);
+                if (!videoId) return null;
+
+                // Return embeddable URL with autoplay
+                return `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}`;
+            }
+
+            // Extract YouTube video ID from various URL formats
+            function extractVideoId(url) {
+                const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+                const match = url.match(regex);
+                return match ? match[1] : null;
+            }
+
             // Initialize Hero Slider with enhanced functionality
             function initializeHeroSlider(slides) {
-                const swiperWrapper = document.querySelector('#hero .swiper-wrapper');
+                const swiperWrapper = document.querySelector('#home .swiper-wrapper');
                 if (!swiperWrapper) return;
 
                 swiperWrapper.innerHTML = '';
@@ -757,40 +781,54 @@
                         const slideElement = document.createElement('div');
                         slideElement.classList.add('swiper-slide');
 
-                        // Handle different media types
+                        // Handle different media types - Clean visual slides without text overlays
                         if (slide.media_type === 'video') {
-                            slideElement.innerHTML = `
-                                <video autoplay muted loop style="width: 100%; height: 100%; object-fit: cover;">
-                                    <source src="${slide.media_path}" type="video/mp4">
-                                </video>
-                                <div class="slide-content" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; color: white; z-index: 2;">
-                                    <h1>${slide.title}</h1>
-                                    <p>${slide.description}</p>
-                                    ${slide.button_text ? `<button onclick="window.open('${slide.target_url}', '_blank')" style="background: ${slide.button_color}; color: white; padding: 1rem 2rem; border: none; border-radius: 25px; font-weight: bold; margin-top: 1rem; cursor: pointer;">${slide.button_text}</button>` : ''}
-                                </div>
-                            `;
+                            // Check if it's a YouTube URL and convert to embed format
+                            const youtubeEmbedUrl = convertToYouTubeEmbed(slide.media_path);
+
+                            if (youtubeEmbedUrl) {
+                                // YouTube video - use iframe
+                                slideElement.innerHTML = `
+                                    <iframe src="${youtubeEmbedUrl}"
+                                            style="width: 100%; height: 100%; border: none;"
+                                            frameborder="0"
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                            allowfullscreen>
+                                    </iframe>
+                                `;
+                            } else {
+                                // Direct video file - use video tag
+                                slideElement.innerHTML = `
+                                    <video autoplay muted loop style="width: 100%; height: 100%; object-fit: cover;">
+                                        <source src="${slide.media_path}" type="video/mp4">
+                                    </video>
+                                `;
+                            }
+
+                            // Add click handler for target URL if provided
+                            if (slide.target_url) {
+                                slideElement.style.cursor = 'pointer';
+                                slideElement.addEventListener('click', () => {
+                                    window.open(slide.target_url, '_blank');
+                                });
+                            }
                         } else {
                             slideElement.style.cssText = `
                                 background-image: url('${slide.media_path}');
                                 background-size: cover;
                                 background-position: center;
                                 background-repeat: no-repeat;
-                                display: flex;
-                                align-items: center;
-                                justify-content: center;
-                                text-align: center;
-                                color: white;
                                 min-height: 500px;
                                 position: relative;
+                                ${slide.target_url ? 'cursor: pointer;' : ''}
                             `;
-                            slideElement.innerHTML = `
-                                <div class="slide-overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.3); z-index: 1;"></div>
-                                <div class="slide-content" style="position: relative; z-index: 2;">
-                                    <h1 style="font-size: 3rem; margin-bottom: 1rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.7);">${slide.title}</h1>
-                                    <p style="font-size: 1.2rem; margin-bottom: 2rem; text-shadow: 1px 1px 2px rgba(0,0,0,0.7);">${slide.description}</p>
-                                    ${slide.button_text ? `<button onclick="window.open('${slide.target_url}', '_blank')" style="background: ${slide.button_color}; color: white; padding: 1rem 2rem; border: none; border-radius: 25px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.3);">${slide.button_text}</button>` : ''}
-                                </div>
-                            `;
+
+                            // Add click handler for target URL if provided
+                            if (slide.target_url) {
+                                slideElement.addEventListener('click', () => {
+                                    window.open(slide.target_url, '_blank');
+                                });
+                            }
                         }
 
                         swiperWrapper.appendChild(slideElement);
@@ -801,14 +839,18 @@
             // Initialize all carousels with enhanced error handling
             function initializeCarousels() {
                 try {
+                    // Check how many slides we have for hero carousel
+                    const heroSlides = document.querySelectorAll('#home .swiper-slide');
+                    const hasMultipleSlides = heroSlides.length > 1;
+
                     // Hero carousel with enhanced options
-                    const heroSwiper = new Swiper('#hero .swiper-container', {
-                        loop: true,
-                        autoplay: {
+                    const heroSwiper = new Swiper('#home .swiper-container', {
+                        loop: hasMultipleSlides,
+                        autoplay: hasMultipleSlides ? {
                             delay: 5000,
                             disableOnInteraction: false,
                             pauseOnMouseEnter: true
-                        },
+                        } : false,
                         pagination: {
                             el: '.swiper-pagination',
                             clickable: true,
@@ -869,7 +911,7 @@
 
                     // Initialize new brands carousel
                     const brandsSwiper = new Swiper('.brands-carousel-container', {
-                        loop: brandSlides.length > 3 ? true : false,
+                        loop: brandSlides.length > 1 ? true : false,
                         slidesPerView: 'auto',
                         spaceBetween: 20,
                         centeredSlides: false,
@@ -1082,7 +1124,7 @@
 
             function initializeFallbackContent() {
                 // Fallback for hero slider
-                const swiperWrapper = document.querySelector('#hero .swiper-wrapper');
+                const swiperWrapper = document.querySelector('#home .swiper-wrapper');
                 if (swiperWrapper) {
                     swiperWrapper.innerHTML = `<div class="swiper-slide" style="background-color: var(--bix-green);">
                         <div class="slide-content"><h1>Welcome to BixCash</h1><p>Shop to Earn</p></div>

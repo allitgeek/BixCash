@@ -54,11 +54,20 @@
                                        class="form-control @error('icon_file') is-invalid @enderror"
                                        id="icon_file"
                                        name="icon_file"
-                                       accept="image/*">
+                                       accept="image/png,image/jpg,image/jpeg,image/svg+xml,image/webp">
                                 @error('icon_file')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-                                <small class="text-muted">Upload PNG, JPG, or SVG file (max 2MB)</small>
+                                <div class="mt-2" style="background: #e7f3ff; padding: 0.75rem; border-radius: 5px; border-left: 4px solid #0066cc;">
+                                    <strong style="color: #0066cc;">📏 Recommended Image Specifications:</strong><br>
+                                    <span style="color: #333; font-size: 0.9rem;">
+                                        <strong>• Dimensions:</strong> 60x60 pixels (square format)<br>
+                                        <strong>• File Types:</strong> PNG (recommended), JPG, SVG, WebP<br>
+                                        <strong>• File Size:</strong> Maximum 2MB, recommended 10-50KB<br>
+                                        <strong>• Background:</strong> Transparent PNG preferred for best results<br>
+                                        <strong>• Style:</strong> Simple, recognizable icon design
+                                    </span>
+                                </div>
                             </div>
 
                             <!-- URL Option -->
