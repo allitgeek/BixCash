@@ -166,4 +166,39 @@ class SlideController extends Controller
         return redirect()->back()
             ->with('success', "Slide {$status} successfully.");
     }
+
+    public function reorder(Request $request)
+    {
+        try {
+            // Validate the request
+            $validated = $request->validate([
+                'slides' => 'required|array',
+                'slides.*.id' => 'required|integer|exists:slides,id',
+                'slides.*.order' => 'required|integer|min:1'
+            ]);
+
+            // Update each slide's order
+            foreach ($validated['slides'] as $slideData) {
+                Slide::where('id', $slideData['id'])
+                    ->update(['order' => $slideData['order']]);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Slide order updated successfully!'
+            ]);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid data provided',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while updating slide order: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }

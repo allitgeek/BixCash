@@ -179,4 +179,42 @@ class CategoryController extends Controller
         return redirect()->back()
             ->with('success', "Category {$status} successfully.");
     }
+
+    /**
+     * Reorder categories via AJAX drag-and-drop.
+     */
+    public function reorder(Request $request)
+    {
+        try {
+            // Validate the request
+            $validated = $request->validate([
+                'categories' => 'required|array',
+                'categories.*.id' => 'required|integer|exists:categories,id',
+                'categories.*.order' => 'required|integer|min:1'
+            ]);
+
+            // Update each category's order
+            foreach ($validated['categories'] as $categoryData) {
+                Category::where('id', $categoryData['id'])
+                    ->update(['order' => $categoryData['order']]);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Category order updated successfully!'
+            ]);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid data provided',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while updating category order: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }

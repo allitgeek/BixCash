@@ -41,12 +41,15 @@
                 </div>
             </form>
 
-            <!-- Slides Table -->
+            <!-- Slides Table with Drag & Drop -->
             @if($slides->count() > 0)
                 <div style="overflow-x: auto;">
-                    <table style="width: 100%; border-collapse: collapse;">
+                    <table id="slidesTable" style="width: 100%; border-collapse: collapse;">
                         <thead>
                             <tr style="background: #f8f9fa; border-bottom: 2px solid #dee2e6;">
+                                <th style="padding: 0.75rem; text-align: center; font-weight: 600; width: 50px;">
+                                    <span title="Drag to reorder">⋮⋮</span>
+                                </th>
                                 <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Order</th>
                                 <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Title</th>
                                 <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Media</th>
@@ -56,11 +59,16 @@
                                 <th style="padding: 0.75rem; text-align: center; font-weight: 600;">Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="sortableSlides">
                             @foreach($slides as $slide)
-                                <tr style="border-bottom: 1px solid #dee2e6;">
+                                <tr class="slide-row" data-slide-id="{{ $slide->id }}" style="border-bottom: 1px solid #dee2e6; cursor: move;">
+                                    <td style="padding: 0.75rem; text-align: center;">
+                                        <div class="drag-handle" style="cursor: grab; font-size: 1.2rem; color: #666; user-select: none;" title="Drag to reorder">
+                                            ⋮⋮
+                                        </div>
+                                    </td>
                                     <td style="padding: 0.75rem;">
-                                        <span style="background: #3498db; color: white; padding: 0.25rem 0.5rem; border-radius: 3px; font-weight: 500;">
+                                        <span class="order-badge" style="background: #3498db; color: white; padding: 0.25rem 0.5rem; border-radius: 3px; font-weight: 500;">
                                             {{ $slide->order }}
                                         </span>
                                     </td>
@@ -166,14 +174,199 @@
 
 @push('scripts')
 <script>
-    // Simple pagination styling
     document.addEventListener('DOMContentLoaded', function() {
+        // Simple pagination styling
         const paginationLinks = document.querySelectorAll('.pagination a, .pagination span');
         paginationLinks.forEach(link => {
             link.style.cssText = 'padding: 0.5rem 0.75rem; margin: 0 0.25rem; border: 1px solid #dee2e6; border-radius: 3px; text-decoration: none; color: #495057;';
             if (link.classList.contains('active')) {
                 link.style.cssText += 'background: #3498db; color: white; border-color: #3498db;';
             }
+        });
+
+        // Drag and Drop Functionality
+        const tbody = document.getElementById('sortableSlides');
+        if (!tbody) return;
+
+        let draggedElement = null;
+        let placeholder = null;
+
+        // Add drag event listeners to all rows
+        const slideRows = tbody.querySelectorAll('.slide-row');
+        slideRows.forEach(row => {
+            row.draggable = true;
+
+            // Drag start
+            row.addEventListener('dragstart', function(e) {
+                draggedElement = this;
+                this.style.opacity = '0.5';
+
+                // Create placeholder
+                placeholder = document.createElement('tr');
+                placeholder.className = 'drag-placeholder';
+                placeholder.innerHTML = `<td colspan="8" style="height: 4px; background: #3498db; border: 2px dashed #3498db; text-align: center; color: #3498db; font-weight: bold;">Drop here</td>`;
+
+                e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('text/html', this.outerHTML);
+            });
+
+            // Drag end
+            row.addEventListener('dragend', function(e) {
+                this.style.opacity = '';
+                draggedElement = null;
+
+                // Remove placeholder if it exists
+                if (placeholder && placeholder.parentNode) {
+                    placeholder.parentNode.removeChild(placeholder);
+                }
+            });
+
+            // Drag over
+            row.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+
+                if (draggedElement && draggedElement !== this) {
+                    const rect = this.getBoundingClientRect();
+                    const midPoint = rect.top + rect.height / 2;
+
+                    // Remove existing placeholder
+                    if (placeholder && placeholder.parentNode) {
+                        placeholder.parentNode.removeChild(placeholder);
+                    }
+
+                    // Insert placeholder
+                    if (e.clientY < midPoint) {
+                        tbody.insertBefore(placeholder, this);
+                    } else {
+                        tbody.insertBefore(placeholder, this.nextSibling);
+                    }
+                }
+            });
+
+            // Drop
+            row.addEventListener('drop', function(e) {
+                e.preventDefault();
+
+                if (draggedElement && draggedElement !== this) {
+                    const rect = this.getBoundingClientRect();
+                    const midPoint = rect.top + rect.height / 2;
+
+                    // Move the dragged element
+                    if (e.clientY < midPoint) {
+                        tbody.insertBefore(draggedElement, this);
+                    } else {
+                        tbody.insertBefore(draggedElement, this.nextSibling);
+                    }
+
+                    // Update order and save
+                    updateSlideOrder();
+                }
+
+                // Remove placeholder
+                if (placeholder && placeholder.parentNode) {
+                    placeholder.parentNode.removeChild(placeholder);
+                }
+            });
+        });
+
+        // Update visual order and send to server
+        function updateSlideOrder() {
+            const rows = tbody.querySelectorAll('.slide-row');
+            const slideOrder = [];
+
+            // Update visual order badges
+            rows.forEach((row, index) => {
+                const orderBadge = row.querySelector('.order-badge');
+                if (orderBadge) {
+                    orderBadge.textContent = index + 1;
+                }
+
+                const slideId = row.getAttribute('data-slide-id');
+                slideOrder.push({
+                    id: parseInt(slideId),
+                    order: index + 1
+                });
+            });
+
+            // Show loading feedback
+            showNotification('Updating slide order...', 'info');
+
+            // Send to server
+            fetch('{{ route("admin.slides.reorder") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                },
+                body: JSON.stringify({ slides: slideOrder })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('Slide order updated successfully!', 'success');
+                } else {
+                    showNotification('Error updating slide order: ' + (data.message || 'Unknown error'), 'error');
+                    // Reload page on error to restore correct order
+                    setTimeout(() => location.reload(), 2000);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Network error updating slide order', 'error');
+                // Reload page on error to restore correct order
+                setTimeout(() => location.reload(), 2000);
+            });
+        }
+
+        // Notification system
+        function showNotification(message, type = 'info') {
+            // Remove existing notifications
+            const existing = document.querySelectorAll('.slide-notification');
+            existing.forEach(n => n.remove());
+
+            const notification = document.createElement('div');
+            notification.className = 'slide-notification';
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 1rem 1.5rem;
+                border-radius: 5px;
+                color: white;
+                font-weight: 500;
+                z-index: 10000;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                ${type === 'success' ? 'background: #27ae60;' : ''}
+                ${type === 'error' ? 'background: #e74c3c;' : ''}
+                ${type === 'info' ? 'background: #3498db;' : ''}
+            `;
+            notification.textContent = message;
+
+            document.body.appendChild(notification);
+
+            // Auto remove after 3 seconds (except for loading messages)
+            if (type !== 'info') {
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.remove();
+                    }
+                }, 3000);
+            }
+        }
+
+        // Enhanced drag handle styling
+        const dragHandles = document.querySelectorAll('.drag-handle');
+        dragHandles.forEach(handle => {
+            handle.addEventListener('mousedown', function() {
+                this.style.cursor = 'grabbing';
+                this.style.color = '#3498db';
+            });
+
+            handle.addEventListener('mouseup', function() {
+                this.style.cursor = 'grab';
+                this.style.color = '#666';
+            });
         });
     });
 </script>
