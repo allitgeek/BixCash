@@ -1,0 +1,204 @@
+{
+  "timestamp": "2025-10-10T18:26:22.991Z",
+  "allTestsPassed": false,
+  "results": [
+    {
+      "viewport": "iPhone SE",
+      "hero": {
+        "height": "450px",
+        "minHeight": "450px",
+        "actualHeight": 450,
+        "marginTop": "0px",
+        "paddingTop": "0px",
+        "position": "relative",
+        "width": "375px",
+        "overflow": "hidden",
+        "isReasonableHeight": true,
+        "heightInVh": 67,
+        "viewport": {
+          "width": 375,
+          "height": 667
+        }
+      },
+      "button": {
+        "isVisible": true,
+        "display": "flex",
+        "size": "44x44",
+        "zIndex": "1001",
+        "position": "relative"
+      },
+      "animation": {
+        "before": {
+          "overlayTransition": "opacity 0.3s, visibility 0.3s",
+          "contentTransition": "transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)",
+          "overlayTransform": "matrix(1, 0, 0, 1, 0, 0)",
+          "contentTransform": "matrix(1, 0, 0, 1, 0, 0)"
+        },
+        "during": {
+          "overlayOpacity": "0.112217",
+          "contentTransform": "matrix(1, 0, 0, 1, 0, 0)",
+          "overlayActive": true
+        },
+        "after": {
+          "overlayOpacity": "1",
+          "contentTransform": "matrix(1, 0, 0, 1, 0, 0)",
+          "overlayActive": true
+        },
+        "noTranslateY": true,
+        "smoothScale": false,
+        "animationWorking": true
+      },
+      "passed": false
+    },
+    {
+      "viewport": "Small Mobile",
+      "hero": {
+        "height": "400px",
+        "minHeight": "400px",
+        "actualHeight": 400,
+        "marginTop": "0px",
+        "paddingTop": "0px",
+        "position": "relative",
+        "width": "320px",
+        "overflow": "hidden",
+        "isReasonableHeight": true,
+        "heightInVh": 70,
+        "viewport": {
+          "width": 320,
+          "height": 568
+        }
+      },
+      "button": {
+        "isVisible": true,
+        "display": "flex",
+        "size": "44x44",
+        "zIndex": "1001",
+        "position": "relative"
+      },
+      "animation": {
+        "before": {
+          "overlayTransition": "opacity 0.3s, visibility 0.3s",
+          "contentTransition": "transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)",
+          "overlayTransform": "matrix(1, 0, 0, 1, 0, 0)",
+          "contentTransform": "matrix(1, 0, 0, 1, 0, 0)"
+        },
+        "during": {
+          "overlayOpacity": "0.468385",
+          "contentTransform": "matrix(1, 0, 0, 1, 0, 0)",
+          "overlayActive": true
+        },
+        "after": {
+          "overlayOpacity": "1",
+          "contentTransform": "matrix(1, 0, 0, 1, 0, 0)",
+          "overlayActive": true
+        },
+        "noTranslateY": true,
+        "smoothScale": false,
+        "animationWorking": true
+      },
+      "passed": false
+    },
+    {
+      "viewport": "Medium Mobile",
+      "hero": {
+        "height": "548.594px",
+        "minHeight": "450px",
+        "actualHeight": 549,
+        "marginTop": "0px",
+        "paddingTop": "0px",
+        "position": "relative",
+        "width": "390px",
+        "overflow": "hidden",
+        "isReasonableHeight": true,
+        "heightInVh": 65,
+        "viewport": {
+          "width": 390,
+          "height": 844
+        }
+      },
+      "button": {
+        "isVisible": true,
+        "display": "flex",
+        "size": "44x44",
+        "zIndex": "1001",
+        "position": "relative"
+      },
+      "animation": {
+        "before": {
+          "overlayTransition": "opacity 0.3s, visibility 0.3s",
+          "contentTransition": "transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)",
+          "overlayTransform": "matrix(1, 0, 0, 1, 0, 0)",
+          "contentTransform": "matrix(1, 0, 0, 1, 0, 0)"
+        },
+        "during": {
+          "overlayOpacity": "0.667388",
+          "contentTransform": "matrix(1, 0, 0, 1, 0, 0)",
+          "overlayActive": true
+        },
+        "after": {
+          "overlayOpacity": "1",
+          "contentTransform": "matrix(1, 0, 0, 1, 0, 0)",
+          "overlayActive": true
+        },
+        "noTranslateY": true,
+        "smoothScale": false,
+        "animationWorking": true
+      },
+      "passed": false
+    },
+    {
+      "viewport": "Large Mobile",
+      "hero": {
+        "height": "520px",
+        "minHeight": "450px",
+        "actualHeight": 520,
+        "marginTop": "0px",
+        "paddingTop": "0px",
+        "position": "relative",
+        "width": "480px",
+        "overflow": "hidden",
+        "isReasonableHeight": true,
+        "heightInVh": 65,
+        "viewport": {
+          "width": 480,
+          "height": 800
+        }
+      },
+      "button": {
+        "isVisible": true,
+        "display": "flex",
+        "size": "44x44",
+        "zIndex": "1001",
+        "position": "relative"
+      },
+      "animation": {
+        "before": {
+          "overlayTransition": "opacity 0.3s, visibility 0.3s",
+          "contentTransition": "transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)",
+          "overlayTransform": "matrix(1, 0, 0, 1, 0, 0)",
+          "contentTransform": "matrix(1, 0, 0, 1, 0, 0)"
+        },
+        "during": {
+          "overlayOpacity": "0.467655",
+          "contentTransform": "matrix(1, 0, 0, 1, 0, 0)",
+          "overlayActive": true
+        },
+        "after": {
+          "overlayOpacity": "1",
+          "contentTransform": "matrix(1, 0, 0, 1, 0, 0)",
+          "overlayActive": true
+        },
+        "noTranslateY": true,
+        "smoothScale": false,
+        "animationWorking": true
+      },
+      "passed": false
+    }
+  ],
+  "improvements": [
+    "Simplified hero section height calculations",
+    "Removed popping translateY animation from mobile overlay",
+    "Improved mobile menu scale animation",
+    "Fixed header heights for consistent spacing"
+  ]
+}

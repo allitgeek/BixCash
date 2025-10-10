@@ -3,9 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#021c47">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#ffffff">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-status-bar-style" content="light-content">
+    <meta name="color-scheme" content="light only">
     <title>BixCash - Shop to Earn</title>
 
     <!-- Performance Optimization: Resource Hints -->
@@ -426,7 +429,7 @@
             transform: rotate(-45deg) translate(6px, -6px);
         }
 
-        /* Mobile Navigation Overlay */
+        /* Mobile Navigation Overlay - IMPROVED: Smoother animation without "popping" */
         .mobile-nav-overlay {
             position: fixed;
             top: 0;
@@ -441,17 +444,16 @@
             justify-content: center;
             opacity: 0;
             visibility: hidden;
-            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            transform: translateY(-100%);
+            /* FIXED: Removed translateY animation to prevent "popping" */
+            transition: opacity 0.3s ease, visibility 0.3s ease;
         }
 
         .mobile-nav-overlay.active {
             opacity: 1;
             visibility: visible;
-            transform: translateY(0);
         }
 
-        /* Mobile Navigation Content */
+        /* Mobile Navigation Content - IMPROVED: Gentler scale animation */
         .mobile-nav-content {
             position: relative;
             width: 90%;
@@ -461,8 +463,9 @@
             border-radius: 20px;
             padding: 0;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            transform: scale(0.8);
-            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            /* FIXED: Reduced scale change and smoother easing */
+            transform: scale(0.95);
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         .mobile-nav-overlay.active .mobile-nav-content {
@@ -703,6 +706,8 @@
                ENHANCED RESPONSIVE BREAKPOINT SYSTEM
                ================================= */
 
+            /* IMPROVED MOBILE BREAKPOINTS - Fixed hero responsiveness issues */
+
             /* Ultra-small mobile (320px and below) */
             @media (max-width: 320px) {
                 body {
@@ -711,17 +716,23 @@
 
                 .main-header {
                     padding: var(--space-xs) var(--space-sm);
+                    height: 70px; /* Fixed header height */
                 }
 
                 .main-header .logo img {
                     height: 35px;
                 }
 
+                /* FIXED: Simplified hero height calculation */
                 .hero-slider {
-                    min-height: 50vh;
-                    height: calc(100vh - 70px);
-                    margin-top: -70px;
-                    padding-top: 70px;
+                    min-height: 400px; /* Safe minimum */
+                    height: 60vh; /* Simple viewport-based height */
+                    margin-top: 0; /* Removed complex margin/padding calculations */
+                    padding-top: 0;
+                    /* Ensure proper positioning */
+                    position: relative;
+                    width: 100%;
+                    overflow: hidden;
                 }
 
                 /* Fluid typography for ultra-small screens */
@@ -743,17 +754,23 @@
 
                 .main-header {
                     padding: var(--space-sm) var(--space-md);
+                    height: 80px; /* Fixed header height */
                 }
 
                 .main-header .logo img {
                     height: 40px;
                 }
 
+                /* FIXED: Simplified hero height calculation */
                 .hero-slider {
-                    min-height: 60vh;
-                    height: calc(100vh - 80px);
-                    margin-top: -80px;
-                    padding-top: 80px;
+                    min-height: 450px; /* Safe minimum */
+                    height: 65vh; /* Simple viewport-based height */
+                    margin-top: 0; /* Removed complex margin/padding calculations */
+                    padding-top: 0;
+                    /* Ensure proper positioning */
+                    position: relative;
+                    width: 100%;
+                    overflow: hidden;
                 }
 
                 /* Enhanced typography */
@@ -773,11 +790,20 @@
                     padding-top: 90px;
                 }
 
+                .main-header {
+                    height: 90px; /* Fixed header height */
+                }
+
+                /* FIXED: Simplified hero height calculation */
                 .hero-slider {
-                    min-height: 70vh;
-                    height: calc(100vh - 90px);
-                    margin-top: -90px;
-                    padding-top: 90px;
+                    min-height: 500px; /* Safe minimum */
+                    height: 70vh; /* Simple viewport-based height */
+                    margin-top: 0; /* Removed complex margin/padding calculations */
+                    padding-top: 0;
+                    /* Ensure proper positioning */
+                    position: relative;
+                    width: 100%;
+                    overflow: hidden;
                 }
 
                 /* Typography scaling */
@@ -1008,16 +1034,8 @@
                 }
             }
 
-            /* Dark mode support (future-ready) */
-            @media (prefers-color-scheme: dark) {
-                :root {
-                    --bix-white: #1a1a1a;
-                    --bix-dark-blue: #ffffff;
-                    --bix-light-gray-1: #2a2a2a;
-                    --bix-light-gray-2: #3a3a3a;
-                    --bix-medium-gray: #cccccc;
-                }
-            }
+            /* REMOVED: Dark mode support to maintain consistent BixCash branding */
+            /* Forces light theme on all devices regardless of system preference */
         }
     </style>
 </head>

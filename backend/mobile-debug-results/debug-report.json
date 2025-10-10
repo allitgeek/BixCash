@@ -1,0 +1,121 @@
+{
+  "timestamp": "2025-10-10T18:23:33.248Z",
+  "analysis": {
+    "viewport": {
+      "width": 375,
+      "height": 667,
+      "devicePixelRatio": 1
+    },
+    "body": {
+      "paddingTop": "80px",
+      "margin": "0px",
+      "overflow": "visible",
+      "position": "static",
+      "width": "375px",
+      "actualWidth": 375,
+      "actualHeight": 7719,
+      "scrollHeight": 7719
+    },
+    "header": {
+      "position": "fixed",
+      "top": "0px",
+      "left": "0px",
+      "width": "375px",
+      "height": "62.5312px",
+      "zIndex": "1000",
+      "display": "flex",
+      "actualWidth": 375,
+      "actualHeight": 63,
+      "scrollHeight": 63
+    },
+    "hero": {
+      "height": "587px",
+      "minHeight": "400.2px",
+      "paddingTop": "80px",
+      "marginTop": "-80px",
+      "position": "relative",
+      "display": "block",
+      "boxSizing": "border-box",
+      "overflow": "hidden",
+      "actualWidth": 375,
+      "actualHeight": 587,
+      "scrollHeight": 587,
+      "isVisible": true,
+      "computedHeight": "587px",
+      "computedMinHeight": "400.2px"
+    },
+    "heroContainer": {
+      "height": "507px",
+      "width": "375px",
+      "position": "relative",
+      "display": "block",
+      "actualWidth": 375,
+      "actualHeight": 507,
+      "scrollHeight": 507
+    },
+    "mobileButton": {
+      "display": "flex",
+      "visibility": "visible",
+      "opacity": "1",
+      "position": "relative",
+      "zIndex": "1001",
+      "width": "44px",
+      "height": "44px",
+      "top": "0px",
+      "right": "0px",
+      "transform": "none",
+      "actualWidth": 44,
+      "actualHeight": 44,
+      "scrollHeight": 44,
+      "isVisible": true,
+      "hasActiveClass": false,
+      "classList": [
+        "mobile-menu-btn"
+      ]
+    },
+    "mobileOverlay": {
+      "display": "flex",
+      "visibility": "hidden",
+      "opacity": "0",
+      "position": "fixed",
+      "zIndex": "1000",
+      "transform": "matrix(1, 0, 0, 1, 0, 0)",
+      "transition": "0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+      "top": "0px",
+      "left": "0px",
+      "width": "375px",
+      "height": "667px",
+      "actualWidth": 375,
+      "actualHeight": 667,
+      "scrollHeight": 667,
+      "hasActiveClass": false,
+      "classList": [
+        "mobile-nav-overlay"
+      ]
+    },
+    "mobileContent": {
+      "transform": "matrix(1, 0, 0, 1, 0, 0)",
+      "transition": "transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+      "position": "relative",
+      "width": "343px",
+      "maxWidth": "400px",
+      "height": "600.297px",
+      "maxHeight": "600.3px",
+      "borderRadius": "20px",
+      "boxShadow": "rgba(0, 0, 0, 0.3) 0px 20px 60px 0px",
+      "actualWidth": 343,
+      "actualHeight": 600,
+      "scrollHeight": 639,
+      "parentTransform": "matrix(1, 0, 0, 1, 0, 0)"
+    },
+    "cssIssues": {
+      "heroCalcHeight": false,
+      "heroViewportHeight": false,
+      "mobileButtonImportant": false
+    }
+  },
+  "issues": {
+    "hero": false,
+    "mobileButton": false
+  }
+}
