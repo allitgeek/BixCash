@@ -343,6 +343,316 @@
             background: var(--bix-light-green);
             transform: translateY(-2px);
         }
+
+        /* =================================
+           MOBILE NAVIGATION SYSTEM
+           ================================= */
+
+        /* Mobile Menu Button - Hidden by default, shown on mobile */
+        .mobile-menu-btn {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 44px;
+            height: 44px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+            position: relative;
+            z-index: 1001;
+        }
+
+        .mobile-menu-btn:hover {
+            background-color: rgba(2, 28, 71, 0.1);
+        }
+
+        .mobile-menu-btn:focus {
+            outline: 2px solid var(--bix-green);
+            outline-offset: 2px;
+        }
+
+        /* Hamburger Lines */
+        .hamburger-line {
+            display: block;
+            width: 24px;
+            height: 3px;
+            background-color: var(--bix-dark-blue);
+            margin: 3px 0;
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        /* Hamburger Animation - X when active */
+        .mobile-menu-btn.active .hamburger-line:nth-child(1) {
+            transform: rotate(45deg) translate(6px, 6px);
+        }
+
+        .mobile-menu-btn.active .hamburger-line:nth-child(2) {
+            opacity: 0;
+            transform: scale(0);
+        }
+
+        .mobile-menu-btn.active .hamburger-line:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
+        }
+
+        /* Mobile Navigation Overlay */
+        .mobile-nav-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(2, 28, 71, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transform: translateY(-100%);
+        }
+
+        .mobile-nav-overlay.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        /* Mobile Navigation Content */
+        .mobile-nav-content {
+            position: relative;
+            width: 90%;
+            max-width: 400px;
+            max-height: 90vh;
+            background: var(--bix-white);
+            border-radius: 20px;
+            padding: 0;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            transform: scale(0.8);
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .mobile-nav-overlay.active .mobile-nav-content {
+            transform: scale(1);
+        }
+
+        /* Mobile Navigation Header */
+        .mobile-nav-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 1.5rem 1rem;
+            border-bottom: 2px solid var(--bix-light-gray-2);
+        }
+
+        .mobile-nav-logo {
+            height: 40px;
+            width: auto;
+        }
+
+        .mobile-nav-close {
+            width: 44px;
+            height: 44px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+            font-size: 24px;
+            color: var(--bix-dark-blue);
+        }
+
+        .mobile-nav-close:hover {
+            background-color: var(--bix-light-gray-2);
+        }
+
+        .mobile-nav-close:focus {
+            outline: 2px solid var(--bix-green);
+            outline-offset: 2px;
+        }
+
+        /* Mobile Navigation Menu */
+        .mobile-nav {
+            padding: 1rem 0 2rem;
+        }
+
+        .mobile-nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .mobile-nav li {
+            margin: 0;
+        }
+
+        .mobile-nav-link {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            color: var(--bix-dark-blue);
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border-radius: 0;
+            position: relative;
+        }
+
+        .mobile-nav-link:hover,
+        .mobile-nav-link.active {
+            background-color: var(--bix-light-gray-1);
+            color: var(--bix-green);
+            transform: translateX(8px);
+        }
+
+        .mobile-nav-link::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--bix-green);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .mobile-nav-link:hover::before,
+        .mobile-nav-link.active::before {
+            transform: scaleY(1);
+        }
+
+        /* Mobile Authentication Button */
+        .mobile-nav-auth {
+            padding: 1rem 1.5rem 0;
+            border-top: 2px solid var(--bix-light-gray-2);
+            margin-top: 1rem;
+        }
+
+        .mobile-auth-btn {
+            display: block;
+            width: 100%;
+            background: linear-gradient(135deg, #93db4d 0%, #76d37a 100%);
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 1rem;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(147, 219, 77, 0.3);
+            transition: all 0.3s ease;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mobile-auth-btn:hover {
+            background: linear-gradient(135deg, #85c441 0%, #68c26a 100%);
+            box-shadow: 0 6px 20px rgba(147, 219, 77, 0.4);
+            transform: translateY(-2px);
+        }
+
+        /* =================================
+           RESPONSIVE NAVIGATION CONTROL
+           ================================= */
+
+        /* Hide mobile elements on desktop */
+        .mobile-menu-btn,
+        .mobile-nav-overlay {
+            display: none;
+        }
+
+        /* Desktop navigation visible by default */
+        .desktop-nav,
+        .desktop-auth {
+            display: flex;
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 768px) {
+            /* Show mobile menu button */
+            .mobile-menu-btn {
+                display: flex;
+            }
+
+            /* Hide desktop navigation */
+            .desktop-nav,
+            .desktop-auth {
+                display: none;
+            }
+
+            /* Enable mobile navigation overlay */
+            .mobile-nav-overlay {
+                display: flex;
+            }
+
+            /* Adjust header padding on mobile */
+            .main-header {
+                padding: 1rem 1.5rem;
+            }
+
+            /* Smaller logo on mobile */
+            .main-header .logo img {
+                height: 45px;
+            }
+        }
+
+        /* Ultra-small mobile adjustments */
+        @media (max-width: 480px) {
+            .mobile-nav-content {
+                width: 95%;
+                margin: 1rem;
+            }
+
+            .mobile-nav-header {
+                padding: 1rem 1rem 0.5rem;
+            }
+
+            .mobile-nav-logo {
+                height: 35px;
+            }
+
+            .mobile-nav-link {
+                padding: 0.8rem 1rem;
+                font-size: 1rem;
+            }
+
+            .mobile-auth-btn {
+                font-size: 1rem;
+                padding: 0.8rem;
+            }
+        }
+
+        /* Prevent body scroll when mobile menu is open */
+        body.mobile-menu-open {
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+        }
+
+        /* Enhanced touch targets for mobile */
+        @media (max-width: 768px) {
+            .mobile-nav-link,
+            .mobile-auth-btn,
+            .mobile-menu-btn,
+            .mobile-nav-close {
+                min-height: 44px; /* Apple's recommended touch target size */
+                min-width: 44px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -351,7 +661,9 @@
         <a href="/" class="logo">
             <img src="/images/logos/logos-01.png" alt="BixCash Logo">
         </a>
-        <nav>
+
+        <!-- Desktop Navigation -->
+        <nav class="desktop-nav">
             <ul>
                 <li><a href="#home" class="active">Home</a></li>
                 <li><a href="#brands">Brands</a></li>
@@ -361,8 +673,41 @@
                 <li><a href="#contact">Contact Us</a></li>
             </ul>
         </nav>
-        <a href="{{ route('login') }}" class="auth-btn">Sign In</a>
+
+        <!-- Mobile Menu Button -->
+        <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle mobile menu">
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+        </button>
+
+        <a href="{{ route('login') }}" class="auth-btn desktop-auth">Sign In</a>
     </header>
+
+    <!-- Mobile Navigation Overlay -->
+    <div class="mobile-nav-overlay" id="mobile-nav-overlay">
+        <div class="mobile-nav-content">
+            <div class="mobile-nav-header">
+                <img src="/images/logos/logos-01.png" alt="BixCash Logo" class="mobile-nav-logo">
+                <button class="mobile-nav-close" id="mobile-nav-close" aria-label="Close mobile menu">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <nav class="mobile-nav">
+                <ul>
+                    <li><a href="#home" class="mobile-nav-link">Home</a></li>
+                    <li><a href="#brands" class="mobile-nav-link">Brands</a></li>
+                    <li><a href="#how-it-works" class="mobile-nav-link">How It Works</a></li>
+                    <li><a href="#partner" class="mobile-nav-link">Partner with us</a></li>
+                    <li><a href="#promotions" class="mobile-nav-link">Promotions</a></li>
+                    <li><a href="#contact" class="mobile-nav-link">Contact Us</a></li>
+                </ul>
+                <div class="mobile-nav-auth">
+                    <a href="{{ route('login') }}" class="mobile-auth-btn">Sign In</a>
+                </div>
+            </nav>
+        </div>
+    </div>
 
     <section id="home" class="hero-slider">
         <div class="swiper-container">
@@ -744,6 +1089,9 @@
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js" defer></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // Initialize Mobile Navigation System
+            initializeMobileNavigation();
+
             // Performance Optimization: Parallel API calls with loading states
             showLoadingStates();
 
@@ -770,6 +1118,157 @@
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 return response.json();
+            }
+
+            // =================================
+            // MOBILE NAVIGATION SYSTEM
+            // =================================
+            function initializeMobileNavigation() {
+                const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+                const mobileNavOverlay = document.getElementById('mobile-nav-overlay');
+                const mobileNavClose = document.getElementById('mobile-nav-close');
+                const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+                const body = document.body;
+
+                // Check if elements exist
+                if (!mobileMenuBtn || !mobileNavOverlay || !mobileNavClose) {
+                    console.log('Mobile navigation elements not found');
+                    return;
+                }
+
+                // Open mobile menu
+                function openMobileMenu() {
+                    mobileNavOverlay.classList.add('active');
+                    mobileMenuBtn.classList.add('active');
+                    body.classList.add('mobile-menu-open');
+
+                    // Focus management for accessibility
+                    setTimeout(() => {
+                        mobileNavClose.focus();
+                    }, 100);
+                }
+
+                // Close mobile menu
+                function closeMobileMenu() {
+                    mobileNavOverlay.classList.remove('active');
+                    mobileMenuBtn.classList.remove('active');
+                    body.classList.remove('mobile-menu-open');
+
+                    // Return focus to hamburger button
+                    mobileMenuBtn.focus();
+                }
+
+                // Toggle mobile menu
+                function toggleMobileMenu() {
+                    if (mobileNavOverlay.classList.contains('active')) {
+                        closeMobileMenu();
+                    } else {
+                        openMobileMenu();
+                    }
+                }
+
+                // Event Listeners
+                mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+                mobileNavClose.addEventListener('click', closeMobileMenu);
+
+                // Close menu when clicking on overlay background
+                mobileNavOverlay.addEventListener('click', function(e) {
+                    if (e.target === mobileNavOverlay) {
+                        closeMobileMenu();
+                    }
+                });
+
+                // Close menu when pressing Escape key
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && mobileNavOverlay.classList.contains('active')) {
+                        closeMobileMenu();
+                    }
+                });
+
+                // Handle mobile navigation link clicks
+                mobileNavLinks.forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+
+                        // Remove active class from all mobile nav links
+                        mobileNavLinks.forEach(navLink => {
+                            navLink.classList.remove('active');
+                        });
+
+                        // Add active class to clicked link
+                        this.classList.add('active');
+
+                        // Close mobile menu
+                        closeMobileMenu();
+
+                        // Navigate to section (reuse existing smooth scroll logic)
+                        const targetId = this.getAttribute('href').substring(1);
+                        const targetElement = document.getElementById(targetId);
+
+                        if (targetElement) {
+                            // Update desktop nav active state too
+                            document.querySelectorAll('.desktop-nav a').forEach(navLink => {
+                                navLink.classList.remove('active');
+                            });
+
+                            const desktopLink = document.querySelector(`.desktop-nav a[href="#${targetId}"]`);
+                            if (desktopLink) {
+                                desktopLink.classList.add('active');
+                            }
+
+                            // Smooth scroll to target
+                            targetElement.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'start'
+                            });
+                        }
+                    });
+                });
+
+                // Handle window resize - close mobile menu if window becomes too wide
+                window.addEventListener('resize', function() {
+                    if (window.innerWidth > 768 && mobileNavOverlay.classList.contains('active')) {
+                        closeMobileMenu();
+                    }
+                });
+
+                // Sync desktop and mobile navigation active states
+                function syncNavigationStates() {
+                    const sections = ['home', 'brands', 'how-it-works', 'partner', 'promotions', 'contact'];
+                    const scrollPosition = window.scrollY + 150; // Offset for header
+
+                    for (let i = sections.length - 1; i >= 0; i--) {
+                        const section = document.getElementById(sections[i]);
+                        if (section && section.offsetTop <= scrollPosition) {
+                            // Update desktop navigation
+                            document.querySelectorAll('.desktop-nav a').forEach(link => {
+                                link.classList.remove('active');
+                            });
+
+                            const desktopActiveLink = document.querySelector(`.desktop-nav a[href="#${sections[i]}"]`);
+                            if (desktopActiveLink) {
+                                desktopActiveLink.classList.add('active');
+                            }
+
+                            // Update mobile navigation
+                            mobileNavLinks.forEach(link => {
+                                link.classList.remove('active');
+                            });
+
+                            const mobileActiveLink = document.querySelector(`.mobile-nav-link[href="#${sections[i]}"]`);
+                            if (mobileActiveLink) {
+                                mobileActiveLink.classList.add('active');
+                            }
+
+                            break;
+                        }
+                    }
+                }
+
+                // Listen for scroll events to sync navigation states
+                window.addEventListener('scroll', throttle(syncNavigationStates, 100));
+
+                console.log('✅ Mobile navigation system initialized');
             }
 
             // Loading state management
