@@ -345,10 +345,32 @@
         }
 
         /* =================================
-           MOBILE NAVIGATION SYSTEM
+           COMPREHENSIVE MOBILE RESPONSIVENESS SYSTEM
            ================================= */
 
-        /* Mobile Menu Button - Hidden by default, shown on mobile */
+        /* Enhanced Responsive Breakpoint System */
+        :root {
+            /* Fluid Typography Using CSS Clamp */
+            --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+            --text-sm: clamp(0.875rem, 0.8rem + 0.375vw, 1rem);
+            --text-base: clamp(1rem, 0.9rem + 0.5vw, 1.125rem);
+            --text-lg: clamp(1.125rem, 1rem + 0.625vw, 1.25rem);
+            --text-xl: clamp(1.25rem, 1.1rem + 0.75vw, 1.5rem);
+            --text-2xl: clamp(1.5rem, 1.3rem + 1vw, 2rem);
+            --text-3xl: clamp(1.875rem, 1.5rem + 1.875vw, 3rem);
+            --text-4xl: clamp(2.25rem, 1.8rem + 2.25vw, 4rem);
+            --text-5xl: clamp(3rem, 2rem + 5vw, 5.5rem);
+
+            /* Fluid Spacing System */
+            --space-xs: clamp(0.25rem, 0.2rem + 0.25vw, 0.5rem);
+            --space-sm: clamp(0.5rem, 0.4rem + 0.5vw, 1rem);
+            --space-md: clamp(1rem, 0.8rem + 1vw, 2rem);
+            --space-lg: clamp(1.5rem, 1rem + 2.5vw, 4rem);
+            --space-xl: clamp(2rem, 1.5rem + 2.5vw, 6rem);
+            --space-2xl: clamp(3rem, 2rem + 5vw, 8rem);
+        }
+
+        /* MOBILE NAVIGATION SYSTEM */
         .mobile-menu-btn {
             display: none;
             flex-direction: column;
@@ -364,6 +386,10 @@
             transition: background-color 0.3s ease;
             position: relative;
             z-index: 1001;
+            /* Enhanced touch target */
+            min-width: 44px;
+            min-height: 44px;
+            touch-action: manipulation;
         }
 
         .mobile-menu-btn:hover {
@@ -569,16 +595,18 @@
            RESPONSIVE NAVIGATION CONTROL
            ================================= */
 
-        /* Hide mobile elements on desktop */
-        .mobile-menu-btn,
-        .mobile-nav-overlay {
-            display: none;
-        }
-
         /* Desktop navigation visible by default */
         .desktop-nav,
         .desktop-auth {
             display: flex;
+        }
+
+        /* Hide mobile elements on desktop - use media query for proper specificity */
+        @media (min-width: 769px) {
+            .mobile-menu-btn,
+            .mobile-nav-overlay {
+                display: none;
+            }
         }
 
         /* Responsive Breakpoints */
@@ -651,6 +679,344 @@
             .mobile-nav-close {
                 min-height: 44px; /* Apple's recommended touch target size */
                 min-width: 44px;
+            }
+
+            /* CRITICAL: Force mobile menu button to show */
+            .mobile-menu-btn {
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: center !important;
+                align-items: center !important;
+                width: 44px !important;
+                height: 44px !important;
+                background: none !important;
+                border: none !important;
+                cursor: pointer !important;
+                padding: 8px !important;
+                border-radius: 8px !important;
+                position: relative !important;
+                z-index: 1001 !important;
+                transition: background-color 0.3s ease !important;
+            }
+
+            /* =================================
+               ENHANCED RESPONSIVE BREAKPOINT SYSTEM
+               ================================= */
+
+            /* Ultra-small mobile (320px and below) */
+            @media (max-width: 320px) {
+                body {
+                    padding-top: 70px;
+                }
+
+                .main-header {
+                    padding: var(--space-xs) var(--space-sm);
+                }
+
+                .main-header .logo img {
+                    height: 35px;
+                }
+
+                .hero-slider {
+                    min-height: 50vh;
+                    height: calc(100vh - 70px);
+                    margin-top: -70px;
+                    padding-top: 70px;
+                }
+
+                /* Fluid typography for ultra-small screens */
+                .brands-section h2,
+                .promotions-title,
+                .dashboard-main-title,
+                .contact-title,
+                .how-it-works-section .main-heading {
+                    font-size: var(--text-3xl);
+                    line-height: 1.1;
+                }
+            }
+
+            /* Mobile portrait (321px - 480px) */
+            @media (min-width: 321px) and (max-width: 480px) {
+                body {
+                    padding-top: 80px;
+                }
+
+                .main-header {
+                    padding: var(--space-sm) var(--space-md);
+                }
+
+                .main-header .logo img {
+                    height: 40px;
+                }
+
+                .hero-slider {
+                    min-height: 60vh;
+                    height: calc(100vh - 80px);
+                    margin-top: -80px;
+                    padding-top: 80px;
+                }
+
+                /* Enhanced typography */
+                .brands-section h2,
+                .promotions-title,
+                .dashboard-main-title,
+                .contact-title,
+                .how-it-works-section .main-heading {
+                    font-size: var(--text-4xl);
+                    line-height: 1.1;
+                }
+            }
+
+            /* Mobile landscape (481px - 767px) */
+            @media (min-width: 481px) and (max-width: 767px) {
+                body {
+                    padding-top: 90px;
+                }
+
+                .hero-slider {
+                    min-height: 70vh;
+                    height: calc(100vh - 90px);
+                    margin-top: -90px;
+                    padding-top: 90px;
+                }
+
+                /* Typography scaling */
+                .brands-section h2,
+                .promotions-title,
+                .dashboard-main-title,
+                .contact-title,
+                .how-it-works-section .main-heading {
+                    font-size: var(--text-4xl);
+                }
+            }
+
+            /* Tablet portrait (768px - 1023px) */
+            @media (min-width: 768px) and (max-width: 1023px) {
+                .brands-section h2,
+                .promotions-title,
+                .dashboard-main-title,
+                .contact-title,
+                .how-it-works-section .main-heading {
+                    font-size: var(--text-5xl);
+                }
+            }
+
+            /* Tablet landscape & Small Desktop (1024px - 1199px) */
+            @media (min-width: 1024px) and (max-width: 1199px) {
+                .brands-section h2,
+                .promotions-title,
+                .dashboard-main-title,
+                .contact-title,
+                .how-it-works-section .main-heading {
+                    font-size: var(--text-5xl);
+                }
+            }
+
+            /* Large Desktop (1200px+) */
+            @media (min-width: 1200px) {
+                .brands-section h2,
+                .promotions-title,
+                .dashboard-main-title,
+                .contact-title,
+                .how-it-works-section .main-heading {
+                    font-size: 5.5rem;
+                }
+            }
+
+            /* CRITICAL: Mobile Navigation Control */
+            @media (max-width: 768px) {
+                .main-header .desktop-nav,
+                .main-header nav.desktop-nav,
+                nav.desktop-nav,
+                .desktop-nav,
+                .desktop-auth {
+                    display: none !important;
+                }
+
+                .mobile-nav-overlay {
+                    display: flex !important;
+                }
+
+                /* Enhanced touch targets for mobile */
+                .mobile-menu-btn {
+                    display: flex !important;
+                    flex-direction: column !important;
+                    justify-content: center !important;
+                    align-items: center !important;
+                    width: 44px !important;
+                    height: 44px !important;
+                    background: none !important;
+                    border: none !important;
+                    cursor: pointer !important;
+                    padding: 8px !important;
+                    border-radius: 8px !important;
+                    position: relative !important;
+                    z-index: 1001 !important;
+                    transition: background-color 0.3s ease !important;
+                    touch-action: manipulation !important;
+                }
+
+                /* iOS Safari zoom prevention */
+                .form-input,
+                .form-textarea,
+                input[type="text"],
+                input[type="email"],
+                input[type="tel"],
+                textarea {
+                    font-size: 16px !important;
+                    transform: translateZ(0);
+                    -webkit-font-smoothing: antialiased;
+                }
+
+                /* Enhanced touch-friendly spacing */
+                .category-item,
+                .brand-slide,
+                .promotion-card,
+                .nav-button,
+                .social-link {
+                    min-height: 44px;
+                    min-width: 44px;
+                    touch-action: manipulation;
+                }
+
+                /* Mobile-optimized grid systems */
+                .promotions-grid {
+                    grid-template-columns: 1fr;
+                    gap: var(--space-md);
+                    padding: 0 var(--space-sm);
+                }
+
+                .category-container {
+                    gap: var(--space-md);
+                    padding: 0 var(--space-sm);
+                }
+
+                /* Mobile-first spacing */
+                .brands-section,
+                .promotions-section,
+                .how-it-works-section,
+                .customer-dashboard-section,
+                .contact-section {
+                    padding: var(--space-xl) var(--space-md);
+                }
+            }
+
+            /* Show mobile overlay */
+            .mobile-nav-overlay {
+                display: flex !important;
+            }
+
+            /* =================================
+               PERFORMANCE & ACCESSIBILITY OPTIMIZATIONS
+               ================================= */
+
+            /* Reduced motion support for accessibility */
+            @media (prefers-reduced-motion: reduce) {
+                .chat-dots span,
+                .green-sparkle,
+                .category-item,
+                .brand-slide,
+                .promotion-card,
+                .dashboard-card,
+                .social-link,
+                .nav-button,
+                .mobile-menu-btn,
+                .mobile-nav-overlay,
+                .mobile-nav-content {
+                    animation: none !important;
+                    transition-duration: 0.01ms !important;
+                }
+
+                .dashboard-card:hover,
+                .promotion-card:hover,
+                .social-link:hover,
+                .nav-button:hover,
+                .form-submit-btn:hover,
+                .category-item:hover,
+                .brand-slide:hover {
+                    transform: none !important;
+                }
+            }
+
+            /* Enhanced focus indicators for accessibility */
+            .mobile-menu-btn:focus,
+            .mobile-nav-close:focus,
+            .mobile-nav-link:focus,
+            .mobile-auth-btn:focus,
+            .category-item:focus,
+            .brand-slide:focus,
+            .promotion-card:focus {
+                outline: 3px solid var(--bix-green);
+                outline-offset: 2px;
+            }
+
+            /* Screen reader support */
+            .sr-only {
+                position: absolute;
+                width: 1px;
+                height: 1px;
+                padding: 0;
+                margin: -1px;
+                overflow: hidden;
+                clip: rect(0, 0, 0, 0);
+                white-space: nowrap;
+                border: 0;
+            }
+
+            /* High contrast mode support */
+            @media (prefers-contrast: high) {
+                .mobile-menu-btn,
+                .mobile-nav-link,
+                .category-item,
+                .brand-slide,
+                .promotion-card {
+                    border: 2px solid;
+                }
+            }
+
+            /* Performance optimizations */
+            .category-item,
+            .brand-slide,
+            .promotion-card,
+            .dashboard-card,
+            .mobile-nav-overlay,
+            .mobile-nav-content {
+                will-change: transform;
+                contain: layout style paint;
+            }
+
+            /* GPU acceleration for smooth animations */
+            .mobile-nav-overlay,
+            .mobile-nav-content,
+            .hamburger-line {
+                transform: translateZ(0);
+                backface-visibility: hidden;
+                perspective: 1000px;
+            }
+
+            /* Enhanced mobile carousel touch gestures */
+            .brands-carousel-container,
+            .swiper-container {
+                touch-action: pan-y pinch-zoom;
+            }
+
+            /* Mobile-specific image optimization */
+            @media (max-width: 768px) {
+                img {
+                    image-rendering: -webkit-optimize-contrast;
+                    image-rendering: crisp-edges;
+                }
+            }
+
+            /* Dark mode support (future-ready) */
+            @media (prefers-color-scheme: dark) {
+                :root {
+                    --bix-white: #1a1a1a;
+                    --bix-dark-blue: #ffffff;
+                    --bix-light-gray-1: #2a2a2a;
+                    --bix-light-gray-2: #3a3a3a;
+                    --bix-medium-gray: #cccccc;
+                }
             }
         }
     </style>

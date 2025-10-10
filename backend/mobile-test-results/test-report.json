@@ -1,0 +1,63 @@
+{
+  "websiteStatus": true,
+  "mobileNavigation": true,
+  "responsiveBreakpoints": [
+    {
+      "name": "ultra-small",
+      "width": 320,
+      "height": 568,
+      "mobileMenuVisible": true,
+      "desktopNavVisible": false,
+      "screenshot": true
+    },
+    {
+      "name": "mobile-portrait",
+      "width": 375,
+      "height": 667,
+      "mobileMenuVisible": true,
+      "desktopNavVisible": false,
+      "screenshot": true
+    },
+    {
+      "name": "mobile-landscape",
+      "width": 667,
+      "height": 375,
+      "mobileMenuVisible": true,
+      "desktopNavVisible": false,
+      "screenshot": true
+    },
+    {
+      "name": "tablet-portrait",
+      "width": 768,
+      "height": 1024,
+      "mobileMenuVisible": true,
+      "desktopNavVisible": false,
+      "screenshot": true
+    },
+    {
+      "name": "tablet-landscape",
+      "width": 1024,
+      "height": 768,
+      "mobileMenuVisible": false,
+      "desktopNavVisible": true,
+      "screenshot": true
+    },
+    {
+      "name": "desktop",
+      "width": 1200,
+      "height": 800,
+      "mobileMenuVisible": false,
+      "desktopNavVisible": true,
+      "screenshot": true
+    },
+    {
+      "name": "large-desktop",
+      "width": 1920,
+      "height": 1080,
+      "mobileMenuVisible": false,
+      "desktopNavVisible": true,
+      "screenshot": true
+    }
+  ],
+  "errors": []
+}
