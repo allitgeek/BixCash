@@ -1294,12 +1294,12 @@ html {
         padding: 1.5rem;
     }
 
-    /* Bottom navigation icons - Single row with 5 columns */
+    /* Bottom navigation icons - Single row with 5 columns FULL WIDTH */
     .bottom-nav-icons {
         display: grid;
         grid-template-columns: repeat(5, 1fr); /* All 5 icons in one row */
-        gap: 0.6rem;
-        margin-top: 1.5rem;
+        gap: 1rem;
+        margin-top: 2rem;
         justify-items: stretch;
         max-width: 100%;
     }
@@ -1313,15 +1313,15 @@ html {
 
     .nav-button {
         width: 100%;
-        min-width: 80px;
-        max-width: 100px;
-        min-height: 70px;
-        padding: 0.5rem;
+        min-width: 110px;
+        max-width: 140px;
+        min-height: 85px;
+        padding: 0.7rem;
     }
 
     .dashboard-icon-img {
-        width: 65px;
-        height: 48px;
+        width: 90px;
+        height: 66px;
     }
 }
 
@@ -1567,11 +1567,11 @@ html {
         width: 6px; /* Reduced from 8px */
     }
 
-    /* Bottom navigation icons - Single row with 5 columns */
+    /* Bottom navigation icons - Single row with 5 columns FULL WIDTH */
     .bottom-nav-icons {
         display: grid;
         grid-template-columns: repeat(5, 1fr); /* All 5 icons in one row */
-        gap: 0.4rem;
+        gap: 0.7rem;
         margin-top: 1.5rem;
         justify-items: stretch;
         max-width: 100%;
@@ -1586,20 +1586,20 @@ html {
 
     .nav-button {
         width: 100%;
-        min-width: 70px;
-        max-width: 90px;
-        min-height: 65px;
-        padding: 0.5rem;
+        min-width: 85px;
+        max-width: 115px;
+        min-height: 75px;
+        padding: 0.6rem;
     }
 
     .dashboard-icon-img {
-        width: 60px;
-        height: 44px;
+        width: 75px;
+        height: 55px;
     }
 
     .nav-label {
-        font-size: 0.65rem;
-        margin-top: 0.25rem;
+        font-size: 0.7rem;
+        margin-top: 0.3rem;
     }
 
     /* Hero slider content */
@@ -1739,10 +1739,10 @@ html {
         height: 80px;
     }
 
-    /* Single row navigation on ultra-small screens */
+    /* Single row navigation on ultra-small screens FULL WIDTH */
     .bottom-nav-icons {
         grid-template-columns: repeat(5, 1fr); /* All 5 icons in one row */
-        gap: 0.3rem;
+        gap: 0.4rem;
     }
 
     .promotion-card {
@@ -1751,21 +1751,21 @@ html {
 
     /* Dashboard ultra-small screen optimizations */
     .dashboard-icon-img {
-        width: 50px;
-        height: 37px;
+        width: 60px;
+        height: 44px;
     }
 
     .nav-button {
         width: 100%;
-        min-width: 60px;
-        max-width: 75px;
-        min-height: 55px;
+        min-width: 70px;
+        max-width: 90px;
+        min-height: 60px;
         padding: 0.4rem;
     }
 
     .nav-label {
-        font-size: 0.6rem;
-        margin-top: 0.2rem;
+        font-size: 0.65rem;
+        margin-top: 0.25rem;
     }
 
     .monitor-screen {

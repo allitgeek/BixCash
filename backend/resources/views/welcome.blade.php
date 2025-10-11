@@ -1278,49 +1278,6 @@
                         <div class="monitor-stand"></div>
                         <div class="monitor-base"></div>
                     </div>
-
-                    <!-- Bottom Navigation Icons -->
-                    <div class="bottom-nav-icons">
-                        <!-- Cash Back Button -->
-                        <div class="nav-icon-item">
-                            <div class="nav-button cash-back-btn">
-                                <img src="/images/elements/dashboard icons.png" alt="Cash Back" class="dashboard-icon-img">
-                            </div>
-                            <span class="nav-label">Cash Back</span>
-                        </div>
-
-                        <!-- Wallet Button -->
-                        <div class="nav-icon-item">
-                            <div class="nav-button wallet-btn">
-                                <img src="/images/elements/wallet icon.png" alt="Wallet" class="dashboard-icon-img">
-                            </div>
-                            <span class="nav-label">Wallet</span>
-                        </div>
-
-                        <!-- Transaction Button -->
-                        <div class="nav-icon-item">
-                            <div class="nav-button transaction-btn">
-                                <img src="/images/elements/transaction icon.png" alt="Transaction" class="dashboard-icon-img">
-                            </div>
-                            <span class="nav-label">Transaction</span>
-                        </div>
-
-                        <!-- Receipt Button -->
-                        <div class="nav-icon-item">
-                            <div class="nav-button receipt-btn">
-                                <img src="/images/elements/receipt icon.png" alt="Receipt" class="dashboard-icon-img">
-                            </div>
-                            <span class="nav-label">Receipt</span>
-                        </div>
-
-                        <!-- Withdrawal Button -->
-                        <div class="nav-icon-item">
-                            <div class="nav-button withdrawal-btn">
-                                <img src="/images/elements/withdrawal icon.png" alt="Withdrawal" class="dashboard-icon-img">
-                            </div>
-                            <span class="nav-label">Withdrawal</span>
-                        </div>
-                    </div>
                 </div>
 
                 <!-- Right Side: Action Cards -->
@@ -1356,6 +1313,49 @@
                     </div>
                 </div>
 
+            </div>
+
+            <!-- Bottom Navigation Icons - Full Width Below Both Columns -->
+            <div class="bottom-nav-icons">
+                <!-- Cash Back Button -->
+                <div class="nav-icon-item">
+                    <div class="nav-button cash-back-btn">
+                        <img src="/images/elements/dashboard icons.png" alt="Cash Back" class="dashboard-icon-img">
+                    </div>
+                    <span class="nav-label">Cash Back</span>
+                </div>
+
+                <!-- Wallet Button -->
+                <div class="nav-icon-item">
+                    <div class="nav-button wallet-btn">
+                        <img src="/images/elements/wallet icon.png" alt="Wallet" class="dashboard-icon-img">
+                    </div>
+                    <span class="nav-label">Wallet</span>
+                </div>
+
+                <!-- Transaction Button -->
+                <div class="nav-icon-item">
+                    <div class="nav-button transaction-btn">
+                        <img src="/images/elements/transaction icon.png" alt="Transaction" class="dashboard-icon-img">
+                    </div>
+                    <span class="nav-label">Transaction</span>
+                </div>
+
+                <!-- Receipt Button -->
+                <div class="nav-icon-item">
+                    <div class="nav-button receipt-btn">
+                        <img src="/images/elements/receipt icon.png" alt="Receipt" class="dashboard-icon-img">
+                    </div>
+                    <span class="nav-label">Receipt</span>
+                </div>
+
+                <!-- Withdrawal Button -->
+                <div class="nav-icon-item">
+                    <div class="nav-button withdrawal-btn">
+                        <img src="/images/elements/withdrawal icon.png" alt="Withdrawal" class="dashboard-icon-img">
+                    </div>
+                    <span class="nav-label">Withdrawal</span>
+                </div>
             </div>
         </div>
     </section>
