@@ -1445,6 +1445,32 @@ html {
         padding: 3rem 1rem; /* Increased from 0.8rem */
     }
 
+    /* MOBILE LAYOUT: Place 3 action cards next to monitor on the right */
+    .dashboard-content-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr; /* 2 columns: monitor left, cards right */
+        gap: 1rem;
+        align-items: start;
+    }
+
+    /* Cards should be in the right column */
+    .dashboard-right-content {
+        gap: 0.8rem; /* Reduced gap for mobile */
+    }
+
+    .dashboard-card {
+        border-radius: 15px; /* Slightly smaller for mobile */
+    }
+
+    .card-full-image {
+        border-radius: 15px;
+    }
+
+    /* Monitor container adjustments */
+    .monitor-container {
+        margin-bottom: 1.5rem; /* Reduced from 3rem */
+    }
+
     /* FIXED: Keep 2-column grid layout on mobile instead of single stack */
     .monitor-screen {
         grid-template-areas:
@@ -1518,18 +1544,24 @@ html {
         width: 6px; /* Reduced from 8px */
     }
 
-    /* Bottom navigation icons - 2 column grid */
+    /* Bottom navigation icons - 3+2 grid layout */
     .bottom-nav-icons {
         display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1rem;
+        grid-template-columns: repeat(3, 1fr); /* 3 icons in first row */
+        gap: 0.8rem;
         margin-top: 1.5rem;
+        justify-items: center;
     }
 
-    /* Center the last (5th) icon if odd number */
-    .nav-icon-item:last-child:nth-child(odd) {
-        grid-column: 1 / -1;
-        justify-self: center;
+    /* Last 2 icons (4th and 5th) should span and center on second row */
+    .nav-icon-item:nth-child(4),
+    .nav-icon-item:nth-child(5) {
+        grid-column: span 1;
+    }
+
+    /* Center the last row (items 4 and 5) by making item 4 start at column 2 */
+    .nav-icon-item:nth-child(4) {
+        grid-column-start: 2;
     }
 
     /* Reduce icon button and image sizes */
@@ -1545,15 +1577,6 @@ html {
 
     .nav-label {
         font-size: 0.65rem; /* Reduced from 0.7rem */
-    }
-
-    /* Reduce card border radius on mobile */
-    .dashboard-card {
-        border-radius: 20px; /* Reduced from 25px */
-    }
-
-    .card-full-image {
-        border-radius: 20px; /* Reduced from 25px */
     }
 
     /* Hero slider content */
@@ -1693,9 +1716,10 @@ html {
         height: 80px;
     }
 
+    /* Keep 3+2 navigation grid on ultra-small screens */
     .bottom-nav-icons {
-        grid-template-columns: 1fr;
-        gap: 0.8rem;
+        grid-template-columns: repeat(3, 1fr); /* Keep 3 columns */
+        gap: 0.6rem; /* Further reduced gap */
     }
 
     .promotion-card {
@@ -1730,11 +1754,21 @@ html {
     }
 
     .dashboard-card {
-        border-radius: 18px; /* Further reduced from 20px */
+        border-radius: 12px; /* Further reduced for ultra-small */
     }
 
     .card-full-image {
-        border-radius: 18px;
+        border-radius: 12px;
+    }
+
+    /* Keep 2-column grid for monitor+cards layout */
+    .dashboard-content-grid {
+        grid-template-columns: 1fr 1fr; /* Maintain side-by-side */
+        gap: 0.6rem; /* Reduced gap */
+    }
+
+    .dashboard-right-content {
+        gap: 0.5rem; /* Further reduced */
     }
 }
 
