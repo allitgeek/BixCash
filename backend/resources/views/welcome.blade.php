@@ -913,8 +913,17 @@
                 }
 
                 .category-container {
+                    display: grid !important;
+                    grid-template-columns: repeat(2, 1fr) !important;
                     gap: var(--space-md);
                     padding: 0 var(--space-sm);
+                    justify-items: center;
+                }
+
+                /* Center the last item if odd number of categories */
+                .category-item:last-child:nth-child(odd) {
+                    grid-column: 1 / -1;
+                    justify-self: center;
                 }
 
                 /* Mobile-first spacing */
@@ -1778,15 +1787,27 @@
                                 });
                             }
                         } else {
+                            // Use img tag with object-fit for better responsive behavior
                             slideElement.style.cssText = `
-                                background-image: url('${slide.media_path}');
-                                background-size: cover;
-                                background-position: center;
-                                background-repeat: no-repeat;
-                                min-height: 500px;
                                 position: relative;
+                                width: 100%;
+                                height: 100%;
+                                overflow: hidden;
                                 ${slide.target_url ? 'cursor: pointer;' : ''}
                             `;
+
+                            const imgElement = document.createElement('img');
+                            imgElement.src = slide.media_path;
+                            imgElement.alt = slide.title || 'Hero Slide';
+                            imgElement.style.cssText = `
+                                width: 100%;
+                                height: 100%;
+                                object-fit: cover;
+                                object-position: center;
+                                display: block;
+                            `;
+
+                            slideElement.appendChild(imgElement);
 
                             // Add click handler for target URL if provided
                             if (slide.target_url) {

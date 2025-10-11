@@ -35,6 +35,18 @@ body {
     padding-top: 120px; /* Account for fixed header height */
     background-color: var(--bix-white);
     color: var(--bix-dark-blue);
+    overflow-x: hidden; /* Prevent horizontal scroll globally */
+    max-width: 100vw; /* Constrain to viewport width */
+}
+
+/* Global overflow prevention */
+* {
+    box-sizing: border-box;
+}
+
+html {
+    overflow-x: hidden;
+    max-width: 100vw;
 }
 
 /* Header Styles */
@@ -90,6 +102,7 @@ body {
     width: 100%;
     height: calc(100vh - 120px); /* Subtract header height */
     min-height: 500px;
+    max-height: 800px; /* Prevent excessive height on large screens */
     position: relative;
     background-color: var(--bix-white);
     overflow: hidden;
@@ -113,13 +126,29 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
     color: var(--bix-white);
     width: 100%;
     height: 100%;
     position: relative;
+    overflow: hidden;
+    background-color: var(--bix-white);
+}
+
+/* Hero slider images - responsive object-fit */
+.hero-slider .swiper-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+}
+
+/* Mobile optimization - adjust crop for better mobile view */
+@media (max-width: 768px) {
+    .hero-slider .swiper-slide img {
+        object-fit: cover;
+        object-position: center center;
+    }
 }
 
 .slide-content {
@@ -129,35 +158,61 @@ body {
     border-radius: 10px;
     position: relative;
     z-index: 2;
+    max-width: 90%;
+    margin: 0 auto;
 }
 
 .slide-content h1 {
-    font-size: 4rem;
+    font-size: clamp(2rem, 5vw + 1rem, 4rem); /* Fluid typography: 2rem mobile → 4rem desktop */
     font-weight: bold;
     margin: 0 0 1rem 0;
     text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+    line-height: 1.2;
 }
 
 .slide-content p {
-    font-size: 1.5rem;
+    font-size: clamp(1rem, 2vw + 0.5rem, 1.5rem); /* Fluid typography: 1rem mobile → 1.5rem desktop */
     text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
     margin: 0;
+    line-height: 1.4;
 }
 
 /* Swiper Navigation Styles for Hero */
 .hero-slider .swiper-button-next,
 .hero-slider .swiper-button-prev {
     color: var(--bix-white);
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(0, 0, 0, 0.5);
     width: 50px;
     height: 50px;
     border-radius: 50%;
     margin-top: -25px;
+    transition: all 0.3s ease;
+}
+
+.hero-slider .swiper-button-next:hover,
+.hero-slider .swiper-button-prev:hover {
+    background: rgba(0, 0, 0, 0.7);
+    transform: scale(1.1);
 }
 
 .hero-slider .swiper-button-next:after,
 .hero-slider .swiper-button-prev:after {
     font-size: 20px;
+}
+
+/* Optimize navigation arrows on mobile */
+@media (max-width: 480px) {
+    .hero-slider .swiper-button-next,
+    .hero-slider .swiper-button-prev {
+        width: 44px; /* Minimum touch target */
+        height: 44px;
+        margin-top: -22px;
+    }
+
+    .hero-slider .swiper-button-next:after,
+    .hero-slider .swiper-button-prev:after {
+        font-size: 18px;
+    }
 }
 
 .hero-slider .swiper-pagination-bullet {
@@ -175,6 +230,10 @@ body {
     padding: 4rem 2rem 2rem;
     text-align: center;
     background-color: var(--bix-white);
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+    box-sizing: border-box;
 }
 
 .brands-container {
@@ -215,11 +274,11 @@ body {
     font-weight: bold;
 }
 .brands-section h2 {
-    font-size: 5rem; 
+    font-size: clamp(2.5rem, 4vw + 1.5rem, 5rem); /* Fluid: 2.5rem mobile → 5rem desktop */
     font-weight: 800;
     margin-bottom: 2rem;
     color: var(--bix-dark-blue);
-
+    line-height: 1.1;
 }
 
 .brands-section h2 .green-text {
@@ -231,6 +290,7 @@ body {
     margin: 0 auto;
     padding: 0 4rem; /* Increased padding to accommodate arrows */
     position: relative;
+    box-sizing: border-box;
 }
 
 .brands-carousel-container .swiper-wrapper {
@@ -279,17 +339,21 @@ body {
 .brands-carousel-container .swiper-button-next,
 .brands-carousel-container .swiper-button-prev {
     color: var(--bix-dark-blue);
-    background: none;
-    width: 40px;
-    height: 40px;
-    margin-top: -20px;
+    background: rgba(255, 255, 255, 0.9);
+    width: 44px; /* Minimum touch target */
+    height: 44px; /* Minimum touch target */
+    margin-top: -22px;
     z-index: 20; /* Ensure arrows are above other elements */
-    transition: color 0.3s ease;
+    transition: all 0.3s ease;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .brands-carousel-container .swiper-button-next:hover,
 .brands-carousel-container .swiper-button-prev:hover {
     color: var(--bix-light-green);
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .brands-carousel-container .swiper-button-next {
@@ -302,7 +366,7 @@ body {
 
 .brands-carousel-container .swiper-button-next:after,
 .brands-carousel-container .swiper-button-prev:after {
-    font-size: 24px;
+    font-size: 20px;
     font-weight: bold;
 }
 
@@ -310,9 +374,13 @@ body {
     .how-it-works-section {
         padding: 2rem 2rem 4rem;
         background-color: var(--bix-white);
+        width: 100%;
+        max-width: 100vw;
+        overflow-x: hidden;
+        box-sizing: border-box;
     }
     .how-it-works-section .main-heading {
-        font-size: 5rem;
+        font-size: clamp(2.5rem, 4vw + 1.5rem, 5rem); /* Fluid: 2.5rem mobile → 5rem desktop */
         font-weight: 800;
         margin-bottom: 0.5rem; /* Further reduced spacing */
         color: var(--bix-dark-blue);
@@ -320,6 +388,7 @@ body {
         max-width: 1200px; /* Align with content wrapper */
         margin-left: auto; /* Center the block */
         margin-right: auto; /* Center the block */
+        line-height: 1.1;
     }
 .how-it-works-section .main-heading .green-text {
     color: var(--bix-light-green);
@@ -384,14 +453,18 @@ body {
     padding: 6rem 2rem;
     background: var(--bix-white);
     position: relative;
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+    box-sizing: border-box;
 }
 
 .dashboard-main-title {
-    font-size: 5rem;
+    font-size: clamp(2.5rem, 4vw + 1.5rem, 5rem); /* Fluid: 2.5rem mobile → 5rem desktop */
     font-weight: 800;
     text-align: center;
     margin-bottom: 4rem;
-    line-height: 1;
+    line-height: 1.1;
 }
 
 .dashboard-green {
@@ -918,6 +991,10 @@ body {
     padding: 3rem 2rem 6rem;
     background-color: var(--bix-white);
     text-align: center;
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+    box-sizing: border-box;
 }
 
 .promotions-container {
@@ -926,10 +1003,11 @@ body {
 }
 
 .promotions-title {
-    font-size: 5rem;
+    font-size: clamp(2.5rem, 4vw + 1.5rem, 5rem); /* Fluid: 2.5rem mobile → 5rem desktop */
     font-weight: 800;
     margin-bottom: 1rem;
     color: var(--bix-dark-blue);
+    line-height: 1.1;
 }
 
 .promotions-description {
@@ -1127,17 +1205,44 @@ body {
 @media (max-width: 767px) and (min-width: 481px) {
     body {
         padding-top: 100px;
+        overflow-x: hidden;
     }
 
     .main-header {
         padding: 1rem 1.5rem;
+        width: 100%;
+        box-sizing: border-box;
     }
 
     .hero-slider {
-        height: calc(100vh - 100px);
+        height: 75vh; /* Simplified: 75% of viewport height */
         margin-top: -100px;
         padding-top: 100px;
-        min-height: 400px;
+        min-height: 450px;
+        max-height: 600px; /* Prevent excessive height */
+        width: 100%;
+        overflow: hidden;
+    }
+
+    /* FIX: Reduce gaps and padding for mobile landscape */
+    .brands-section {
+        padding: 3rem 1.5rem 2rem;
+        overflow-x: hidden;
+        width: 100%;
+    }
+
+    .brands-carousel-container {
+        padding: 0 3rem; /* Reduced from 4rem */
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+
+    .category-container {
+        gap: 3rem; /* Reduced from desktop 6rem */
+    }
+
+    .how-it-works-section .content-wrapper {
+        gap: 2.5rem; /* Reduced from desktop 4rem */
     }
 
     .dashboard-main-title {
@@ -1201,10 +1306,13 @@ body {
 @media (max-width: 480px) {
     body {
         padding-top: 90px; /* Even smaller header on small mobile */
+        overflow-x: hidden;
     }
 
     .main-header {
         padding: 0.8rem 1rem;
+        width: 100%;
+        box-sizing: border-box;
     }
 
     .main-header .logo img {
@@ -1212,10 +1320,35 @@ body {
     }
 
     .hero-slider {
-        height: calc(100vh - 90px);
+        height: 70vh; /* Simplified: 70% of viewport height for small screens */
         margin-top: -90px;
         padding-top: 90px;
-        min-height: 350px;
+        min-height: 400px;
+        max-height: 550px; /* Prevent excessive height on small devices */
+        width: 100%;
+        overflow: hidden;
+    }
+
+    /* FIX: Reduce gaps and padding for mobile */
+    .brands-section {
+        padding: 3rem 1rem 2rem; /* Reduced horizontal padding */
+        overflow-x: hidden;
+        width: 100%;
+    }
+
+    .brands-carousel-container {
+        padding: 0 2.5rem; /* Reduced from 4rem to accommodate mobile */
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+
+    .category-container {
+        gap: 1.5rem; /* Override desktop 6rem gap */
+    }
+
+    .how-it-works-section .content-wrapper {
+        gap: 2rem; /* Override desktop 4rem gap */
+        padding: 0;
     }
 
     /* Ultra-small text scaling */
@@ -1267,24 +1400,32 @@ body {
         max-height: 50px;
     }
 
-    /* Smaller categories */
+    /* Mobile categories - Exactly 2 per row */
     .category-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); /* Exactly 2 columns on mobile */
         gap: 1.5rem;
         justify-content: center;
+        max-width: 100%;
+        padding: 0 1rem;
     }
 
     .category-item {
-        width: 90px;
-        height: 125px;
-        padding: 0.8rem;
+        width: 100%;
+        max-width: 100%; /* Allow full width within grid */
+        height: 160px;
+        padding: 1.2rem;
+        margin: 0 auto; /* Center within grid cell */
     }
 
     .category-item img {
-        height: 60px;
+        height: 85px;
     }
 
     .category-item span {
-        font-size: 0.8rem;
+        font-size: 0.95rem;
+        line-height: 1.3;
+        font-weight: 600;
     }
 
     /* Smaller brand slides */
@@ -1434,14 +1575,27 @@ body {
         font-size: 1.8rem;
     }
 
+    .category-container {
+        grid-template-columns: repeat(2, 1fr); /* Keep 2 per row even on ultra-small */
+        gap: 1rem;
+        padding: 0 0.8rem;
+    }
+
     .category-item {
-        width: 80px;
-        height: 115px;
-        padding: 0.6rem;
+        width: 100%;
+        max-width: 100%;
+        height: 140px;
+        padding: 1rem;
     }
 
     .category-item img {
-        height: 50px;
+        height: 70px;
+    }
+
+    .category-item span {
+        font-size: 0.85rem;
+        font-weight: 600;
+        line-height: 1.2;
     }
 
     .brand-slide {
@@ -1463,6 +1617,10 @@ body {
 .contact-section {
     padding: 6rem 2rem;
     background-color: var(--bix-white);
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+    box-sizing: border-box;
 }
 
 .contact-container {
@@ -1485,10 +1643,10 @@ body {
 }
 
 .contact-title {
-    font-size: 5rem;
+    font-size: clamp(2.5rem, 4vw + 1.5rem, 5rem); /* Fluid: 2.5rem mobile → 5rem desktop */
     font-weight: 800;
     color: var(--bix-light-green);
-    line-height: 0.9;
+    line-height: 1.1;
     margin: 0;
     text-align: right;
 }
