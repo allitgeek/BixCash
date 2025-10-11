@@ -1548,9 +1548,10 @@ html {
     .bottom-nav-icons {
         display: grid;
         grid-template-columns: repeat(3, 1fr); /* 3 icons in first row */
-        gap: 0.8rem;
+        gap: 0.5rem;
         margin-top: 1.5rem;
-        justify-items: center;
+        justify-items: stretch; /* Make items fill available space */
+        max-width: 100%; /* Ensure grid fills container width */
     }
 
     /* Last 2 icons (4th and 5th) should span and center on second row */
@@ -1564,19 +1565,31 @@ html {
         grid-column-start: 2;
     }
 
-    /* Reduce icon button and image sizes */
+    /* Make nav-icon-item fill the grid cell */
+    .nav-icon-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%; /* Fill grid cell width */
+    }
+
+    /* Increase icon button sizes for 3+2 grid */
     .nav-button {
-        min-width: 85px; /* Reduced from 100px */
-        min-height: 60px; /* Reduced from 70px */
+        width: 100%; /* Fill available width */
+        min-width: 90px; /* Slightly larger minimum */
+        max-width: 110px; /* Constrain max size */
+        min-height: 70px; /* Taller for better visibility */
+        padding: 0.6rem;
     }
 
     .dashboard-icon-img {
-        width: 70px; /* Reduced from 90px */
-        height: 50px; /* Reduced from 65px */
+        width: 75px; /* Increased from 70px */
+        height: 55px; /* Increased from 50px */
     }
 
     .nav-label {
-        font-size: 0.65rem; /* Reduced from 0.7rem */
+        font-size: 0.7rem; /* Restored from 0.65rem */
+        margin-top: 0.3rem;
     }
 
     /* Hero slider content */
@@ -1719,7 +1732,7 @@ html {
     /* Keep 3+2 navigation grid on ultra-small screens */
     .bottom-nav-icons {
         grid-template-columns: repeat(3, 1fr); /* Keep 3 columns */
-        gap: 0.6rem; /* Further reduced gap */
+        gap: 0.4rem; /* Further reduced gap */
     }
 
     .promotion-card {
@@ -1728,13 +1741,21 @@ html {
 
     /* Dashboard ultra-small screen optimizations */
     .dashboard-icon-img {
-        width: 60px; /* Further reduced from 70px */
-        height: 45px; /* Further reduced from 50px */
+        width: 65px; /* Slightly larger for better visibility */
+        height: 48px; /* Proportional to width */
     }
 
     .nav-button {
-        min-width: 75px; /* Further reduced from 85px */
-        min-height: 55px; /* Further reduced from 60px */
+        width: 100%; /* Fill available width */
+        min-width: 80px; /* Larger minimum */
+        max-width: 100px; /* Constrain max */
+        min-height: 65px; /* Taller for better touch target */
+        padding: 0.5rem;
+    }
+
+    .nav-label {
+        font-size: 0.65rem;
+        margin-top: 0.2rem;
     }
 
     .monitor-screen {
