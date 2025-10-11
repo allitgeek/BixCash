@@ -1294,11 +1294,42 @@ html {
         padding: 1.5rem;
     }
 
+    /* Bottom navigation icons - 3+2 grid layout for larger mobile/tablets */
     .bottom-nav-icons {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr); /* 3 icons in first row */
+        gap: 0.8rem;
+        margin-top: 1.5rem;
+        justify-items: stretch;
+        max-width: 100%;
+    }
+
+    .nav-icon-item:nth-child(4),
+    .nav-icon-item:nth-child(5) {
+        grid-column: span 1;
+    }
+
+    .nav-icon-item:nth-child(4) {
+        grid-column-start: 2;
+    }
+
+    .nav-icon-item {
         display: flex;
-        justify-content: center;
-        gap: 1.5rem;
-        flex-wrap: wrap;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+
+    .nav-button {
+        width: 100%;
+        min-width: 100px;
+        max-width: 130px;
+        min-height: 75px;
+    }
+
+    .dashboard-icon-img {
+        width: 80px;
+        height: 58px;
     }
 }
 
