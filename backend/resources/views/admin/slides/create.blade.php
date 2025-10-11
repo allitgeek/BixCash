@@ -80,10 +80,13 @@
                                    accept="image/*,video/*"
                                    style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem;">
                             <small style="color: #666;">
-                                <strong>Supported formats:</strong> JPG, PNG, GIF, WebP, MP4, AVI, MOV, WMV (Max: 20MB)<br>
+                                <strong>Supported formats:</strong> JPG, PNG, GIF, WebP, MP4, AVI, MOV, WMV (Max: 50MB)<br>
                                 <strong>📸 Best for Images:</strong> WebP/JPG at 1920x1080px (500KB-1MB) |
-                                <strong>🎥 Best for Videos:</strong> MP4 H.264 at 1920x1080p (3-7MB)
+                                <strong>🎥 Best for Videos:</strong> MP4 H.264 at 1920x1080p (3-15MB)
                             </small>
+                            <div id="file-size-warning" style="display: none; margin-top: 0.5rem; padding: 0.5rem; background: #fff3cd; border: 1px solid #ffc107; border-radius: 4px; color: #856404;">
+                                <strong>⚠️ Large file detected!</strong> <span id="file-size-message"></span>
+                            </div>
                         </div>
 
                         <!-- URL Input Option (Hidden by default) -->
@@ -283,19 +286,37 @@
             }
         });
 
-        // File upload preview
+        // File upload preview with enhanced validation
         const fileInput = document.getElementById('media_file');
+        const fileSizeWarning = document.getElementById('file-size-warning');
+        const fileSizeMessage = document.getElementById('file-size-message');
+
         fileInput.addEventListener('change', function() {
             const file = this.files[0];
+            fileSizeWarning.style.display = 'none'; // Hide warning by default
+
             if (file) {
                 const fileSize = (file.size / 1024 / 1024).toFixed(2); // Convert to MB
-                if (fileSize > 20) {
-                    alert('File size must be less than 20MB');
+                const fileName = file.name;
+                const fileType = file.type;
+
+                // Check if file exceeds server limit
+                if (fileSize > 50) {
+                    alert(`❌ File is too large!\n\nFile: ${fileName}\nSize: ${fileSize}MB\nMaximum allowed: 50MB\n\nPlease compress your video or choose a smaller file.`);
                     this.value = '';
                     return;
                 }
 
-                console.log(`Selected file: ${file.name} (${fileSize}MB)`);
+                // Show warning for files over 20MB (still allowed, but warn user)
+                if (fileSize > 20) {
+                    fileSizeWarning.style.display = 'block';
+                    fileSizeMessage.textContent = `File size is ${fileSize}MB. Upload may take longer. Consider optimizing for faster loading.`;
+                } else if (fileSize > 10) {
+                    fileSizeWarning.style.display = 'block';
+                    fileSizeMessage.textContent = `File size is ${fileSize}MB. This is acceptable but consider optimizing for better performance.`;
+                }
+
+                console.log(`✓ Selected file: ${fileName} (${fileSize}MB, ${fileType})`);
             }
         });
     });
