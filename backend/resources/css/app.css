@@ -1294,23 +1294,14 @@ html {
         padding: 1.5rem;
     }
 
-    /* Bottom navigation icons - 3+2 grid layout for larger mobile/tablets */
+    /* Bottom navigation icons - Single row with 5 columns */
     .bottom-nav-icons {
         display: grid;
-        grid-template-columns: repeat(3, 1fr); /* 3 icons in first row */
-        gap: 0.8rem;
+        grid-template-columns: repeat(5, 1fr); /* All 5 icons in one row */
+        gap: 0.6rem;
         margin-top: 1.5rem;
         justify-items: stretch;
         max-width: 100%;
-    }
-
-    .nav-icon-item:nth-child(4),
-    .nav-icon-item:nth-child(5) {
-        grid-column: span 1;
-    }
-
-    .nav-icon-item:nth-child(4) {
-        grid-column-start: 2;
     }
 
     .nav-icon-item {
@@ -1322,14 +1313,15 @@ html {
 
     .nav-button {
         width: 100%;
-        min-width: 100px;
-        max-width: 130px;
-        min-height: 75px;
+        min-width: 80px;
+        max-width: 100px;
+        min-height: 70px;
+        padding: 0.5rem;
     }
 
     .dashboard-icon-img {
-        width: 80px;
-        height: 58px;
+        width: 65px;
+        height: 48px;
     }
 }
 
@@ -1575,52 +1567,39 @@ html {
         width: 6px; /* Reduced from 8px */
     }
 
-    /* Bottom navigation icons - 3+2 grid layout */
+    /* Bottom navigation icons - Single row with 5 columns */
     .bottom-nav-icons {
         display: grid;
-        grid-template-columns: repeat(3, 1fr); /* 3 icons in first row */
-        gap: 0.5rem;
+        grid-template-columns: repeat(5, 1fr); /* All 5 icons in one row */
+        gap: 0.4rem;
         margin-top: 1.5rem;
-        justify-items: stretch; /* Make items fill available space */
-        max-width: 100%; /* Ensure grid fills container width */
+        justify-items: stretch;
+        max-width: 100%;
     }
 
-    /* Last 2 icons (4th and 5th) should span and center on second row */
-    .nav-icon-item:nth-child(4),
-    .nav-icon-item:nth-child(5) {
-        grid-column: span 1;
-    }
-
-    /* Center the last row (items 4 and 5) by making item 4 start at column 2 */
-    .nav-icon-item:nth-child(4) {
-        grid-column-start: 2;
-    }
-
-    /* Make nav-icon-item fill the grid cell */
     .nav-icon-item {
         display: flex;
         flex-direction: column;
         align-items: center;
-        width: 100%; /* Fill grid cell width */
+        width: 100%;
     }
 
-    /* Increase icon button sizes for 3+2 grid */
     .nav-button {
-        width: 100%; /* Fill available width */
-        min-width: 90px; /* Slightly larger minimum */
-        max-width: 110px; /* Constrain max size */
-        min-height: 70px; /* Taller for better visibility */
-        padding: 0.6rem;
+        width: 100%;
+        min-width: 70px;
+        max-width: 90px;
+        min-height: 65px;
+        padding: 0.5rem;
     }
 
     .dashboard-icon-img {
-        width: 75px; /* Increased from 70px */
-        height: 55px; /* Increased from 50px */
+        width: 60px;
+        height: 44px;
     }
 
     .nav-label {
-        font-size: 0.7rem; /* Restored from 0.65rem */
-        margin-top: 0.3rem;
+        font-size: 0.65rem;
+        margin-top: 0.25rem;
     }
 
     /* Hero slider content */
@@ -1760,10 +1739,10 @@ html {
         height: 80px;
     }
 
-    /* Keep 3+2 navigation grid on ultra-small screens */
+    /* Single row navigation on ultra-small screens */
     .bottom-nav-icons {
-        grid-template-columns: repeat(3, 1fr); /* Keep 3 columns */
-        gap: 0.4rem; /* Further reduced gap */
+        grid-template-columns: repeat(5, 1fr); /* All 5 icons in one row */
+        gap: 0.3rem;
     }
 
     .promotion-card {
@@ -1772,20 +1751,20 @@ html {
 
     /* Dashboard ultra-small screen optimizations */
     .dashboard-icon-img {
-        width: 65px; /* Slightly larger for better visibility */
-        height: 48px; /* Proportional to width */
+        width: 50px;
+        height: 37px;
     }
 
     .nav-button {
-        width: 100%; /* Fill available width */
-        min-width: 80px; /* Larger minimum */
-        max-width: 100px; /* Constrain max */
-        min-height: 65px; /* Taller for better touch target */
-        padding: 0.5rem;
+        width: 100%;
+        min-width: 60px;
+        max-width: 75px;
+        min-height: 55px;
+        padding: 0.4rem;
     }
 
     .nav-label {
-        font-size: 0.65rem;
+        font-size: 0.6rem;
         margin-top: 0.2rem;
     }
 
