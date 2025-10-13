@@ -1589,3 +1589,187 @@ In this case, it was HTML structure (icons inside left column) that caused the b
 **Deployment Date**: October 12, 2025
 **Optimized By**: Claude Code with user feedback
 **Production Status**: ✅ LIVE and FUNCTIONAL
+
+---
+
+## 📱 PROMOTIONS & CONTACT SECTIONS MOBILE OPTIMIZATION
+
+### Status: 🔄 IN PROGRESS (2025-01-13)
+
+---
+
+### Promotions Section - 2-Column Grid Fix ✅
+
+#### Issue #1: Single Column Layout (8 Rows on Mobile)
+**User Request**: "Promotion section showing 8 rows on mobile - change to 2 columns (4 rows)"
+
+**Root Cause Discovery**:
+After initial CSS fix didn't work, deep investigation revealed **DUPLICATE CSS RULES**:
+1. `/var/www/bixcash.com/backend/resources/css/app.css` (line 1400-1405) ✅ Fixed first
+2. `/var/www/bixcash.com/backend/resources/views/welcome.blade.php` (line 909-913) ❌ Still had old rule
+
+The inline `<style>` tag in the Blade template was loading AFTER the compiled CSS, completely overriding the fix.
+
+**Solution Applied**:
+
+**Location 1 - CSS File** (`app.css` line 1400-1405):
+```css
+/* Mobile Portrait (≤480px) - 2 columns for promotions */
+.promotions-grid {
+    grid-template-columns: repeat(2, 1fr); /* Was: 1fr (single column) */
+    gap: 1rem;
+    padding: 0 0.5rem;
+}
+```
+
+**Location 2 - Blade Template** (`welcome.blade.php` line 909-913):
+```css
+@media (max-width: 480px) {
+    .promotions-grid {
+        grid-template-columns: repeat(2, 1fr); /* Was: 1fr (single column) */
+        gap: var(--space-md);
+        padding: 0 var(--space-sm);
+    }
+}
+```
+
+**Technical Fix Process**:
+1. **Attempt 1**: Fixed `app.css` only → User: "no changes, still 8 rows"
+2. **Investigation**: Checked incognito mode, verified CSS compilation
+3. **Root Cause Found**: Inline styles in Blade template overriding compiled CSS
+4. **Attempt 2**: Fixed BOTH locations → **User: "eok, grat, it worked now" ✅**
+
+**Result**:
+- ✅ Promotions now display in **2-column grid** on mobile (4 rows instead of 8)
+- ✅ Better space utilization and visual balance
+- ✅ No more vertical scrolling through 8 single-column items
+- ✅ Consistent with modern mobile design patterns
+
+**Lesson Learned**:
+Always check for duplicate CSS rules in both external stylesheets AND inline Blade template styles. Inline styles load last and can override compiled CSS regardless of specificity.
+
+---
+
+### Contact Section - Text Alignment Issue ⚠️
+
+#### Issue #2: "Send your Query" Title Alignment on Mobile
+**User Request**: "Send your Query section seems left aligned - make it right aligned or centered"
+**Clarification**: User actually wants LEFT-aligned (corrected after initial misunderstanding)
+
+**Current Status**: ⚠️ **UNRESOLVED** - Multiple attempts made, issue persists
+
+**Attempts Made**:
+
+**Attempt 1**: Added centered alignment
+```css
+/* Lines 1398 & 2045 in app.css */
+.contact-title {
+    text-align: center;
+}
+```
+**Result**: User - "now i don't see any changes" ❌
+
+---
+
+**Attempt 2**: Added `!important` flag for specificity
+```css
+.contact-title {
+    text-align: center !important;
+}
+```
+**Build**: `app-Bkc8t-JX.css`
+**Result**: User - "no, i don't any change" ❌
+
+---
+
+**Attempt 3**: Changed to left-aligned per user clarification
+```css
+/* Mobile (≤480px) - Line 1398 */
+.contact-title {
+    font-size: 2.2rem;
+    line-height: 1.1;
+    text-align: left !important; /* Left-align on mobile for better readability */
+}
+
+/* Tablet (≤768px) - Line 2045 */
+.contact-title {
+    font-size: 2.5rem;
+    text-align: left !important; /* Left-align on mobile for better readability */
+}
+```
+**Build**: `app-BNqX48ly.css` (30.15 KB)
+**Verification**: Compiled CSS confirmed contains rules with `!important`
+**Result**: User - "issue is still there" ❌
+
+---
+
+**Investigation Status**:
+
+**What We Know**:
+- ✅ CSS rules are correctly written in `app.css`
+- ✅ npm run build compiles successfully
+- ✅ New CSS file generated (`app-BNqX48ly.css`)
+- ✅ Compiled CSS confirmed contains `text-align: left !important`
+- ✅ Laravel caches cleared (view:clear, config:clear)
+- ✅ `!important` flag added for maximum specificity
+
+**Possible Remaining Issues**:
+1. **More Specific CSS Rule**: Another rule with higher specificity overriding
+2. **Inline Styles in Blade**: Similar to promotions issue - inline style tag overriding CSS
+3. **JavaScript Manipulation**: JS dynamically setting inline styles
+4. **Browser Caching**: User's mobile browser heavily caching old CSS
+5. **Different Element**: `.contact-title` class may not be on the element user is seeing
+6. **CSS Order**: Rules appearing in wrong order in compiled file
+
+**Next Steps to Try**:
+1. Search `welcome.blade.php` for inline styles affecting `.contact-title`
+2. Check JavaScript for dynamic style manipulation
+3. Inspect element selector - verify `.contact-title` class is correct
+4. Check CSS cascade order in compiled `app-BNqX48ly.css`
+5. Try more specific selector like `.contact-section .contact-title`
+6. Add inline style directly in Blade template as last resort
+
+---
+
+### Files Modified
+
+**CSS Stylesheet**:
+- `/var/www/bixcash.com/backend/resources/css/app.css`
+  - Line 1400-1405 (≤480px): Promotions grid 2-column ✅
+  - Line 1398 (≤480px): Contact title left-aligned ⚠️
+  - Line 2045 (≤768px): Contact title left-aligned ⚠️
+
+**Blade Template**:
+- `/var/www/bixcash.com/backend/resources/views/welcome.blade.php`
+  - Line 909-913: Promotions grid inline styles fixed ✅
+
+**Build Output**:
+- Vite compiled: `app-BNqX48ly.css` (30.15 KB)
+- All Laravel caches cleared
+- Manifest updated: `/var/www/bixcash.com/backend/public/build/manifest.json`
+
+---
+
+### Summary of Session Work
+
+**Completed ✅**:
+1. **GitHub Push**: Resolved authentication with Personal Access Token
+2. **Promotions Grid**: Fixed duplicate CSS issue - now 2 columns on mobile
+3. **Promotions Build**: Compiled and deployed successfully
+4. **Deep Investigation**: Discovered inline style override pattern
+
+**In Progress ⚠️**:
+1. **Contact Title Alignment**: Multiple attempts, needs further investigation
+2. **Root Cause Analysis**: Ongoing - likely inline styles or JavaScript
+
+**Pending 📋**:
+1. Complete contact title alignment fix
+2. Test all changes on actual mobile devices
+3. Verify no other sections have similar inline style override issues
+4. Continue mobile responsiveness optimization for remaining sections
+
+---
+
+**Session Date**: January 13, 2025
+**Optimized By**: Claude Code with user guidance
+**Current Status**: Partial completion - promotions fixed, contact section needs more work

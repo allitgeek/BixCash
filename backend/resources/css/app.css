@@ -1395,11 +1395,12 @@ html {
     .contact-title {
         font-size: 2.2rem;
         line-height: 1.1;
+        text-align: left !important; /* Left-align on mobile for better readability */
     }
 
-    /* Single column layout for promotions */
+    /* Two column layout for promotions on mobile */
     .promotions-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
         gap: 1rem;
         padding: 0 0.5rem;
     }
@@ -1838,7 +1839,7 @@ html {
     color: var(--bix-light-green);
     line-height: 1.1;
     margin: 0;
-    text-align: right;
+    text-align: left; /* Left-aligned for mobile, overridden by media query for desktop */
 }
 
 .contact-form-side {
@@ -2012,6 +2013,14 @@ html {
 }
 
 /* Responsive Design for Contact and Footer */
+
+/* Desktop & Large Tablets (769px+) - Right-aligned title */
+@media (min-width: 769px) {
+    .contact-title {
+        text-align: right !important; /* Right-align on desktop for design consistency */
+    }
+}
+
 @media (max-width: 1024px) {
     .contact-content {
         grid-template-columns: 1fr;
@@ -2042,6 +2051,7 @@ html {
 
     .contact-title {
         font-size: 2.5rem;
+        text-align: left !important; /* Left-align on mobile for better readability */
     }
 
     .form-submit-btn {

@@ -907,7 +907,7 @@
 
                 /* Mobile-optimized grid systems */
                 .promotions-grid {
-                    grid-template-columns: 1fr;
+                    grid-template-columns: repeat(2, 1fr);
                     gap: var(--space-md);
                     padding: 0 var(--space-sm);
                 }
