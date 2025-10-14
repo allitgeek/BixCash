@@ -323,6 +323,101 @@ class FirebaseOtpService
     }
 
     /**
+     * Verify Firebase ID Token from client-side authentication
+     *
+     * @param string $idToken Firebase ID token from client
+     * @return array ['success' => bool, 'data' => array|null, 'message' => string]
+     */
+    public function verifyFirebaseIdToken(string $idToken): array
+    {
+        try {
+            $auth = $this->firebase->createAuth();
+
+            // Verify the ID token
+            $verifiedIdToken = $auth->verifyIdToken($idToken);
+
+            // Extract claims from the token
+            $uid = $verifiedIdToken->claims()->get('sub');
+            $phoneNumber = $verifiedIdToken->claims()->get('phone_number');
+            $email = $verifiedIdToken->claims()->get('email');
+
+            // Validate that phone number exists (required for phone auth)
+            if (empty($phoneNumber)) {
+                return [
+                    'success' => false,
+                    'data' => null,
+                    'message' => 'Phone number not found in Firebase token. Please use phone authentication.'
+                ];
+            }
+
+            // Get full Firebase user record for additional details
+            try {
+                $firebaseUser = $auth->getUser($uid);
+
+                return [
+                    'success' => true,
+                    'data' => [
+                        'firebase_uid' => $uid,
+                        'phone' => $phoneNumber,
+                        'email' => $email,
+                        'phone_verified' => $firebaseUser->phoneNumber !== null,
+                        'email_verified' => $firebaseUser->emailVerified ?? false,
+                        'display_name' => $firebaseUser->displayName,
+                        'photo_url' => $firebaseUser->photoUrl,
+                    ],
+                    'message' => 'Firebase token verified successfully'
+                ];
+            } catch (\Exception $e) {
+                // If we can't get full user record, return basic info from token
+                return [
+                    'success' => true,
+                    'data' => [
+                        'firebase_uid' => $uid,
+                        'phone' => $phoneNumber,
+                        'email' => $email,
+                        'phone_verified' => true, // If token is valid, phone was verified
+                    ],
+                    'message' => 'Firebase token verified successfully'
+                ];
+            }
+
+        } catch (\Kreait\Firebase\Exception\Auth\FailedToVerifyToken $e) {
+            Log::error('Failed to verify Firebase ID token', [
+                'error' => $e->getMessage()
+            ]);
+
+            return [
+                'success' => false,
+                'data' => null,
+                'message' => 'Invalid or expired Firebase token. Please authenticate again.'
+            ];
+
+        } catch (\Kreait\Firebase\Exception\Auth\RevokedIdToken $e) {
+            Log::error('Revoked Firebase ID token used', [
+                'error' => $e->getMessage()
+            ]);
+
+            return [
+                'success' => false,
+                'data' => null,
+                'message' => 'This authentication token has been revoked. Please sign in again.'
+            ];
+
+        } catch (\Exception $e) {
+            Log::error('Firebase ID token verification failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return [
+                'success' => false,
+                'data' => null,
+                'message' => 'Failed to verify authentication. Please try again.'
+            ];
+        }
+    }
+
+    /**
      * Clean up expired OTPs (call from scheduled task)
      */
     public static function cleanupExpiredOtps(): int

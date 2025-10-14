@@ -552,6 +552,166 @@ class CustomerAuthController extends Controller
     }
 
     /**
+     * Verify Firebase ID Token and login/register customer
+     * This endpoint is used when Firebase Phone Auth is handled on the client-side
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function verifyFirebaseToken(Request $request)
+    {
+        try {
+            $request->validate([
+                'id_token' => ['required', 'string']
+            ]);
+
+            // Verify Firebase ID token
+            $verificationResult = $this->otpService->verifyFirebaseIdToken($request->id_token);
+
+            if (!$verificationResult['success']) {
+                SecurityLogService::logFailedLogin(
+                    'Unknown',
+                    'Firebase token verification failed: ' . $verificationResult['message']
+                );
+
+                return response()->json([
+                    'success' => false,
+                    'message' => $verificationResult['message']
+                ], 401);
+            }
+
+            $firebaseData = $verificationResult['data'];
+            $phone = $firebaseData['phone'];
+
+            // Find or create user
+            $user = User::where('phone', $phone)->first();
+
+            if (!$user) {
+                // Create new customer
+                DB::beginTransaction();
+                try {
+                    // Get customer role
+                    $customerRole = Role::where('name', 'customer')->first();
+
+                    if (!$customerRole) {
+                        throw new \Exception('Customer role not found in database');
+                    }
+
+                    // Create user with Firebase data
+                    $user = User::create([
+                        'phone' => $phone,
+                        'email' => $firebaseData['email'] ?? null,
+                        'name' => $firebaseData['display_name'] ?? 'Customer',
+                        'phone_verified_at' => now(),
+                        'email_verified_at' => ($firebaseData['email_verified'] ?? false) ? now() : null,
+                        'role_id' => $customerRole->id,
+                        'is_active' => true,
+                        'firebase_uid' => $firebaseData['firebase_uid'],
+                    ]);
+
+                    // Create customer profile
+                    CustomerProfile::create([
+                        'user_id' => $user->id,
+                        'phone' => $phone,
+                        'phone_verified' => true,
+                        'avatar' => $firebaseData['photo_url'] ?? null,
+                    ]);
+
+                    DB::commit();
+
+                    $isNewUser = true;
+                } catch (\Exception $e) {
+                    DB::rollBack();
+                    Log::error('Failed to create user from Firebase token', [
+                        'error' => $e->getMessage(),
+                        'firebase_uid' => $firebaseData['firebase_uid'] ?? null
+                    ]);
+                    throw $e;
+                }
+            } else {
+                // Update existing user with Firebase data if needed
+                $updates = [];
+
+                // Mark phone as verified if not already
+                if (!$user->hasVerifiedPhone()) {
+                    $user->markPhoneAsVerified();
+                }
+
+                // Update Firebase UID if not set
+                if (empty($user->firebase_uid)) {
+                    $updates['firebase_uid'] = $firebaseData['firebase_uid'];
+                }
+
+                // Update email if provided and not set
+                if (!empty($firebaseData['email']) && empty($user->email)) {
+                    $updates['email'] = $firebaseData['email'];
+                    if ($firebaseData['email_verified'] ?? false) {
+                        $updates['email_verified_at'] = now();
+                    }
+                }
+
+                // Update name if it's still default and Firebase has one
+                if ($user->name === 'Customer' && !empty($firebaseData['display_name'])) {
+                    $updates['name'] = $firebaseData['display_name'];
+                }
+
+                if (!empty($updates)) {
+                    $user->update($updates);
+                }
+
+                $isNewUser = false;
+            }
+
+            // Update last login
+            $user->last_login_at = now();
+            $user->save();
+
+            // Create Laravel Sanctum token for API access
+            $token = $user->createToken('customer-firebase-auth')->plainTextToken;
+
+            // Check if PIN is set
+            $hasPinSet = !is_null($user->pin_hash);
+
+            return response()->json([
+                'success' => true,
+                'message' => $isNewUser ? 'Account created successfully' : 'Login successful',
+                'data' => [
+                    'user' => [
+                        'id' => $user->id,
+                        'phone' => $user->phone,
+                        'name' => $user->name,
+                        'email' => $user->email,
+                        'phone_verified' => $user->hasVerifiedPhone(),
+                        'email_verified' => !is_null($user->email_verified_at),
+                    ],
+                    'token' => $token,
+                    'is_new_user' => $isNewUser,
+                    'has_pin_set' => $hasPinSet,
+                    'profile_completed' => !is_null($user->email) && $user->name !== 'Customer',
+                    'auth_method' => 'firebase_phone'
+                ]
+            ]);
+
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            Log::error('Firebase token verification failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Authentication failed. Please try again.'
+            ], 500);
+        }
+    }
+
+    /**
      * Logout customer (revoke token)
      *
      * @param Request $request

@@ -57,4 +57,22 @@ return [
         'max_attempts' => 5,
         'lockout_minutes' => 15,
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Firebase Web Client Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configuration for client-side Firebase SDK (JavaScript)
+    | Used for Firebase Phone Authentication from browser
+    |
+    */
+    'web' => [
+        'api_key' => env('FIREBASE_WEB_API_KEY', ''),
+        'auth_domain' => env('FIREBASE_AUTH_DOMAIN', env('FIREBASE_PROJECT_ID') . '.firebaseapp.com'),
+        'project_id' => env('FIREBASE_PROJECT_ID', ''),
+        'storage_bucket' => env('FIREBASE_STORAGE_BUCKET', ''),
+        'messaging_sender_id' => env('FIREBASE_MESSAGING_SENDER_ID', ''),
+        'app_id' => env('FIREBASE_APP_ID', ''),
+    ],
 ];

@@ -22,6 +22,8 @@ Route::prefix('customer/auth')->middleware(['check.blocked', 'throttle:customer-
         ->middleware('throttle:10,1'); // 10 requests per minute
     Route::post('/verify-otp', [CustomerAuthController::class, 'verifyOtp'])
         ->middleware('throttle:5,1'); // 5 requests per minute
+    Route::post('/verify-firebase-token', [CustomerAuthController::class, 'verifyFirebaseToken'])
+        ->middleware('throttle:10,1'); // 10 requests per minute - Firebase phone auth
     Route::post('/login-pin', [CustomerAuthController::class, 'loginWithPin'])
         ->middleware('throttle:5,1'); // 5 requests per minute
     Route::post('/reset-pin/request', [CustomerAuthController::class, 'resetPinRequest'])
