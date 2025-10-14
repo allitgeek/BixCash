@@ -4,6 +4,116 @@
 @section('page-title', 'Settings')
 
 @section('content')
+    <!-- Firebase Configuration Section -->
+    <div class="card" style="margin-bottom: 1.5rem;">
+        <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+            <h3 class="card-title">Firebase Configuration (Customer Authentication)</h3>
+            @if($firebaseConfig['credentials_exists'])
+                <span style="background: #27ae60; color: white; padding: 0.25rem 0.75rem; border-radius: 3px; font-size: 0.8rem;">
+                    ✓ Configured
+                </span>
+            @else
+                <span style="background: #e74c3c; color: white; padding: 0.25rem 0.75rem; border-radius: 3px; font-size: 0.8rem;">
+                    ⚠ Not Configured
+                </span>
+            @endif
+        </div>
+        <div class="card-body">
+            <div style="background: #e3f2fd; padding: 1rem; border-radius: 5px; margin-bottom: 1.5rem; border-left: 4px solid #2196f3;">
+                <p style="margin: 0; color: #1976d2;">
+                    <strong>📱 Customer Authentication Setup</strong><br>
+                    Configure Firebase to enable OTP-based authentication for customers. You'll need a Firebase service account JSON file.
+                </p>
+            </div>
+
+            <form method="POST" action="{{ route('admin.firebase-config.update') }}" id="firebaseConfigForm">
+                @csrf
+
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
+                        Firebase Project ID *
+                    </label>
+                    <input type="text"
+                           name="firebase_project_id"
+                           id="firebase_project_id"
+                           value="{{ $firebaseConfig['project_id'] }}"
+                           required
+                           placeholder="your-firebase-project-id"
+                           style="width: 100%; padding: 0.5rem; border: 1px solid #dee2e6; border-radius: 4px;">
+                    <small style="color: #666; display: block; margin-top: 0.25rem;">
+                        Find this in Firebase Console → Project Settings → General
+                    </small>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
+                        Firebase Database URL
+                    </label>
+                    <input type="url"
+                           name="firebase_database_url"
+                           id="firebase_database_url"
+                           value="{{ $firebaseConfig['database_url'] }}"
+                           placeholder="https://your-project-id.firebaseio.com"
+                           style="width: 100%; padding: 0.5rem; border: 1px solid #dee2e6; border-radius: 4px;">
+                    <small style="color: #666; display: block; margin-top: 0.25rem;">
+                        Optional: Only needed if using Firebase Realtime Database
+                    </small>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
+                        Firebase Storage Bucket
+                    </label>
+                    <input type="text"
+                           name="firebase_storage_bucket"
+                           id="firebase_storage_bucket"
+                           value="{{ $firebaseConfig['storage_bucket'] }}"
+                           placeholder="your-project-id.appspot.com"
+                           style="width: 100%; padding: 0.5rem; border: 1px solid #dee2e6; border-radius: 4px;">
+                    <small style="color: #666; display: block; margin-top: 0.25rem;">
+                        Optional: Only needed if using Firebase Storage
+                    </small>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
+                        Service Account JSON *
+                    </label>
+                    <textarea name="firebase_credentials_json"
+                              id="firebase_credentials_json"
+                              required
+                              rows="8"
+                              placeholder='Paste your Firebase service account JSON here...
+{
+  "type": "service_account",
+  "project_id": "your-project-id",
+  "private_key_id": "...",
+  "private_key": "-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n",
+  ...
+}'
+                              style="width: 100%; padding: 0.5rem; border: 1px solid #dee2e6; border-radius: 4px; font-family: monospace; font-size: 0.9rem;"></textarea>
+                    <small style="color: #666; display: block; margin-top: 0.25rem;">
+                        <strong>How to get this:</strong> Firebase Console → Project Settings → Service Accounts → Generate New Private Key
+                    </small>
+                </div>
+
+                <div style="display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 2rem;">
+                    <button type="button"
+                            onclick="testFirebaseConnection()"
+                            class="btn btn-secondary"
+                            id="testButton">
+                        Test Connection
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        Save Configuration
+                    </button>
+                </div>
+            </form>
+
+            <div id="testResult" style="margin-top: 1.5rem; display: none;"></div>
+        </div>
+    </div>
+
     <!-- Social Media Links Section -->
     <div class="card" style="margin-bottom: 1.5rem;">
         <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
@@ -233,5 +343,64 @@
                 closeModal();
             }
         });
+
+        // Firebase Configuration Test
+        function testFirebaseConnection() {
+            const testButton = document.getElementById('testButton');
+            const testResult = document.getElementById('testResult');
+
+            testButton.disabled = true;
+            testButton.textContent = 'Testing...';
+
+            testResult.style.display = 'block';
+            testResult.innerHTML = '<div style="text-align: center; color: #666;"><i class="fas fa-spinner fa-spin"></i> Testing Firebase connection...</div>';
+
+            fetch('{{ route("admin.firebase-config.test") }}', {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    testResult.innerHTML = `
+                        <div style="background: #d4edda; color: #155724; padding: 1rem; border-radius: 5px; border: 1px solid #c3e6cb;">
+                            <strong>✓ Success!</strong> ${data.message}
+                        </div>
+                    `;
+                } else {
+                    testResult.innerHTML = `
+                        <div style="background: #f8d7da; color: #721c24; padding: 1rem; border-radius: 5px; border: 1px solid #f5c6cb;">
+                            <strong>✗ Error:</strong> ${data.message}
+                        </div>
+                    `;
+                }
+            })
+            .catch(error => {
+                testResult.innerHTML = `
+                    <div style="background: #f8d7da; color: #721c24; padding: 1rem; border-radius: 5px; border: 1px solid #f5c6cb;">
+                        <strong>✗ Error:</strong> ${error.message}
+                    </div>
+                `;
+            })
+            .finally(() => {
+                testButton.disabled = false;
+                testButton.textContent = 'Test Connection';
+            });
+        }
     </script>
+
+    @if(session('error'))
+        <div style="position: fixed; top: 20px; right: 20px; background: #e74c3c; color: white; padding: 1rem 1.5rem; border-radius: 5px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); z-index: 9999;" id="errorMessage">
+            {{ session('error') }}
+        </div>
+        <script>
+            setTimeout(() => {
+                const msg = document.getElementById('errorMessage');
+                if (msg) msg.remove();
+            }, 5000);
+        </script>
+    @endif
 @endsection

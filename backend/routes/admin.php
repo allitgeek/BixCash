@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\SlideController;
 use App\Http\Controllers\Admin\PromotionController;
 use App\Http\Controllers\Admin\CustomerQueryController;
 use App\Http\Controllers\Admin\EmailSettingController;
+use App\Http\Controllers\Admin\CustomerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -76,6 +77,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('reports', [DashboardController::class, 'reports'])->name('reports');
         });
 
+        // Customer Management
+        Route::middleware(['role.permission:manage_users'])->group(function () {
+            Route::resource('customers', CustomerController::class)->except(['create', 'store']);
+            Route::patch('customers/{customer}/toggle-status', [CustomerController::class, 'toggleStatus'])->name('customers.toggle-status');
+            Route::post('customers/{customer}/reset-pin', [CustomerController::class, 'resetPin'])->name('customers.reset-pin');
+            Route::post('customers/{customer}/unlock-pin', [CustomerController::class, 'unlockPin'])->name('customers.unlock-pin');
+        });
+
         // Customer Queries Management
         Route::prefix('queries')->name('queries.')->group(function () {
             Route::get('/', [CustomerQueryController::class, 'index'])->name('index');
@@ -100,6 +109,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::post('social-media', [DashboardController::class, 'storeSocialMedia'])->name('social-media.store');
             Route::put('social-media/{socialMedia}', [DashboardController::class, 'updateSocialMedia'])->name('social-media.update');
             Route::delete('social-media/{socialMedia}', [DashboardController::class, 'destroySocialMedia'])->name('social-media.destroy');
+
+            // Firebase Configuration Management
+            Route::post('firebase-config', [DashboardController::class, 'updateFirebaseConfig'])->name('firebase-config.update');
+            Route::get('firebase-config/test', [DashboardController::class, 'testFirebaseConnection'])->name('firebase-config.test');
         });
     });
 });

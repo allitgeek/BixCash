@@ -11,6 +11,9 @@ class CustomerProfile extends Model
     protected $fillable = [
         'user_id',
         'phone',
+        'phone_verified',
+        'last_otp_sent_at',
+        'otp_attempts_today',
         'date_of_birth',
         'gender',
         'address',
@@ -29,6 +32,9 @@ class CustomerProfile extends Model
 
     protected $casts = [
         'date_of_birth' => 'date',
+        'phone_verified' => 'boolean',
+        'last_otp_sent_at' => 'datetime',
+        'otp_attempts_today' => 'integer',
         'bix_cash_balance' => 'decimal:2',
         'total_earnings' => 'decimal:2',
         'total_spent' => 'decimal:2',

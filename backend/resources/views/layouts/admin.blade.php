@@ -576,6 +576,12 @@
                         User Management
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="{{ route('admin.customers.index') }}" class="nav-link {{ request()->routeIs('admin.customers.*') ? 'active' : '' }}">
+                        <span class="nav-icon">👤</span>
+                        Customer Management
+                    </a>
+                </li>
                 @endif
 
                 @if(auth()->user() && auth()->user()->hasPermission('manage_content'))

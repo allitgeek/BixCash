@@ -538,18 +538,17 @@
 
     <!-- JavaScript -->
     <script>
-        // Auth System State Management
+        // Auth System State Management with Real API Integration
         class BixCashAuth {
             constructor() {
                 this.currentStep = 'mobile';
                 this.userPhone = '';
-                this.isExistingUser = false;
+                this.authToken = null;
                 this.otpTimer = null;
                 this.otpCountdown = 60;
-                this.isResettingTpin = false; // Track if we're in forgot T-Pin flow
-
-                // Demo existing users (for testing)
-                this.existingUsers = JSON.parse(localStorage.getItem('bixcash_users') || '{}');
+                this.isResettingTpin = false;
+                this.verifiedOtp = null;
+                this.apiBaseUrl = '/api/customer/auth';
 
                 this.initEventListeners();
                 this.initPinInputs();
@@ -587,9 +586,9 @@
                 });
 
                 // Resend OTP
-                document.getElementById('resend-otp').addEventListener('click', (e) => {
+                document.getElementById('resend-otp').addEventListener('click', async (e) => {
                     e.preventDefault();
-                    this.startOtpTimer();
+                    await this.resendOtp();
                 });
 
                 // Forgot T-Pin link
@@ -705,90 +704,247 @@
                 }
             }
 
-            handleMobileContinue() {
+            async handleMobileContinue() {
                 const mobileInput = document.getElementById('mobile-input');
-                this.userPhone = '+92' + mobileInput.value;
+                const mobileValue = mobileInput.value;
 
-                // Check if user exists (demo logic)
-                this.isExistingUser = this.existingUsers[this.userPhone] !== undefined;
+                if (!mobileValue || mobileValue.length !== 10 || !mobileValue.startsWith('3')) {
+                    this.showError('Please enter a valid 10-digit mobile number starting with 3');
+                    return;
+                }
 
-                if (this.isResettingTpin) {
-                    // For forgot T-Pin flow, always go to OTP verification regardless of user status
-                    if (this.isExistingUser) {
-                        this.showStep('otp');
-                        this.startOtpTimer();
+                this.userPhone = '+92' + mobileValue;
+
+                // Disable button and show loading
+                const btn = document.getElementById('mobile-continue');
+                btn.disabled = true;
+                btn.textContent = 'Please wait...';
+
+                try {
+                    // First, check if user exists and has PIN set
+                    const checkResponse = await this.apiCall(`${this.apiBaseUrl}/check-phone`, 'POST', {
+                        phone: this.userPhone
+                    });
+
+                    if (checkResponse.success) {
+                        const { user_exists, has_pin_set } = checkResponse.data;
+
+                        // If user has PIN set and NOT resetting, go directly to PIN screen
+                        if (has_pin_set && !this.isResettingTpin) {
+                            this.showStep('tpin');
+                            return;
+                        }
+
+                        // Otherwise, send OTP (for new users, users without PIN, or PIN reset)
+                        const purpose = this.isResettingTpin ? 'reset_pin' : 'login';
+                        const response = await this.apiCall(`${this.apiBaseUrl}/send-otp`, 'POST', {
+                            phone: this.userPhone,
+                            purpose: purpose
+                        });
+
+                        if (response.success) {
+                            // OTP sent successfully
+                            this.showStep('otp');
+                            this.startOtpTimer();
+
+                            // Show OTP in console if in development
+                            if (response.otp) {
+                                console.log('Development OTP:', response.otp);
+                                this.showSuccess(`OTP sent! (Dev: ${response.otp})`);
+                            } else {
+                                this.showSuccess('OTP sent to your mobile number');
+                            }
+                        } else {
+                            this.showError(response.message || 'Failed to send OTP');
+                        }
                     } else {
-                        this.showError('This mobile number is not registered. Please sign up first.');
-                        return;
+                        this.showError('Failed to check phone number');
                     }
-                } else {
-                    // Normal login flow
-                    if (this.isExistingUser) {
-                        this.showStep('tpin');
-                    } else {
-                        this.showStep('otp');
-                        this.startOtpTimer();
-                    }
+                } catch (error) {
+                    this.showError(error.message || 'Network error. Please try again.');
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = 'Continue';
                 }
             }
 
-            handleTpinContinue() {
+            async handleTpinContinue() {
                 const tpinInputs = document.querySelectorAll('#tpin-inputs .pin-input');
                 const enteredPin = Array.from(tpinInputs).map(input => input.value).join('');
-                const storedPin = this.existingUsers[this.userPhone];
 
-                if (enteredPin === storedPin) {
-                    this.showStep('success');
-                } else {
-                    this.showError('Invalid T-Pin. Please try again.');
+                if (enteredPin.length !== 4) {
+                    this.showError('Please enter a 4-digit PIN');
+                    return;
+                }
+
+                const btn = document.getElementById('tpin-continue');
+                btn.disabled = true;
+                btn.textContent = 'Verifying...';
+
+                try {
+                    const response = await this.apiCall(`${this.apiBaseUrl}/login-pin`, 'POST', {
+                        phone: this.userPhone,
+                        pin: enteredPin
+                    });
+
+                    if (response.success) {
+                        this.authToken = response.data.token;
+                        localStorage.setItem('bixcash_token', this.authToken);
+                        localStorage.setItem('bixcash_user', JSON.stringify(response.data.user));
+
+                        this.showSuccess('Login successful!');
+                        this.showStep('success');
+                    } else {
+                        this.showError(response.message || 'Invalid PIN');
+                        this.clearPinInputs(tpinInputs);
+                    }
+                } catch (error) {
+                    this.showError(error.message || 'Login failed');
                     this.clearPinInputs(tpinInputs);
+                } finally {
+                    btn.disabled = true; // Keep disabled until all fields filled again
+                    btn.textContent = 'Continue';
                 }
             }
 
-            handleOtpContinue() {
+            async handleOtpContinue() {
                 const otpInputs = document.querySelectorAll('#otp-inputs .pin-input');
                 const enteredOtp = Array.from(otpInputs).map(input => input.value).join('');
 
-                // Demo: Accept any 6-digit OTP for testing
-                if (enteredOtp.length === 6) {
-                    // Simulate successful OTP verification
-                    this.clearOtpTimer();
+                if (enteredOtp.length !== 6) {
+                    this.showError('Please enter a 6-digit OTP');
+                    return;
+                }
+
+                const btn = document.getElementById('otp-continue');
+                btn.disabled = true;
+                btn.textContent = 'Verifying...';
+
+                try {
+                    const purpose = this.isResettingTpin ? 'reset_pin' : 'login';
 
                     if (this.isResettingTpin) {
-                        // For forgot T-Pin flow, go to reset T-Pin step
-                        this.showStep('reset-tpin');
-                    } else {
-                        // For new users, prompt to set T-Pin
-                        this.promptSetTpin();
+                        // For PIN reset, verify OTP first using the regular verify endpoint
+                        const response = await this.apiCall(`${this.apiBaseUrl}/verify-otp`, 'POST', {
+                            phone: this.userPhone,
+                            otp: enteredOtp,
+                            purpose: 'reset_pin'
+                        });
+
+                        if (response.success) {
+                            // OTP verified, store it for later use and move to reset-tpin step
+                            this.verifiedOtp = enteredOtp;
+                            this.clearOtpTimer();
+                            this.showStep('reset-tpin');
+                            return;
+                        } else {
+                            this.showError(response.message || 'Invalid OTP');
+                            this.clearPinInputs(otpInputs);
+                            btn.disabled = true;
+                            btn.textContent = 'Continue';
+                            return;
+                        }
                     }
-                } else {
-                    this.showError('Invalid OTP. Please try again.');
+
+                    // Normal login/signup flow
+                    const response = await this.apiCall(`${this.apiBaseUrl}/verify-otp`, 'POST', {
+                        phone: this.userPhone,
+                        otp: enteredOtp,
+                        purpose: purpose
+                    });
+
+                    if (response.success) {
+                        this.clearOtpTimer();
+                        this.authToken = response.data.token;
+                        localStorage.setItem('bixcash_token', this.authToken);
+                        localStorage.setItem('bixcash_user', JSON.stringify(response.data.user));
+
+                        // Check if user needs to set PIN
+                        if (!response.data.has_pin_set) {
+                            this.showSuccess('Account verified! Please set your PIN');
+                            // Show a PIN setup step (we'll prompt inline)
+                            const newPin = prompt('Set your 4-digit PIN for future logins:');
+                            const confirmPin = prompt('Confirm your 4-digit PIN:');
+
+                            if (newPin && confirmPin && newPin === confirmPin && /^\d{4}$/.test(newPin)) {
+                                await this.setupPin(newPin, confirmPin);
+                            }
+                        }
+
+                        this.showSuccess('Welcome to BixCash!');
+                        this.showStep('success');
+                    } else {
+                        this.showError(response.message || 'Invalid OTP');
+                        this.clearPinInputs(otpInputs);
+                    }
+                } catch (error) {
+                    this.showError(error.message || 'Verification failed');
                     this.clearPinInputs(otpInputs);
+                } finally {
+                    btn.disabled = true;
+                    btn.textContent = 'Continue';
                 }
             }
 
-            handleCreateAccount() {
+            async handleCreateAccount() {
                 const signupMobileInput = document.getElementById('signup-mobile-input');
-                this.userPhone = '+92' + signupMobileInput.value;
+                const mobileValue = signupMobileInput.value;
 
-                // Go to OTP verification for new account
-                this.showStep('otp');
-                this.startOtpTimer();
+                if (!mobileValue || mobileValue.length !== 10 || !mobileValue.startsWith('3')) {
+                    this.showError('Please enter a valid 10-digit mobile number');
+                    return;
+                }
+
+                this.userPhone = '+92' + mobileValue;
+
+                const btn = document.getElementById('create-account-btn');
+                btn.disabled = true;
+                btn.textContent = 'Please wait...';
+
+                try {
+                    const response = await this.apiCall(`${this.apiBaseUrl}/send-otp`, 'POST', {
+                        phone: this.userPhone,
+                        purpose: 'login'
+                    });
+
+                    if (response.success) {
+                        this.showStep('otp');
+                        this.startOtpTimer();
+
+                        if (response.otp) {
+                            console.log('Development OTP:', response.otp);
+                            this.showSuccess(`OTP sent! (Dev: ${response.otp})`);
+                        } else {
+                            this.showSuccess('OTP sent to your mobile number');
+                        }
+                    } else {
+                        this.showError(response.message || 'Failed to send OTP');
+                    }
+                } catch (error) {
+                    this.showError(error.message || 'Network error');
+                } finally {
+                    btn.disabled = true;
+                    btn.textContent = 'Create Your Account';
+                }
             }
 
-            promptSetTpin() {
-                // Create a simple T-Pin setup dialog
-                const tpin = prompt('Set your 4-digit T-Pin for future logins:');
+            async setupPin(pin, pinConfirmation) {
+                try {
+                    const response = await this.apiCall(`${this.apiBaseUrl}/setup-pin`, 'POST', {
+                        pin: pin,
+                        pin_confirmation: pinConfirmation
+                    }, this.authToken);
 
-                if (tpin && /^\d{4}$/.test(tpin)) {
-                    // Store user with T-Pin
-                    this.existingUsers[this.userPhone] = tpin;
-                    localStorage.setItem('bixcash_users', JSON.stringify(this.existingUsers));
-
-                    this.showStep('success');
-                } else {
-                    alert('Please enter a valid 4-digit T-Pin');
-                    this.promptSetTpin(); // Retry
+                    if (response.success) {
+                        this.showSuccess('PIN set successfully!');
+                        return true;
+                    } else {
+                        this.showError(response.message || 'Failed to set PIN');
+                        return false;
+                    }
+                } catch (error) {
+                    this.showError(error.message || 'Failed to set PIN');
+                    return false;
                 }
             }
 
@@ -807,27 +963,113 @@
                 document.querySelector('#step-mobile .auth-subtitle').textContent = 'Enter your mobile number to verify your identity';
             }
 
-            handleSaveNewTpin() {
+            async handleSaveNewTpin() {
                 const newTpinInputs = document.querySelectorAll('#new-tpin-inputs .pin-input');
                 const newTpin = Array.from(newTpinInputs).map(input => input.value).join('');
 
-                if (newTpin.length === 4) {
-                    // Update user's T-Pin in storage
-                    this.existingUsers[this.userPhone] = newTpin;
-                    localStorage.setItem('bixcash_users', JSON.stringify(this.existingUsers));
+                if (newTpin.length !== 4) {
+                    this.showError('Please enter a 4-digit PIN');
+                    return;
+                }
 
-                    // Reset the flag
-                    this.isResettingTpin = false;
+                if (!this.verifiedOtp) {
+                    this.showError('OTP verification required. Please start over.');
+                    this.showStep('mobile');
+                    return;
+                }
 
-                    // Show success
-                    this.showStep('success');
+                const btn = document.getElementById('save-new-tpin');
+                btn.disabled = true;
+                btn.textContent = 'Saving...';
 
-                    // Update success message for T-Pin reset
-                    document.querySelector('#step-success .auth-title').textContent = 'T-Pin Reset Successful!';
-                    document.querySelector('#step-success .auth-subtitle').textContent = 'Your new T-Pin has been saved. You can now use it to login.';
-                } else {
-                    this.showError('Please enter a valid 4-digit T-Pin');
+                try {
+                    const response = await this.apiCall(`${this.apiBaseUrl}/reset-pin/verify`, 'POST', {
+                        phone: this.userPhone,
+                        otp: this.verifiedOtp,
+                        new_pin: newTpin,
+                        new_pin_confirmation: newTpin
+                    });
+
+                    if (response.success) {
+                        this.isResettingTpin = false;
+                        this.verifiedOtp = null; // Clear verified OTP
+                        this.showSuccess('PIN reset successfully!');
+                        this.showStep('success');
+
+                        // Update success message
+                        document.querySelector('#step-success .auth-title').textContent = 'PIN Reset Successful!';
+                        document.querySelector('#step-success .auth-subtitle').textContent = 'Your new PIN has been saved. You can now use it to login.';
+                    } else {
+                        this.showError(response.message || 'Failed to reset PIN');
+                        this.clearPinInputs(newTpinInputs);
+                    }
+                } catch (error) {
+                    this.showError(error.message || 'Failed to reset PIN');
                     this.clearPinInputs(newTpinInputs);
+                } finally {
+                    btn.disabled = true;
+                    btn.textContent = 'Save New T-Pin';
+                }
+            }
+
+            // API Call Helper Method
+            async apiCall(url, method = 'GET', body = null, token = null) {
+                const headers = {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                };
+
+                if (token) {
+                    headers['Authorization'] = `Bearer ${token}`;
+                }
+
+                const options = {
+                    method: method,
+                    headers: headers
+                };
+
+                if (body && method !== 'GET') {
+                    options.body = JSON.stringify(body);
+                }
+
+                try {
+                    const response = await fetch(url, options);
+                    const data = await response.json();
+
+                    if (!response.ok && !data.success) {
+                        throw new Error(data.message || `HTTP error! status: ${response.status}`);
+                    }
+
+                    return data;
+                } catch (error) {
+                    console.error('API call error:', error);
+                    throw error;
+                }
+            }
+
+            async resendOtp() {
+                try {
+                    const purpose = this.isResettingTpin ? 'reset_pin' : 'login';
+                    const response = await this.apiCall(`${this.apiBaseUrl}/send-otp`, 'POST', {
+                        phone: this.userPhone,
+                        purpose: purpose
+                    });
+
+                    if (response.success) {
+                        this.startOtpTimer();
+
+                        if (response.otp) {
+                            console.log('Development OTP:', response.otp);
+                            this.showSuccess(`OTP resent! (Dev: ${response.otp})`);
+                        } else {
+                            this.showSuccess('OTP resent to your mobile number');
+                        }
+                    } else {
+                        this.showError(response.message || 'Failed to resend OTP');
+                    }
+                } catch (error) {
+                    this.showError(error.message || 'Failed to resend OTP');
                 }
             }
 
@@ -904,8 +1146,13 @@
             }
 
             showError(message) {
-                // Simple error display (you can enhance this)
-                alert(message);
+                alert('❌ ' + message);
+            }
+
+            showSuccess(message) {
+                // Simple success notification
+                console.log('✅ ' + message);
+                // You can enhance this with a toast notification
             }
         }
 
@@ -913,16 +1160,6 @@
         document.addEventListener('DOMContentLoaded', () => {
             new BixCashAuth();
         });
-
-        // Add some demo users for testing
-        if (!localStorage.getItem('bixcash_users')) {
-            const demoUsers = {
-                '+923001234567': '1234',
-                '+923121234567': '5678',
-                '+923331234567': '9999'
-            };
-            localStorage.setItem('bixcash_users', JSON.stringify(demoUsers));
-        }
     </script>
 </body>
 </html>
