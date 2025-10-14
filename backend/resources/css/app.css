@@ -143,12 +143,25 @@ html {
     display: block;
 }
 
-/* DESKTOP FIX: Show full images without cropping on large screens */
-@media (min-width: 769px) {
+/* LAPTOP/SMALL DESKTOP (769px - 1919px): Show full images without cropping */
+@media (min-width: 769px) and (max-width: 1919px) {
     .hero-slider .swiper-slide img {
-        object-fit: contain; /* Desktop: show full image, no crop */
+        object-fit: contain; /* Laptop: show full image, no crop */
         object-position: center;
         background-color: var(--bix-white); /* Fill empty space */
+    }
+}
+
+/* LARGE MONITOR (1920px+): Use cover with smart positioning for ultra-wide screens */
+@media (min-width: 1920px) {
+    .hero-slider .swiper-slide img {
+        object-fit: cover; /* Large monitor: fill screen, smart crop */
+        object-position: center;
+    }
+
+    /* Increase max-height for large monitors to reduce extreme aspect ratio issues */
+    .hero-slider {
+        max-height: 900px; /* Increased from 800px for better display on 27"+ monitors */
     }
 }
 
