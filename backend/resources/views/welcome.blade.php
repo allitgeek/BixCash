@@ -15,11 +15,10 @@
     <link rel="dns-prefetch" href="//unpkg.com">
     <link rel="preconnect" href="https://unpkg.com" crossorigin>
     <link rel="preload" href="/images/logos/logos-01.png" as="image">
-    <link rel="preload" href="/images/elements/cash back.png" as="image">
 
     <!-- Stylesheets -->
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
-    @vite(['resources/css/app.css'])
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <!-- Dynamic Content Loading Styles -->
     <style>
@@ -1485,7 +1484,7 @@
         </div>
     </footer>
 
-    <script src="https://unpkg.com/swiper/swiper-bundle.min.js" defer></script>
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // Initialize Mobile Navigation System
@@ -1968,6 +1967,7 @@
             function populateCategories(categories) {
                 const categoryContainer = document.querySelector('.category-container');
                 const categoryNavButtons = document.querySelector('.category-nav-buttons');
+
                 if (!categoryContainer) return;
 
                 if (!categories || categories.length === 0) {
@@ -2364,48 +2364,6 @@
 
             // Initialize notification system
             createNotificationContainer();
-
-            // Contact form handling with enhanced validation
-            const contactForm = document.getElementById('contactForm');
-            if (contactForm) {
-                contactForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-
-                    // Get form data
-                    const formData = new FormData(contactForm);
-                    const name = formData.get('name').trim();
-                    const email = formData.get('email').trim();
-                    const message = formData.get('message').trim();
-
-                    // Enhanced validation
-                    if (!name) {
-                        showNotification('Please enter your name', 'error');
-                        return;
-                    }
-                    if (!email || !isValidEmail(email)) {
-                        showNotification('Please enter a valid email address', 'error');
-                        return;
-                    }
-                    if (!message || message.length < 10) {
-                        showNotification('Please enter a message (at least 10 characters)', 'error');
-                        return;
-                    }
-
-                    // Show loading state
-                    const submitBtn = contactForm.querySelector('.form-submit-btn');
-                    const originalText = submitBtn.textContent;
-                    submitBtn.textContent = 'Sending...';
-                    submitBtn.disabled = true;
-
-                    // Simulate form submission (replace with actual API call)
-                    setTimeout(() => {
-                        showNotification('Thank you for your message! We will get back to you soon.', 'success');
-                        contactForm.reset();
-                        submitBtn.textContent = originalText;
-                        submitBtn.disabled = false;
-                    }, 1500);
-                });
-            }
 
             // Smooth scroll navigation system
             function initializeSmoothScroll() {

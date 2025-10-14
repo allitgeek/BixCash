@@ -22,7 +22,7 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #021c47 0%, #76d37a 100%);
             color: white;
             padding: 30px;
             text-align: center;
@@ -35,8 +35,8 @@
             padding: 30px;
         }
         .highlight-box {
-            background-color: #f0f4ff;
-            border-left: 4px solid #667eea;
+            background-color: #f0fff0;
+            border-left: 4px solid #76d37a;
             padding: 20px;
             margin: 20px 0;
             border-radius: 4px;
@@ -65,20 +65,20 @@
         <div class="content">
             <div class="checkmark">✓</div>
 
-            <p>Dear {{ $query->name }},</p>
+            <p>Hello <strong>{{ $query->name }}</strong>,</p>
 
-            <p>Thank you for reaching out to BixCash! We have successfully received your query and our team will review it shortly.</p>
+            <p>Thank you for getting in touch with us! We have received your message and appreciate you reaching out to BixCash.</p>
 
             <div class="highlight-box">
                 <strong>Your Message:</strong>
                 <p style="margin-top: 10px;">{{ $query->message }}</p>
             </div>
 
-            <p>We strive to respond to all inquiries within 24-48 hours. One of our team members will get back to you at <strong>{{ $query->email }}</strong> as soon as possible.</p>
+            <p>One of our representatives will get in touch with you within 24 hours to assist you with your inquiry.</p>
 
-            <p>If you have any urgent concerns or need immediate assistance, please don't hesitate to reach out to us directly.</p>
+            <p>If you have any urgent concerns in the meantime, feel free to contact us directly.</p>
 
-            <p style="margin-top: 30px;">Best regards,<br><strong>The BixCash Team</strong></p>
+            <p style="margin-top: 30px;">Thank you,<br><strong>The BixCash Team</strong></p>
         </div>
 
         <div class="footer">

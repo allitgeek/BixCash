@@ -350,6 +350,35 @@
         .icon-reports::before { content: "📄"; }
         .icon-settings::before { content: "⚙️"; }
 
+        /* Submenu Styles */
+        .nav-item.has-submenu > .nav-link {
+            cursor: pointer;
+            position: relative;
+        }
+        .nav-item.has-submenu > .nav-link::after {
+            content: "▼";
+            position: absolute;
+            right: 1.5rem;
+            font-size: 0.7rem;
+            transition: transform 0.3s ease;
+        }
+        .nav-item.has-submenu.open > .nav-link::after {
+            transform: rotate(180deg);
+        }
+        .submenu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            background: rgba(0, 0, 0, 0.2);
+        }
+        .nav-item.has-submenu.open .submenu {
+            max-height: 500px;
+        }
+        .submenu .nav-link {
+            padding: 0.75rem 1.5rem 0.75rem 3rem;
+            font-size: 0.9rem;
+        }
+
         /* Table Styles */
         .table {
             width: 100%;
@@ -559,6 +588,13 @@
                 </li>
                 @endif
 
+                <li class="nav-item">
+                    <a href="{{ route('admin.queries.index') }}" class="nav-link {{ request()->routeIs('admin.queries.*') ? 'active' : '' }}">
+                        <span class="nav-icon">📧</span>
+                        Customer Queries
+                    </a>
+                </li>
+
                 @if(auth()->user() && auth()->user()->hasPermission('view_analytics'))
                 <li class="nav-item">
                     <a href="{{ route('admin.analytics') }}" class="nav-link {{ request()->routeIs('admin.analytics') ? 'active' : '' }}">
@@ -575,11 +611,23 @@
                 @endif
 
                 @if(auth()->user() && auth()->user()->hasPermission('manage_settings'))
-                <li class="nav-item">
-                    <a href="{{ route('admin.settings') }}" class="nav-link {{ request()->routeIs('admin.settings') ? 'active' : '' }}">
+                <li class="nav-item has-submenu {{ request()->routeIs('admin.settings*') ? 'open' : '' }}">
+                    <a class="nav-link {{ request()->routeIs('admin.settings*') ? 'active' : '' }}" onclick="toggleSubmenu(this)">
                         <span class="nav-icon icon-settings"></span>
                         Settings
                     </a>
+                    <ul class="submenu">
+                        <li class="nav-item">
+                            <a href="{{ route('admin.settings') }}" class="nav-link {{ request()->routeIs('admin.settings') && !request()->routeIs('admin.settings.email') ? 'active' : '' }}">
+                                General Settings
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.settings.email') }}" class="nav-link {{ request()->routeIs('admin.settings.email') ? 'active' : '' }}">
+                                Email Settings
+                            </a>
+                        </li>
+                    </ul>
                 </li>
                 @endif
             </ul>
@@ -642,6 +690,12 @@
 
     <!-- JavaScript -->
     <script>
+        // Submenu toggle function
+        function toggleSubmenu(element) {
+            const navItem = element.closest('.nav-item.has-submenu');
+            navItem.classList.toggle('open');
+        }
+
         // Mobile menu toggle (if needed)
         document.addEventListener('DOMContentLoaded', function() {
             // Add mobile menu functionality if needed

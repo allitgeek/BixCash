@@ -22,7 +22,7 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #021c47 0%, #76d37a 100%);
             color: white;
             padding: 30px;
             text-align: center;
@@ -44,15 +44,15 @@
         }
         .label {
             font-weight: bold;
-            color: #667eea;
+            color: #021c47;
             margin-bottom: 5px;
         }
         .value {
             color: #555;
         }
         .message-box {
-            background-color: #f9f9f9;
-            border-left: 4px solid #667eea;
+            background-color: #f0fff0;
+            border-left: 4px solid #76d37a;
             padding: 15px;
             margin-top: 10px;
             border-radius: 4px;
@@ -67,11 +67,12 @@
         .button {
             display: inline-block;
             padding: 12px 30px;
-            background-color: #667eea;
-            color: white;
+            background-color: #76d37a;
+            color: #021c47;
             text-decoration: none;
             border-radius: 5px;
             margin-top: 20px;
+            font-weight: bold;
         }
     </style>
 </head>

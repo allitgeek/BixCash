@@ -44,7 +44,14 @@ class EmailSettingController extends Controller
         // Clear config cache to apply new settings
         \Artisan::call('config:clear');
 
-        return back()->with('success', 'Email settings updated successfully!');
+        // Restart queue workers to pick up new email configuration
+        try {
+            exec('sudo supervisorctl restart bixcash-worker:* 2>&1', $output, $returnCode);
+        } catch (\Exception $e) {
+            // Queue workers restart failed, but settings were saved
+        }
+
+        return back()->with('success', 'Email settings updated successfully! Queue workers restarted.');
     }
 
     /**

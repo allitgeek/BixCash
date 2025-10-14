@@ -4,6 +4,22 @@
 @section('page-title', 'Email Settings')
 
 @section('content')
+    <!-- Gmail App Password Help -->
+    <div class="alert alert-info" style="margin-bottom: 1.5rem; background: #e3f2fd; border-left: 4px solid #2196f3; padding: 1.5rem;">
+        <h4 style="margin-bottom: 1rem; color: #1565c0;">📧 Using Gmail? Important Information</h4>
+        <p style="margin-bottom: 0.5rem;"><strong>Gmail requires an App-Specific Password, not your regular password.</strong></p>
+        <p style="margin-bottom: 1rem;">Follow these steps to create an App Password:</p>
+        <ol style="margin-left: 1.5rem; line-height: 1.8;">
+            <li>Go to your <a href="https://myaccount.google.com/security" target="_blank" style="color: #2196f3; text-decoration: underline;">Google Account Security</a></li>
+            <li>Enable <strong>2-Step Verification</strong> if not already enabled</li>
+            <li>Go to <a href="https://myaccount.google.com/apppasswords" target="_blank" style="color: #2196f3; text-decoration: underline;">App Passwords</a></li>
+            <li>Select "Mail" and "Other (Custom name)" → Enter "BixCash"</li>
+            <li>Click "Generate" → Copy the 16-character password</li>
+            <li>Use this App Password in the "SMTP Password" field below (not your regular Gmail password)</li>
+        </ol>
+        <p style="margin-top: 1rem; color: #666;"><strong>SMTP Settings for Gmail:</strong> Host: <code>smtp.gmail.com</code>, Port: <code>587</code>, Encryption: <code>TLS</code></p>
+    </div>
+
     <div class="card">
         <div class="card-header">
             <h3 class="card-title">Configure Email Settings</h3>
@@ -48,10 +64,11 @@
                         </div>
 
                         <div>
-                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">SMTP Password</label>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">SMTP Password *</label>
                             <input type="password" name="smtp_password" value="{{ $settings['smtp_password']->value ?? '' }}"
                                    placeholder="••••••••"
                                    style="width: 100%; padding: 0.75rem; border: 1px solid #dee2e6; border-radius: 4px;">
+                            <small style="color: #e74c3c; font-weight: 500;">⚠️ Gmail users: Use App Password, not regular password</small><br>
                             <small style="color: #666;">Leave blank to keep current password</small>
                         </div>
                     </div>
