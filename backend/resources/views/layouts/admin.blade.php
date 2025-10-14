@@ -350,6 +350,23 @@
         .icon-reports::before { content: "📄"; }
         .icon-settings::before { content: "⚙️"; }
 
+        /* Badge Notification */
+        .badge-notification {
+            display: inline-block;
+            background: #e74c3c;
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            margin-left: 0.5rem;
+            min-width: 20px;
+            text-align: center;
+        }
+        .nav-link.active .badge-notification {
+            background: var(--bix-dark-blue);
+        }
+
         /* Submenu Styles */
         .nav-item.has-submenu > .nav-link {
             cursor: pointer;
@@ -592,6 +609,12 @@
                     <a href="{{ route('admin.queries.index') }}" class="nav-link {{ request()->routeIs('admin.queries.*') ? 'active' : '' }}">
                         <span class="nav-icon">📧</span>
                         Customer Queries
+                        @php
+                            $unreadCount = \App\Models\CustomerQuery::whereNull('read_at')->count();
+                        @endphp
+                        @if($unreadCount > 0)
+                            <span class="badge-notification">{{ $unreadCount }}</span>
+                        @endif
                     </a>
                 </li>
 

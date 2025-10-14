@@ -22,6 +22,10 @@
             <div style="font-size: 2rem; font-weight: bold; margin-bottom: 0.5rem;">{{ $stats['resolved'] }}</div>
             <div style="font-size: 0.9rem; opacity: 0.9;">Resolved</div>
         </div>
+        <div class="stat-card" style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); color: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <div style="font-size: 2rem; font-weight: bold; margin-bottom: 0.5rem;">{{ $stats['unread'] }}</div>
+            <div style="font-size: 0.9rem; opacity: 0.9;">Unread</div>
+        </div>
     </div>
 
     <div class="card">
@@ -41,6 +45,7 @@
                         <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Status</label>
                         <select name="status" style="width: 100%; padding: 0.5rem; border: 1px solid #dee2e6; border-radius: 4px;">
                             <option value="">All Statuses</option>
+                            <option value="unread" {{ request('status') == 'unread' ? 'selected' : '' }}>Unread</option>
                             <option value="new" {{ request('status') == 'new' ? 'selected' : '' }}>New</option>
                             <option value="in_progress" {{ request('status') == 'in_progress' ? 'selected' : '' }}>In Progress</option>
                             <option value="resolved" {{ request('status') == 'resolved' ? 'selected' : '' }}>Resolved</option>

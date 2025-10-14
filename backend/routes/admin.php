@@ -81,6 +81,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('/', [CustomerQueryController::class, 'index'])->name('index');
             Route::get('/{query}', [CustomerQueryController::class, 'show'])->name('show');
             Route::put('/{query}', [CustomerQueryController::class, 'update'])->name('update');
+            Route::post('/{query}/reply', [CustomerQueryController::class, 'reply'])->name('reply');
             Route::delete('/{query}', [CustomerQueryController::class, 'destroy'])->name('destroy');
         });
 

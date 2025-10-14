@@ -10,7 +10,7 @@
         </a>
     </div>
 
-    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem;">
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
         <!-- Query Details -->
         <div class="card">
             <div class="card-header">
@@ -146,6 +146,65 @@
             </div>
         </div>
     </div>
+
+    <!-- Reply Section -->
+    <div class="card" style="margin-bottom: 1.5rem;">
+        <div class="card-header">
+            <h3 class="card-title">Reply to Customer</h3>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ route('admin.queries.reply', $query) }}">
+                @csrf
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Your Reply</label>
+                    <textarea name="message" rows="6" required style="width: 100%; padding: 0.75rem; border: 1px solid #dee2e6; border-radius: 4px; resize: vertical; font-family: inherit;" placeholder="Type your reply to {{ $query->name }}..."></textarea>
+                    @error('message')
+                        <small style="color: #e74c3c; display: block; margin-top: 0.25rem;">{{ $message }}</small>
+                    @enderror
+                </div>
+                <div style="background: #e3f2fd; padding: 1rem; border-radius: 4px; margin-bottom: 1rem; border-left: 4px solid #2196f3;">
+                    <small style="color: #1565c0;">
+                        <strong>Note:</strong> This reply will be sent via email to <strong>{{ $query->email }}</strong> and will be saved in the reply history below.
+                    </small>
+                </div>
+                <button type="submit" class="btn btn-primary" style="padding: 0.75rem 2rem;">
+                    Send Reply
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Reply History -->
+    @if($query->replies->count() > 0)
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Reply History ({{ $query->replies->count() }})</h3>
+            </div>
+            <div class="card-body">
+                @foreach($query->replies()->with('user')->orderBy('created_at', 'desc')->get() as $reply)
+                    <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem; border-left: 4px solid #76d37a;">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                            <div>
+                                <strong style="color: #021c47;">{{ $reply->user->name }}</strong>
+                                <span style="color: #666; font-size: 0.9rem;"> replied</span>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="color: #666; font-size: 0.85rem;">
+                                    {{ $reply->created_at->format('M j, Y \a\t h:i A') }}
+                                </div>
+                                @if($reply->sent_at)
+                                    <div style="color: #27ae60; font-size: 0.8rem; margin-top: 0.25rem;">
+                                        ✓ Email sent
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                        <div style="white-space: pre-wrap; line-height: 1.6; color: #333;">{{ $reply->message }}</div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    @endif
 
     @if(session('success'))
         <div style="position: fixed; top: 20px; right: 20px; background: #27ae60; color: white; padding: 1rem 1.5rem; border-radius: 5px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); z-index: 9999;" id="successMessage">

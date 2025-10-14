@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class CustomerQuery extends Model
 {
@@ -29,6 +30,14 @@ class CustomerQuery extends Model
     public function assignedUser(): BelongsTo
     {
         return $this->belongsTo(User::class, 'assigned_to');
+    }
+
+    /**
+     * Get all replies for this query
+     */
+    public function replies(): HasMany
+    {
+        return $this->hasMany(QueryReply::class, 'customer_query_id');
     }
 
     /**
