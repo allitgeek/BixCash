@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Slide;
+use App\Models\SocialMediaLink;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -59,7 +60,72 @@ class DashboardController extends Controller
 
     public function settings()
     {
-        // Placeholder for settings page
-        return view('admin.dashboard.settings');
+        $socialMediaLinks = SocialMediaLink::ordered()->get();
+        return view('admin.dashboard.settings', compact('socialMediaLinks'));
+    }
+
+    /**
+     * Store a new social media link
+     */
+    public function storeSocialMedia(Request $request)
+    {
+        $validated = $request->validate([
+            'platform' => 'required|string|max:50',
+            'url' => 'required|url|max:255',
+            'icon' => 'nullable|string|max:100',
+            'order' => 'nullable|integer|min:0',
+            'is_enabled' => 'nullable|boolean',
+        ]);
+
+        // Set default icon if not provided
+        if (empty($validated['icon'])) {
+            $validated['icon'] = SocialMediaLink::getDefaultIcon($validated['platform']);
+        }
+
+        // Handle checkbox
+        $validated['is_enabled'] = $request->has('is_enabled');
+
+        SocialMediaLink::create($validated);
+
+        return redirect()->route('admin.settings')
+            ->with('success', 'Social media link added successfully!');
+    }
+
+    /**
+     * Update an existing social media link
+     */
+    public function updateSocialMedia(Request $request, SocialMediaLink $socialMedia)
+    {
+        $validated = $request->validate([
+            'platform' => 'required|string|max:50',
+            'url' => 'required|url|max:255',
+            'icon' => 'nullable|string|max:100',
+            'order' => 'nullable|integer|min:0',
+            'is_enabled' => 'nullable|boolean',
+        ]);
+
+        // Set default icon if not provided
+        if (empty($validated['icon'])) {
+            $validated['icon'] = SocialMediaLink::getDefaultIcon($validated['platform']);
+        }
+
+        // Handle checkbox
+        $validated['is_enabled'] = $request->has('is_enabled');
+
+        $socialMedia->update($validated);
+
+        return redirect()->route('admin.settings')
+            ->with('success', 'Social media link updated successfully!');
+    }
+
+    /**
+     * Delete a social media link
+     */
+    public function destroySocialMedia(SocialMediaLink $socialMedia)
+    {
+        $socialMedia->delete();
+
+        return redirect()->route('admin.settings')
+            ->with('success', 'Social media link deleted successfully!');
     }
 }
