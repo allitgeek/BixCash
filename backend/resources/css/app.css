@@ -138,15 +138,24 @@ html {
 .hero-slider .swiper-slide img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: cover; /* Default: cover for all screens */
     object-position: center;
     display: block;
 }
 
-/* Mobile optimization - adjust crop for better mobile view */
+/* DESKTOP FIX: Show full images without cropping on large screens */
+@media (min-width: 769px) {
+    .hero-slider .swiper-slide img {
+        object-fit: contain; /* Desktop: show full image, no crop */
+        object-position: center;
+        background-color: var(--bix-white); /* Fill empty space */
+    }
+}
+
+/* Mobile optimization - keep crop for immersive mobile view */
 @media (max-width: 768px) {
     .hero-slider .swiper-slide img {
-        object-fit: cover;
+        object-fit: cover; /* Mobile: fill screen, crop is acceptable */
         object-position: center center;
     }
 }
@@ -697,9 +706,20 @@ html {
 /* Bottom Navigation Icons */
 .bottom-nav-icons {
     display: flex;
-    justify-content: center;
+    justify-content: center; /* Default: centered for mobile/tablet */
     gap: 2rem;
     margin-top: 2rem;
+}
+
+/* DESKTOP FIX: Left align navigation icons on large screens */
+@media (min-width: 1024px) {
+    .bottom-nav-icons {
+        justify-content: flex-start; /* Desktop: left align icons */
+        max-width: 1400px;
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 0; /* Align with dashboard content */
+    }
 }
 
 .nav-icon-item {
