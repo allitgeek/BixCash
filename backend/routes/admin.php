@@ -93,7 +93,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // Settings (Super Admin only)
         Route::middleware(['role.permission:manage_settings'])->group(function () {
-            Route::get('settings', [DashboardController::class, 'settings'])->name('settings.general');
+            Route::get('settings', [DashboardController::class, 'settings'])->name('settings');
         });
     });
 });
