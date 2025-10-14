@@ -15,6 +15,7 @@ class SocialMediaLink extends Model
         'platform',
         'url',
         'icon',
+        'icon_file',
         'is_enabled',
         'order',
     ];

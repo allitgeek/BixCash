@@ -73,9 +73,16 @@ class DashboardController extends Controller
             'platform' => 'required|string|max:50',
             'url' => 'required|url|max:255',
             'icon' => 'nullable|string|max:100',
+            'icon_file' => 'nullable|image|mimes:png,jpg,jpeg,svg|max:2048',
             'order' => 'nullable|integer|min:0',
             'is_enabled' => 'nullable|boolean',
         ]);
+
+        // Handle icon file upload
+        if ($request->hasFile('icon_file')) {
+            $iconPath = $request->file('icon_file')->store('social-media-icons', 'public');
+            $validated['icon_file'] = $iconPath;
+        }
 
         // Set default icon if not provided
         if (empty($validated['icon'])) {
@@ -100,9 +107,21 @@ class DashboardController extends Controller
             'platform' => 'required|string|max:50',
             'url' => 'required|url|max:255',
             'icon' => 'nullable|string|max:100',
+            'icon_file' => 'nullable|image|mimes:png,jpg,jpeg,svg|max:2048',
             'order' => 'nullable|integer|min:0',
             'is_enabled' => 'nullable|boolean',
         ]);
+
+        // Handle icon file upload
+        if ($request->hasFile('icon_file')) {
+            // Delete old icon file if exists
+            if ($socialMedia->icon_file && \Storage::disk('public')->exists($socialMedia->icon_file)) {
+                \Storage::disk('public')->delete($socialMedia->icon_file);
+            }
+
+            $iconPath = $request->file('icon_file')->store('social-media-icons', 'public');
+            $validated['icon_file'] = $iconPath;
+        }
 
         // Set default icon if not provided
         if (empty($validated['icon'])) {
@@ -123,6 +142,11 @@ class DashboardController extends Controller
      */
     public function destroySocialMedia(SocialMediaLink $socialMedia)
     {
+        // Delete icon file if exists
+        if ($socialMedia->icon_file && \Storage::disk('public')->exists($socialMedia->icon_file)) {
+            \Storage::disk('public')->delete($socialMedia->icon_file);
+        }
+
         $socialMedia->delete();
 
         return redirect()->route('admin.settings')

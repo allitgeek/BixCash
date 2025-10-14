@@ -41,8 +41,11 @@
                                         </a>
                                     </td>
                                     <td style="padding: 0.75rem;">
-                                        <i class="{{ $link->icon }}" style="font-size: 1.5rem; color: #666;"></i>
-                                        <small style="color: #999; display: block;">{{ $link->icon }}</small>
+                                        @if($link->icon_file)
+                                            <img src="{{ asset('storage/' . $link->icon_file) }}" alt="{{ $link->platform }}" style="width: 40px; height: 40px; object-fit: contain;">
+                                        @else
+                                            <i class="{{ $link->icon }}" style="font-size: 1.5rem; color: #666;"></i>
+                                        @endif
                                     </td>
                                     <td style="padding: 0.75rem; text-align: center;">
                                         @if($link->is_enabled)
@@ -57,7 +60,7 @@
                                     </td>
                                     <td style="padding: 0.75rem; text-align: center;">
                                         <div style="display: flex; gap: 0.25rem; justify-content: center;">
-                                            <button onclick="openEditModal({{ $link->id }}, '{{ $link->platform }}', '{{ $link->url }}', '{{ $link->icon }}', {{ $link->is_enabled ? 'true' : 'false' }}, {{ $link->order }})"
+                                            <button onclick="openEditModal({{ $link->id }}, '{{ $link->platform }}', '{{ $link->url }}', '{{ $link->icon }}', {{ $link->is_enabled ? 'true' : 'false' }}, {{ $link->order }}, '{{ $link->icon_file ? asset('storage/' . $link->icon_file) : '' }}')"
                                                     class="btn btn-primary" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">
                                                 Edit
                                             </button>
@@ -93,7 +96,7 @@
         <div style="max-width: 600px; margin: 50px auto; background: white; border-radius: 8px; padding: 2rem; position: relative;">
             <h3 style="margin-bottom: 1.5rem;" id="modalTitle">Add Social Media Link</h3>
 
-            <form id="socialMediaForm" method="POST">
+            <form id="socialMediaForm" method="POST" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" name="_method" id="formMethod" value="POST">
 
@@ -118,9 +121,15 @@
                 </div>
 
                 <div style="margin-bottom: 1.5rem;">
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Icon (Font Awesome Class)</label>
-                    <input type="text" name="icon" id="icon" placeholder="fab fa-facebook-f" style="width: 100%; padding: 0.5rem; border: 1px solid #dee2e6; border-radius: 4px;">
-                    <small style="color: #666; display: block; margin-top: 0.25rem;">Leave empty to use default icon for the platform</small>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Icon Image *</label>
+                    <input type="file" name="icon_file" id="icon_file" accept="image/png,image/jpeg,image/jpg,image/svg+xml" style="width: 100%; padding: 0.5rem; border: 1px solid #dee2e6; border-radius: 4px;">
+                    <small style="color: #666; display: block; margin-top: 0.25rem;">
+                        <strong>Recommended size: 64x64 pixels</strong> (PNG, JPG, or SVG format, max 2MB)
+                    </small>
+                    <div id="currentIcon" style="margin-top: 0.5rem; display: none;">
+                        <small style="color: #666;">Current icon:</small>
+                        <img id="currentIconPreview" src="" alt="Current icon" style="width: 40px; height: 40px; margin-left: 0.5rem; object-fit: contain;">
+                    </div>
                 </div>
 
                 <div style="margin-bottom: 1.5rem;">
@@ -178,21 +187,31 @@
             document.getElementById('formMethod').value = 'POST';
             document.getElementById('platform').value = '';
             document.getElementById('url').value = '';
-            document.getElementById('icon').value = '';
+            document.getElementById('icon_file').value = '';
             document.getElementById('order').value = '0';
             document.getElementById('is_enabled').checked = true;
+            document.getElementById('currentIcon').style.display = 'none';
             document.getElementById('socialMediaModal').style.display = 'block';
         }
 
-        function openEditModal(id, platform, url, icon, isEnabled, order) {
+        function openEditModal(id, platform, url, icon, isEnabled, order, iconFile) {
             document.getElementById('modalTitle').textContent = 'Edit Social Media Link';
             document.getElementById('socialMediaForm').action = `/admin/social-media/${id}`;
             document.getElementById('formMethod').value = 'PUT';
             document.getElementById('platform').value = platform;
             document.getElementById('url').value = url;
-            document.getElementById('icon').value = icon;
+            document.getElementById('icon_file').value = '';
             document.getElementById('order').value = order;
             document.getElementById('is_enabled').checked = isEnabled;
+
+            // Show current icon if exists
+            if (iconFile) {
+                document.getElementById('currentIconPreview').src = iconFile;
+                document.getElementById('currentIcon').style.display = 'block';
+            } else {
+                document.getElementById('currentIcon').style.display = 'none';
+            }
+
             document.getElementById('socialMediaModal').style.display = 'block';
         }
 

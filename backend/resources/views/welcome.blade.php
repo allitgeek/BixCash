@@ -1425,7 +1425,11 @@
                         @endphp
                         @foreach($socialMediaLinks as $socialLink)
                             <a href="{{ $socialLink->url }}" target="_blank" rel="noopener noreferrer" class="social-link {{ strtolower($socialLink->platform) }}" title="{{ ucfirst($socialLink->platform) }}">
-                                <i class="{{ $socialLink->icon }}" style="font-size: 1.2rem;"></i>
+                                @if($socialLink->icon_file)
+                                    <img src="{{ asset('storage/' . $socialLink->icon_file) }}" alt="{{ $socialLink->platform }}" style="width: 32px; height: 32px; object-fit: contain;">
+                                @else
+                                    <i class="{{ $socialLink->icon }}" style="font-size: 1.2rem;"></i>
+                                @endif
                             </a>
                         @endforeach
                     </div>
