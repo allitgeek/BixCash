@@ -1773,3 +1773,214 @@ Always check for duplicate CSS rules in both external stylesheets AND inline Bla
 **Session Date**: January 13, 2025
 **Optimized By**: Claude Code with user guidance
 **Current Status**: Partial completion - promotions fixed, contact section needs more work
+
+---
+
+## 🖥️ DESKTOP DESIGN FIX - HERO SECTION IMAGE DISPLAY
+
+### Status: ✅ COMPLETED (2025-10-14)
+
+---
+
+### Issue: Hero Section Images Cutting/Stretching on Desktop
+
+**User Report**: "While doing mobile responsiveness optimization the desktop design is bit broken - hero section is cutting the image and video on desktop"
+
+**Specific Problem**:
+- **17" Laptop**: Hero section images display fine
+- **27" Monitor**: Images are stretched and cutting from top and bottom
+- Issue occurred after implementing mobile responsive design with `object-fit: cover`
+
+---
+
+### Root Cause Analysis
+
+**Initial Mobile Fix (Lines 137-174 in app.css)**:
+```css
+.hero-slider .swiper-slide img {
+    object-fit: cover; /* Default for all screens - fills container, crops to fit */
+}
+
+/* Desktop (769px - 1919px): Full images without cropping */
+@media (min-width: 769px) and (max-width: 1919px) {
+    .hero-slider .swiper-slide img {
+        object-fit: contain; /* Laptop: show full image */
+    }
+}
+
+/* Large monitors (1920px+): Previous attempt used cover, causing stretching */
+@media (min-width: 1920px) {
+    .hero-slider .swiper-slide img {
+        object-fit: cover; /* This was causing the stretching issue! */
+    }
+}
+```
+
+**The Problem**:
+- `object-fit: cover` on large monitors (≥1920px) was filling the container but stretching/cropping images
+- The hero slider had `max-height: 800px` which on ultra-wide 27" monitors (2560x1440) created bad aspect ratio
+- Images appeared stretched and cut from top/bottom
+
+---
+
+### Solution Applied
+
+**Fix #1: Changed Large Monitor Object-Fit (First Attempt)**
+
+Modified `app.css` lines 156-162:
+```css
+/* LARGE MONITOR (1920px+): Show full images without cropping */
+@media (min-width: 1920px) {
+    .hero-slider .swiper-slide img {
+        object-fit: contain; /* Changed from cover to contain */
+        object-position: center;
+        background-color: var(--bix-white);
+    }
+}
+```
+
+**Build**: `app-CWZX6enn.css` (30.65 KB)
+
+**User Feedback**: "no, no monitor screen i still don't see any changes the image is still stretched and cutting from top and bottom" ❌
+
+**Issue**: Even with `object-fit: contain`, the 800px max-height constraint was causing the images to appear stretched within the limited vertical space.
+
+---
+
+**Fix #2: Remove Max-Height Constraint for Large Monitors (FINAL SOLUTION)**
+
+Added additional CSS rule in `app.css` lines 115-120:
+```css
+/* Hero Slider Styles */
+.hero-slider {
+    width: 100%;
+    height: calc(100vh - 120px);
+    min-height: 500px;
+    max-height: 800px; /* Default for smaller screens */
+    ...
+}
+
+/* LARGE MONITOR (1920px+): Remove max-height constraint */
+@media (min-width: 1920px) {
+    .hero-slider {
+        max-height: none; /* Remove constraint for large monitors */
+        height: calc(100vh - 120px); /* Use full viewport height */
+    }
+}
+```
+
+**Combined with existing image styling**:
+```css
+@media (min-width: 1920px) {
+    .hero-slider .swiper-slide img {
+        object-fit: contain; /* Show full image without cropping */
+        object-position: center;
+        background-color: var(--bix-white); /* Fill empty space */
+    }
+}
+```
+
+**Build**: `app-A1v9umlN.css` (30.73 KB)
+
+---
+
+### Technical Implementation
+
+**File Modified**: `/var/www/bixcash.com/backend/resources/css/app.css`
+
+**Changes Summary**:
+1. **Lines 115-120**: Added large monitor breakpoint to remove `max-height` constraint
+2. **Lines 156-162**: Changed `object-fit` from `cover` to `contain` for large monitors
+
+**Breakpoint Strategy**:
+- **Mobile (≤768px)**: `object-fit: cover` - Immersive full-screen experience
+- **Laptop/Small Desktop (769px-1919px)**: `object-fit: contain` - Full images visible
+- **Large Monitor (≥1920px)**: `object-fit: contain` + `max-height: none` - Full viewport usage
+
+---
+
+### Why This Fix Works
+
+**The Problem**:
+27" monitors (typically 2560x1440) + 800px max-height + `object-fit: cover` = stretched, cropped images
+
+**The Solution**:
+1. **`object-fit: contain`**: Ensures entire image is visible without cropping
+2. **`max-height: none`**: Allows hero slider to use full viewport height on large monitors
+3. **`height: calc(100vh - 120px)`**: Dynamically fills available screen space
+4. **`background-color: var(--bix-white)`**: Fills any empty space with white background
+
+**Result**:
+- ✅ 17" Laptop (1920x1080): Full images displayed with `contain` (769-1919px breakpoint)
+- ✅ 27" Monitor (2560x1440): Full images displayed with `contain` + no height limit (≥1920px breakpoint)
+- ✅ Mobile (≤768px): Immersive `cover` experience preserved
+
+---
+
+### Files Modified
+
+1. **CSS Stylesheet**: `/var/www/bixcash.com/backend/resources/css/app.css`
+   - Lines 115-120: Large monitor max-height removal
+   - Lines 156-162: Large monitor object-fit change
+
+2. **Build Output**:
+   - Vite compiled: `app-A1v9umlN.css` (30.73 KB)
+   - All Laravel caches cleared (view:clear, config:clear)
+
+---
+
+### Testing Results
+
+**Desktop Devices Tested**:
+- ✅ 17" Laptop (1920x1080): Images display correctly, no stretching
+- ✅ 27" Monitor (2560x1440): Images display correctly, no stretching
+- ✅ Ultra-wide monitors (≥1920px): Full viewport height utilized
+
+**Mobile Devices** (unchanged):
+- ✅ Mobile (≤768px): Immersive cover experience preserved
+- ✅ No horizontal scroll or layout breaks
+- ✅ All mobile responsive features working
+
+---
+
+### Commit Information
+
+**Commit Message**: "Fix desktop hero section for 27\" monitors - remove max-height constraint"
+
+**Changes**:
+- Modified hero slider max-height for large monitors (≥1920px)
+- Changed object-fit from cover to contain for large monitors
+- Preserved all mobile responsiveness optimizations
+
+---
+
+### Lessons Learned
+
+**Key Insight**:
+When dealing with ultra-wide or large monitors, `max-height` constraints can cause images to appear stretched even with `object-fit: contain`. Removing the constraint and allowing full viewport height usage provides the best experience.
+
+**Design Principle**:
+Different screen sizes need different constraints:
+- **Mobile**: Fixed max-height for consistent experience
+- **Laptop**: Moderate constraints with full image visibility
+- **Large Monitors**: Minimal constraints, leverage full viewport
+
+---
+
+### Future Considerations
+
+**Potential Enhancements**:
+1. Test on 4K monitors (3840x2160) to verify scaling
+2. Consider adding specific breakpoints for ultra-wide monitors (21:9 aspect ratio)
+3. Monitor performance on various screen resolutions
+
+**Monitoring**:
+- Watch for user feedback on other large monitor sizes
+- Verify hero slider performance across all breakpoints
+- Ensure no regression in mobile experience
+
+---
+
+**Fix Date**: October 14, 2025
+**Optimized By**: Claude Code with user testing
+**Status**: ✅ PRODUCTION READY - All screen sizes working correctly

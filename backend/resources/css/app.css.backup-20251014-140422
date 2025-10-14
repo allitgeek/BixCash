@@ -111,14 +111,6 @@ html {
     box-sizing: border-box;
 }
 
-/* LARGE MONITOR (1920px+): Remove max-height constraint */
-@media (min-width: 1920px) {
-    .hero-slider {
-        max-height: none; /* Remove max-height for large monitors */
-        height: calc(100vh - 120px); /* Use full viewport height */
-    }
-}
-
 .hero-slider .swiper-container {
     width: 100%;
     height: 100%;
@@ -146,33 +138,15 @@ html {
 .hero-slider .swiper-slide img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Default: cover for all screens */
+    object-fit: cover;
     object-position: center;
     display: block;
 }
 
-/* LAPTOP/SMALL DESKTOP (769px - 1919px): Show full images without cropping */
-@media (min-width: 769px) and (max-width: 1919px) {
-    .hero-slider .swiper-slide img {
-        object-fit: contain; /* Laptop: show full image, no crop */
-        object-position: center;
-        background-color: var(--bix-white); /* Fill empty space */
-    }
-}
-
-/* LARGE MONITOR (1920px+): Show full images without cropping */
-@media (min-width: 1920px) {
-    .hero-slider .swiper-slide img {
-        object-fit: contain; /* Large monitor: show full image, no crop */
-        object-position: center;
-        background-color: var(--bix-white); /* Fill empty space */
-    }
-}
-
-/* Mobile optimization - keep crop for immersive mobile view */
+/* Mobile optimization - adjust crop for better mobile view */
 @media (max-width: 768px) {
     .hero-slider .swiper-slide img {
-        object-fit: cover; /* Mobile: fill screen, crop is acceptable */
+        object-fit: cover;
         object-position: center center;
     }
 }
@@ -723,20 +697,9 @@ html {
 /* Bottom Navigation Icons */
 .bottom-nav-icons {
     display: flex;
-    justify-content: center; /* Default: centered for mobile/tablet */
+    justify-content: center;
     gap: 2rem;
     margin-top: 2rem;
-}
-
-/* DESKTOP FIX: Left align navigation icons on large screens */
-@media (min-width: 1024px) {
-    .bottom-nav-icons {
-        justify-content: flex-start; /* Desktop: left align icons */
-        max-width: 1400px;
-        margin-left: auto;
-        margin-right: auto;
-        padding-left: 0; /* Align with dashboard content */
-    }
 }
 
 .nav-icon-item {
