@@ -1389,6 +1389,9 @@
                 <!-- Right Side - Contact Form -->
                 <div class="contact-form-side">
                     <form class="contact-form" id="contactForm">
+                        @csrf
+                        <div id="formMessages" style="display: none; padding: 1rem; margin-bottom: 1rem; border-radius: 5px; font-weight: 500;"></div>
+
                         <div class="form-group">
                             <input type="text" id="name" name="name" placeholder="Name" class="form-input" required>
                         </div>
@@ -1398,7 +1401,10 @@
                         <div class="form-group">
                             <textarea id="message" name="message" placeholder="Write Message" class="form-textarea" rows="5" required></textarea>
                         </div>
-                        <button type="submit" class="form-submit-btn">Submit</button>
+                        <button type="submit" class="form-submit-btn" id="submitBtn">
+                            <span id="submitBtnText">Submit</span>
+                            <span id="submitBtnLoader" style="display: none;">Sending...</span>
+                        </button>
                     </form>
                 </div>
             </div>
@@ -2527,6 +2533,87 @@
                         setTimeout(() => inThrottle = false, limit);
                     }
                 }
+            }
+
+            // Contact Form AJAX Submission
+            const contactForm = document.getElementById('contactForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const submitBtnText = document.getElementById('submitBtnText');
+            const submitBtnLoader = document.getElementById('submitBtnLoader');
+            const formMessages = document.getElementById('formMessages');
+
+            if (contactForm) {
+                contactForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+
+                    // Disable submit button
+                    submitBtn.disabled = true;
+                    submitBtnText.style.display = 'none';
+                    submitBtnLoader.style.display = 'inline';
+
+                    // Hide previous messages
+                    formMessages.style.display = 'none';
+
+                    // Get form data
+                    const formData = new FormData(contactForm);
+
+                    try {
+                        const response = await fetch('{{ route("contact.store") }}', {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                                'Accept': 'application/json',
+                            },
+                            body: formData
+                        });
+
+                        const data = await response.json();
+
+                        if (response.ok && data.success) {
+                            // Show success message
+                            formMessages.textContent = data.message || 'Thank you for contacting us! We will get back to you soon.';
+                            formMessages.style.display = 'block';
+                            formMessages.style.backgroundColor = '#d4edda';
+                            formMessages.style.color = '#155724';
+                            formMessages.style.border = '1px solid #c3e6cb';
+
+                            // Reset form
+                            contactForm.reset();
+
+                            // Hide success message after 5 seconds
+                            setTimeout(() => {
+                                formMessages.style.display = 'none';
+                            }, 5000);
+                        } else {
+                            // Show error message
+                            let errorMessage = 'An error occurred. Please try again.';
+
+                            if (data.errors) {
+                                errorMessage = Object.values(data.errors).flat().join('<br>');
+                            } else if (data.message) {
+                                errorMessage = data.message;
+                            }
+
+                            formMessages.innerHTML = errorMessage;
+                            formMessages.style.display = 'block';
+                            formMessages.style.backgroundColor = '#f8d7da';
+                            formMessages.style.color = '#721c24';
+                            formMessages.style.border = '1px solid #f5c6cb';
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        formMessages.textContent = 'Network error. Please check your connection and try again.';
+                        formMessages.style.display = 'block';
+                        formMessages.style.backgroundColor = '#f8d7da';
+                        formMessages.style.color = '#721c24';
+                        formMessages.style.border = '1px solid #f5c6cb';
+                    } finally {
+                        // Re-enable submit button
+                        submitBtn.disabled = false;
+                        submitBtnText.style.display = 'inline';
+                        submitBtnLoader.style.display = 'none';
+                    }
+                });
             }
         });
     </script>

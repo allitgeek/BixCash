@@ -8,6 +8,8 @@ use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\SlideController;
 use App\Http\Controllers\Admin\PromotionController;
+use App\Http\Controllers\Admin\CustomerQueryController;
+use App\Http\Controllers\Admin\EmailSettingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -74,9 +76,24 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('reports', [DashboardController::class, 'reports'])->name('reports');
         });
 
+        // Customer Queries Management
+        Route::prefix('queries')->name('queries.')->group(function () {
+            Route::get('/', [CustomerQueryController::class, 'index'])->name('index');
+            Route::get('/{query}', [CustomerQueryController::class, 'show'])->name('show');
+            Route::put('/{query}', [CustomerQueryController::class, 'update'])->name('update');
+            Route::delete('/{query}', [CustomerQueryController::class, 'destroy'])->name('destroy');
+        });
+
+        // Email Settings (Super Admin & Admin)
+        Route::prefix('settings')->name('settings.')->group(function () {
+            Route::get('/email', [EmailSettingController::class, 'index'])->name('email');
+            Route::put('/email', [EmailSettingController::class, 'update'])->name('email.update');
+            Route::post('/email/test', [EmailSettingController::class, 'test'])->name('email.test');
+        });
+
         // Settings (Super Admin only)
         Route::middleware(['role.permission:manage_settings'])->group(function () {
-            Route::get('settings', [DashboardController::class, 'settings'])->name('settings');
+            Route::get('settings', [DashboardController::class, 'settings'])->name('settings.general');
         });
     });
 });
