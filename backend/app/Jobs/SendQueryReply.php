@@ -29,13 +29,29 @@ class SendQueryReply implements ShouldQueue
      */
     public function handle(): void
     {
-        // Apply email settings from database
-        EmailSetting::applyToConfig();
+        try {
+            // Apply email settings from database
+            EmailSetting::applyToConfig();
 
-        // Send the email
-        Mail::to($this->query->email)->send(new QueryReplyMail($this->query, $this->reply));
+            // Load the reply relationship to ensure user is available
+            $this->reply->load('user');
 
-        // Update reply with sent timestamp
-        $this->reply->update(['sent_at' => now()]);
+            // Send the email
+            Mail::to($this->query->email)->send(new QueryReplyMail($this->query, $this->reply));
+
+            // Update reply with sent timestamp only if successful
+            $this->reply->update(['sent_at' => now()]);
+        } catch (\Exception $e) {
+            // Log the error
+            \Log::error('Failed to send query reply email', [
+                'query_id' => $this->query->id,
+                'reply_id' => $this->reply->id,
+                'customer_email' => $this->query->email,
+                'error' => $e->getMessage(),
+            ]);
+
+            // Re-throw to mark job as failed
+            throw $e;
+        }
     }
 }
