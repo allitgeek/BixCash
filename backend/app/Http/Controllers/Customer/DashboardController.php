@@ -13,10 +13,7 @@ use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
+    // No need for constructor middleware - routes already have 'auth' middleware applied
 
     public function index()
     {
