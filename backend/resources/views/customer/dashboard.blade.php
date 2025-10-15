@@ -435,8 +435,10 @@
                 </div>
 
                 <button type="submit" class="btn btn-primary">Complete Profile</button>
-                <button type="button" class="btn btn-outline" onclick="skipProfileModal()" style="margin-top: 0.75rem; background: transparent; color: var(--text-light); border: 2px solid var(--border);">Skip for now</button>
             </form>
+            <p style="text-align: center; font-size: 0.85rem; color: var(--text-light); margin-top: 1rem;">
+                Please complete your profile to continue using the dashboard
+            </p>
         </div>
     </div>
     @endif
@@ -622,15 +624,6 @@
     </style>
 
     <script>
-        // Skip profile modal function
-        function skipProfileModal() {
-            const modal = document.getElementById('profileModal');
-            if (modal) {
-                modal.style.animation = 'fadeOut 0.3s ease';
-                setTimeout(() => modal.style.display = 'none', 300);
-            }
-        }
-
         // Handle form submission
         document.addEventListener('DOMContentLoaded', function() {
             const profileForm = document.getElementById('profileForm');

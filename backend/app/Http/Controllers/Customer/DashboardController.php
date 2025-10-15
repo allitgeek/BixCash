@@ -57,17 +57,24 @@ class DashboardController extends Controller
 
         $user = Auth::user();
 
-        // Update user name
-        $user->update(['name' => $validated['name']]);
+        // Update user name and email
+        $user->update([
+            'name' => $validated['name'],
+            'email' => $validated['email'] ?? $user->email,
+        ]);
 
-        // Update or create profile
+        // Update or create profile and mark as completed
         $profile = CustomerProfile::updateOrCreate(
             ['user_id' => $user->id],
             [
                 'date_of_birth' => $validated['date_of_birth'] ?? null,
-                'profile_completed' => true,
+                'profile_completed' => 1, // Explicitly set to 1 for database compatibility
             ]
         );
+
+        // Ensure it's saved
+        $profile->profile_completed = 1;
+        $profile->save();
 
         return redirect()->route('customer.dashboard')->with('success', 'Profile completed successfully!');
     }
