@@ -124,7 +124,7 @@ class DashboardController extends Controller
         return redirect()->back()->with('success', 'Profile updated successfully!');
     }
 
-    public function updateBankDetails(Request $request)
+    public function requestBankDetailsOtp(Request $request)
     {
         $validated = $request->validate([
             'bank_name' => 'required|string|max:255',
@@ -134,13 +134,78 @@ class DashboardController extends Controller
         ]);
 
         $user = Auth::user();
+        $profile = CustomerProfile::where('user_id', $user->id)->first();
 
-        CustomerProfile::updateOrCreate(
-            ['user_id' => $user->id],
-            $validated
-        );
+        // Generate 6-digit OTP
+        $otp = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
 
-        return redirect()->back()->with('success', 'Bank details updated successfully!');
+        // Save OTP and pending bank details
+        $profile->bank_change_otp = $otp;
+        $profile->bank_change_otp_expires_at = now()->addMinutes(10);
+        $profile->save();
+
+        // Store pending bank details in session
+        session([
+            'pending_bank_data' => $validated,
+            'show_otp_modal' => true
+        ]);
+
+        // TODO: Send SMS with OTP using Firebase or SMS service
+        // For now, we'll just flash it (remove in production)
+        if (app()->environment('local', 'development')) {
+            session()->flash('otp_debug', $otp);
+        }
+
+        return redirect()->back();
+    }
+
+    public function verifyBankDetailsOtp(Request $request)
+    {
+        $request->validate([
+            'otp_digit_1' => 'required|numeric|digits:1',
+            'otp_digit_2' => 'required|numeric|digits:1',
+            'otp_digit_3' => 'required|numeric|digits:1',
+            'otp_digit_4' => 'required|numeric|digits:1',
+            'otp_digit_5' => 'required|numeric|digits:1',
+            'otp_digit_6' => 'required|numeric|digits:1',
+            'bank_name' => 'required|string|max:255',
+            'account_number' => 'required|string|max:50',
+            'account_title' => 'required|string|max:255',
+            'iban' => 'nullable|string|max:50',
+        ]);
+
+        $user = Auth::user();
+        $profile = CustomerProfile::where('user_id', $user->id)->first();
+
+        // Concatenate OTP digits
+        $enteredOtp = $request->otp_digit_1 . $request->otp_digit_2 . $request->otp_digit_3 .
+                     $request->otp_digit_4 . $request->otp_digit_5 . $request->otp_digit_6;
+
+        // Verify OTP
+        if (!$profile || $profile->bank_change_otp !== $enteredOtp) {
+            return redirect()->back()->with('error', 'Invalid OTP. Please try again.');
+        }
+
+        if ($profile->bank_change_otp_expires_at < now()) {
+            return redirect()->back()->with('error', 'OTP has expired. Please request a new one.');
+        }
+
+        // Update bank details
+        $profile->update([
+            'bank_name' => $request->bank_name,
+            'account_number' => $request->account_number,
+            'account_title' => $request->account_title,
+            'iban' => $request->iban,
+            'bank_details_last_updated' => now(),
+            'withdrawal_locked_until' => now()->addHours(24),
+            'bank_change_otp' => null,
+            'bank_change_otp_expires_at' => null,
+        ]);
+
+        // Clear session
+        session()->forget(['pending_bank_data', 'show_otp_modal']);
+
+        return redirect()->route('customer.profile')->with('success', 'Bank details updated successfully! Withdrawals will be locked for 24 hours for security.');
     }
 
     public function wallet()
@@ -177,6 +242,15 @@ class DashboardController extends Controller
         $profile = CustomerProfile::where('user_id', $user->id)->first();
         if (!$profile || !$profile->bank_name || !$profile->account_number) {
             return redirect()->route('customer.profile')->with('error', 'Please add your bank details first!');
+        }
+
+        // Check if withdrawals are locked due to bank detail change
+        if ($profile->withdrawal_locked_until && $profile->withdrawal_locked_until > now()) {
+            $hoursRemaining = now()->diffInHours($profile->withdrawal_locked_until);
+            $minutesRemaining = now()->diffInMinutes($profile->withdrawal_locked_until) % 60;
+
+            return redirect()->back()->with('error',
+                "Withdrawals are locked for security after changing bank details. Please try again in {$hoursRemaining} hours and {$minutesRemaining} minutes.");
         }
 
         // Create withdrawal request

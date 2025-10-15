@@ -72,6 +72,24 @@
 
     <main class="content">
 
+        @php
+            $profile = Auth::user()->customerProfile;
+            $isLocked = $profile && $profile->withdrawal_locked_until && $profile->withdrawal_locked_until > now();
+        @endphp
+
+        @if($isLocked)
+        <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 1rem; margin-bottom: 1.5rem; border-radius: 8px;">
+            <p style="font-size: 0.875rem; color: #92400e; margin-bottom: 0.5rem;">
+                <strong>🔒 Withdrawals Temporarily Locked</strong>
+            </p>
+            <p style="font-size: 0.875rem; color: #92400e;">
+                For security, withdrawals are locked for 24 hours after changing bank details.
+                <br>
+                <strong>Unlock Time:</strong> {{ $profile->withdrawal_locked_until->format('M d, Y h:i A') }}
+            </p>
+        </div>
+        @endif
+
         <div class="withdraw-section">
             <h2 class="section-title">Request Withdrawal</h2>
             <form method="POST" action="{{ route('customer.wallet.withdraw') }}">

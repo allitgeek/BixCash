@@ -87,26 +87,76 @@
         <div class="section">
             <h2 class="section-title">Bank Details</h2>
             <p style="color: var(--text-light); font-size: 0.875rem; margin-bottom: 1rem;">Required for withdrawal requests</p>
-            <form method="POST" action="{{ route('customer.bank-details.update') }}">
-                @csrf
-                <div class="form-group">
-                    <label class="form-label">Bank Name *</label>
-                    <input type="text" name="bank_name" class="form-input" required value="{{ $profile->bank_name ?? '' }}" placeholder="e.g., HBL, UBL, Meezan Bank">
+
+            @if($profile && $profile->bank_name)
+                <!-- Current Bank Details (Display Only) -->
+                <div style="background: var(--bg-light); border-radius: 12px; padding: 1rem; margin-bottom: 1.5rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                        <h3 style="font-size: 0.875rem; font-weight: 600; color: var(--text-dark);">Current Bank Account</h3>
+                        <button type="button" onclick="toggleBankEdit()" class="btn" style="padding: 0.5rem 1rem; font-size: 0.875rem; background: var(--primary); color: white;">Change</button>
+                    </div>
+                    <div style="display: grid; gap: 0.5rem;">
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: var(--text-light); font-size: 0.875rem;">Bank:</span>
+                            <span style="font-weight: 600;">{{ $profile->bank_name }}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: var(--text-light); font-size: 0.875rem;">Account Title:</span>
+                            <span style="font-weight: 600;">{{ $profile->account_title }}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: var(--text-light); font-size: 0.875rem;">Account Number:</span>
+                            <span style="font-weight: 600;">{{ maskAccountNumber($profile->account_number) }}</span>
+                        </div>
+                        @if($profile->iban)
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: var(--text-light); font-size: 0.875rem;">IBAN:</span>
+                            <span style="font-weight: 600;">{{ maskIban($profile->iban) }}</span>
+                        </div>
+                        @endif
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label class="form-label">Account Title *</label>
-                    <input type="text" name="account_title" class="form-input" required value="{{ $profile->account_title ?? '' }}" placeholder="Account holder name">
+
+                <!-- Edit Bank Details Form (Hidden by Default) -->
+                <div id="bankEditForm" style="display: none;">
+            @else
+                <!-- No Bank Details Yet -->
+                <div id="bankEditForm">
+            @endif
+
+                    <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 1rem; margin-bottom: 1.5rem; border-radius: 8px;">
+                        <p style="font-size: 0.875rem; color: #92400e; margin-bottom: 0.5rem;">
+                            <strong>⚠️ Security Notice:</strong>
+                        </p>
+                        <p style="font-size: 0.875rem; color: #92400e;">
+                            Changing bank details requires OTP verification and will lock withdrawals for 24 hours for security reasons.
+                        </p>
+                    </div>
+
+                    <form method="POST" action="{{ route('customer.bank-details.request-otp') }}" id="bankDetailsForm">
+                        @csrf
+                        <div class="form-group">
+                            <label class="form-label">Bank Name *</label>
+                            <input type="text" name="bank_name" class="form-input" required placeholder="e.g., HBL, UBL, Meezan Bank">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Account Title *</label>
+                            <input type="text" name="account_title" class="form-input" required placeholder="Account holder name">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Account Number *</label>
+                            <input type="text" name="account_number" class="form-input" required placeholder="Your account number">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">IBAN (Optional)</label>
+                            <input type="text" name="iban" class="form-input" placeholder="PK36XXXX0000001234567890">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Request OTP Verification</button>
+                        @if($profile && $profile->bank_name)
+                        <button type="button" onclick="toggleBankEdit()" class="btn" style="width: 100%; margin-top: 0.5rem; background: transparent; color: var(--text-dark); border: 2px solid var(--border);">Cancel</button>
+                        @endif
+                    </form>
                 </div>
-                <div class="form-group">
-                    <label class="form-label">Account Number *</label>
-                    <input type="text" name="account_number" class="form-input" required value="{{ $profile->account_number ?? '' }}" placeholder="Your account number">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">IBAN (Optional)</label>
-                    <input type="text" name="iban" class="form-input" value="{{ $profile->iban ?? '' }}" placeholder="PK36XXXX0000001234567890">
-                </div>
-                <button type="submit" class="btn btn-primary">Save Bank Details</button>
-            </form>
         </div>
 
     </main>
@@ -137,6 +187,87 @@
         {{ session('success') }}
     </div>
     @endif
+
+    @if(session('error'))
+    <div style="position: fixed; top: 20px; right: 20px; background: #f56565; color: white; padding: 1rem 1.5rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 2000;">
+        {{ session('error') }}
+    </div>
+    @endif
+
+    @if(session('otp_debug'))
+    <div style="position: fixed; top: 80px; right: 20px; background: #4299e1; color: white; padding: 1rem 1.5rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 2000;">
+        <strong>Development Mode - OTP:</strong> {{ session('otp_debug') }}
+    </div>
+    @endif
+
+    <!-- OTP Verification Modal -->
+    @if(session('show_otp_modal'))
+    <div id="otpModal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 3000; padding: 1rem;">
+        <div style="background: white; border-radius: 20px; padding: 2rem; max-width: 500px; width: 100%;">
+            <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">Verify Your Phone</h2>
+            <p style="color: var(--text-light); margin-bottom: 1.5rem;">Enter the 6-digit OTP sent to {{ $user->phone }}</p>
+
+            <form method="POST" action="{{ route('customer.bank-details.verify-otp') }}">
+                @csrf
+                <input type="hidden" name="bank_name" value="{{ session('pending_bank_data.bank_name') }}">
+                <input type="hidden" name="account_title" value="{{ session('pending_bank_data.account_title') }}">
+                <input type="hidden" name="account_number" value="{{ session('pending_bank_data.account_number') }}">
+                <input type="hidden" name="iban" value="{{ session('pending_bank_data.iban') }}">
+
+                <div style="display: flex; gap: 0.75rem; justify-content: center; margin-bottom: 1.5rem;">
+                    <input type="text" name="otp_digit_1" class="otp-input" maxlength="1" pattern="[0-9]" required autofocus style="width: 50px; height: 50px; text-align: center; font-size: 1.5rem; border: 2px solid var(--border); border-radius: 12px;">
+                    <input type="text" name="otp_digit_2" class="otp-input" maxlength="1" pattern="[0-9]" required style="width: 50px; height: 50px; text-align: center; font-size: 1.5rem; border: 2px solid var(--border); border-radius: 12px;">
+                    <input type="text" name="otp_digit_3" class="otp-input" maxlength="1" pattern="[0-9]" required style="width: 50px; height: 50px; text-align: center; font-size: 1.5rem; border: 2px solid var(--border); border-radius: 12px;">
+                    <input type="text" name="otp_digit_4" class="otp-input" maxlength="1" pattern="[0-9]" required style="width: 50px; height: 50px; text-align: center; font-size: 1.5rem; border: 2px solid var(--border); border-radius: 12px;">
+                    <input type="text" name="otp_digit_5" class="otp-input" maxlength="1" pattern="[0-9]" required style="width: 50px; height: 50px; text-align: center; font-size: 1.5rem; border: 2px solid var(--border); border-radius: 12px;">
+                    <input type="text" name="otp_digit_6" class="otp-input" maxlength="1" pattern="[0-9]" required style="width: 50px; height: 50px; text-align: center; font-size: 1.5rem; border: 2px solid var(--border); border-radius: 12px;">
+                </div>
+
+                <button type="submit" class="btn btn-primary">Verify & Save Bank Details</button>
+            </form>
+        </div>
+    </div>
+    @endif
+
+    <script>
+        function toggleBankEdit() {
+            const form = document.getElementById('bankEditForm');
+            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        }
+
+        // OTP Input Auto-focus
+        document.querySelectorAll('.otp-input').forEach((input, index, inputs) => {
+            input.addEventListener('input', function(e) {
+                if (this.value && index < inputs.length - 1) {
+                    inputs[index + 1].focus();
+                }
+            });
+
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Backspace' && !this.value && index > 0) {
+                    inputs[index - 1].focus();
+                }
+            });
+        });
+
+        // Auto-hide messages
+        setTimeout(() => {
+            const messages = document.querySelectorAll('[style*="position: fixed"]');
+            messages.forEach(msg => {
+                if (msg.textContent.includes('success') || msg.textContent.includes('error')) {
+                    msg.style.animation = 'fadeOut 0.3s ease';
+                    setTimeout(() => msg.remove(), 300);
+                }
+            });
+        }, 3000);
+    </script>
+
+    <style>
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+    </style>
 
 </body>
 </html>
