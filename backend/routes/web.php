@@ -35,6 +35,7 @@ Route::prefix('customer')->name('customer.')->middleware('auth')->group(function
     Route::post('/profile', [CustomerDashboard::class, 'updateProfile'])->name('profile.update');
     Route::post('/profile/bank-details/request-otp', [CustomerDashboard::class, 'requestBankDetailsOtp'])->name('bank-details.request-otp');
     Route::post('/profile/bank-details/verify-otp', [CustomerDashboard::class, 'verifyBankDetailsOtp'])->name('bank-details.verify-otp');
+    Route::get('/profile/bank-details/cancel-otp', [CustomerDashboard::class, 'cancelBankDetailsOtp'])->name('bank-details.cancel-otp');
 
     // Wallet
     Route::get('/wallet', [CustomerDashboard::class, 'wallet'])->name('wallet');

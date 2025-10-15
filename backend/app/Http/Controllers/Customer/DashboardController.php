@@ -203,9 +203,28 @@ class DashboardController extends Controller
         ]);
 
         // Clear session
-        session()->forget(['pending_bank_data', 'show_otp_modal']);
+        session()->forget(['pending_bank_data', 'show_otp_modal', 'otp_debug']);
 
         return redirect()->route('customer.profile')->with('success', 'Bank details updated successfully! Withdrawals will be locked for 24 hours for security.');
+    }
+
+    public function cancelBankDetailsOtp()
+    {
+        $user = Auth::user();
+        $profile = CustomerProfile::where('user_id', $user->id)->first();
+
+        // Clear OTP from database
+        if ($profile) {
+            $profile->update([
+                'bank_change_otp' => null,
+                'bank_change_otp_expires_at' => null,
+            ]);
+        }
+
+        // Clear session
+        session()->forget(['pending_bank_data', 'show_otp_modal', 'otp_debug']);
+
+        return redirect()->route('customer.profile');
     }
 
     public function wallet()

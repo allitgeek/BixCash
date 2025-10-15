@@ -203,11 +203,21 @@
     <!-- OTP Verification Modal -->
     @if(session('show_otp_modal'))
     <div id="otpModal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 3000; padding: 1rem;">
-        <div style="background: white; border-radius: 20px; padding: 2rem; max-width: 500px; width: 100%;">
-            <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">Verify Your Phone</h2>
-            <p style="color: var(--text-light); margin-bottom: 1.5rem;">Enter the 6-digit OTP sent to {{ $user->phone }}</p>
+        <div style="background: white; border-radius: 20px; padding: 2rem; max-width: 500px; width: 100%; position: relative;">
+            <!-- Close Button -->
+            <button type="button" onclick="closeOtpModal()" style="position: absolute; top: 1rem; right: 1rem; background: transparent; border: none; font-size: 1.5rem; color: var(--text-light); cursor: pointer; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: all 0.3s;" onmouseover="this.style.background='var(--bg-light)'" onmouseout="this.style.background='transparent'">×</button>
 
-            <form method="POST" action="{{ route('customer.bank-details.verify-otp') }}">
+            <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">Verify Your Phone</h2>
+            <p style="color: var(--text-light); margin-bottom: 1rem;">Enter the 6-digit OTP sent to {{ $user->phone }}</p>
+
+            @if(session('otp_debug'))
+            <div style="background: #4299e1; color: white; padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem; text-align: center;">
+                <strong style="font-size: 0.875rem;">Development Mode - Your OTP:</strong>
+                <div style="font-size: 2rem; font-weight: 700; letter-spacing: 0.5rem; margin-top: 0.5rem;">{{ session('otp_debug') }}</div>
+            </div>
+            @endif
+
+            <form method="POST" action="{{ route('customer.bank-details.verify-otp') }}" id="otpForm">
                 @csrf
                 <input type="hidden" name="bank_name" value="{{ session('pending_bank_data.bank_name') }}">
                 <input type="hidden" name="account_title" value="{{ session('pending_bank_data.account_title') }}">
@@ -224,6 +234,7 @@
                 </div>
 
                 <button type="submit" class="btn btn-primary">Verify & Save Bank Details</button>
+                <button type="button" onclick="closeOtpModal()" class="btn" style="width: 100%; margin-top: 0.75rem; background: transparent; color: var(--text-dark); border: 2px solid var(--border);">Cancel</button>
             </form>
         </div>
     </div>
@@ -233,6 +244,11 @@
         function toggleBankEdit() {
             const form = document.getElementById('bankEditForm');
             form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function closeOtpModal() {
+            // Redirect to cancel route to clear session and OTP
+            window.location.href = '{{ route('customer.bank-details.cancel-otp') }}';
         }
 
         // OTP Input Auto-focus
