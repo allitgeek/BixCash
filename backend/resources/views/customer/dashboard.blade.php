@@ -416,7 +416,7 @@
             <h2 class="modal-title">Complete Your Profile</h2>
             <p class="modal-subtitle">Welcome! Let's set up your account</p>
 
-            <form method="POST" action="{{ route('customer.complete-profile') }}">
+            <form method="POST" action="{{ route('customer.complete-profile') }}" id="profileForm">
                 @csrf
                 <div class="form-group">
                     <label class="form-label">Full Name *</label>
@@ -425,16 +425,17 @@
 
                 <div class="form-group">
                     <label class="form-label">Email (Optional)</label>
-                    <input type="email" name="email" class="form-input" placeholder="your@email.com">
+                    <input type="email" name="email" class="form-input" placeholder="your@email.com" value="{{ $user->email }}">
                     <div class="form-hint">We'll use this for important updates</div>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">Date of Birth (Optional)</label>
-                    <input type="date" name="date_of_birth" class="form-input">
+                    <input type="date" name="date_of_birth" class="form-input" max="{{ date('Y-m-d') }}">
                 </div>
 
                 <button type="submit" class="btn btn-primary">Complete Profile</button>
+                <button type="button" class="btn btn-outline" onclick="skipProfileModal()" style="margin-top: 0.75rem; background: transparent; color: var(--text-light); border: 2px solid var(--border);">Skip for now</button>
             </form>
         </div>
     </div>
@@ -617,6 +618,61 @@
         @keyframes slideIn {
             from { transform: translateX(100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
+        }
+    </style>
+
+    <script>
+        // Skip profile modal function
+        function skipProfileModal() {
+            const modal = document.getElementById('profileModal');
+            if (modal) {
+                modal.style.animation = 'fadeOut 0.3s ease';
+                setTimeout(() => modal.style.display = 'none', 300);
+            }
+        }
+
+        // Handle form submission
+        document.addEventListener('DOMContentLoaded', function() {
+            const profileForm = document.getElementById('profileForm');
+            if (profileForm) {
+                profileForm.addEventListener('submit', function(e) {
+                    // Show loading state
+                    const submitBtn = this.querySelector('button[type="submit"]');
+                    const originalText = submitBtn.textContent;
+                    submitBtn.textContent = 'Saving...';
+                    submitBtn.disabled = true;
+                });
+            }
+        });
+
+        // Auto-hide success message after 3 seconds
+        @if(session('success'))
+        setTimeout(() => {
+            const successMsg = document.querySelector('[style*="position: fixed"]');
+            if (successMsg) {
+                successMsg.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => successMsg.remove(), 300);
+            }
+        }, 3000);
+
+        // If profile was completed successfully, hide modal
+        const modal = document.getElementById('profileModal');
+        if (modal) {
+            modal.style.animation = 'fadeOut 0.3s ease';
+            setTimeout(() => modal.style.display = 'none', 300);
+        }
+        @endif
+    </script>
+
+    <style>
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
         }
     </style>
 
