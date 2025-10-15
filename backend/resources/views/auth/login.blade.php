@@ -453,7 +453,7 @@
                     <h1 class="auth-title">Welcome to BixCash!</h1>
                     <p class="auth-subtitle">Your account has been successfully verified.</p>
 
-                    <button type="button" class="continue-btn" onclick="window.location.href='/'">
+                    <button type="button" class="continue-btn" onclick="window.location.href='/customer/dashboard'">
                         Continue to Dashboard
                     </button>
                 </div>

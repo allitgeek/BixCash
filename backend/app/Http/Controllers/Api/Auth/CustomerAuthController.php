@@ -217,6 +217,9 @@ class CustomerAuthController extends Controller
             $user->last_login_at = now();
             $user->save();
 
+            // Create web session login (for accessing customer dashboard routes)
+            auth()->login($user, true); // true = remember me
+
             // Create token
             $token = $user->createToken('customer-auth')->plainTextToken;
 
@@ -371,6 +374,9 @@ class CustomerAuthController extends Controller
             // Update last login
             $user->last_login_at = now();
             $user->save();
+
+            // Create web session login (for accessing customer dashboard routes)
+            auth()->login($user, true); // true = remember me
 
             // Create token
             $token = $user->createToken('customer-auth')->plainTextToken;
@@ -665,6 +671,9 @@ class CustomerAuthController extends Controller
             // Update last login
             $user->last_login_at = now();
             $user->save();
+
+            // Create web session login (for accessing customer dashboard routes)
+            auth()->login($user, true); // true = remember me
 
             // Create Laravel Sanctum token for API access
             $token = $user->createToken('customer-firebase-auth')->plainTextToken;
