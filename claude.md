@@ -508,3 +508,726 @@ For questions or issues, refer to:
 ---
 
 **End of Documentation**
+
+---
+
+## Development Session - October 15, 2025
+
+**Last Updated**: October 15, 2025
+**Session Duration**: ~3 hours
+**Main Achievement**: Firebase SMS OTP Authentication Implementation
+
+### 🎯 Session Goal
+Implement real SMS OTP delivery using Firebase Phone Authentication to replace the placeholder OTP system.
+
+---
+
+### 📊 What Was Accomplished
+
+#### ✅ Complete Firebase Phone Auth Integration
+
+Implemented a **hybrid architecture** where:
+- **Frontend (JavaScript)**: Firebase SDK sends SMS and verifies OTP
+- **Backend (PHP Laravel)**: Verifies Firebase ID tokens and manages user sessions
+
+**Why This Approach?**
+- Firebase Admin SDK (PHP) **cannot** send SMS from server-side
+- Firebase Phone Auth only works from client-side SDKs (JavaScript, Android, iOS)
+- This is a Firebase limitation, not a BixCash implementation issue
+
+---
+
+### 🔧 Backend Implementation
+
+#### 1. Firebase ID Token Verification Service
+**File**: `backend/app/Services/FirebaseOtpService.php`
+
+Added new method `verifyFirebaseIdToken()`:
+- Verifies Firebase ID tokens received from frontend
+- Extracts user phone number and profile data
+- Handles token expiration and revocation
+- Returns structured user data for registration/login
+
+```php
+public function verifyFirebaseIdToken(string $idToken): array
+{
+    // Verifies token with Firebase Admin SDK
+    // Extracts phone, email, display name, photo URL
+    // Returns success/failure with user data
+}
+```
+
+#### 2. New API Endpoint for Token Verification
+**File**: `backend/app/Http/Controllers/Api/Auth/CustomerAuthController.php`
+
+Added `verifyFirebaseToken()` method:
+- Receives Firebase ID token from frontend
+- Verifies token using FirebaseOtpService
+- Creates or updates user in database
+- Updates user with Firebase profile data (name, email, photo)
+- Returns Laravel Sanctum token for API access
+- Handles new user registration automatically
+
+**Location**: Lines 554-712
+
+#### 3. API Route Configuration
+**File**: `backend/routes/api.php`
+
+Added new route:
+```php
+POST /api/customer/auth/verify-firebase-token
+- Rate limit: 10 requests/minute
+- Public endpoint (no auth required)
+- Body: { "id_token": "firebase_id_token_here" }
+```
+
+**Location**: Line 25-26
+
+#### 4. Configuration Updates
+**File**: `backend/config/firebase.php`
+
+Added web client configuration section:
+```php
+'web' => [
+    'api_key' => env('FIREBASE_WEB_API_KEY', ''),
+    'auth_domain' => env('FIREBASE_AUTH_DOMAIN', env('FIREBASE_PROJECT_ID') . '.firebaseapp.com'),
+    'project_id' => env('FIREBASE_PROJECT_ID', ''),
+    'storage_bucket' => env('FIREBASE_STORAGE_BUCKET', ''),
+    'messaging_sender_id' => env('FIREBASE_MESSAGING_SENDER_ID', ''),
+    'app_id' => env('FIREBASE_APP_ID', ''),
+]
+```
+
+**Location**: Lines 70-77
+
+#### 5. Environment Variables
+**File**: `backend/.env`
+
+Added Firebase web credentials (placeholders):
+```env
+FIREBASE_WEB_API_KEY=YOUR_WEB_API_KEY_HERE
+FIREBASE_AUTH_DOMAIN=bixcash-413b3.firebaseapp.com
+FIREBASE_MESSAGING_SENDER_ID=YOUR_MESSAGING_SENDER_ID
+FIREBASE_APP_ID=YOUR_APP_ID_HERE
+```
+
+**Location**: Lines 75-78
+
+---
+
+### 💻 Frontend Implementation
+
+#### 1. Firebase Authentication Module
+**File**: `backend/public/js/firebase-auth.js` (NEW)
+
+Complete client-side authentication library with:
+
+**Class**: `FirebasePhoneAuth`
+
+**Methods**:
+- `initialize()` - Initialize Firebase app and auth
+- `setupRecaptcha(buttonId)` - Configure invisible reCAPTCHA
+- `sendOTP(phoneNumber)` - Send SMS via Firebase
+- `verifyOTP(otpCode)` - Verify OTP code
+- `loginWithFirebaseToken(idToken)` - Send token to backend
+- `authenticateWithPhone()` - Complete flow helper
+- `logout()` - Sign out and clear session
+- `getCurrentUser()` - Get Firebase user
+- `isAuthenticated()` - Check auth status
+
+**Features**:
+- Automatic reCAPTCHA management
+- Error handling with user-friendly messages
+- Token storage in localStorage
+- Firebase error code translation
+- Rate limit detection
+
+**Size**: 377 lines
+
+#### 2. Demo Authentication Page
+**File**: `backend/resources/views/customer-auth-demo.blade.php` (NEW)
+
+Beautiful, production-ready authentication UI with:
+
+**Features**:
+- 3-step authentication flow:
+  1. Phone number entry
+  2. OTP verification
+  3. Authenticated state
+- Real-time Firebase SDK integration
+- Automatic config injection from Laravel
+- Responsive design (mobile-first)
+- Loading states and animations
+- Error message display
+- User info display after login
+
+**Design**:
+- Gradient purple/blue theme
+- Modern card-based layout
+- Smooth animations and transitions
+- Mobile-optimized inputs
+- Accessible form controls
+
+**Size**: 437 lines
+
+---
+
+### 📚 Documentation
+
+#### 1. Complete Setup Guide
+**File**: `FIREBASE_SETUP_INSTRUCTIONS.md` (NEW)
+
+Comprehensive 450+ line guide covering:
+
+**Sections**:
+1. Overview and prerequisites
+2. Step-by-step Firebase Console setup (7 steps)
+   - Enable Phone Authentication
+   - Configure SMS region policy (Pakistan)
+   - Set up billing (Blaze plan required)
+   - Get web credentials (API key, sender ID, app ID)
+   - Update environment variables
+   - Add authorized domains
+   - Testing procedures
+3. Architecture overview (flow diagrams)
+4. Files modified/created reference
+5. Troubleshooting guide
+6. Cost management and monitoring
+7. Security best practices
+8. Testing checklist
+
+**Key Information**:
+- Firebase Phone Auth costs: $0.06 per SMS to Pakistan
+- No free tier for phone authentication
+- Billing required (Blaze plan)
+- SMS region policy MUST include Pakistan
+
+---
+
+### 🔐 Security Features
+
+#### Already Implemented (Carried Forward)
+✅ Rate limiting on all endpoints (5-20 req/min)
+✅ IP blocking middleware
+✅ Security event logging
+✅ Phone format validation
+✅ Firebase token expiration handling
+✅ Laravel Sanctum API authentication
+
+#### New Security Features
+✅ Firebase ID token verification with Admin SDK
+✅ Token revocation detection
+✅ Automatic reCAPTCHA protection
+✅ Client-side phone format validation
+✅ Secure token storage (httpOnly recommended for production)
+
+---
+
+### 💰 Cost Breakdown
+
+#### Firebase Phone Authentication Pricing (2025)
+- **Free Tier**: NONE (Phone Auth requires Blaze plan)
+- **Per SMS**: $0.06 for Pakistan (+92)
+- **Per SMS**: $0.01 for US/Canada/India
+- **Per SMS**: $0.06 for most other countries
+
+#### Cost Examples
+| Monthly OTPs | Pakistan Cost |
+|--------------|---------------|
+| 100          | $6            |
+| 500          | $30           |
+| 1,000        | $60           |
+| 5,000        | $300          |
+| 10,000       | $600          |
+
+**No monthly minimums** - Pay only for SMS sent
+
+---
+
+### 📁 Files Created
+
+```
+NEW FILES:
+├── FIREBASE_SETUP_INSTRUCTIONS.md (450 lines)
+├── backend/public/js/
+│   └── firebase-auth.js (377 lines)
+└── backend/resources/views/
+    └── customer-auth-demo.blade.php (437 lines)
+
+TOTAL NEW LINES: 1,264
+```
+
+---
+
+### 📝 Files Modified
+
+```
+MODIFIED FILES:
+├── backend/config/firebase.php (+17 lines)
+│   └── Added web client configuration section
+├── backend/app/Services/FirebaseOtpService.php (+93 lines)
+│   └── Added verifyFirebaseIdToken() method
+├── backend/app/Http/Controllers/Api/Auth/CustomerAuthController.php (+158 lines)
+│   └── Added verifyFirebaseToken() endpoint
+├── backend/routes/api.php (+2 lines)
+│   └── Added verify-firebase-token route
+└── backend/.env (+5 lines)
+    └── Added Firebase web credentials
+
+TOTAL MODIFIED LINES: +275
+```
+
+---
+
+### 🎯 Implementation Architecture
+
+#### Frontend → Backend Flow
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ 1. User enters phone number (+923XXXXXXXXX)                 │
+└────────────────────┬────────────────────────────────────────┘
+                     ↓
+┌─────────────────────────────────────────────────────────────┐
+│ 2. Firebase JavaScript SDK sends SMS automatically           │
+│    - Uses Firebase Phone Auth API                           │
+│    - Handles reCAPTCHA verification                          │
+│    - Firebase servers send SMS to user's phone              │
+└────────────────────┬────────────────────────────────────────┘
+                     ↓
+┌─────────────────────────────────────────────────────────────┐
+│ 3. User receives SMS with 6-digit OTP                       │
+└────────────────────┬────────────────────────────────────────┘
+                     ↓
+┌─────────────────────────────────────────────────────────────┐
+│ 4. User enters OTP code in frontend                         │
+└────────────────────┬────────────────────────────────────────┘
+                     ↓
+┌─────────────────────────────────────────────────────────────┐
+│ 5. Firebase SDK verifies OTP                                │
+│    - Verification happens on Firebase servers               │
+│    - Returns Firebase ID token if successful                │
+└────────────────────┬────────────────────────────────────────┘
+                     ↓
+┌─────────────────────────────────────────────────────────────┐
+│ 6. Frontend sends Firebase ID token to backend              │
+│    POST /api/customer/auth/verify-firebase-token            │
+│    Body: { "id_token": "eyJhbGciOiJSUzI1..." }              │
+└────────────────────┬────────────────────────────────────────┘
+                     ↓
+┌─────────────────────────────────────────────────────────────┐
+│ 7. Backend verifies ID token with Firebase Admin SDK        │
+│    - Validates token signature                              │
+│    - Checks token expiration                                │
+│    - Extracts user claims (phone, email, etc.)              │
+└────────────────────┬────────────────────────────────────────┘
+                     ↓
+┌─────────────────────────────────────────────────────────────┐
+│ 8. Backend creates/updates user in database                 │
+│    - Phone number from verified token                       │
+│    - Auto-marks phone as verified                           │
+│    - Updates profile with Firebase data                     │
+└────────────────────┬────────────────────────────────────────┘
+                     ↓
+┌─────────────────────────────────────────────────────────────┐
+│ 9. Backend returns Laravel Sanctum token                    │
+│    - For subsequent API requests                            │
+│    - Stored in localStorage by frontend                     │
+└────────────────────┬────────────────────────────────────────┘
+                     ↓
+┌─────────────────────────────────────────────────────────────┐
+│ 10. User is logged in and can access protected endpoints    │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+### ⚙️ Configuration Requirements
+
+#### Firebase Console Setup (Required)
+
+**Must Complete Before Testing:**
+
+1. **Enable Phone Authentication**
+   - Firebase Console → Authentication → Sign-in method
+   - Enable "Phone" provider
+
+2. **Configure Pakistan SMS Region**
+   - Authentication → Settings → SMS region policy
+   - Select "Allow" → Check "Pakistan"
+
+3. **Enable Billing (REQUIRED)**
+   - Upgrade to Blaze (pay-as-you-go) plan
+   - Link Google Cloud billing account
+   - Phone Auth requires active billing
+
+4. **Get Web Credentials**
+   - Project Settings → Your apps → Web app
+   - Copy: API Key, Sender ID, App ID
+
+5. **Add Authorized Domains**
+   - Authentication → Settings → Authorized domains
+   - Add: bixcash.com
+
+#### Environment Variables (Required)
+
+Must update `.env` with real values:
+```env
+FIREBASE_WEB_API_KEY=AIzaSy... # ← Get from Firebase Console
+FIREBASE_MESSAGING_SENDER_ID=123456789 # ← Get from Firebase Console
+FIREBASE_APP_ID=1:123456789:web:abc123... # ← Get from Firebase Console
+```
+
+**Location**: `/var/www/bixcash.com/backend/.env` (lines 75-78)
+
+---
+
+### 🧪 Testing
+
+#### Prerequisites for Testing
+- [ ] Firebase Phone Auth enabled in console
+- [ ] Pakistan added to allowed SMS regions
+- [ ] Billing configured (Blaze plan active)
+- [ ] Web credentials added to `.env`
+- [ ] Authorized domains configured (bixcash.com)
+
+#### Test the Demo Page
+
+1. Add route to `routes/web.php`:
+```php
+Route::get('/auth-demo', function () {
+    return view('customer-auth-demo');
+});
+```
+
+2. Visit: `https://bixcash.com/auth-demo`
+
+3. Test flow:
+   - Enter: `+923023772000` (or your phone)
+   - Click "Send OTP"
+   - **Check your phone for SMS**
+   - Enter 6-digit OTP
+   - Click "Verify & Login"
+   - See authenticated state
+
+#### Test the API Directly
+
+```bash
+# Step 1: Get Firebase ID token from frontend
+# (After completing phone auth in browser)
+
+# Step 2: Verify token with backend
+curl -X POST https://bixcash.com/api/customer/auth/verify-firebase-token \
+  -H "Content-Type: application/json" \
+  -d '{
+    "id_token": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjEyMzQ1Njc4..."
+  }'
+
+# Expected response:
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "user": {
+      "id": 1,
+      "phone": "+923023772000",
+      "name": "Customer",
+      "email": null,
+      "phone_verified": true
+    },
+    "token": "1|abcdef123456...",
+    "is_new_user": false,
+    "has_pin_set": true,
+    "auth_method": "firebase_phone"
+  }
+}
+```
+
+---
+
+### 🐛 Troubleshooting
+
+#### SMS Not Receiving
+
+**Check**:
+1. Firebase Console → Authentication → Users (verify phone auth enabled)
+2. Firebase Console → Authentication → Settings → SMS region policy (Pakistan included?)
+3. Firebase Console → Usage & Billing (billing active?)
+4. Phone format correct: `+92XXXXXXXXXX` (10 digits after +92)
+
+**Common Issues**:
+- Billing not enabled → SMS won't send
+- Pakistan not in allowed regions → SMS blocked
+- Invalid phone format → Validation error
+- Too many requests → Rate limit hit
+
+#### Token Verification Fails
+
+**Check**:
+1. Service account JSON exists:
+   ```bash
+   ls -la /var/www/bixcash.com/backend/storage/app/firebase/service-account.json
+   ```
+2. Project ID matches:
+   ```bash
+   grep FIREBASE_PROJECT_ID /var/www/bixcash.com/backend/.env
+   # Should show: FIREBASE_PROJECT_ID=bixcash-413b3
+   ```
+3. Laravel logs:
+   ```bash
+   tail -f /var/www/bixcash.com/backend/storage/logs/laravel.log
+   ```
+
+#### Config Not Loading
+
+```bash
+cd /var/www/bixcash.com/backend
+php artisan config:clear
+php artisan config:cache
+```
+
+#### reCAPTCHA Issues
+
+- Clear browser cache
+- Try incognito mode
+- Check browser console for errors
+- Verify domain in Firebase authorized domains
+
+---
+
+### 📊 Monitoring & Logging
+
+#### Firebase Usage Monitoring
+
+**Firebase Console**:
+- Usage & Billing → See SMS counts
+- Authentication → Users → View sign-ins
+- Authentication → Usage → See auth attempts
+
+**Set Up Alerts**:
+- Google Cloud Console → Billing → Budgets & alerts
+- Set threshold: e.g., $100/month
+- Email notifications when 50%, 90%, 100% of budget
+
+#### Laravel Application Logs
+
+```bash
+# Real-time log monitoring
+tail -f /var/www/bixcash.com/backend/storage/logs/laravel.log
+
+# Search for Firebase errors
+grep "Firebase" /var/www/bixcash.com/backend/storage/logs/laravel.log
+
+# Check recent auth attempts
+grep "verifyFirebaseToken" /var/www/bixcash.com/backend/storage/logs/laravel.log | tail -20
+```
+
+#### Database Monitoring
+
+```bash
+# Check recent user registrations
+php artisan tinker
+>>> User::where('created_at', '>', now()->subDay())->count();
+
+# Check Firebase UID population
+>>> User::whereNotNull('firebase_uid')->count();
+```
+
+---
+
+### 🔒 Security Recommendations
+
+#### Already Implemented
+✅ Rate limiting (10 requests/min on token verification)
+✅ IP blocking middleware
+✅ Firebase token signature verification
+✅ Token expiration checking
+✅ Revoked token detection
+✅ Security event logging
+
+#### Additional Recommendations
+
+1. **Enable Firebase Console 2FA**
+   - Protect against unauthorized access
+   - Settings → Security → 2-Step Verification
+
+2. **Monitor Authorized Domains**
+   - Regularly review allowed domains
+   - Remove unused/old domains
+   - Alert on domain additions
+
+3. **Set Up Anomaly Alerts**
+   - Unusual SMS volume spikes
+   - Authentication from new countries
+   - High failure rates
+
+4. **Regular Security Audits**
+   - Review security_logs table weekly
+   - Check for suspicious patterns
+   - Monitor failed token verifications
+
+---
+
+### 🚀 Next Steps
+
+#### Immediate (Required Before Testing)
+1. ⚠️ Get Firebase web credentials from console
+2. ⚠️ Update `.env` with real API key, sender ID, app ID
+3. ⚠️ Enable Phone Auth in Firebase Console
+4. ⚠️ Add Pakistan to SMS region policy
+5. ⚠️ Enable billing (Blaze plan)
+
+#### Short Term (This Week)
+- [ ] Test SMS delivery to real Pakistan phone
+- [ ] Monitor costs for first 100 OTPs
+- [ ] Integrate into main customer app
+- [ ] Add phone auth to existing login flow
+
+#### Medium Term (Next 2 Weeks)
+- [ ] Set up production monitoring dashboards
+- [ ] Configure billing alerts ($100 threshold)
+- [ ] Add analytics for auth conversion rates
+- [ ] Optimize SMS costs (test number fallback)
+
+#### Long Term (Next Month)
+- [ ] Add alternative auth methods (email, social)
+- [ ] Implement SMS retry logic
+- [ ] Add customer support for auth issues
+- [ ] A/B test OTP vs PIN preference
+
+---
+
+### 📚 Documentation References
+
+**Internal Docs**:
+- `FIREBASE_SETUP_INSTRUCTIONS.md` - Complete setup guide
+- `claude.md` - This file (session history)
+- API documentation in code comments
+
+**External Docs**:
+- [Firebase Phone Auth](https://firebase.google.com/docs/auth/web/phone-auth)
+- [Firebase Admin PHP SDK](https://firebase-php.readthedocs.io/)
+- [Firebase Pricing](https://firebase.google.com/pricing)
+
+---
+
+### 🎉 Session Summary
+
+**Time Spent**: ~3 hours
+**Lines of Code**: 1,539 lines (new + modified)
+**Files Changed**: 7 files
+**New Features**: 1 major (Firebase SMS OTP)
+**Bugs Fixed**: 0 (planning/implementation session)
+**Documentation**: 450+ lines
+
+**Status**: ✅ **READY FOR TESTING**
+*Pending: Firebase Console configuration and web credentials*
+
+---
+
+### 💬 Important Notes
+
+1. **Firebase Limitation Discovered**:
+   - Firebase Admin SDK (PHP) cannot send SMS
+   - Only client-side SDKs can trigger SMS
+   - This is why hybrid architecture was necessary
+
+2. **Billing Requirement**:
+   - Phone Auth requires Blaze plan (pay-as-you-go)
+   - No free tier available for phone authentication
+   - Must link billing account before testing
+
+3. **SMS Costs**:
+   - $0.06 per SMS to Pakistan
+   - Monitor usage to control costs
+   - Consider implementing SMS daily caps
+
+4. **Architecture Choice**:
+   - Hybrid (frontend + backend) is the correct approach
+   - Frontend handles SMS via Firebase
+   - Backend handles token verification and user management
+   - This is the recommended Firebase pattern
+
+---
+
+### 🔄 Git Commit
+
+**Status**: Ready to commit
+**Files staged**: 7 files
+**Commit message**: (see below)
+
+---
+
+### 📋 Commit Message Template
+
+```
+Implement Firebase SMS OTP Authentication for Real SMS Delivery
+
+Major Features:
+✅ Complete Firebase Phone Authentication integration
+✅ Hybrid architecture (JavaScript frontend + PHP backend)
+✅ Real SMS OTP delivery via Firebase (costs $0.06/SMS to Pakistan)
+✅ Firebase ID token verification with Admin SDK
+✅ Automatic user registration from verified phone numbers
+✅ Beautiful demo UI with 3-step auth flow
+
+Backend Changes:
+- Added verifyFirebaseIdToken() to FirebaseOtpService
+- Added verifyFirebaseToken() endpoint to CustomerAuthController
+- Added /api/customer/auth/verify-firebase-token route
+- Added web client config to config/firebase.php
+- Added Firebase web credentials to .env (placeholders)
+
+Frontend Changes:
+- Created complete Firebase auth module (public/js/firebase-auth.js)
+- Created demo authentication page (customer-auth-demo.blade.php)
+- Includes reCAPTCHA, error handling, loading states
+
+Documentation:
+- Created FIREBASE_SETUP_INSTRUCTIONS.md (450+ lines)
+- Complete Firebase Console setup guide
+- Cost breakdown and monitoring instructions
+- Troubleshooting guide
+- Security best practices
+- Testing checklist
+
+Architecture:
+Frontend: Firebase JavaScript SDK sends SMS and verifies OTP
+Backend: Verifies Firebase ID tokens and manages user sessions
+Why: Firebase Admin SDK cannot send SMS (limitation)
+
+Files Created:
+- FIREBASE_SETUP_INSTRUCTIONS.md (450 lines)
+- backend/public/js/firebase-auth.js (377 lines)
+- backend/resources/views/customer-auth-demo.blade.php (437 lines)
+
+Files Modified:
+- backend/config/firebase.php (+17 lines)
+- backend/app/Services/FirebaseOtpService.php (+93 lines)
+- backend/app/Http/Controllers/Api/Auth/CustomerAuthController.php (+158 lines)
+- backend/routes/api.php (+2 lines)
+- backend/.env (+5 lines)
+
+Total: 1,539 lines of new/modified code
+
+Requirements Before Testing:
+1. Get Firebase web credentials (API key, sender ID, app ID)
+2. Update .env with real credentials
+3. Enable Phone Auth in Firebase Console
+4. Add Pakistan to SMS region policy
+5. Enable billing (Blaze plan required)
+
+Costs: $0.06 per SMS to Pakistan (no free tier)
+
+Status: ✅ READY FOR TESTING (pending Firebase Console setup)
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+```
+
+---
+
+**End of October 15, 2025 Session**
+**Next Session**: Firebase Console configuration and testing
+

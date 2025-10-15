@@ -75,6 +75,77 @@
                     </small>
                 </div>
 
+                <div style="background: #fff3cd; padding: 1rem; border-radius: 5px; margin-bottom: 1.5rem; border-left: 4px solid #ffc107;">
+                    <p style="margin: 0; color: #856404;">
+                        <strong>📱 Web Client Credentials (For Phone Authentication)</strong><br>
+                        The following credentials are required for Firebase Phone Authentication to work from the web browser.
+                    </p>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
+                        Firebase Web API Key *
+                    </label>
+                    <input type="text"
+                           name="firebase_web_api_key"
+                           id="firebase_web_api_key"
+                           value="{{ $firebaseConfig['web_api_key'] }}"
+                           required
+                           placeholder="AIzaSyXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+                           style="width: 100%; padding: 0.5rem; border: 1px solid #dee2e6; border-radius: 4px;">
+                    <small style="color: #666; display: block; margin-top: 0.25rem;">
+                        Required for client-side Firebase authentication
+                    </small>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
+                        Firebase Auth Domain *
+                    </label>
+                    <input type="text"
+                           name="firebase_auth_domain"
+                           id="firebase_auth_domain"
+                           value="{{ $firebaseConfig['auth_domain'] }}"
+                           required
+                           placeholder="your-project-id.firebaseapp.com"
+                           style="width: 100%; padding: 0.5rem; border: 1px solid #dee2e6; border-radius: 4px;">
+                    <small style="color: #666; display: block; margin-top: 0.25rem;">
+                        Usually your-project-id.firebaseapp.com
+                    </small>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
+                        Firebase Messaging Sender ID *
+                    </label>
+                    <input type="text"
+                           name="firebase_messaging_sender_id"
+                           id="firebase_messaging_sender_id"
+                           value="{{ $firebaseConfig['messaging_sender_id'] }}"
+                           required
+                           placeholder="123456789012"
+                           style="width: 100%; padding: 0.5rem; border: 1px solid #dee2e6; border-radius: 4px;">
+                    <small style="color: #666; display: block; margin-top: 0.25rem;">
+                        Numeric sender ID for Firebase Cloud Messaging
+                    </small>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
+                        Firebase App ID *
+                    </label>
+                    <input type="text"
+                           name="firebase_app_id"
+                           id="firebase_app_id"
+                           value="{{ $firebaseConfig['app_id'] }}"
+                           required
+                           placeholder="1:123456789012:web:abcdef123456"
+                           style="width: 100%; padding: 0.5rem; border: 1px solid #dee2e6; border-radius: 4px;">
+                    <small style="color: #666; display: block; margin-top: 0.25rem;">
+                        Unique identifier for your Firebase web app
+                    </small>
+                </div>
+
                 <div style="margin-bottom: 1.5rem;">
                     <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
                         Service Account JSON *

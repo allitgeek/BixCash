@@ -67,6 +67,10 @@ class DashboardController extends Controller
             'project_id' => env('FIREBASE_PROJECT_ID', ''),
             'database_url' => env('FIREBASE_DATABASE_URL', ''),
             'storage_bucket' => env('FIREBASE_STORAGE_BUCKET', ''),
+            'web_api_key' => env('FIREBASE_WEB_API_KEY', ''),
+            'auth_domain' => env('FIREBASE_AUTH_DOMAIN', ''),
+            'messaging_sender_id' => env('FIREBASE_MESSAGING_SENDER_ID', ''),
+            'app_id' => env('FIREBASE_APP_ID', ''),
             'credentials_exists' => file_exists(storage_path('app/firebase/service-account.json'))
         ];
 
@@ -172,6 +176,10 @@ class DashboardController extends Controller
                 'firebase_project_id' => 'required|string|max:255',
                 'firebase_database_url' => 'nullable|url|max:500',
                 'firebase_storage_bucket' => 'nullable|string|max:255',
+                'firebase_web_api_key' => 'required|string|max:255',
+                'firebase_auth_domain' => 'required|string|max:255',
+                'firebase_messaging_sender_id' => 'required|string|max:255',
+                'firebase_app_id' => 'required|string|max:255',
                 'firebase_credentials_json' => 'required|string'
             ]);
 
@@ -197,6 +205,10 @@ class DashboardController extends Controller
                 'FIREBASE_PROJECT_ID' => $validated['firebase_project_id'],
                 'FIREBASE_DATABASE_URL' => $validated['firebase_database_url'] ?? '',
                 'FIREBASE_STORAGE_BUCKET' => $validated['firebase_storage_bucket'] ?? '',
+                'FIREBASE_WEB_API_KEY' => $validated['firebase_web_api_key'],
+                'FIREBASE_AUTH_DOMAIN' => $validated['firebase_auth_domain'],
+                'FIREBASE_MESSAGING_SENDER_ID' => $validated['firebase_messaging_sender_id'],
+                'FIREBASE_APP_ID' => $validated['firebase_app_id'],
                 'FIREBASE_CREDENTIALS' => $credentialsPath
             ]);
 

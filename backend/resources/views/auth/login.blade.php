@@ -536,9 +536,27 @@
         </footer>
     </div>
 
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+
     <!-- JavaScript -->
     <script>
-        // Auth System State Management with Real API Integration
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "{{ config('firebase.web.api_key') }}",
+            authDomain: "{{ config('firebase.web.auth_domain') }}",
+            projectId: "{{ config('firebase.web.project_id') }}",
+            storageBucket: "{{ config('firebase.web.storage_bucket') }}",
+            messagingSenderId: "{{ config('firebase.web.messaging_sender_id') }}",
+            appId: "{{ config('firebase.web.app_id') }}"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        // Auth System State Management with Firebase Phone Auth
         class BixCashAuth {
             constructor() {
                 this.currentStep = 'mobile';
@@ -549,10 +567,32 @@
                 this.isResettingTpin = false;
                 this.verifiedOtp = null;
                 this.apiBaseUrl = '/api/customer/auth';
+                this.confirmationResult = null; // Firebase confirmation result
+                this.recaptchaVerifier = null;
+                this.useFirebaseSMS = true; // Flag to use Firebase SMS instead of database OTP
 
+                this.initFirebase();
                 this.initEventListeners();
                 this.initPinInputs();
                 this.initButtonStates();
+            }
+
+            initFirebase() {
+                // Set up reCAPTCHA for Firebase Phone Auth
+                try {
+                    this.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('mobile-continue', {
+                        'size': 'invisible',
+                        'callback': (response) => {
+                            console.log('reCAPTCHA verified');
+                        },
+                        'expired-callback': () => {
+                            console.log('reCAPTCHA expired');
+                            this.recaptchaVerifier.render();
+                        }
+                    });
+                } catch (error) {
+                    console.error('Error initializing reCAPTCHA:', error);
+                }
             }
 
             initEventListeners() {
@@ -735,28 +775,8 @@
                             return;
                         }
 
-                        // Otherwise, send OTP (for new users, users without PIN, or PIN reset)
-                        const purpose = this.isResettingTpin ? 'reset_pin' : 'login';
-                        const response = await this.apiCall(`${this.apiBaseUrl}/send-otp`, 'POST', {
-                            phone: this.userPhone,
-                            purpose: purpose
-                        });
-
-                        if (response.success) {
-                            // OTP sent successfully
-                            this.showStep('otp');
-                            this.startOtpTimer();
-
-                            // Show OTP in console if in development
-                            if (response.otp) {
-                                console.log('Development OTP:', response.otp);
-                                this.showSuccess(`OTP sent! (Dev: ${response.otp})`);
-                            } else {
-                                this.showSuccess('OTP sent to your mobile number');
-                            }
-                        } else {
-                            this.showError(response.message || 'Failed to send OTP');
-                        }
+                        // Otherwise, send OTP via Firebase (real SMS)
+                        await this.sendFirebaseOTP();
                     } else {
                         this.showError('Failed to check phone number');
                     }
@@ -765,6 +785,35 @@
                 } finally {
                     btn.disabled = false;
                     btn.textContent = 'Continue';
+                }
+            }
+
+            async sendFirebaseOTP() {
+                try {
+                    // Send SMS via Firebase
+                    this.confirmationResult = await auth.signInWithPhoneNumber(this.userPhone, this.recaptchaVerifier);
+
+                    // SMS sent successfully
+                    console.log('Firebase SMS sent successfully');
+                    this.showSuccess('OTP sent to your mobile number');
+                    this.showStep('otp');
+                    this.startOtpTimer();
+                } catch (error) {
+                    console.error('Firebase SMS error:', error);
+
+                    // Handle specific Firebase errors
+                    let errorMessage = 'Failed to send OTP. Please try again.';
+
+                    if (error.code === 'auth/invalid-phone-number') {
+                        errorMessage = 'Invalid phone number format';
+                    } else if (error.code === 'auth/too-many-requests') {
+                        errorMessage = 'Too many requests. Please try again later.';
+                    } else if (error.code === 'auth/quota-exceeded') {
+                        errorMessage = 'SMS quota exceeded. Please contact support.';
+                    }
+
+                    this.showError(errorMessage);
+                    throw error;
                 }
             }
 
@@ -821,36 +870,17 @@
                 btn.textContent = 'Verifying...';
 
                 try {
-                    const purpose = this.isResettingTpin ? 'reset_pin' : 'login';
+                    // Verify OTP with Firebase
+                    const userCredential = await this.confirmationResult.confirm(enteredOtp);
+                    console.log('Firebase OTP verified successfully');
 
-                    if (this.isResettingTpin) {
-                        // For PIN reset, verify OTP first using the regular verify endpoint
-                        const response = await this.apiCall(`${this.apiBaseUrl}/verify-otp`, 'POST', {
-                            phone: this.userPhone,
-                            otp: enteredOtp,
-                            purpose: 'reset_pin'
-                        });
+                    // Get Firebase ID token
+                    const idToken = await userCredential.user.getIdToken();
+                    console.log('Firebase ID token received');
 
-                        if (response.success) {
-                            // OTP verified, store it for later use and move to reset-tpin step
-                            this.verifiedOtp = enteredOtp;
-                            this.clearOtpTimer();
-                            this.showStep('reset-tpin');
-                            return;
-                        } else {
-                            this.showError(response.message || 'Invalid OTP');
-                            this.clearPinInputs(otpInputs);
-                            btn.disabled = true;
-                            btn.textContent = 'Continue';
-                            return;
-                        }
-                    }
-
-                    // Normal login/signup flow
-                    const response = await this.apiCall(`${this.apiBaseUrl}/verify-otp`, 'POST', {
-                        phone: this.userPhone,
-                        otp: enteredOtp,
-                        purpose: purpose
+                    // Send ID token to backend for verification and user creation
+                    const response = await this.apiCall(`${this.apiBaseUrl}/verify-firebase-token`, 'POST', {
+                        id_token: idToken
                     });
 
                     if (response.success) {
@@ -874,11 +904,21 @@
                         this.showSuccess('Welcome to BixCash!');
                         this.showStep('success');
                     } else {
-                        this.showError(response.message || 'Invalid OTP');
+                        this.showError(response.message || 'Authentication failed');
                         this.clearPinInputs(otpInputs);
                     }
                 } catch (error) {
-                    this.showError(error.message || 'Verification failed');
+                    console.error('OTP verification error:', error);
+
+                    let errorMessage = 'Invalid OTP. Please try again.';
+
+                    if (error.code === 'auth/invalid-verification-code') {
+                        errorMessage = 'Invalid OTP code. Please check and try again.';
+                    } else if (error.code === 'auth/code-expired') {
+                        errorMessage = 'OTP has expired. Please request a new one.';
+                    }
+
+                    this.showError(errorMessage);
                     this.clearPinInputs(otpInputs);
                 } finally {
                     btn.disabled = true;
@@ -902,26 +942,36 @@
                 btn.textContent = 'Please wait...';
 
                 try {
-                    const response = await this.apiCall(`${this.apiBaseUrl}/send-otp`, 'POST', {
-                        phone: this.userPhone,
-                        purpose: 'login'
+                    // First, check if user already exists
+                    const checkResponse = await this.apiCall(`${this.apiBaseUrl}/check-phone`, 'POST', {
+                        phone: this.userPhone
                     });
 
-                    if (response.success) {
-                        this.showStep('otp');
-                        this.startOtpTimer();
+                    if (checkResponse.success) {
+                        const { user_exists, has_pin_set } = checkResponse.data;
 
-                        if (response.otp) {
-                            console.log('Development OTP:', response.otp);
-                            this.showSuccess(`OTP sent! (Dev: ${response.otp})`);
-                        } else {
-                            this.showSuccess('OTP sent to your mobile number');
+                        // If user already exists
+                        if (user_exists) {
+                            if (has_pin_set) {
+                                // User has PIN, redirect to login with PIN
+                                this.showError('This number is already registered. Please use Sign In instead.');
+                                // Automatically switch to sign-in step with phone pre-filled
+                                document.getElementById('mobile-input').value = mobileValue;
+                                this.showStep('mobile');
+                                return;
+                            } else {
+                                // User exists but no PIN set, send OTP to complete registration
+                                this.showSuccess('Account found. Sending verification code...');
+                            }
                         }
+
+                        // Send OTP via Firebase (for new users or existing users without PIN)
+                        await this.sendFirebaseOTP();
                     } else {
-                        this.showError(response.message || 'Failed to send OTP');
+                        this.showError('Failed to verify phone number');
                     }
                 } catch (error) {
-                    this.showError(error.message || 'Network error');
+                    this.showError(error.message || 'Failed to send OTP');
                 } finally {
                     btn.disabled = true;
                     btn.textContent = 'Create Your Account';
@@ -1050,24 +1100,9 @@
 
             async resendOtp() {
                 try {
-                    const purpose = this.isResettingTpin ? 'reset_pin' : 'login';
-                    const response = await this.apiCall(`${this.apiBaseUrl}/send-otp`, 'POST', {
-                        phone: this.userPhone,
-                        purpose: purpose
-                    });
-
-                    if (response.success) {
-                        this.startOtpTimer();
-
-                        if (response.otp) {
-                            console.log('Development OTP:', response.otp);
-                            this.showSuccess(`OTP resent! (Dev: ${response.otp})`);
-                        } else {
-                            this.showSuccess('OTP resent to your mobile number');
-                        }
-                    } else {
-                        this.showError(response.message || 'Failed to resend OTP');
-                    }
+                    // Resend SMS via Firebase
+                    await this.sendFirebaseOTP();
+                    this.showSuccess('OTP resent to your mobile number');
                 } catch (error) {
                     this.showError(error.message || 'Failed to resend OTP');
                 }

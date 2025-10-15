@@ -17,3 +17,8 @@ Route::get('/signup', function () {
 
 // Contact Form
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+
+// Firebase Phone Auth Demo (Testing)
+Route::get('/auth-demo', function () {
+    return view('customer-auth-demo');
+})->name('auth.demo');
