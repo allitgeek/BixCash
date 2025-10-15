@@ -91,28 +91,14 @@ class FirebaseOtpService
             // Update customer profile last_otp_sent_at and increment attempts
             $this->updateCustomerOtpTracking($phone);
 
-            // In development/testing, return OTP code
-            // In production, send via SMS service (Twilio, SNS, etc.)
-            if (app()->environment('local', 'development')) {
-                Log::info('OTP generated for phone', [
-                    'phone' => $phone,
-                    'otp' => $otpCode,
-                    'purpose' => $purpose
-                ]);
+            // Log OTP for server logs only (not exposed to client)
+            Log::info('OTP generated for phone', [
+                'phone' => $this->maskPhone($phone),
+                'purpose' => $purpose
+            ]);
 
-                return [
-                    'success' => true,
-                    'message' => 'OTP sent successfully',
-                    'otp' => $otpCode, // Only in development
-                    'expires_in_minutes' => $expiryMinutes
-                ];
-            }
-
-            // TODO: Integrate with SMS service (Twilio, AWS SNS, or Firebase Phone Auth)
-            // For now, we'll use Firebase Cloud Messaging (requires phone auth setup)
-
-            // Production implementation would be:
-            // $this->sendSmsViaService($phone, $otpCode);
+            // Note: This method stores OTP in database for fallback verification
+            // Production systems should use Firebase Phone Auth for real SMS delivery
 
             return [
                 'success' => true,

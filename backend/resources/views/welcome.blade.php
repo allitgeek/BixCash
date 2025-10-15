@@ -1073,7 +1073,14 @@
             <span class="hamburger-line"></span>
         </button>
 
-        <a href="{{ route('login') }}" class="auth-btn desktop-auth">Sign In</a>
+        @auth
+            <a href="{{ route('customer.dashboard') }}" class="auth-btn desktop-auth" style="display: flex; align-items: center; gap: 0.5rem;">
+                <svg fill="currentColor" viewBox="0 0 20 20" style="width: 20px; height: 20px;"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
+                {{ Auth::user()->name }}
+            </a>
+        @else
+            <a href="{{ route('login') }}" class="auth-btn desktop-auth">Sign In</a>
+        @endauth
     </header>
 
     <!-- Mobile Navigation Overlay -->
@@ -1095,7 +1102,14 @@
                     <li><a href="#contact" class="mobile-nav-link">Contact Us</a></li>
                 </ul>
                 <div class="mobile-nav-auth">
-                    <a href="{{ route('login') }}" class="mobile-auth-btn">Sign In</a>
+                    @auth
+                        <a href="{{ route('customer.dashboard') }}" class="mobile-auth-btn">
+                            <svg fill="currentColor" viewBox="0 0 20 20" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 0.5rem;"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
+                            {{ Auth::user()->name }}
+                        </a>
+                    @else
+                        <a href="{{ route('login') }}" class="mobile-auth-btn">Sign In</a>
+                    @endauth
                 </div>
             </nav>
         </div>

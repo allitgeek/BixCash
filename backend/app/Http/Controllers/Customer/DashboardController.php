@@ -52,7 +52,7 @@ class DashboardController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'nullable|email|max:255',
-            'date_of_birth' => 'nullable|date|before:today',
+            'date_of_birth' => 'nullable|date|before_or_equal:today',
         ]);
 
         $user = Auth::user();
@@ -92,7 +92,7 @@ class DashboardController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'nullable|email|max:255',
-            'date_of_birth' => 'nullable|date|before:today',
+            'date_of_birth' => 'nullable|date|before_or_equal:today',
             'phone' => 'nullable|string|max:20',
             'address' => 'nullable|string',
             'city' => 'nullable|string|max:100',
@@ -103,23 +103,39 @@ class DashboardController extends Controller
         $user = Auth::user();
 
         // Update user
-        $user->update([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-        ]);
+        $user->name = $validated['name'];
+        if (isset($validated['email'])) {
+            $user->email = $validated['email'];
+        }
+        $user->save();
 
-        // Update profile
-        CustomerProfile::updateOrCreate(
+        // Get or create profile
+        $profile = CustomerProfile::firstOrCreate(
             ['user_id' => $user->id],
-            [
-                'phone' => $validated['phone'] ?? null,
-                'date_of_birth' => $validated['date_of_birth'] ?? null,
-                'address' => $validated['address'] ?? null,
-                'city' => $validated['city'] ?? null,
-                'state' => $validated['state'] ?? null,
-                'postal_code' => $validated['postal_code'] ?? null,
-            ]
+            ['profile_completed' => 0]
         );
+
+        // Update only fields that are present in request AND have non-empty values
+        if (!empty($validated['phone'])) {
+            $profile->phone = $validated['phone'];
+        }
+        if (!empty($validated['date_of_birth'])) {
+            $profile->date_of_birth = $validated['date_of_birth'];
+        }
+        if (!empty($validated['address'])) {
+            $profile->address = $validated['address'];
+        }
+        if (!empty($validated['city'])) {
+            $profile->city = $validated['city'];
+        }
+        if (!empty($validated['state'])) {
+            $profile->state = $validated['state'];
+        }
+        if (!empty($validated['postal_code'])) {
+            $profile->postal_code = $validated['postal_code'];
+        }
+
+        $profile->save();
 
         return redirect()->back()->with('success', 'Profile updated successfully!');
     }
@@ -133,28 +149,11 @@ class DashboardController extends Controller
             'iban' => 'nullable|string|max:50',
         ]);
 
-        $user = Auth::user();
-        $profile = CustomerProfile::where('user_id', $user->id)->first();
-
-        // Generate 6-digit OTP
-        $otp = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-
-        // Save OTP and pending bank details
-        $profile->bank_change_otp = $otp;
-        $profile->bank_change_otp_expires_at = now()->addMinutes(10);
-        $profile->save();
-
-        // Store pending bank details in session
+        // Store pending bank details in session for Firebase verification
         session([
             'pending_bank_data' => $validated,
-            'show_otp_modal' => true
+            'show_otp_modal' => true,
         ]);
-
-        // TODO: Send SMS with OTP using Firebase or SMS service
-        // For now, we'll just flash it (remove in production)
-        if (app()->environment('local', 'development')) {
-            session()->flash('otp_debug', $otp);
-        }
 
         return redirect()->back();
     }
@@ -162,67 +161,68 @@ class DashboardController extends Controller
     public function verifyBankDetailsOtp(Request $request)
     {
         $request->validate([
-            'otp_digit_1' => 'required|numeric|digits:1',
-            'otp_digit_2' => 'required|numeric|digits:1',
-            'otp_digit_3' => 'required|numeric|digits:1',
-            'otp_digit_4' => 'required|numeric|digits:1',
-            'otp_digit_5' => 'required|numeric|digits:1',
-            'otp_digit_6' => 'required|numeric|digits:1',
-            'bank_name' => 'required|string|max:255',
-            'account_number' => 'required|string|max:50',
-            'account_title' => 'required|string|max:255',
-            'iban' => 'nullable|string|max:50',
+            'firebase_token' => 'required|string',
         ]);
 
         $user = Auth::user();
-        $profile = CustomerProfile::where('user_id', $user->id)->first();
 
-        // Concatenate OTP digits
-        $enteredOtp = $request->otp_digit_1 . $request->otp_digit_2 . $request->otp_digit_3 .
-                     $request->otp_digit_4 . $request->otp_digit_5 . $request->otp_digit_6;
+        // Verify Firebase ID token
+        $firebaseService = app(\App\Services\FirebaseOtpService::class);
+        $verificationResult = $firebaseService->verifyFirebaseIdToken($request->firebase_token);
 
-        // Verify OTP
-        if (!$profile || $profile->bank_change_otp !== $enteredOtp) {
-            return redirect()->back()->with('error', 'Invalid OTP. Please try again.');
+        if (!$verificationResult['success']) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Phone verification failed. Please try again.'
+            ], 401);
         }
 
-        if ($profile->bank_change_otp_expires_at < now()) {
-            return redirect()->back()->with('error', 'OTP has expired. Please request a new one.');
+        // Verify the phone matches the logged-in user's phone
+        $firebasePhone = $verificationResult['data']['phone'];
+        if ($firebasePhone !== $user->phone) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Phone number mismatch. Please use your registered phone number.'
+            ], 403);
         }
+
+        // Get pending bank data from session
+        $pendingBankData = session('pending_bank_data');
+        if (!$pendingBankData) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Session expired. Please try again.'
+            ], 400);
+        }
+
+        // Get or create profile
+        $profile = CustomerProfile::firstOrCreate(
+            ['user_id' => $user->id],
+            ['profile_completed' => 0]
+        );
 
         // Update bank details
-        $profile->update([
-            'bank_name' => $request->bank_name,
-            'account_number' => $request->account_number,
-            'account_title' => $request->account_title,
-            'iban' => $request->iban,
-            'bank_details_last_updated' => now(),
-            'withdrawal_locked_until' => now()->addHours(24),
-            'bank_change_otp' => null,
-            'bank_change_otp_expires_at' => null,
-        ]);
+        $profile->bank_name = $pendingBankData['bank_name'];
+        $profile->account_number = $pendingBankData['account_number'];
+        $profile->account_title = $pendingBankData['account_title'];
+        $profile->iban = $pendingBankData['iban'];
+        $profile->bank_details_last_updated = now();
+        $profile->withdrawal_locked_until = now()->addHours(24);
+        $profile->save();
 
         // Clear session
-        session()->forget(['pending_bank_data', 'show_otp_modal', 'otp_debug']);
+        session()->forget(['pending_bank_data', 'show_otp_modal']);
 
-        return redirect()->route('customer.profile')->with('success', 'Bank details updated successfully! Withdrawals will be locked for 24 hours for security.');
+        return response()->json([
+            'success' => true,
+            'message' => 'Bank details updated successfully! Withdrawals will be locked for 24 hours for security.'
+        ]);
     }
 
     public function cancelBankDetailsOtp()
     {
-        $user = Auth::user();
-        $profile = CustomerProfile::where('user_id', $user->id)->first();
-
-        // Clear OTP from database
-        if ($profile) {
-            $profile->update([
-                'bank_change_otp' => null,
-                'bank_change_otp_expires_at' => null,
-            ]);
-        }
-
         // Clear session
-        session()->forget(['pending_bank_data', 'show_otp_modal', 'otp_debug']);
+        session()->forget(['pending_bank_data', 'show_otp_modal']);
 
         return redirect()->route('customer.profile');
     }
@@ -296,5 +296,14 @@ class DashboardController extends Controller
             ->paginate(15);
 
         return view('customer.purchase-history', compact('purchases'));
+    }
+
+    public function logout()
+    {
+        Auth::logout();
+        session()->invalidate();
+        session()->regenerateToken();
+
+        return redirect('/')->with('success', 'Logged out successfully!');
     }
 }

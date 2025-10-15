@@ -102,19 +102,11 @@ class CustomerAuthController extends Controller
                 ], 429);
             }
 
-            // In development, include OTP in response
-            $response = [
+            return response()->json([
                 'success' => true,
                 'message' => $result['message'],
                 'expires_in_minutes' => $result['expires_in_minutes']
-            ];
-
-            if (isset($result['otp']) && app()->environment('local', 'development')) {
-                $response['otp'] = $result['otp'];
-                $response['dev_note'] = 'OTP is only shown in development environment';
-            }
-
-            return response()->json($response);
+            ]);
 
         } catch (ValidationException $e) {
             return response()->json([
@@ -457,18 +449,11 @@ class CustomerAuthController extends Controller
                 ], 429);
             }
 
-            $response = [
+            return response()->json([
                 'success' => true,
                 'message' => $result['message'],
                 'expires_in_minutes' => $result['expires_in_minutes']
-            ];
-
-            if (isset($result['otp']) && app()->environment('local', 'development')) {
-                $response['otp'] = $result['otp'];
-                $response['dev_note'] = 'OTP is only shown in development environment';
-            }
-
-            return response()->json($response);
+            ]);
 
         } catch (ValidationException $e) {
             return response()->json([

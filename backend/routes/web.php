@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\ContactController;
 
 Route::get('/', function () {
@@ -8,6 +9,9 @@ Route::get('/', function () {
 });
 
 Route::get('/login', function () {
+    if (Auth::check()) {
+        return redirect()->route('customer.dashboard');
+    }
     return view('auth.login');
 })->name('login');
 
@@ -43,4 +47,7 @@ Route::prefix('customer')->name('customer.')->middleware('auth')->group(function
 
     // Purchase History
     Route::get('/purchases', [CustomerDashboard::class, 'purchaseHistory'])->name('purchases');
+
+    // Logout
+    Route::post('/logout', [CustomerDashboard::class, 'logout'])->name('logout');
 });

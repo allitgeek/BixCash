@@ -842,7 +842,7 @@
                         localStorage.setItem('bixcash_user', JSON.stringify(response.data.user));
 
                         this.showSuccess('Login successful!');
-                        this.showStep('success');
+                        window.location.href = '/customer/dashboard';
                     } else {
                         this.showError(response.message || 'Invalid PIN');
                         this.clearPinInputs(tpinInputs);
@@ -902,7 +902,7 @@
                         }
 
                         this.showSuccess('Welcome to BixCash!');
-                        this.showStep('success');
+                        window.location.href = '/customer/dashboard';
                     } else {
                         this.showError(response.message || 'Authentication failed');
                         this.clearPinInputs(otpInputs);
@@ -1044,11 +1044,7 @@
                         this.isResettingTpin = false;
                         this.verifiedOtp = null; // Clear verified OTP
                         this.showSuccess('PIN reset successfully!');
-                        this.showStep('success');
-
-                        // Update success message
-                        document.querySelector('#step-success .auth-title').textContent = 'PIN Reset Successful!';
-                        document.querySelector('#step-success .auth-subtitle').textContent = 'Your new PIN has been saved. You can now use it to login.';
+                        window.location.href = '/customer/dashboard';
                     } else {
                         this.showError(response.message || 'Failed to reset PIN');
                         this.clearPinInputs(newTpinInputs);
