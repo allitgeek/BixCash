@@ -26,6 +26,12 @@ return Application::configure(basePath: dirname(__DIR__))
             'customer.role' => \App\Http\Middleware\EnsureCustomerRole::class,
             'check.blocked' => \App\Http\Middleware\CheckBlockedIp::class,
         ]);
+
+        // Exclude customer auth API routes from CSRF verification
+        // These routes use Firebase phone auth and need to set web sessions
+        $middleware->validateCsrfTokens(except: [
+            'api/customer/auth/*'
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

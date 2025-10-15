@@ -1076,7 +1076,8 @@
 
                 const options = {
                     method: method,
-                    headers: headers
+                    headers: headers,
+                    credentials: 'include' // Include cookies for session handling
                 };
 
                 if (body && method !== 'GET') {

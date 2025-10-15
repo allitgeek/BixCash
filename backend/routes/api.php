@@ -15,7 +15,8 @@ Route::get('/brands', [BrandController::class, 'index']);
 Route::get('/promotions', [PromotionController::class, 'index']);
 
 // Customer Authentication Routes (Public) with Rate Limiting
-Route::prefix('customer/auth')->middleware(['check.blocked', 'throttle:customer-auth'])->group(function () {
+// IMPORTANT: 'web' middleware is added to enable session handling for auth()->login()
+Route::prefix('customer/auth')->middleware(['web', 'check.blocked', 'throttle:customer-auth'])->group(function () {
     Route::post('/check-phone', [CustomerAuthController::class, 'checkPhone'])
         ->middleware('throttle:20,1'); // 20 requests per minute - higher for UX
     Route::post('/send-otp', [CustomerAuthController::class, 'sendOtp'])
