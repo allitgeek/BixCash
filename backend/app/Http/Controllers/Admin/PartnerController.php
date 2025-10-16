@@ -13,6 +13,87 @@ use Illuminate\Support\Facades\DB;
 class PartnerController extends Controller
 {
     /**
+     * Show create partner form
+     */
+    public function create()
+    {
+        return view('admin.partners.create');
+    }
+
+    /**
+     * Store new partner
+     */
+    public function store(Request $request)
+    {
+        // Validate input
+        $validated = $request->validate([
+            'business_name' => 'required|string|max:255',
+            'phone' => 'required|string|regex:/^[0-9]{10}$/',
+            'contact_person_name' => 'required|string|max:255',
+            'email' => 'nullable|email|max:255',
+            'business_type' => 'required|string|max:100',
+            'business_address' => 'nullable|string|max:500',
+            'city' => 'nullable|string|max:100',
+            'auto_approve' => 'nullable|boolean',
+        ]);
+
+        // Format phone number to E.164
+        $phone = '+92' . $validated['phone'];
+
+        // Check if phone number already exists
+        $existingUser = User::where('phone', $phone)->first();
+
+        if ($existingUser) {
+            $roleName = $existingUser->role->name ?? 'user';
+            return back()->withInput()->withErrors([
+                'phone' => "This phone number is already registered as a {$roleName}."
+            ]);
+        }
+
+        // Get partner role
+        $partnerRole = Role::where('name', 'partner')->first();
+
+        if (!$partnerRole) {
+            return back()->withErrors(['error' => 'Partner role not found. Please contact system administrator.']);
+        }
+
+        // Determine if auto-approve
+        $autoApprove = $request->input('auto_approve', false);
+        $status = $autoApprove ? 'approved' : 'pending';
+        $isActive = $autoApprove ? true : false;
+
+        // Create user account
+        $user = User::create([
+            'name' => $validated['contact_person_name'],
+            'phone' => $phone,
+            'email' => $validated['email'] ?? null,
+            'role_id' => $partnerRole->id,
+            'is_active' => $isActive,
+        ]);
+
+        // Create partner profile
+        $partnerProfile = PartnerProfile::create([
+            'user_id' => $user->id,
+            'business_name' => $validated['business_name'],
+            'contact_person_name' => $validated['contact_person_name'],
+            'business_type' => $validated['business_type'],
+            'business_phone' => $phone,
+            'business_address' => $validated['business_address'] ?? null,
+            'business_city' => $validated['city'] ?? null,
+            'status' => $status,
+            'registration_date' => now(),
+            'approved_at' => $autoApprove ? now() : null,
+        ]);
+
+        $message = $autoApprove
+            ? "Partner '{$partnerProfile->business_name}' created and approved successfully!"
+            : "Partner '{$partnerProfile->business_name}' created successfully! Status: Pending approval.";
+
+        return redirect()->route('admin.partners.show', $user->id)
+            ->with('success', $message);
+    }
+
+    /**
      * Display all partners
      */
     public function index(Request $request)
@@ -213,5 +294,57 @@ class PartnerController extends Controller
         $status = $request->is_active ? 'activated' : 'deactivated';
 
         return back()->with('success', "Partner account {$status} successfully");
+    }
+
+    /**
+     * Set PIN for partner
+     */
+    public function setPin(Request $request, $id)
+    {
+        $request->validate([
+            'pin' => ['required', 'string', 'regex:/^[0-9]{4}$/', 'confirmed'],
+            'pin_confirmation' => ['required', 'same:pin']
+        ]);
+
+        $partner = User::findOrFail($id);
+
+        if (!$partner->isPartner()) {
+            return back()->withErrors(['error' => 'Invalid partner account']);
+        }
+
+        if ($partner->pin_hash) {
+            return back()->withErrors(['error' => 'Partner already has a PIN set. Use Reset PIN instead.']);
+        }
+
+        // Set PIN
+        $partner->setPin($request->pin);
+
+        return back()->with('success', "PIN set successfully for partner '{$partner->name}'");
+    }
+
+    /**
+     * Reset PIN for partner
+     */
+    public function resetPin(Request $request, $id)
+    {
+        $request->validate([
+            'new_pin' => ['required', 'string', 'regex:/^[0-9]{4}$/', 'confirmed'],
+            'new_pin_confirmation' => ['required', 'same:new_pin']
+        ]);
+
+        $partner = User::findOrFail($id);
+
+        if (!$partner->isPartner()) {
+            return back()->withErrors(['error' => 'Invalid partner account']);
+        }
+
+        if (!$partner->pin_hash) {
+            return back()->withErrors(['error' => 'Partner does not have a PIN set. Use Set PIN instead.']);
+        }
+
+        // Reset PIN
+        $partner->resetPin($request->new_pin);
+
+        return back()->with('success', "PIN reset successfully for partner '{$partner->name}'");
     }
 }

@@ -128,7 +128,7 @@ class CustomerAuthController extends Controller
     }
 
     /**
-     * Verify OTP and login/register customer
+     * Verify OTP and login/register customer or partner
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -159,7 +159,7 @@ class CustomerAuthController extends Controller
                 ], 400);
             }
 
-            // Find or create user
+            // Find existing user (customer or partner)
             $user = User::where('phone', $phone)->first();
 
             if (!$user) {
@@ -218,6 +218,11 @@ class CustomerAuthController extends Controller
             // Check if PIN is set
             $hasPinSet = !is_null($user->pin_hash);
 
+            // Get user role
+            $userRole = $user->role->name ?? 'customer';
+            $isPartner = $user->isPartner();
+            $isCustomer = $user->isCustomer();
+
             return response()->json([
                 'success' => true,
                 'message' => $isNewUser ? 'Account created successfully' : 'Login successful',
@@ -228,6 +233,9 @@ class CustomerAuthController extends Controller
                         'name' => $user->name,
                         'email' => $user->email,
                         'phone_verified' => $user->hasVerifiedPhone(),
+                        'role' => $userRole,
+                        'is_partner' => $isPartner,
+                        'is_customer' => $isCustomer,
                     ],
                     'token' => $token,
                     'is_new_user' => $isNewUser,
@@ -256,7 +264,7 @@ class CustomerAuthController extends Controller
     }
 
     /**
-     * Set up 4-digit PIN for customer
+     * Set up 4-digit PIN for customer or partner
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -271,10 +279,10 @@ class CustomerAuthController extends Controller
 
             $user = $request->user();
 
-            if (!$user || !$user->isCustomer()) {
+            if (!$user || (!$user->isCustomer() && !$user->isPartner())) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Unauthorized'
+                    'message' => 'Unauthorized. Only customers and partners can set PIN.'
                 ], 401);
             }
 
@@ -306,7 +314,7 @@ class CustomerAuthController extends Controller
     }
 
     /**
-     * Login with phone number and PIN
+     * Login with phone number and PIN (customer or partner)
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -329,6 +337,16 @@ class CustomerAuthController extends Controller
                 return response()->json([
                     'success' => false,
                     'message' => 'Invalid phone number or PIN not set. Please use OTP login.'
+                ], 401);
+            }
+
+            // Check if user is customer or partner
+            if (!$user->isCustomer() && !$user->isPartner()) {
+                SecurityLogService::logFailedLogin($request->phone, 'User is not customer or partner');
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid account type. PIN login only available for customers and partners.'
                 ], 401);
             }
 
@@ -373,6 +391,11 @@ class CustomerAuthController extends Controller
             // Create token
             $token = $user->createToken('customer-auth')->plainTextToken;
 
+            // Get user role
+            $userRole = $user->role->name ?? 'customer';
+            $isPartner = $user->isPartner();
+            $isCustomer = $user->isCustomer();
+
             return response()->json([
                 'success' => true,
                 'message' => 'Login successful',
@@ -383,6 +406,9 @@ class CustomerAuthController extends Controller
                         'name' => $user->name,
                         'email' => $user->email,
                         'phone_verified' => $user->hasVerifiedPhone(),
+                        'role' => $userRole,
+                        'is_partner' => $isPartner,
+                        'is_customer' => $isCustomer,
                     ],
                     'token' => $token
                 ]

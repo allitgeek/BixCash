@@ -88,11 +88,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Partner Management
         Route::middleware(['role.permission:manage_users'])->prefix('partners')->name('partners.')->group(function () {
             Route::get('/', [PartnerController::class, 'index'])->name('index');
+            Route::get('/create', [PartnerController::class, 'create'])->name('create');
+            Route::post('/', [PartnerController::class, 'store'])->name('store');
             Route::get('/pending', [PartnerController::class, 'pendingApplications'])->name('pending');
             Route::get('/{partner}', [PartnerController::class, 'show'])->name('show');
             Route::post('/{partner}/approve', [PartnerController::class, 'approve'])->name('approve');
             Route::post('/{partner}/reject', [PartnerController::class, 'reject'])->name('reject');
             Route::patch('/{partner}/status', [PartnerController::class, 'updateStatus'])->name('update-status');
+            Route::post('/{partner}/set-pin', [PartnerController::class, 'setPin'])->name('set-pin');
+            Route::post('/{partner}/reset-pin', [PartnerController::class, 'resetPin'])->name('reset-pin');
             Route::get('/{partner}/transactions', [PartnerController::class, 'transactions'])->name('transactions');
         });
 

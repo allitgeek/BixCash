@@ -772,6 +772,8 @@
                         // If user has PIN set and NOT resetting, go directly to PIN screen
                         if (has_pin_set && !this.isResettingTpin) {
                             this.showStep('tpin');
+                            btn.disabled = false;
+                            btn.textContent = 'Continue';
                             return;
                         }
 
@@ -781,6 +783,7 @@
                         this.showError('Failed to check phone number');
                     }
                 } catch (error) {
+                    console.error('Error in handleMobileContinue:', error);
                     this.showError(error.message || 'Network error. Please try again.');
                 } finally {
                     btn.disabled = false;
@@ -842,7 +845,14 @@
                         localStorage.setItem('bixcash_user', JSON.stringify(response.data.user));
 
                         this.showSuccess('Login successful!');
-                        window.location.href = '/customer/dashboard';
+
+                        // Redirect based on user role
+                        const userRole = response.data.user.role || 'customer';
+                        if (userRole === 'partner' || response.data.user.is_partner) {
+                            window.location.href = '/partner/dashboard';
+                        } else {
+                            window.location.href = '/customer/dashboard';
+                        }
                     } else {
                         this.showError(response.message || 'Invalid PIN');
                         this.clearPinInputs(tpinInputs);

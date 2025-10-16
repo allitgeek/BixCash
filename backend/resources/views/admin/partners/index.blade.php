@@ -8,6 +8,9 @@
         <div class="card-header">
             <h3 class="card-title">Manage Partners</h3>
             <div style="display: flex; gap: 1rem; margin-top: 0.5rem; flex-wrap: wrap;">
+                <a href="{{ route('admin.partners.create') }}" class="btn btn-success" style="padding: 0.5rem 1rem;">
+                    + Create New Partner
+                </a>
                 <a href="{{ route('admin.partners.pending') }}" class="btn btn-warning" style="padding: 0.5rem 1rem;">
                     View Pending Applications
                     @php

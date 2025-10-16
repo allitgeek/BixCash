@@ -37,16 +37,18 @@
                     </div>
 
                     <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                        @if($partner->partnerProfile && $partner->partnerProfile->status === 'pending')
+                        @if($partner->partnerProfile && in_array($partner->partnerProfile->status, ['pending', 'rejected']))
                             <form method="POST" action="{{ route('admin.partners.approve', $partner) }}" style="display: inline;">
                                 @csrf
-                                <button type="submit" class="btn btn-success" onclick="return confirm('Approve this partner application?')">
-                                    Approve Partner
+                                <button type="submit" class="btn btn-success" onclick="return confirm('{{ $partner->partnerProfile->status === 'rejected' ? 'Approve this previously rejected partner?' : 'Approve this partner application?' }}')">
+                                    {{ $partner->partnerProfile->status === 'rejected' ? 'Re-Approve Partner' : 'Approve Partner' }}
                                 </button>
                             </form>
-                            <button type="button" class="btn btn-danger" onclick="document.getElementById('reject-modal').style.display='block'">
-                                Reject Application
-                            </button>
+                            @if($partner->partnerProfile->status === 'pending')
+                                <button type="button" class="btn btn-danger" onclick="document.getElementById('reject-modal').style.display='block'">
+                                    Reject Application
+                                </button>
+                            @endif
                         @endif
 
                         <form method="POST" action="{{ route('admin.partners.update-status', $partner) }}" style="display: inline;">
@@ -57,6 +59,17 @@
                                 {{ $partner->is_active ? 'Deactivate Account' : 'Activate Account' }}
                             </button>
                         </form>
+
+                        <!-- PIN Management Buttons -->
+                        @if($partner->pin_hash)
+                            <button type="button" class="btn btn-warning" onclick="document.getElementById('reset-pin-modal').style.display='block'">
+                                🔄 Reset PIN
+                            </button>
+                        @else
+                            <button type="button" class="btn btn-primary" onclick="document.getElementById('set-pin-modal').style.display='block'">
+                                🔑 Set PIN
+                            </button>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -118,6 +131,18 @@
                     <td style="padding: 0.75rem;">{{ $partner->partnerProfile->approved_at ? $partner->partnerProfile->approved_at->format('F j, Y g:i A') : '-' }}</td>
                 </tr>
                 @endif
+                @if($partner->partnerProfile && $partner->partnerProfile->status === 'rejected')
+                <tr style="border-bottom: 1px solid #dee2e6;">
+                    <td style="padding: 0.75rem; font-weight: 600;">Rejected At:</td>
+                    <td style="padding: 0.75rem;">{{ $partner->partnerProfile->rejected_at ? $partner->partnerProfile->rejected_at->format('F j, Y g:i A') : '-' }}</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #dee2e6;">
+                    <td style="padding: 0.75rem; font-weight: 600;">Rejection Reason:</td>
+                    <td style="padding: 0.75rem;">
+                        <span style="color: #e74c3c; font-weight: 500;">{{ $partner->partnerProfile->rejection_notes ?? 'No reason provided' }}</span>
+                    </td>
+                </tr>
+                @endif
             </table>
 
             <!-- Recent Transactions -->
@@ -171,37 +196,119 @@
     </div>
 
     <!-- Reject Modal -->
-    <div id="reject-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center;">
-        <div style="background: white; padding: 2rem; border-radius: 10px; max-width: 500px; width: 90%;">
-            <h3 style="margin-bottom: 1rem;">Reject Partner Application</h3>
-            <form method="POST" action="{{ route('admin.partners.reject', $partner) }}">
-                @csrf
-                <div class="form-group">
-                    <label for="rejection_notes">Rejection Reason *</label>
-                    <textarea id="rejection_notes" name="rejection_notes" class="form-control" rows="4" required
-                              placeholder="Please provide a reason for rejection..."></textarea>
-                </div>
-                <div style="display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 1rem;">
-                    <button type="button" class="btn btn-secondary" onclick="document.getElementById('reject-modal').style.display='none'">
-                        Cancel
-                    </button>
-                    <button type="submit" class="btn btn-danger">
-                        Confirm Rejection
-                    </button>
-                </div>
-            </form>
+    <div id="reject-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999;">
+        <div style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;">
+            <div style="background: white; padding: 2rem; border-radius: 10px; max-width: 500px; width: 90%;">
+                <h3 style="margin-bottom: 1rem;">Reject Partner Application</h3>
+                <form method="POST" action="{{ route('admin.partners.reject', $partner) }}">
+                    @csrf
+                    <div class="form-group">
+                        <label for="rejection_notes">Rejection Reason *</label>
+                        <textarea id="rejection_notes" name="rejection_notes" class="form-control" rows="4" required
+                                  placeholder="Please provide a reason for rejection..."></textarea>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 1rem;">
+                        <button type="button" class="btn btn-secondary" onclick="document.getElementById('reject-modal').style.display='none'">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-danger">
+                            Confirm Rejection
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Set PIN Modal -->
+    <div id="set-pin-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999;">
+        <div style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;">
+            <div style="background: white; padding: 2rem; border-radius: 10px; max-width: 500px; width: 90%;">
+                <h3 style="margin-bottom: 1rem;">🔑 Set Partner PIN</h3>
+                <p style="color: #666; margin-bottom: 1.5rem;">Set a 4-digit PIN for partner login</p>
+                <form method="POST" action="{{ route('admin.partners.set-pin', $partner) }}">
+                    @csrf
+                    <div class="form-group">
+                        <label for="pin">4-Digit PIN *</label>
+                        <input type="text" id="pin" name="pin" class="form-control" maxlength="4" pattern="[0-9]{4}" required
+                               placeholder="Enter 4-digit PIN" style="font-size: 1.5rem; text-align: center; letter-spacing: 0.5rem;">
+                    </div>
+                    <div class="form-group">
+                        <label for="pin_confirmation">Confirm PIN *</label>
+                        <input type="text" id="pin_confirmation" name="pin_confirmation" class="form-control" maxlength="4" pattern="[0-9]{4}" required
+                               placeholder="Re-enter 4-digit PIN" style="font-size: 1.5rem; text-align: center; letter-spacing: 0.5rem;">
+                    </div>
+                    <div style="display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 1rem;">
+                        <button type="button" class="btn btn-secondary" onclick="document.getElementById('set-pin-modal').style.display='none'">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            Set PIN
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reset PIN Modal -->
+    <div id="reset-pin-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999;">
+        <div style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;">
+            <div style="background: white; padding: 2rem; border-radius: 10px; max-width: 500px; width: 90%;">
+                <h3 style="margin-bottom: 1rem;">🔄 Reset Partner PIN</h3>
+                <p style="color: #666; margin-bottom: 1.5rem;">Enter a new 4-digit PIN for partner login</p>
+                <form method="POST" action="{{ route('admin.partners.reset-pin', $partner) }}">
+                    @csrf
+                    <div class="form-group">
+                        <label for="new_pin">New 4-Digit PIN *</label>
+                        <input type="text" id="new_pin" name="new_pin" class="form-control" maxlength="4" pattern="[0-9]{4}" required
+                               placeholder="Enter new 4-digit PIN" style="font-size: 1.5rem; text-align: center; letter-spacing: 0.5rem;">
+                    </div>
+                    <div class="form-group">
+                        <label for="new_pin_confirmation">Confirm New PIN *</label>
+                        <input type="text" id="new_pin_confirmation" name="new_pin_confirmation" class="form-control" maxlength="4" pattern="[0-9]{4}" required
+                               placeholder="Re-enter new 4-digit PIN" style="font-size: 1.5rem; text-align: center; letter-spacing: 0.5rem;">
+                    </div>
+                    <div style="display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 1rem;">
+                        <button type="button" class="btn btn-secondary" onclick="document.getElementById('reset-pin-modal').style.display='none'">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-warning">
+                            Reset PIN
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 @endsection
 
 @push('scripts')
 <script>
-    // Show reject modal with flex display
+    // Modal references
+    const rejectModal = document.getElementById('reject-modal');
+    const setPinModal = document.getElementById('set-pin-modal');
+    const resetPinModal = document.getElementById('reset-pin-modal');
+
+    // Close modals when clicking outside
     window.onclick = function(event) {
-        const modal = document.getElementById('reject-modal');
-        if (event.target == modal) {
-            modal.style.display = 'none';
+        if (event.target == rejectModal) {
+            rejectModal.style.display = 'none';
+        }
+        if (event.target == setPinModal) {
+            setPinModal.style.display = 'none';
+        }
+        if (event.target == resetPinModal) {
+            resetPinModal.style.display = 'none';
         }
     }
+
+    // PIN input validation - only numbers
+    const pinInputs = document.querySelectorAll('input[name="pin"], input[name="pin_confirmation"], input[name="new_pin"], input[name="new_pin_confirmation"]');
+    pinInputs.forEach(input => {
+        input.addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9]/g, '').substring(0, 4);
+        });
+    });
 </script>
 @endpush
