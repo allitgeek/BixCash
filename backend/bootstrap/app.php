@@ -24,6 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin.auth' => \App\Http\Middleware\AdminAuth::class,
             'role.permission' => \App\Http\Middleware\RolePermission::class,
             'customer.role' => \App\Http\Middleware\EnsureCustomerRole::class,
+            'partner' => \App\Http\Middleware\EnsurePartnerRole::class,
             'check.blocked' => \App\Http\Middleware\CheckBlockedIp::class,
         ]);
 

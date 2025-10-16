@@ -573,13 +573,29 @@
                 <li class="nav-item">
                     <a href="{{ route('admin.users.index') }}" class="nav-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
                         <span class="nav-icon icon-users"></span>
-                        User Management
+                        Users
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="{{ route('admin.customers.index') }}" class="nav-link {{ request()->routeIs('admin.customers.*') ? 'active' : '' }}">
                         <span class="nav-icon">👤</span>
-                        Customer Management
+                        Customers
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('admin.partners.index') }}" class="nav-link {{ request()->routeIs('admin.partners.*') ? 'active' : '' }}">
+                        <span class="nav-icon">🤝</span>
+                        Partners
+                        @php
+                            $pendingPartnersCount = \App\Models\User::whereHas('role', function($q) {
+                                $q->where('name', 'partner');
+                            })->whereHas('partnerProfile', function($q) {
+                                $q->where('status', 'pending');
+                            })->count();
+                        @endphp
+                        @if($pendingPartnersCount > 0)
+                            <span class="badge-notification">{{ $pendingPartnersCount }}</span>
+                        @endif
                     </a>
                 </li>
                 @endif

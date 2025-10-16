@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\PromotionController;
 use App\Http\Controllers\Admin\CustomerQueryController;
 use App\Http\Controllers\Admin\EmailSettingController;
 use App\Http\Controllers\Admin\CustomerController;
+use App\Http\Controllers\Admin\PartnerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,11 +25,10 @@ use App\Http\Controllers\Admin\CustomerController;
 
 // Admin Authentication Routes (public)
 Route::prefix('admin')->name('admin.')->group(function () {
-    // Login routes (accessible without authentication)
-    Route::middleware('guest')->group(function () {
-        Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-        Route::post('/login', [AuthController::class, 'login'])->name('login.post');
-    });
+    // Login routes (accessible without admin authentication)
+    // Note: No 'guest' middleware to allow customer/partner users to access admin login
+    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 
     // Logout route (needs authentication)
     Route::post('/logout', [AuthController::class, 'logout'])
@@ -83,6 +83,17 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::patch('customers/{customer}/toggle-status', [CustomerController::class, 'toggleStatus'])->name('customers.toggle-status');
             Route::post('customers/{customer}/reset-pin', [CustomerController::class, 'resetPin'])->name('customers.reset-pin');
             Route::post('customers/{customer}/unlock-pin', [CustomerController::class, 'unlockPin'])->name('customers.unlock-pin');
+        });
+
+        // Partner Management
+        Route::middleware(['role.permission:manage_users'])->prefix('partners')->name('partners.')->group(function () {
+            Route::get('/', [PartnerController::class, 'index'])->name('index');
+            Route::get('/pending', [PartnerController::class, 'pendingApplications'])->name('pending');
+            Route::get('/{partner}', [PartnerController::class, 'show'])->name('show');
+            Route::post('/{partner}/approve', [PartnerController::class, 'approve'])->name('approve');
+            Route::post('/{partner}/reject', [PartnerController::class, 'reject'])->name('reject');
+            Route::patch('/{partner}/status', [PartnerController::class, 'updateStatus'])->name('update-status');
+            Route::get('/{partner}/transactions', [PartnerController::class, 'transactions'])->name('transactions');
         });
 
         // Customer Queries Management

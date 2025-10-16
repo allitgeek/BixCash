@@ -10,7 +10,26 @@ Route::get('/', function () {
 
 Route::get('/login', function () {
     if (Auth::check()) {
-        return redirect()->route('customer.dashboard');
+        $user = Auth::user();
+
+        // Smart routing based on user role
+        if ($user->isPartner()) {
+            $partnerProfile = $user->partnerProfile;
+
+            if ($partnerProfile && $partnerProfile->status === 'pending') {
+                return redirect()->route('partner.pending-approval');
+            } elseif ($partnerProfile && $partnerProfile->status === 'approved') {
+                return redirect()->route('partner.dashboard');
+            } else {
+                // Rejected or inactive
+                Auth::logout();
+                return redirect()->route('login')->withErrors(['phone' => 'Your partner account is not active.']);
+            }
+        } elseif ($user->isCustomer()) {
+            return redirect()->route('customer.dashboard');
+        } elseif ($user->isAdmin()) {
+            return redirect()->route('admin.dashboard');
+        }
     }
     return view('auth.login');
 })->name('login');
@@ -48,6 +67,48 @@ Route::prefix('customer')->name('customer.')->middleware('auth')->group(function
     // Purchase History
     Route::get('/purchases', [CustomerDashboard::class, 'purchaseHistory'])->name('purchases');
 
+    // Partner Transaction Confirmation
+    Route::get('/pending-transactions', [CustomerDashboard::class, 'getPendingTransactions'])->name('pending-transactions');
+    Route::post('/confirm-transaction/{id}', [CustomerDashboard::class, 'confirmTransaction'])->name('confirm-transaction');
+    Route::post('/reject-transaction/{id}', [CustomerDashboard::class, 'rejectTransaction'])->name('reject-transaction');
+
     // Logout
     Route::post('/logout', [CustomerDashboard::class, 'logout'])->name('logout');
+});
+
+// Partner Registration (Public)
+use App\Http\Controllers\Partner\AuthController as PartnerAuth;
+
+Route::get('/partner/register', [PartnerAuth::class, 'showRegistrationForm'])->name('partner.register');
+Route::post('/partner/register', [PartnerAuth::class, 'register'])->name('partner.register.submit');
+
+// Partner Pending Approval
+Route::get('/partner/pending-approval', [PartnerAuth::class, 'pendingApproval'])
+    ->name('partner.pending-approval')
+    ->middleware('auth');
+
+// Partner Portal (Authenticated + Approved Partners Only)
+use App\Http\Controllers\Partner\DashboardController as PartnerDashboard;
+
+Route::prefix('partner')->name('partner.')->middleware(['auth', 'partner'])->group(function () {
+    // Dashboard
+    Route::get('/dashboard', [PartnerDashboard::class, 'index'])->name('dashboard');
+
+    // Customer search and transaction creation
+    Route::post('/search-customer', [PartnerDashboard::class, 'searchCustomer'])->name('search-customer');
+    Route::post('/create-transaction', [PartnerDashboard::class, 'createTransaction'])->name('create-transaction');
+    Route::get('/transaction-status/{id}', [PartnerDashboard::class, 'getTransactionStatus'])->name('transaction-status');
+
+    // Transaction history
+    Route::get('/transactions', [PartnerDashboard::class, 'transactionHistory'])->name('transactions');
+
+    // Profit history
+    Route::get('/profits', [PartnerDashboard::class, 'profitHistory'])->name('profits');
+
+    // Profile
+    Route::get('/profile', [PartnerDashboard::class, 'profile'])->name('profile');
+    Route::post('/profile', [PartnerDashboard::class, 'updateProfile'])->name('profile.update');
+
+    // Logout
+    Route::post('/logout', [PartnerDashboard::class, 'logout'])->name('logout');
 });

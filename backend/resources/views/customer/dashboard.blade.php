@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#021c47">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Dashboard - BixCash</title>
     @vite(['resources/css/app.css'])
     <style>
@@ -487,6 +488,51 @@
             </div>
         </div>
 
+        <!-- Pending Transactions -->
+        @if(isset($pendingTransactions) && $pendingTransactions->count() > 0)
+        <div class="section" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b;">
+            <div class="section-header">
+                <h2 class="section-title" style="color: #92400e;">⏱️ Confirm Purchase</h2>
+                <span style="font-size: 0.875rem; color: #92400e; font-weight: 600;">{{ $pendingTransactions->count() }} pending</span>
+            </div>
+
+            @foreach($pendingTransactions as $transaction)
+            <div class="transaction-confirm-card" data-transaction-id="{{ $transaction->id }}" data-deadline="{{ $transaction->confirmation_deadline->timestamp }}" style="background: white; border-radius: 16px; padding: 1.25rem; margin-bottom: 1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                    <div>
+                        <div style="font-weight: 700; font-size: 1.125rem; color: var(--text-dark); margin-bottom: 0.25rem;">
+                            Rs {{ number_format($transaction->invoice_amount, 0) }}
+                        </div>
+                        <div style="font-size: 0.875rem; color: var(--text-light);">
+                            at {{ $transaction->partner->partnerProfile->business_name ?? 'Unknown Partner' }}
+                        </div>
+                        <div style="font-size: 0.75rem; color: var(--text-light); margin-top: 0.25rem;">
+                            Code: {{ $transaction->transaction_code }}
+                        </div>
+                    </div>
+                    <div class="countdown-timer" style="text-align: center; background: var(--danger); color: white; padding: 0.5rem 1rem; border-radius: 12px; min-width: 80px;">
+                        <div style="font-size: 1.5rem; font-weight: 700;" class="timer-display">60</div>
+                        <div style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.5px;">seconds</div>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                    <button onclick="confirmTransaction({{ $transaction->id }})" class="btn-confirm" style="background: var(--success); color: white; border: none; padding: 0.75rem; border-radius: 12px; font-weight: 600; cursor: pointer;">
+                        ✓ Confirm
+                    </button>
+                    <button onclick="showRejectModal({{ $transaction->id }})" class="btn-reject" style="background: var(--danger); color: white; border: none; padding: 0.75rem; border-radius: 12px; font-weight: 600; cursor: pointer;">
+                        ✗ Reject
+                    </button>
+                </div>
+            </div>
+            @endforeach
+
+            <div style="text-align: center; margin-top: 1rem; font-size: 0.75rem; color: #92400e;">
+                ⚠️ Transactions auto-confirm after 60 seconds
+            </div>
+        </div>
+        @endif
+
         <!-- Recent Purchases -->
         <div class="section">
             <div class="section-header">
@@ -676,6 +722,159 @@
         @keyframes fadeOut {
             from { opacity: 1; }
             to { opacity: 0; }
+        }
+    </style>
+
+    <!-- Rejection Modal -->
+    <div id="rejectModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 2000; align-items: center; justify-content: center; padding: 1rem;">
+        <div style="background: white; border-radius: 20px; max-width: 500px; width: 100%; padding: 2rem;">
+            <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; color: var(--text-dark);">Reject Transaction</h3>
+            <p style="color: var(--text-light); margin-bottom: 1.5rem;">Please provide a reason for rejecting this transaction:</p>
+
+            <textarea id="rejectReason" style="width: 100%; padding: 1rem; border: 2px solid var(--border); border-radius: 12px; font-size: 1rem; min-height: 120px; resize: vertical;" placeholder="Enter reason..."></textarea>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem;">
+                <button onclick="closeRejectModal()" style="background: var(--border); color: var(--text-dark); border: none; padding: 1rem; border-radius: 12px; font-weight: 600; cursor: pointer;">
+                    Cancel
+                </button>
+                <button onclick="submitRejection()" style="background: var(--danger); color: white; border: none; padding: 1rem; border-radius: 12px; font-weight: 600; cursor: pointer;">
+                    Reject Transaction
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let rejectingTransactionId = null;
+
+        // Countdown timers
+        function updateCountdowns() {
+            const cards = document.querySelectorAll('.transaction-confirm-card');
+            cards.forEach(card => {
+                const deadline = parseInt(card.dataset.deadline);
+                const now = Math.floor(Date.now() / 1000);
+                const secondsRemaining = Math.max(0, deadline - now);
+
+                const timerDisplay = card.querySelector('.timer-display');
+                if (timerDisplay) {
+                    timerDisplay.textContent = secondsRemaining;
+
+                    // Change color based on urgency
+                    const timerEl = card.querySelector('.countdown-timer');
+                    if (secondsRemaining <= 10) {
+                        timerEl.style.background = 'var(--danger)';
+                        timerEl.style.animation = 'pulse 1s infinite';
+                    } else if (secondsRemaining <= 30) {
+                        timerEl.style.background = 'var(--warning)';
+                    }
+
+                    // Auto-remove if expired
+                    if (secondsRemaining === 0) {
+                        setTimeout(() => {
+                            card.style.animation = 'fadeOut 0.5s ease';
+                            setTimeout(() => {
+                                card.remove();
+                                // Reload if no more pending transactions
+                                if (document.querySelectorAll('.transaction-confirm-card').length === 0) {
+                                    location.reload();
+                                }
+                            }, 500);
+                        }, 1000);
+                    }
+                }
+            });
+        }
+
+        // Start countdown timers
+        updateCountdowns();
+        setInterval(updateCountdowns, 1000);
+
+        // Confirm transaction
+        async function confirmTransaction(transactionId) {
+            if (!confirm('Confirm this purchase?')) return;
+
+            try {
+                const response = await fetch(`/customer/confirm-transaction/${transactionId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('✓ Transaction confirmed successfully!');
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            } catch (error) {
+                alert('Network error. Please try again.');
+            }
+        }
+
+        // Show reject modal
+        function showRejectModal(transactionId) {
+            rejectingTransactionId = transactionId;
+            document.getElementById('rejectModal').style.display = 'flex';
+            document.getElementById('rejectReason').value = '';
+        }
+
+        // Close reject modal
+        function closeRejectModal() {
+            document.getElementById('rejectModal').style.display = 'none';
+            rejectingTransactionId = null;
+        }
+
+        // Submit rejection
+        async function submitRejection() {
+            const reason = document.getElementById('rejectReason').value.trim();
+
+            if (!reason) {
+                alert('Please provide a reason for rejection');
+                return;
+            }
+
+            if (!rejectingTransactionId) return;
+
+            try {
+                const response = await fetch(`/customer/reject-transaction/${rejectingTransactionId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ reason })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('✓ Transaction rejected');
+                    closeRejectModal();
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            } catch (error) {
+                alert('Network error. Please try again.');
+            }
+        }
+
+        // Close modal on background click
+        document.getElementById('rejectModal')?.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeRejectModal();
+            }
+        });
+    </script>
+
+    <style>
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
         }
     </style>
 

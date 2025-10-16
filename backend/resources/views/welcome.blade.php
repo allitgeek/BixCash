@@ -1296,7 +1296,7 @@
                 <!-- Right Side: Action Cards -->
                 <div class="dashboard-right-content">
                     <!-- Grow Your Money Card -->
-                    <div class="dashboard-card grow-money">
+                    <a href="{{ route('partner.register') }}" class="dashboard-card grow-money" style="display: block; text-decoration: none; cursor: pointer;">
                         <img src="/images/elements/grow your money icon.png" alt="Grow your Money" class="card-full-image">
                         <div class="card-sparkles">
                             <div class="green-sparkle sparkle-1">✦</div>
@@ -1304,26 +1304,26 @@
                             <div class="green-sparkle sparkle-3">✦</div>
                             <div class="green-sparkle sparkle-4">✦</div>
                         </div>
-                    </div>
+                    </a>
 
                     <!-- Rewards Card -->
-                    <div class="dashboard-card rewards">
+                    <a href="{{ route('partner.register') }}" class="dashboard-card rewards" style="display: block; text-decoration: none; cursor: pointer;">
                         <img src="/images/elements/rewards icon.png" alt="Rewards" class="card-full-image">
                         <div class="card-sparkles">
                             <div class="green-sparkle sparkle-1">✦</div>
                             <div class="green-sparkle sparkle-2">✦</div>
                             <div class="green-sparkle sparkle-3">✦</div>
                         </div>
-                    </div>
+                    </a>
 
                     <!-- Shop & Earn Card -->
-                    <div class="dashboard-card shop-earn">
+                    <a href="{{ route('partner.register') }}" class="dashboard-card shop-earn" style="display: block; text-decoration: none; cursor: pointer;">
                         <img src="/images/elements/shop and earn.png" alt="Shop & Earn" class="card-full-image">
                         <div class="card-sparkles">
                             <div class="green-sparkle sparkle-1">✦</div>
                             <div class="green-sparkle sparkle-2">✦</div>
                         </div>
-                    </div>
+                    </a>
                 </div>
 
             </div>

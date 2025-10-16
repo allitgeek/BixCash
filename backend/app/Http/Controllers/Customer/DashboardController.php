@@ -7,6 +7,7 @@ use App\Models\CustomerWallet;
 use App\Models\WithdrawalRequest;
 use App\Models\PurchaseHistory;
 use App\Models\CustomerProfile;
+use App\Models\PartnerTransaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -41,10 +42,17 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
+        // Get pending partner transactions (for confirmation)
+        $pendingTransactions = PartnerTransaction::where('customer_id', $user->id)
+            ->where('status', 'pending_confirmation')
+            ->with('partner.partnerProfile')
+            ->latest()
+            ->get();
+
         // Check if profile is complete
         $profileComplete = $profile && $profile->profile_completed;
 
-        return view('customer.dashboard', compact('user', 'wallet', 'profile', 'recentPurchases', 'recentWithdrawals', 'profileComplete'));
+        return view('customer.dashboard', compact('user', 'wallet', 'profile', 'recentPurchases', 'recentWithdrawals', 'pendingTransactions', 'profileComplete'));
     }
 
     public function completeProfile(Request $request)
@@ -296,6 +304,117 @@ class DashboardController extends Controller
             ->paginate(15);
 
         return view('customer.purchase-history', compact('purchases'));
+    }
+
+    /**
+     * Get pending transactions (for AJAX polling)
+     */
+    public function getPendingTransactions()
+    {
+        $user = Auth::user();
+
+        $transactions = PartnerTransaction::where('customer_id', $user->id)
+            ->where('status', 'pending_confirmation')
+            ->with('partner.partnerProfile')
+            ->latest()
+            ->get()
+            ->map(function($transaction) {
+                return [
+                    'id' => $transaction->id,
+                    'transaction_code' => $transaction->transaction_code,
+                    'invoice_amount' => $transaction->invoice_amount,
+                    'partner_name' => $transaction->partner->partnerProfile->business_name ?? 'Unknown Partner',
+                    'transaction_date' => $transaction->transaction_date,
+                    'confirmation_deadline' => $transaction->confirmation_deadline,
+                    'seconds_remaining' => max(0, $transaction->confirmation_deadline->diffInSeconds(now(), false)),
+                    'is_expired' => $transaction->isExpired(),
+                ];
+            });
+
+        return response()->json([
+            'success' => true,
+            'transactions' => $transactions
+        ]);
+    }
+
+    /**
+     * Confirm a partner transaction
+     */
+    public function confirmTransaction(Request $request, $transactionId)
+    {
+        $user = Auth::user();
+
+        $transaction = PartnerTransaction::where('id', $transactionId)
+            ->where('customer_id', $user->id)
+            ->where('status', 'pending_confirmation')
+            ->first();
+
+        if (!$transaction) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Transaction not found or already processed.'
+            ], 404);
+        }
+
+        if ($transaction->isExpired()) {
+            // Auto-confirm if expired
+            $transaction->autoConfirm();
+            return response()->json([
+                'success' => true,
+                'message' => 'Transaction was auto-confirmed (time expired).',
+                'method' => 'auto'
+            ]);
+        }
+
+        // Manual confirmation
+        if ($transaction->confirmByCustomer()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Transaction confirmed successfully!',
+                'method' => 'manual'
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Failed to confirm transaction.'
+        ], 500);
+    }
+
+    /**
+     * Reject a partner transaction
+     */
+    public function rejectTransaction(Request $request, $transactionId)
+    {
+        $validated = $request->validate([
+            'reason' => 'required|string|max:500',
+        ]);
+
+        $user = Auth::user();
+
+        $transaction = PartnerTransaction::where('id', $transactionId)
+            ->where('customer_id', $user->id)
+            ->where('status', 'pending_confirmation')
+            ->first();
+
+        if (!$transaction) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Transaction not found or already processed.'
+            ], 404);
+        }
+
+        if ($transaction->reject($validated['reason'])) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Transaction rejected successfully.'
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Failed to reject transaction.'
+        ], 500);
     }
 
     public function logout()
