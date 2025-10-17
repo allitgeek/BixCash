@@ -7,21 +7,32 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Partner Profile - BixCash</title>
     @vite(['resources/css/app.css'])
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 </head>
 <body class="bg-gradient-to-br from-gray-50 via-blue-50/20 to-gray-50 min-h-screen pb-24" style="margin: 0; padding: 0;">
 
-    {{-- Header with Glassmorphism --}}
+    {{-- Enhanced Profile Header with Glassmorphism --}}
     <header class="bg-white/80 backdrop-blur-xl shadow-lg shadow-blue-900/5 border-b border-gray-200/60 sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 py-3">
-            <div class="flex items-center justify-between">
-                <div class="flex-1">
-                    <h1 class="text-lg sm:text-xl font-bold bg-gradient-to-r from-blue-900 to-blue-700 bg-clip-text text-transparent">
-                        Partner Profile
-                    </h1>
-                    <p class="text-xs sm:text-sm text-gray-500 mt-0.5">View and manage your profile</p>
+            {{-- Top Row: Avatar + User Info + Actions --}}
+            <div class="flex items-center justify-between gap-3 mb-3">
+                <div class="flex items-center gap-3 flex-1 min-w-0">
+                    {{-- User Avatar --}}
+                    <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-blue-600 to-blue-900 text-white flex items-center justify-center shadow-lg flex-shrink-0 border-4 border-white">
+                        <span class="text-xl sm:text-2xl font-bold">{{ strtoupper(substr($partnerProfile->contact_person_name, 0, 1)) }}</span>
+                    </div>
+                    {{-- User Info --}}
+                    <div class="flex-1 min-w-0">
+                        <h1 class="text-base sm:text-lg font-bold bg-gradient-to-r from-blue-900 to-blue-700 bg-clip-text text-transparent truncate">
+                            {{ $partnerProfile->contact_person_name }}
+                        </h1>
+                        <p class="text-xs text-gray-500 mt-0.5 truncate">{{ $partnerProfile->business_name }}</p>
+                        <p class="text-[10px] text-gray-400 mt-0.5">Member since {{ $stats['member_since']->format('M Y') }}</p>
+                    </div>
                 </div>
-                <div class="flex items-center gap-1.5 sm:gap-2">
-                    <a href="{{ route('partner.dashboard') }}" class="px-3 sm:px-4 py-2 rounded-full bg-white border border-gray-200 text-gray-700 text-xs font-semibold hover:bg-gray-50 hover:border-gray-300 hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-1.5 shadow-sm">
+                {{-- Action Buttons --}}
+                <div class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+                    <a href="{{ route('partner.dashboard') }}" class="px-3 sm:px-4 py-2 rounded-full bg-gradient-to-r from-blue-600 to-blue-700 text-white text-xs font-semibold shadow-md shadow-blue-500/30 hover:shadow-lg hover:shadow-blue-500/40 hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-1.5">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                         </svg>
@@ -36,6 +47,42 @@
                             <span class="hidden sm:inline">Logout</span>
                         </button>
                     </form>
+                </div>
+            </div>
+
+            {{-- Quick Stats Row: Responsive Grid --}}
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
+                {{-- Total Orders --}}
+                <div class="bg-gradient-to-br from-blue-50/80 to-indigo-50/50 rounded-lg border-l-4 border-blue-600 p-2 sm:p-3 shadow-sm">
+                    <div class="flex items-center gap-2 mb-0.5">
+                        <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                        </svg>
+                        <p class="text-xs text-gray-600 font-semibold">Orders</p>
+                    </div>
+                    <p class="text-lg sm:text-xl font-bold text-blue-600">{{ $stats['total_orders'] }}</p>
+                </div>
+
+                {{-- Total Profit --}}
+                <div class="bg-gradient-to-br from-green-50/80 to-emerald-50/50 rounded-lg border-l-4 border-green-500 p-2 sm:p-3 shadow-sm">
+                    <div class="flex items-center gap-2 mb-0.5">
+                        <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <p class="text-xs text-gray-600 font-semibold">Profit</p>
+                    </div>
+                    <p class="text-sm sm:text-base font-bold text-green-600">Rs {{ number_format($stats['total_profit'], 0) }}</p>
+                </div>
+
+                {{-- Account Status --}}
+                <div class="bg-gradient-to-br from-purple-50/80 to-violet-50/50 rounded-lg border-l-4 border-purple-600 p-2 sm:p-3 shadow-sm col-span-2 sm:col-span-1">
+                    <div class="flex items-center gap-2 mb-0.5">
+                        <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <p class="text-xs text-gray-600 font-semibold">Status</p>
+                    </div>
+                    <p class="text-lg sm:text-xl font-bold bg-gradient-to-r from-purple-600 to-violet-600 bg-clip-text text-transparent capitalize">{{ $partnerProfile->status }}</p>
                 </div>
             </div>
         </div>

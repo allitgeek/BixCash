@@ -212,6 +212,7 @@ class DashboardController extends Controller
     public function transactionHistory(Request $request)
     {
         $partner = Auth::user();
+        $partnerProfile = $partner->partnerProfile;
 
         $query = PartnerTransaction::where('partner_id', $partner->id)
             ->with('customer');
@@ -232,7 +233,21 @@ class DashboardController extends Controller
         $transactions = $query->orderBy('created_at', 'desc')
             ->paginate(20);
 
-        return view('partner.transaction-history', compact('transactions'));
+        // Get stats for header
+        $stats = [
+            'total_transactions' => PartnerTransaction::where('partner_id', $partner->id)->count(),
+            'total_amount' => PartnerTransaction::where('partner_id', $partner->id)
+                ->where('status', 'confirmed')
+                ->sum('invoice_amount'),
+            'confirmed_count' => PartnerTransaction::where('partner_id', $partner->id)
+                ->where('status', 'confirmed')
+                ->count(),
+            'pending_count' => PartnerTransaction::where('partner_id', $partner->id)
+                ->where('status', 'pending_confirmation')
+                ->count(),
+        ];
+
+        return view('partner.transaction-history', compact('transactions', 'stats', 'partner', 'partnerProfile'));
     }
 
     /**
@@ -241,6 +256,7 @@ class DashboardController extends Controller
     public function profitHistory()
     {
         $partner = Auth::user();
+        $partnerProfile = $partner->partnerProfile;
 
         // Get completed batches where partner received profit
         $profitBatches = ProfitBatch::where('status', 'completed')
@@ -253,7 +269,35 @@ class DashboardController extends Controller
             ->orderBy('batch_period', 'desc')
             ->paginate(12);
 
-        return view('partner.profit-history', compact('profitBatches'));
+        // Calculate total profit from all batches
+        $allBatches = ProfitBatch::where('status', 'completed')
+            ->whereHas('transactions', function($q) use ($partner) {
+                $q->where('partner_id', $partner->id);
+            })
+            ->with(['transactions' => function($q) use ($partner) {
+                $q->where('partner_id', $partner->id);
+            }])
+            ->get();
+
+        $totalProfit = 0;
+        $totalTransactions = 0;
+        foreach ($allBatches as $batch) {
+            $totalProfit += $batch->transactions->sum('partner_profit_share');
+            $totalTransactions += $batch->transactions->count();
+        }
+
+        // Get last payment info
+        $lastBatch = $allBatches->first();
+        $lastPaymentDate = $lastBatch ? $lastBatch->processed_at : null;
+
+        $stats = [
+            'total_batches' => $allBatches->count(),
+            'total_profit' => $totalProfit,
+            'total_transactions' => $totalTransactions,
+            'last_payment_date' => $lastPaymentDate,
+        ];
+
+        return view('partner.profit-history', compact('profitBatches', 'stats', 'partner', 'partnerProfile'));
     }
 
     /**
@@ -264,7 +308,18 @@ class DashboardController extends Controller
         $partner = Auth::user();
         $partnerProfile = $partner->partnerProfile;
 
-        return view('partner.profile', compact('partner', 'partnerProfile'));
+        // Get quick stats for header
+        $stats = [
+            'total_orders' => PartnerTransaction::where('partner_id', $partner->id)
+                ->where('status', 'confirmed')
+                ->count(),
+            'total_profit' => PartnerTransaction::where('partner_id', $partner->id)
+                ->where('status', 'confirmed')
+                ->sum('partner_profit_share'),
+            'member_since' => $partner->created_at,
+        ];
+
+        return view('partner.profile', compact('partner', 'partnerProfile', 'stats'));
     }
 
     /**

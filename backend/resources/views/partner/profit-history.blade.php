@@ -7,25 +7,68 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Profit History - BixCash</title>
     @vite(['resources/css/app.css'])
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 </head>
-<body class="bg-gray-50 min-h-screen pb-24" style="margin: 0; padding: 0;">
+<body class="bg-gradient-to-br from-gray-50 via-blue-50/20 to-gray-50 min-h-screen pb-24" style="margin: 0; padding: 0;">
 
-    {{-- Header with Glassmorphism --}}
+    {{-- Enhanced Header with Glassmorphism --}}
     <header class="bg-white/80 backdrop-blur-xl shadow-lg shadow-blue-900/5 border-b border-gray-200/60 sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 py-3">
-            <div class="flex items-center justify-between">
-                <div class="flex-1">
-                    <h1 class="text-lg sm:text-xl font-bold bg-gradient-to-r from-blue-900 to-blue-700 bg-clip-text text-transparent">
-                        Profit History
-                    </h1>
-                    <p class="text-xs sm:text-sm text-gray-500 mt-0.5">View your profit distributions</p>
+            {{-- Top Row: Logo + Title + Back Button --}}
+            <div class="flex items-center justify-between gap-3 mb-3">
+                <div class="flex items-center gap-3 flex-1 min-w-0">
+                    {{-- Logo --}}
+                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-green-600 to-blue-900 flex items-center justify-center shadow-md flex-shrink-0">
+                        <svg class="w-6 h-6 sm:w-7 sm:h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    {{-- Title --}}
+                    <div class="flex-1 min-w-0">
+                        <h1 class="text-base sm:text-lg font-bold bg-gradient-to-r from-green-600 to-blue-900 bg-clip-text text-transparent truncate">
+                            Profit History
+                        </h1>
+                        <p class="text-xs text-gray-500 mt-0.5">{{ $partnerProfile->business_name }}</p>
+                    </div>
                 </div>
-                <a href="{{ route('partner.dashboard') }}" class="px-3 sm:px-4 py-2 rounded-full bg-gradient-to-r from-blue-600 to-blue-700 text-white text-xs font-semibold shadow-md shadow-blue-500/30 hover:shadow-lg hover:shadow-blue-500/40 hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-1.5">
+                {{-- Back Button --}}
+                <a href="{{ route('partner.dashboard') }}" class="px-3 sm:px-4 py-2 rounded-full bg-gradient-to-r from-blue-600 to-blue-700 text-white text-xs font-semibold shadow-md shadow-blue-500/30 hover:shadow-lg hover:shadow-blue-500/40 hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-1.5 flex-shrink-0">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
                     <span class="hidden sm:inline">Back</span>
                 </a>
+            </div>
+
+            {{-- Stats Row: Responsive Grid --}}
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+                {{-- Total Batches --}}
+                <div class="bg-gradient-to-br from-purple-50/80 to-violet-50/50 rounded-lg border-l-4 border-purple-600 p-2 sm:p-3 shadow-sm">
+                    <p class="text-xs text-gray-600 font-semibold mb-0.5">Batches</p>
+                    <p class="text-lg sm:text-xl font-bold bg-gradient-to-r from-purple-600 to-violet-600 bg-clip-text text-transparent">{{ $stats['total_batches'] }}</p>
+                </div>
+
+                {{-- Total Profit --}}
+                <div class="bg-gradient-to-br from-green-50/80 to-emerald-50/50 rounded-lg border-l-4 border-green-500 p-2 sm:p-3 shadow-sm">
+                    <p class="text-xs text-gray-600 font-semibold mb-0.5">Total Profit</p>
+                    <p class="text-sm sm:text-base font-bold text-green-600">Rs {{ number_format($stats['total_profit'], 0) }}</p>
+                </div>
+
+                {{-- Total Transactions --}}
+                <div class="bg-gradient-to-br from-blue-50/80 to-indigo-50/50 rounded-lg border-l-4 border-blue-600 p-2 sm:p-3 shadow-sm">
+                    <p class="text-xs text-gray-600 font-semibold mb-0.5">Transactions</p>
+                    <p class="text-lg sm:text-xl font-bold text-blue-600">{{ $stats['total_transactions'] }}</p>
+                </div>
+
+                {{-- Last Payment --}}
+                <div class="bg-gradient-to-br from-orange-50/80 to-amber-50/50 rounded-lg border-l-4 border-orange-600 p-2 sm:p-3 shadow-sm">
+                    <p class="text-xs text-gray-600 font-semibold mb-0.5">Last Payment</p>
+                    @if($stats['last_payment_date'])
+                    <p class="text-[10px] sm:text-xs font-bold text-orange-600">{{ $stats['last_payment_date']->format('M d, Y') }}</p>
+                    @else
+                    <p class="text-xs font-bold text-orange-600">N/A</p>
+                    @endif
+                </div>
             </div>
         </div>
     </header>
