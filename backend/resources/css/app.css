@@ -144,23 +144,16 @@
         @apply bg-gray-50 font-semibold text-gray-900;
     }
 
-    /* Utility Classes */
-    .text-center { @apply text-center; }
+    /* Utility Classes - Custom mappings */
     .text-muted { @apply text-gray-600; }
-    .text-sm { @apply text-sm; }
     .small { @apply text-sm; }
-
-    .mb-1 { @apply mb-1; }
-    .mb-2 { @apply mb-2; }
     .mb-3 { @apply mb-4; }
     .mb-4 { @apply mb-6; }
-    .mt-2 { @apply mt-2; }
     .mt-3 { @apply mt-4; }
     .mt-4 { @apply mt-6; }
     .py-5 { @apply py-12; }
     .d-block { @apply block; }
     .d-grid { @apply grid; }
-    .gap-2 { @apply gap-2; }
     .w-100 { @apply w-full; }
 
     .btn-sm {
