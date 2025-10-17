@@ -5,7 +5,7 @@
 
 @section('content')
     {{-- Stats Grid with Modern Glassmorphism Design --}}
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-6">
         {{-- Total Users Card --}}
         <div class="group relative bg-white/70 backdrop-blur-xl rounded-2xl border border-white/20 shadow-lg hover:shadow-2xl transition-all duration-300 ease-in-out hover:-translate-y-1 overflow-hidden">
             <div class="absolute inset-0 bg-gradient-to-br from-blue-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>

@@ -188,9 +188,9 @@
             {{-- Top Header --}}
             <header class="bg-white/80 backdrop-blur-xl border-b border-gray-200/50 sticky top-0 z-40 shadow-sm">
                 <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="flex items-center justify-between h-16">
+                    <div class="flex items-center justify-between h-14">
                         {{-- Page Title --}}
-                        <h1 class="text-2xl font-bold text-gray-900 tracking-tight">@yield('page-title', 'Dashboard')</h1>
+                        <h1 class="text-xl font-bold text-gray-900 tracking-tight">@yield('page-title', 'Dashboard')</h1>
 
                         {{-- Right Side: User Info & Logout --}}
                         <div class="flex items-center space-x-4">
@@ -216,7 +216,7 @@
             </header>
 
             {{-- Main Content --}}
-            <main class="max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <main class="max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
                 {{-- Flash Messages --}}
                 @if (session('success'))
                     <div class="mb-6 rounded-xl bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 p-4 shadow-lg shadow-green-500/10">
