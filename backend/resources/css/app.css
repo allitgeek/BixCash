@@ -15,6 +15,222 @@
     --bix-black: #000000;
 }
 
+/* ===================================
+   ADMIN PANEL UTILITY CLASSES
+   Legacy compatibility layer for existing admin pages
+   =================================== */
+
+@layer components {
+    /* Card Components */
+    .card {
+        @apply bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden;
+    }
+
+    .card-header {
+        @apply bg-gray-50 px-6 py-4 border-b-2 border-gray-100 flex justify-between items-center;
+    }
+
+    .card-title {
+        @apply text-gray-900 text-xl font-bold m-0;
+    }
+
+    .card-body {
+        @apply p-6;
+    }
+
+    /* Button Styles */
+    .btn {
+        @apply inline-block px-5 py-2.5 rounded-lg no-underline cursor-pointer border-0 text-sm font-semibold transition-all duration-200 m-1;
+    }
+
+    .btn-primary {
+        @apply bg-[#76d37a] text-[#021c47] hover:bg-[#93db4d] hover:-translate-y-0.5 hover:shadow-lg hover:shadow-green-500/30;
+    }
+
+    .btn-success {
+        @apply bg-[#76d37a] text-[#021c47] hover:bg-[#93db4d] hover:-translate-y-0.5;
+    }
+
+    .btn-warning {
+        @apply bg-[#f39c12] text-white hover:bg-[#e67e22] hover:-translate-y-0.5;
+    }
+
+    .btn-danger {
+        @apply bg-[#e74c3c] text-white hover:bg-[#c0392b] hover:-translate-y-0.5;
+    }
+
+    .btn-secondary {
+        @apply bg-[#707070] text-white hover:bg-[#021c47] hover:-translate-y-0.5;
+    }
+
+    .btn-info {
+        @apply bg-[#021c47] text-white hover:bg-[#76d37a] hover:text-[#021c47] hover:-translate-y-0.5;
+    }
+
+    /* Form Controls */
+    .form-control {
+        @apply w-full px-3 py-2 border-2 border-gray-200 rounded-lg text-base transition-all duration-200 bg-white focus:outline-none focus:border-[#76d37a] focus:ring-4 focus:ring-green-500/10;
+    }
+
+    .form-control.is-invalid {
+        @apply border-[#e74c3c];
+    }
+
+    .form-group {
+        @apply mb-6;
+    }
+
+    .form-group label {
+        @apply block mb-2 text-gray-900 font-semibold;
+    }
+
+    /* Badges */
+    .badge {
+        @apply inline-block px-2 py-1 text-xs font-semibold rounded uppercase tracking-wide;
+    }
+
+    .badge-success {
+        @apply bg-[#76d37a] text-[#021c47];
+    }
+
+    .badge-secondary {
+        @apply bg-[#707070] text-white;
+    }
+
+    .badge-warning {
+        @apply bg-[#f39c12] text-white;
+    }
+
+    .badge-primary {
+        @apply bg-[#021c47] text-white;
+    }
+
+    .role-badge {
+        @apply inline-block px-3.5 py-1.5 bg-[#76d37a] text-[#021c47] rounded-full text-xs font-semibold uppercase tracking-wider;
+    }
+
+    /* Alert Styles */
+    .alert {
+        @apply px-5 py-4 mb-6 rounded-xl border transition-all duration-300 font-medium;
+    }
+
+    .alert-success {
+        @apply bg-green-50 text-gray-900 border-[#76d37a];
+    }
+
+    .alert-danger {
+        @apply bg-red-50 text-red-900 border-[#e74c3c];
+    }
+
+    .alert-warning {
+        @apply bg-yellow-50 text-yellow-900 border-[#f39c12];
+    }
+
+    .alert-info {
+        @apply bg-blue-50 text-gray-900 border-[#021c47];
+    }
+
+    /* Table Styles */
+    .table {
+        @apply w-full border-collapse mb-4;
+    }
+
+    .table th,
+    .table td {
+        @apply px-3 py-3 border-b border-gray-200 text-left;
+    }
+
+    .table th {
+        @apply bg-gray-50 font-semibold text-gray-900;
+    }
+
+    /* Utility Classes */
+    .text-center { @apply text-center; }
+    .text-muted { @apply text-gray-600; }
+    .text-sm { @apply text-sm; }
+    .small { @apply text-sm; }
+
+    .mb-1 { @apply mb-1; }
+    .mb-2 { @apply mb-2; }
+    .mb-3 { @apply mb-4; }
+    .mb-4 { @apply mb-6; }
+    .mt-2 { @apply mt-2; }
+    .mt-3 { @apply mt-4; }
+    .mt-4 { @apply mt-6; }
+    .py-5 { @apply py-12; }
+    .d-block { @apply block; }
+    .d-grid { @apply grid; }
+    .gap-2 { @apply gap-2; }
+    .w-100 { @apply w-full; }
+
+    .btn-sm {
+        @apply px-3.5 py-2 text-xs;
+    }
+
+    .invalid-feedback {
+        @apply block text-[#e74c3c] text-sm mt-1 font-medium;
+    }
+
+    .form-check {
+        @apply flex items-center mb-2;
+    }
+
+    .form-check-input {
+        @apply mr-2 w-4 h-4;
+    }
+
+    .form-check-label {
+        @apply mb-0 font-medium;
+    }
+
+    .list-unstyled {
+        @apply list-none p-0;
+    }
+
+    .btn + .btn {
+        @apply ml-2;
+    }
+
+    .form-actions {
+        @apply flex gap-4 items-center pt-6 mt-6 border-t-2 border-gray-200;
+    }
+
+    /* Layout Grid */
+    .row {
+        @apply flex flex-wrap -mx-3;
+    }
+
+    .col-md-4,
+    .col-md-6,
+    .col-md-8,
+    .col-md-12 {
+        @apply px-3;
+    }
+
+    .col-md-4 { @apply flex-[0_0_33.333333%] max-w-[33.333333%]; }
+    .col-md-6 { @apply flex-[0_0_50%] max-w-[50%]; }
+    .col-md-8 { @apply flex-[0_0_66.666667%] max-w-[66.666667%]; }
+    .col-md-12 { @apply flex-[0_0_100%] max-w-full; }
+
+    /* Mobile Responsive Grid */
+    @media (max-width: 768px) {
+        .col-md-4,
+        .col-md-6,
+        .col-md-8,
+        .col-md-12 {
+            @apply flex-[0_0_100%] max-w-full mb-4;
+        }
+
+        .form-actions {
+            @apply flex-col items-stretch;
+        }
+
+        .form-actions .btn {
+            @apply w-full my-1;
+        }
+    }
+}
+
 /* Performance: Will-change hints for animated elements */
 .dashboard-card,
 .promotion-card,
