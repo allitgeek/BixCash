@@ -7,468 +7,257 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Partner Dashboard - BixCash</title>
     @vite(['resources/css/app.css'])
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        :root {
-            --primary: #93db4d;
-            --secondary: #021c47;
-            --text-dark: #1a202c;
-            --text-light: #718096;
-            --border: #e2e8f0;
-            --bg-light: #f7fafc;
-            --success: #48bb78;
-            --danger: #f56565;
-            --warning: #f59e0b;
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background: linear-gradient(135deg, var(--secondary) 0%, #0a2f5f 100%);
-            min-height: 100vh;
-            padding-bottom: 80px;
-        }
-        .header {
-            background: white;
-            padding: 1.5rem 1rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        .header-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .business-name {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--secondary);
-        }
-        .partner-badge {
-            background: var(--primary);
-            color: white;
-            padding: 0.25rem 0.75rem;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-        .stats-grid {
-            max-width: 1200px;
-            margin: 2rem auto;
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
-            padding: 0 1rem;
-        }
-        .stat-card {
-            background: white;
-            border-radius: 20px;
-            padding: 1.5rem;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-        .stat-label {
-            font-size: 0.875rem;
-            color: var(--text-light);
-            margin-bottom: 0.5rem;
-        }
-        .stat-value {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--text-dark);
-        }
-        .stat-value.success {
-            color: var(--success);
-        }
-        .stat-value.warning {
-            color: var(--warning);
-        }
-        .quick-actions {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
-        .section-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: white;
-            margin-bottom: 1rem;
-        }
-        .new-transaction-btn {
-            width: 100%;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 20px;
-            padding: 1.5rem;
-            font-size: 1.125rem;
-            font-weight: 700;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(147, 219, 77, 0.3);
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.75rem;
-        }
-        .new-transaction-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(147, 219, 77, 0.4);
-        }
-        .recent-transactions {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
-        .transaction-list {
-            background: white;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-        .transaction-item {
-            padding: 1rem;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .transaction-item:last-child {
-            border-bottom: none;
-        }
-        .transaction-info h4 {
-            font-size: 0.95rem;
-            color: var(--text-dark);
-            margin-bottom: 0.25rem;
-        }
-        .transaction-info p {
-            font-size: 0.75rem;
-            color: var(--text-light);
-        }
-        .transaction-amount {
-            font-size: 1.125rem;
-            font-weight: 700;
-            color: var(--text-dark);
-            text-align: right;
-        }
-        .transaction-status {
-            font-size: 0.7rem;
-            padding: 0.25rem 0.5rem;
-            border-radius: 8px;
-            font-weight: 600;
-            display: inline-block;
-            margin-top: 0.25rem;
-        }
-        .status-confirmed {
-            background: #d1fae5;
-            color: #065f46;
-        }
-        .status-pending_confirmation {
-            background: #fef3c7;
-            color: #92400e;
-        }
-        .status-rejected {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-        .empty-state {
-            text-align: center;
-            padding: 3rem 1rem;
-            color: var(--text-light);
-        }
-        .view-all-btn {
-            display: block;
-            width: 100%;
-            text-align: center;
-            padding: 1rem;
-            background: var(--bg-light);
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 600;
-        }
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: white;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            z-index: 100;
-        }
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 0.75rem 0.5rem;
-            text-decoration: none;
-            color: var(--text-light);
-            font-size: 0.7rem;
-            transition: all 0.3s ease;
-        }
-        .nav-item.active {
-            color: var(--primary);
-        }
-        .nav-icon {
-            font-size: 1.5rem;
-            margin-bottom: 0.25rem;
-        }
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.7);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-        }
-        .modal.active {
-            display: flex;
-        }
-        .modal-content {
-            background: white;
-            border-radius: 20px;
-            max-width: 500px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-        .modal-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .modal-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--text-dark);
-        }
-        .modal-close {
-            font-size: 1.5rem;
-            color: var(--text-light);
-            cursor: pointer;
-            background: none;
-            border: none;
-        }
-        .modal-body {
-            padding: 1.5rem;
-        }
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-        .form-label {
-            display: block;
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--text-dark);
-            margin-bottom: 0.5rem;
-        }
-        .form-input {
-            width: 100%;
-            padding: 0.875rem 1rem;
-            border: 2px solid var(--border);
-            border-radius: 12px;
-            font-size: 1rem;
-        }
-        .form-input:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-        .btn-primary {
-            width: 100%;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            padding: 1rem;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-        }
-        .btn-primary:disabled {
-            background: var(--border);
-            cursor: not-allowed;
-        }
-        .alert {
-            padding: 1rem;
-            border-radius: 12px;
-            margin-bottom: 1rem;
-            font-size: 0.875rem;
-        }
-        .alert-success {
-            background: #d1fae5;
-            color: #065f46;
-        }
-        .alert-error {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-        .customer-info-box {
-            background: var(--bg-light);
-            border-radius: 12px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-        }
-        .customer-info-box h4 {
-            font-size: 1rem;
-            color: var(--text-dark);
-            margin-bottom: 0.5rem;
-        }
-        .customer-info-box p {
-            font-size: 0.875rem;
-            color: var(--text-light);
-            margin: 0.25rem 0;
-        }
-        @media (max-width: 768px) {
-            .stats-grid {
-                gap: 0.75rem;
-            }
-            .stat-card {
-                padding: 1rem;
-            }
-            .stat-value {
-                font-size: 1.5rem;
-            }
-        }
-    </style>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 </head>
-<body>
-    <div class="header">
-        <div class="header-content">
-            <div>
-                <div class="business-name">{{ $partnerProfile->business_name }}</div>
-                <div style="font-size: 0.875rem; color: var(--text-light); margin-top: 0.25rem;">
-                    {{ $partnerProfile->business_type }}
+<body class="bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 min-h-screen pb-20">
+
+    {{-- Header with Glassmorphism --}}
+    <header class="bg-white/90 backdrop-blur-xl shadow-lg shadow-blue-900/10 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex-1">
+                    <h1 class="text-xl font-bold bg-gradient-to-r from-blue-900 to-blue-700 bg-clip-text text-transparent">
+                        {{ $partnerProfile->business_name }}
+                    </h1>
+                    <p class="text-sm text-gray-500 mt-0.5 capitalize">{{ $partnerProfile->business_type }}</p>
+                </div>
+                <div class="px-4 py-1.5 rounded-full bg-gradient-to-r from-green-500 to-green-600 text-white text-xs font-semibold shadow-sm shadow-green-500/30">
+                    Partner
                 </div>
             </div>
-            <div class="partner-badge">Partner</div>
         </div>
-    </div>
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-label">Total Revenue</div>
-            <div class="stat-value success">Rs {{ number_format($stats['total_revenue'], 0) }}</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-label">Your Profit</div>
-            <div class="stat-value success">Rs {{ number_format($stats['total_profit'], 0) }}</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-label">Transactions</div>
-            <div class="stat-value">{{ $stats['total_transactions'] }}</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-label">Pending</div>
-            <div class="stat-value warning">{{ $stats['pending_confirmations'] }}</div>
-        </div>
-    </div>
-    <div class="quick-actions">
-        <button class="new-transaction-btn" onclick="openTransactionModal()">
-            <span style="font-size: 1.5rem;">+</span>
-            New Transaction
-        </button>
-        @if($nextBatchDate)
-        <div style="text-align: center; margin-top: 1rem; color: white; font-size: 0.875rem;">
-            Next Profit Distribution: {{ $nextBatchDate->format('M d, Y') }}
-        </div>
-        @endif
-    </div>
-    <div class="recent-transactions">
-        <h3 class="section-title">Recent Transactions</h3>
-        <div class="transaction-list">
-            @forelse($recentTransactions as $transaction)
-            <div class="transaction-item">
-                <div class="transaction-info">
-                    <h4>{{ $transaction->customer->name }}</h4>
-                    <p>{{ $transaction->transaction_code }} • {{ $transaction->created_at->format('M d, h:i A') }}</p>
-                    <span class="transaction-status status-{{ strtolower($transaction->status) }}">
-                        {{ ucfirst(str_replace('_', ' ', $transaction->status)) }}
-                    </span>
-                </div>
-                <div class="transaction-amount">
-                    Rs {{ number_format($transaction->invoice_amount, 0) }}
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 py-6 space-y-6">
+
+        {{-- Stats Grid with Navy Blue Accents --}}
+        <div class="grid grid-cols-2 gap-3">
+            {{-- Total Revenue Card --}}
+            <div class="group bg-white rounded-xl border border-gray-200/60 p-4 hover:border-blue-800 hover:shadow-lg hover:shadow-blue-900/10 hover:ring-1 hover:ring-blue-900/20 transition-all duration-200">
+                <div class="flex flex-col space-y-2">
+                    <div class="flex items-center gap-2">
+                        <div class="w-9 h-9 rounded-lg bg-green-500/10 flex items-center justify-center text-green-600 group-hover:bg-gradient-to-br group-hover:from-green-600 group-hover:to-blue-900 group-hover:text-white transition-all duration-200">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <p class="text-xs text-gray-500 font-medium">Total Revenue</p>
+                    </div>
+                    <h3 class="text-2xl font-bold text-green-600">Rs {{ number_format($stats['total_revenue'], 0) }}</h3>
                 </div>
             </div>
-            @empty
-            <div class="empty-state">
-                <p>No transactions yet</p>
-                <p style="font-size: 0.75rem; margin-top: 0.5rem;">Create your first transaction above!</p>
+
+            {{-- Your Profit Card --}}
+            <div class="group bg-white rounded-xl border border-gray-200/60 p-4 hover:border-blue-800 hover:shadow-lg hover:shadow-blue-900/10 hover:ring-1 hover:ring-blue-900/20 transition-all duration-200">
+                <div class="flex flex-col space-y-2">
+                    <div class="flex items-center gap-2">
+                        <div class="w-9 h-9 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-600 group-hover:bg-gradient-to-br group-hover:from-blue-600 group-hover:to-blue-900 group-hover:text-white transition-all duration-200">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                            </svg>
+                        </div>
+                        <p class="text-xs text-gray-500 font-medium">Your Profit</p>
+                    </div>
+                    <h3 class="text-2xl font-bold text-blue-600">Rs {{ number_format($stats['total_profit'], 0) }}</h3>
+                </div>
             </div>
-            @endforelse
+
+            {{-- Transactions Card --}}
+            <div class="group bg-white rounded-xl border border-gray-200/60 p-4 hover:border-blue-800 hover:shadow-lg hover:shadow-blue-900/10 hover:ring-1 hover:ring-blue-900/20 transition-all duration-200">
+                <div class="flex flex-col space-y-2">
+                    <div class="flex items-center gap-2">
+                        <div class="w-9 h-9 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-600 group-hover:bg-gradient-to-br group-hover:from-purple-600 group-hover:to-blue-900 group-hover:text-white transition-all duration-200">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                            </svg>
+                        </div>
+                        <p class="text-xs text-gray-500 font-medium">Transactions</p>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900">{{ $stats['total_transactions'] }}</h3>
+                </div>
+            </div>
+
+            {{-- Pending Card --}}
+            <div class="group bg-white rounded-xl border border-gray-200/60 p-4 hover:border-blue-800 hover:shadow-lg hover:shadow-blue-900/10 hover:ring-1 hover:ring-blue-900/20 transition-all duration-200">
+                <div class="flex flex-col space-y-2">
+                    <div class="flex items-center gap-2">
+                        <div class="w-9 h-9 rounded-lg bg-orange-500/10 flex items-center justify-center text-orange-600 group-hover:bg-gradient-to-br group-hover:from-orange-600 group-hover:to-blue-900 group-hover:text-white transition-all duration-200">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <p class="text-xs text-gray-500 font-medium">Pending</p>
+                    </div>
+                    <h3 class="text-2xl font-bold text-orange-600">{{ $stats['pending_confirmations'] }}</h3>
+                </div>
+            </div>
+        </div>
+
+        {{-- New Transaction Button --}}
+        <div class="space-y-4">
+            <button onclick="openTransactionModal()" class="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-xl py-4 px-6 font-bold text-lg shadow-lg shadow-green-500/30 hover:shadow-xl hover:shadow-green-500/40 hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-3">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                New Transaction
+            </button>
+
+            @if($nextBatchDate)
+            <div class="text-center text-white text-sm bg-white/10 backdrop-blur-sm rounded-lg py-2 px-4">
+                Next Profit Distribution: <span class="font-semibold">{{ $nextBatchDate->format('M d, Y') }}</span>
+            </div>
+            @endif
+        </div>
+
+        {{-- Recent Transactions Card --}}
+        <div class="bg-white rounded-xl border border-gray-200/60 shadow-sm overflow-hidden hover:border-blue-800/40 hover:shadow-md hover:shadow-blue-900/5 transition-all duration-200">
+            <div class="px-5 py-4 border-b border-gray-200/60 bg-gradient-to-r from-blue-50/70 via-blue-900/5 to-transparent">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-blue-900 flex items-center justify-center shadow-sm shadow-blue-900/20">
+                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-base font-bold bg-gradient-to-r from-gray-800 to-blue-900 bg-clip-text text-transparent">Recent Transactions</h3>
+                </div>
+            </div>
+
+            <div class="divide-y divide-gray-200/60">
+                @forelse($recentTransactions as $transaction)
+                <div class="p-4 hover:bg-blue-50/50 transition-colors duration-150 flex items-center justify-between">
+                    <div class="flex-1 min-w-0">
+                        <h4 class="text-sm font-semibold text-gray-900 truncate">{{ $transaction->customer->name }}</h4>
+                        <p class="text-xs text-gray-500 mt-0.5">{{ $transaction->transaction_code }} • {{ $transaction->created_at->format('M d, h:i A') }}</p>
+                        <span class="inline-block mt-1.5 px-2 py-0.5 rounded-md text-xs font-semibold
+                            @if($transaction->status === 'confirmed') bg-green-100 text-green-700
+                            @elseif($transaction->status === 'pending_confirmation') bg-yellow-100 text-yellow-700
+                            @else bg-red-100 text-red-700 @endif">
+                            {{ ucfirst(str_replace('_', ' ', $transaction->status)) }}
+                        </span>
+                    </div>
+                    <div class="text-right ml-4">
+                        <p class="text-lg font-bold text-gray-900">Rs {{ number_format($transaction->invoice_amount, 0) }}</p>
+                    </div>
+                </div>
+                @empty
+                <div class="text-center py-12">
+                    <svg class="w-16 h-16 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <p class="text-gray-500 font-medium">No transactions yet</p>
+                    <p class="text-xs text-gray-400 mt-1">Create your first transaction above!</p>
+                </div>
+                @endforelse
+            </div>
+
             @if($recentTransactions->count() > 0)
-            <a href="{{ route('partner.transactions') }}" class="view-all-btn">View All Transactions</a>
+            <a href="{{ route('partner.transactions') }}" class="block w-full text-center py-3 bg-gray-50 hover:bg-blue-50 text-blue-700 font-semibold text-sm transition-colors duration-150">
+                View All Transactions
+            </a>
             @endif
         </div>
     </div>
-    <div class="bottom-nav">
-        <a href="{{ route('partner.dashboard') }}" class="nav-item active">
-            <div class="nav-icon">🏠</div>
-            <div>Home</div>
-        </a>
-        <a href="{{ route('partner.transactions') }}" class="nav-item">
-            <div class="nav-icon">📋</div>
-            <div>History</div>
-        </a>
-        <a href="{{ route('partner.profits') }}" class="nav-item">
-            <div class="nav-icon">💰</div>
-            <div>Profits</div>
-        </a>
-        <a href="{{ route('partner.profile') }}" class="nav-item">
-            <div class="nav-icon">👤</div>
-            <div>Profile</div>
-        </a>
-    </div>
-    <div class="modal" id="transactionModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">New Transaction</h3>
-                <button class="modal-close" onclick="closeTransactionModal()">&times;</button>
+
+    {{-- Bottom Navigation --}}
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg shadow-blue-900/10 z-50">
+        <div class="grid grid-cols-4">
+            <a href="{{ route('partner.dashboard') }}" class="flex flex-col items-center py-3 text-green-600 transition-colors duration-150">
+                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                </svg>
+                <span class="text-xs font-medium">Home</span>
+            </a>
+            <a href="{{ route('partner.transactions') }}" class="flex flex-col items-center py-3 text-gray-500 hover:text-blue-700 transition-colors duration-150">
+                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+                <span class="text-xs font-medium">History</span>
+            </a>
+            <a href="{{ route('partner.profits') }}" class="flex flex-col items-center py-3 text-gray-500 hover:text-blue-700 transition-colors duration-150">
+                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span class="text-xs font-medium">Profits</span>
+            </a>
+            <a href="{{ route('partner.profile') }}" class="flex flex-col items-center py-3 text-gray-500 hover:text-blue-700 transition-colors duration-150">
+                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                <span class="text-xs font-medium">Profile</span>
+            </a>
+        </div>
+    </nav>
+
+    {{-- Transaction Modal --}}
+    <div id="transactionModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+            <div class="px-6 py-5 border-b border-gray-200 flex items-center justify-between bg-gradient-to-r from-blue-50/70 to-transparent">
+                <h3 class="text-xl font-bold bg-gradient-to-r from-blue-900 to-blue-700 bg-clip-text text-transparent">New Transaction</h3>
+                <button onclick="closeTransactionModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
             </div>
-            <div class="modal-body">
+
+            <div class="p-6">
                 <div id="alertContainer"></div>
-                <div id="step1" class="step-content">
-                    <div class="form-group">
-                        <label class="form-label">Customer Phone Number</label>
-                        <div style="display: flex; gap: 0.5rem;">
-                            <div style="padding: 0.875rem 1rem; background: var(--bg-light); border: 2px solid var(--border); border-radius: 12px; font-weight: 600;">+92</div>
-                            <input type="text" id="customerPhone" class="form-input" placeholder="3001234567" maxlength="10" pattern="[0-9]{10}">
+
+                {{-- Step 1: Search Customer --}}
+                <div id="step1" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Customer Phone Number</label>
+                        <div class="flex gap-2">
+                            <div class="px-4 py-3 bg-gray-100 border-2 border-gray-200 rounded-xl font-semibold text-gray-700">+92</div>
+                            <input type="text" id="customerPhone" class="flex-1 px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all" placeholder="3001234567" maxlength="10" pattern="[0-9]{10}">
                         </div>
                     </div>
-                    <button class="btn-primary" onclick="searchCustomer()">Search Customer</button>
+                    <button onclick="searchCustomer()" class="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-xl py-3 font-semibold shadow-lg shadow-green-500/30 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200">
+                        Search Customer
+                    </button>
                 </div>
-                <div id="step2" class="step-content" style="display: none;">
-                    <div class="customer-info-box" id="customerInfoBox"></div>
-                    <div class="form-group">
-                        <label class="form-label">Invoice Amount (Rs)</label>
-                        <input type="number" id="invoiceAmount" class="form-input" placeholder="0" min="1" step="0.01">
+
+                {{-- Step 2: Create Transaction --}}
+                <div id="step2" class="hidden space-y-4">
+                    <div id="customerInfoBox" class="bg-blue-50 border border-blue-200 rounded-xl p-4"></div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Invoice Amount (Rs)</label>
+                        <input type="number" id="invoiceAmount" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all" placeholder="0" min="1" step="0.01">
                     </div>
-                    <button class="btn-primary" onclick="createTransaction()">Create Transaction</button>
-                    <button class="btn-primary" onclick="backToStep1()" style="background: var(--border); color: var(--text-dark); margin-top: 0.5rem;">Back</button>
+                    <button onclick="createTransaction()" class="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-xl py-3 font-semibold shadow-lg shadow-green-500/30 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200">
+                        Create Transaction
+                    </button>
+                    <button onclick="backToStep1()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl py-3 font-semibold transition-colors duration-200">
+                        Back
+                    </button>
                 </div>
-                <div id="step3" class="step-content" style="display: none; text-align: center;">
-                    <div style="font-size: 4rem; margin: 1rem 0;">✅</div>
-                    <h3 style="color: var(--success); margin-bottom: 1rem;">Transaction Created!</h3>
-                    <div id="transactionSuccessInfo"></div>
-                    <button class="btn-primary" onclick="closeTransactionModal(); location.reload();" style="margin-top: 1.5rem;">Done</button>
+
+                {{-- Step 3: Success --}}
+                <div id="step3" class="hidden text-center space-y-4">
+                    <div class="text-6xl mb-4">✅</div>
+                    <h3 class="text-2xl font-bold text-green-600">Transaction Created!</h3>
+                    <div id="transactionSuccessInfo" class="bg-green-50 border border-green-200 rounded-xl p-4 text-left"></div>
+                    <button onclick="closeTransactionModal(); location.reload();" class="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-xl py-3 font-semibold shadow-lg shadow-green-500/30 hover:shadow-xl transition-all duration-200">
+                        Done
+                    </button>
                 </div>
             </div>
         </div>
     </div>
+
     <script>
         let selectedCustomer = null;
+
         function openTransactionModal() {
-            document.getElementById('transactionModal').classList.add('active');
+            document.getElementById('transactionModal').classList.remove('hidden');
             resetModal();
         }
+
         function closeTransactionModal() {
-            document.getElementById('transactionModal').classList.remove('active');
+            document.getElementById('transactionModal').classList.add('hidden');
             resetModal();
         }
+
         function resetModal() {
             showStep(1);
             document.getElementById('customerPhone').value = '';
@@ -476,25 +265,31 @@
             document.getElementById('alertContainer').innerHTML = '';
             selectedCustomer = null;
         }
+
         function showStep(step) {
-            document.getElementById('step1').style.display = step === 1 ? 'block' : 'none';
-            document.getElementById('step2').style.display = step === 2 ? 'block' : 'none';
-            document.getElementById('step3').style.display = step === 3 ? 'block' : 'none';
+            document.getElementById('step1').classList.toggle('hidden', step !== 1);
+            document.getElementById('step2').classList.toggle('hidden', step !== 2);
+            document.getElementById('step3').classList.toggle('hidden', step !== 3);
         }
+
         function backToStep1() {
             showStep(1);
             selectedCustomer = null;
         }
+
         function showAlert(message, type = 'error') {
-            const alertHtml = `<div class="alert alert-${type}">${message}</div>`;
+            const bgColor = type === 'error' ? 'bg-red-50 border-red-200 text-red-700' : 'bg-green-50 border-green-200 text-green-700';
+            const alertHtml = `<div class="mb-4 px-4 py-3 rounded-xl border ${bgColor} text-sm font-medium">${message}</div>`;
             document.getElementById('alertContainer').innerHTML = alertHtml;
         }
+
         async function searchCustomer() {
             const phone = document.getElementById('customerPhone').value.trim();
             if (!/^[0-9]{10}$/.test(phone)) {
                 showAlert('Please enter a valid 10-digit phone number');
                 return;
             }
+
             try {
                 const response = await fetch('{{ route('partner.search-customer') }}', {
                     method: 'POST',
@@ -504,6 +299,7 @@
                     },
                     body: JSON.stringify({ phone })
                 });
+
                 const data = await response.json();
                 if (data.success) {
                     selectedCustomer = data.customer;
@@ -517,15 +313,17 @@
                 showAlert('Network error. Please try again.');
             }
         }
+
         function displayCustomerInfo(customer) {
             const html = `
-                <h4>${customer.name}</h4>
-                <p>Phone: ${customer.phone}</p>
-                <p>Total Purchases: ${customer.stats.total_purchases}</p>
-                <p>Total Spent: Rs ${parseFloat(customer.stats.total_spent || 0).toFixed(0)}</p>
+                <h4 class="font-bold text-gray-900 mb-2">${customer.name}</h4>
+                <p class="text-sm text-gray-600"><span class="font-medium">Phone:</span> ${customer.phone}</p>
+                <p class="text-sm text-gray-600"><span class="font-medium">Total Purchases:</span> ${customer.stats.total_purchases}</p>
+                <p class="text-sm text-gray-600"><span class="font-medium">Total Spent:</span> Rs ${parseFloat(customer.stats.total_spent || 0).toFixed(0)}</p>
             `;
             document.getElementById('customerInfoBox').innerHTML = html;
         }
+
         async function createTransaction() {
             const amount = document.getElementById('invoiceAmount').value;
             if (!amount || amount <= 0) {
@@ -536,6 +334,7 @@
                 showAlert('Customer not selected');
                 return;
             }
+
             try {
                 const response = await fetch('{{ route('partner.create-transaction') }}', {
                     method: 'POST',
@@ -548,6 +347,7 @@
                         invoice_amount: amount
                     })
                 });
+
                 const data = await response.json();
                 if (data.success) {
                     displaySuccess(data.transaction);
@@ -559,18 +359,28 @@
                 showAlert('Network error. Please try again.');
             }
         }
+
         function displaySuccess(transaction) {
             const html = `
-                <p style="color: var(--text-dark); margin-bottom: 0.5rem;">Transaction Code</p>
-                <p style="font-size: 1.5rem; font-weight: 700; color: var(--primary); margin-bottom: 1rem;">${transaction.transaction_code}</p>
-                <p style="color: var(--text-dark); margin-bottom: 0.5rem;">Amount: Rs ${transaction.invoice_amount}</p>
-                <p style="color: var(--text-light); font-size: 0.875rem; margin-top: 1rem;">Customer: ${transaction.customer_name}</p>
-                <p style="color: var(--warning); font-size: 0.875rem; margin-top: 0.5rem;">⏱️ Customer has 60 seconds to confirm</p>
+                <p class="text-sm text-gray-600 mb-1">Transaction Code</p>
+                <p class="text-2xl font-bold text-green-600 mb-3">${transaction.transaction_code}</p>
+                <p class="text-sm text-gray-600 mb-1"><span class="font-medium">Amount:</span> Rs ${transaction.invoice_amount}</p>
+                <p class="text-sm text-gray-600 mb-1"><span class="font-medium">Customer:</span> ${transaction.customer_name}</p>
+                <p class="text-xs text-orange-600 font-medium mt-3">⏱️ Customer has 60 seconds to confirm</p>
             `;
             document.getElementById('transactionSuccessInfo').innerHTML = html;
         }
+
+        // Phone input validation
         document.getElementById('customerPhone')?.addEventListener('input', function(e) {
             this.value = this.value.replace(/[^0-9]/g, '').substring(0, 10);
+        });
+
+        // Close modal on outside click
+        document.getElementById('transactionModal')?.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeTransactionModal();
+            }
         });
     </script>
 </body>
