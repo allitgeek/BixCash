@@ -187,7 +187,7 @@
         <div class="flex-1 overflow-auto focus:outline-none">
             {{-- Top Header --}}
             <header class="bg-white/80 backdrop-blur-xl border-b border-gray-200/50 sticky top-0 z-40 shadow-sm">
-                <div class="max-w-full mx-auto px-6 py-3">
+                <div class="max-w-full mx-auto px-6 py-1">
                     <div class="flex items-center justify-between">
                         {{-- Page Title --}}
                         <h1 class="text-xl font-bold text-gray-900 tracking-tight">@yield('page-title', 'Dashboard')</h1>
