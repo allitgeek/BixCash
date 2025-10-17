@@ -187,8 +187,8 @@
         <div class="flex-1 overflow-auto focus:outline-none">
             {{-- Top Header --}}
             <header class="bg-white/80 backdrop-blur-xl border-b border-gray-200/50 sticky top-0 z-40 shadow-sm">
-                <div class="max-w-full mx-auto px-6">
-                    <div class="flex items-center justify-between h-14">
+                <div class="max-w-full mx-auto px-6 py-3">
+                    <div class="flex items-center justify-between">
                         {{-- Page Title --}}
                         <h1 class="text-xl font-bold text-gray-900 tracking-tight">@yield('page-title', 'Dashboard')</h1>
 
@@ -216,7 +216,7 @@
             </header>
 
             {{-- Main Content --}}
-            <main class="max-w-full mx-auto px-6 py-4">
+            <main class="max-w-full mx-auto px-6 py-3">
                 {{-- Flash Messages --}}
                 @if (session('success'))
                     <div class="mb-6 rounded-xl bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 p-4 shadow-lg shadow-green-500/10">
