@@ -14,90 +14,91 @@
     {{-- Navy Gradient Accent Bar --}}
     <div class="h-1 bg-gradient-to-r from-blue-900 via-blue-600 to-blue-500"></div>
 
-    {{-- Glassmorphism Header --}}
+    {{-- Glassmorphism Header with New Transaction Button --}}
     <header class="bg-white/90 backdrop-blur-xl shadow-lg shadow-blue-900/10 sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 py-4">
-            <div class="flex items-center justify-between">
-                <div class="flex-1">
-                    <h1 class="text-xl font-bold bg-gradient-to-r from-blue-900 to-blue-700 bg-clip-text text-transparent">
-                        {{ $partnerProfile->business_name }}
-                    </h1>
-                    <p class="text-sm text-gray-600 mt-0.5 capitalize">{{ $partnerProfile->business_type }}</p>
+            <div class="flex items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="flex-1">
+                        <h1 class="text-xl font-bold bg-gradient-to-r from-blue-900 to-blue-700 bg-clip-text text-transparent">
+                            {{ $partnerProfile->business_name }}
+                        </h1>
+                        <p class="text-sm text-gray-600 mt-0.5 capitalize">{{ $partnerProfile->business_type }}</p>
+                    </div>
+                    <div class="px-3 py-1.5 rounded-full bg-gradient-to-r from-blue-900 to-blue-700 text-white text-xs font-bold shadow-md shadow-blue-900/30">
+                        Partner
+                    </div>
                 </div>
-                <div class="px-4 py-2 rounded-full bg-gradient-to-r from-blue-900 to-blue-700 text-white text-xs font-bold shadow-lg shadow-blue-900/30">
-                    Partner
-                </div>
+                <button onclick="openTransactionModal()" class="px-4 py-2 rounded-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white text-sm font-semibold shadow-md shadow-green-500/30 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-2 whitespace-nowrap">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                    New Transaction
+                </button>
             </div>
         </div>
     </header>
 
     <div class="max-w-7xl mx-auto px-4 py-6 space-y-6">
 
-        {{-- Color-Coded Stats Grid --}}
-        <div class="grid grid-cols-2 gap-4">
+        {{-- Compact Stats in Single Row --}}
+        <div class="grid grid-cols-4 gap-3">
             {{-- Total Revenue Card - Green Theme --}}
-            <div class="bg-gradient-to-br from-green-50/80 to-emerald-50/50 rounded-xl border-l-4 border-green-500 p-4 shadow-lg shadow-green-900/10 hover:shadow-xl hover:-translate-y-1 hover:shadow-green-900/20 transition-all duration-300">
-                <div class="flex items-center gap-3 mb-2">
-                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center text-white shadow-md">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="bg-gradient-to-br from-green-50/80 to-emerald-50/50 rounded-xl border-l-4 border-green-500 p-3 shadow-lg shadow-green-900/10 hover:shadow-xl hover:-translate-y-1 hover:shadow-green-900/20 transition-all duration-300">
+                <div class="flex items-center gap-2 mb-1.5">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center text-white shadow-md">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                     </div>
-                    <p class="text-xs text-gray-700 font-semibold">Total Revenue</p>
+                    <p class="text-xs text-gray-700 font-semibold">Revenue</p>
                 </div>
-                <h3 class="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">Rs {{ number_format($stats['total_revenue'], 0) }}</h3>
+                <h3 class="text-xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">Rs {{ number_format($stats['total_revenue'], 0) }}</h3>
             </div>
 
             {{-- Your Profit Card - Navy/Blue Theme --}}
-            <div class="bg-gradient-to-br from-blue-50/80 to-indigo-50/50 rounded-xl border-l-4 border-blue-600 p-4 shadow-lg shadow-blue-900/10 hover:shadow-xl hover:-translate-y-1 hover:shadow-blue-900/20 transition-all duration-300">
-                <div class="flex items-center gap-3 mb-2">
-                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-600 to-blue-900 flex items-center justify-center text-white shadow-md">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="bg-gradient-to-br from-blue-50/80 to-indigo-50/50 rounded-xl border-l-4 border-blue-600 p-3 shadow-lg shadow-blue-900/10 hover:shadow-xl hover:-translate-y-1 hover:shadow-blue-900/20 transition-all duration-300">
+                <div class="flex items-center gap-2 mb-1.5">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-blue-900 flex items-center justify-center text-white shadow-md">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
                         </svg>
                     </div>
-                    <p class="text-xs text-gray-700 font-semibold">Your Profit</p>
+                    <p class="text-xs text-gray-700 font-semibold">Profit</p>
                 </div>
-                <h3 class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-900 bg-clip-text text-transparent">Rs {{ number_format($stats['total_profit'], 0) }}</h3>
+                <h3 class="text-xl font-bold bg-gradient-to-r from-blue-600 to-blue-900 bg-clip-text text-transparent">Rs {{ number_format($stats['total_profit'], 0) }}</h3>
             </div>
 
             {{-- Transactions Card - Purple Theme --}}
-            <div class="bg-gradient-to-br from-purple-50/80 to-violet-50/50 rounded-xl border-l-4 border-purple-600 p-4 shadow-lg shadow-purple-900/10 hover:shadow-xl hover:-translate-y-1 hover:shadow-purple-900/20 transition-all duration-300">
-                <div class="flex items-center gap-3 mb-2">
-                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-600 to-violet-600 flex items-center justify-center text-white shadow-md">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="bg-gradient-to-br from-purple-50/80 to-violet-50/50 rounded-xl border-l-4 border-purple-600 p-3 shadow-lg shadow-purple-900/10 hover:shadow-xl hover:-translate-y-1 hover:shadow-purple-900/20 transition-all duration-300">
+                <div class="flex items-center gap-2 mb-1.5">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-600 to-violet-600 flex items-center justify-center text-white shadow-md">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                         </svg>
                     </div>
-                    <p class="text-xs text-gray-700 font-semibold">Transactions</p>
+                    <p class="text-xs text-gray-700 font-semibold">Orders</p>
                 </div>
-                <h3 class="text-2xl font-bold bg-gradient-to-r from-purple-600 to-violet-600 bg-clip-text text-transparent">{{ $stats['total_transactions'] }}</h3>
+                <h3 class="text-xl font-bold bg-gradient-to-r from-purple-600 to-violet-600 bg-clip-text text-transparent">{{ $stats['total_transactions'] }}</h3>
             </div>
 
             {{-- Pending Card - Orange Theme --}}
-            <div class="bg-gradient-to-br from-orange-50/80 to-amber-50/50 rounded-xl border-l-4 border-orange-600 p-4 shadow-lg shadow-orange-900/10 hover:shadow-xl hover:-translate-y-1 hover:shadow-orange-900/20 transition-all duration-300">
-                <div class="flex items-center gap-3 mb-2">
-                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-orange-600 to-amber-600 flex items-center justify-center text-white shadow-md">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="bg-gradient-to-br from-orange-50/80 to-amber-50/50 rounded-xl border-l-4 border-orange-600 p-3 shadow-lg shadow-orange-900/10 hover:shadow-xl hover:-translate-y-1 hover:shadow-orange-900/20 transition-all duration-300">
+                <div class="flex items-center gap-2 mb-1.5">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-600 to-amber-600 flex items-center justify-center text-white shadow-md">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                     </div>
                     <p class="text-xs text-gray-700 font-semibold">Pending</p>
                 </div>
-                <h3 class="text-2xl font-bold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">{{ $stats['pending_confirmations'] }}</h3>
+                <h3 class="text-xl font-bold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">{{ $stats['pending_confirmations'] }}</h3>
             </div>
         </div>
 
-        {{-- Enhanced Action Section --}}
+        {{-- Next Profit Distribution --}}
+        @if($nextBatchDate)
         <div class="space-y-4">
-            <button onclick="openTransactionModal()" class="w-full bg-gradient-to-r from-green-500 via-green-600 to-emerald-600 hover:from-green-600 hover:via-green-700 hover:to-emerald-700 text-white rounded-xl py-3.5 px-6 font-bold text-base shadow-xl shadow-green-500/40 hover:shadow-2xl hover:-translate-y-1 hover:shadow-green-500/50 transition-all duration-300 flex items-center justify-center gap-3">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                </svg>
-                New Transaction
-            </button>
-
-            @if($nextBatchDate)
             <div class="flex items-center justify-center gap-3 text-sm bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 border border-blue-200 rounded-xl py-3 px-5 shadow-sm">
                 <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -105,8 +106,8 @@
                 <span class="text-gray-700 font-medium">Next Profit Distribution:</span>
                 <span class="font-bold bg-gradient-to-r from-blue-700 to-purple-700 bg-clip-text text-transparent">{{ $nextBatchDate->format('M d, Y') }}</span>
             </div>
-            @endif
         </div>
+        @endif
 
         {{-- Recent Transactions Card --}}
         <div class="bg-white rounded-xl border border-gray-200/60 shadow-lg shadow-blue-900/5 overflow-hidden hover:border-blue-800/40 hover:shadow-xl hover:shadow-blue-900/10 transition-all duration-300">
