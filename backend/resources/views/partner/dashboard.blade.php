@@ -9,7 +9,7 @@
     @vite(['resources/css/app.css'])
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 </head>
-<body class="bg-gradient-to-br from-gray-50 via-blue-50/20 to-gray-50 min-h-screen pb-20">
+<body class="bg-gradient-to-br from-gray-50 via-blue-50/20 to-gray-50 min-h-screen pb-20" style="margin: 0; padding: 0;">
 
     {{-- Header with New Transaction Button --}}
     <header class="bg-gray-100 shadow-md shadow-gray-900/5 sticky top-0 z-40">
