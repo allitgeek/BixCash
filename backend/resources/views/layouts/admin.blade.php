@@ -1,758 +1,291 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full bg-gray-50">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'BixCash Admin Panel')</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <style>
-        /* BixCash Brand Colors - CSS Variables */
-        :root {
-            --bix-dark-blue: #021c47;
-            --bix-navy: #021c47;
-            --bix-green: #76d37a;
-            --bix-light-green: #93db4d;
-            --bix-white: #ffffff;
-            --bix-light-gray-1: #f8f8f8;
-            --bix-light-gray-2: #eef2f5;
-            --bix-medium-gray: #707070;
-            --bix-black: #000000;
-        }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--bix-light-gray-2);
-            line-height: 1.6;
-            color: var(--bix-dark-blue);
-        }
-
-        /* Layout Structure */
-        .admin-wrapper {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            width: 260px;
-            background: var(--bix-dark-blue);
-            color: var(--bix-white);
-            position: fixed;
-            height: 100vh;
-            overflow-y: auto;
-            z-index: 1000;
-        }
-        .sidebar-header {
-            padding: 2rem 1.5rem;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            text-align: center;
-        }
-        .sidebar-header h2 {
-            color: var(--bix-white);
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 0.25rem;
-        }
-        .sidebar-header p {
-            color: rgba(255,255,255,0.7);
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        /* Navigation Menu */
-        .nav-menu {
-            list-style: none;
-            margin-top: 1rem;
-        }
-        .nav-item {
-            margin: 0.25rem 0;
-        }
-        .nav-link {
-            display: flex;
-            align-items: center;
-            padding: 1rem 1.5rem;
-            color: rgba(255,255,255,0.8);
-            text-decoration: none;
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-        .nav-link:hover {
-            background: rgba(255,255,255,0.1);
-            color: var(--bix-light-green);
-            transform: translateX(5px);
-        }
-        .nav-link.active {
-            background: var(--bix-green);
-            color: var(--bix-dark-blue);
-            font-weight: 600;
-        }
-        .nav-icon {
-            width: 20px;
-            height: 20px;
-            margin-right: 0.75rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-        }
-
-        /* Main Content */
-        .main-content {
-            flex: 1;
-            margin-left: 260px;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        /* Header */
-        .main-header {
-            background: var(--bix-white);
-            box-shadow: 0 2px 8px rgba(2, 28, 71, 0.1);
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 999;
-            border-bottom: 2px solid var(--bix-light-gray-2);
-        }
-        .page-title {
-            color: var(--bix-dark-blue);
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            color: var(--bix-dark-blue);
-            font-weight: 600;
-        }
-        .role-badge {
-            display: inline-block;
-            padding: 0.35rem 0.85rem;
-            background: var(--bix-green);
-            color: var(--bix-dark-blue);
-            border-radius: 25px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .logout-btn {
-            background: var(--bix-dark-blue);
-            color: var(--bix-white);
-            border: none;
-            padding: 0.65rem 1.25rem;
-            border-radius: 8px;
-            cursor: pointer;
-            text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-        .logout-btn:hover {
-            background: var(--bix-green);
-            color: var(--bix-dark-blue);
-            transform: translateY(-2px);
-        }
-
-        /* Content Area */
-        .content-area {
-            flex: 1;
-            padding: 2rem;
-            background: var(--bix-light-gray-2);
-        }
-
-        /* Cards and Components */
-        .card {
-            background: var(--bix-white);
-            border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(2, 28, 71, 0.08);
-            overflow: hidden;
-            border: 1px solid rgba(2, 28, 71, 0.05);
-        }
-        .card-header {
-            background: var(--bix-light-gray-1);
-            padding: 1.25rem 1.5rem;
-            border-bottom: 2px solid var(--bix-light-gray-2);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .card-title {
-            color: var(--bix-dark-blue);
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin: 0;
-        }
-        .card-body {
-            padding: 1.5rem;
-        }
-
-        /* Buttons - BixCash Theme */
-        .btn {
-            display: inline-block;
-            padding: 0.65rem 1.25rem;
-            border-radius: 8px;
-            text-decoration: none;
-            cursor: pointer;
-            border: none;
-            font-size: 0.9rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            margin: 0.25rem;
-        }
-        .btn-primary {
-            background: var(--bix-green);
-            color: var(--bix-dark-blue);
-        }
-        .btn-primary:hover {
-            background: var(--bix-light-green);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(118, 211, 122, 0.3);
-        }
-        .btn-success {
-            background: var(--bix-green);
-            color: var(--bix-dark-blue);
-        }
-        .btn-success:hover {
-            background: var(--bix-light-green);
-            transform: translateY(-2px);
-        }
-        .btn-warning {
-            background: #f39c12;
-            color: var(--bix-white);
-        }
-        .btn-warning:hover {
-            background: #e67e22;
-            transform: translateY(-2px);
-        }
-        .btn-danger {
-            background: #e74c3c;
-            color: var(--bix-white);
-        }
-        .btn-danger:hover {
-            background: #c0392b;
-            transform: translateY(-2px);
-        }
-        .btn-secondary {
-            background: var(--bix-medium-gray);
-            color: var(--bix-white);
-        }
-        .btn-secondary:hover {
-            background: var(--bix-dark-blue);
-            transform: translateY(-2px);
-        }
-        .btn-info {
-            background: var(--bix-dark-blue);
-            color: var(--bix-white);
-        }
-        .btn-info:hover {
-            background: var(--bix-green);
-            color: var(--bix-dark-blue);
-            transform: translateY(-2px);
-        }
-
-        /* Alerts - BixCash Theme */
-        .alert {
-            padding: 1rem 1.25rem;
-            margin-bottom: 1.5rem;
-            border-radius: 10px;
-            border: 1px solid transparent;
-            font-weight: 500;
-        }
-        .alert-success {
-            background: rgba(118, 211, 122, 0.15);
-            color: var(--bix-dark-blue);
-            border-color: var(--bix-green);
-        }
-        .alert-danger {
-            background: rgba(231, 76, 60, 0.15);
-            color: #721c24;
-            border-color: #e74c3c;
-        }
-        .alert-warning {
-            background: rgba(243, 156, 18, 0.15);
-            color: #856404;
-            border-color: #f39c12;
-        }
-        .alert-info {
-            background: rgba(2, 28, 71, 0.15);
-            color: var(--bix-dark-blue);
-            border-color: var(--bix-dark-blue);
-        }
-
-        /* Form Styles */
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: var(--bix-dark-blue);
-            font-weight: 600;
-        }
-        .form-control {
-            width: 100%;
-            padding: 0.75rem;
-            border: 2px solid var(--bix-light-gray-2);
-            border-radius: 8px;
-            font-size: 0.95rem;
-            transition: all 0.3s ease;
-            background: var(--bix-white);
-        }
-        .form-control:focus {
-            outline: none;
-            border-color: var(--bix-green);
-            box-shadow: 0 0 0 3px rgba(118, 211, 122, 0.1);
-        }
-        .form-control.is-invalid {
-            border-color: #e74c3c;
-        }
-
-        /* Mobile Responsive */
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-                transition: transform 0.3s ease;
-            }
-            .sidebar.mobile-open {
-                transform: translateX(0);
-            }
-            .main-content {
-                margin-left: 0;
-            }
-            .main-header {
-                padding: 1rem;
-            }
-            .content-area {
-                padding: 1rem;
-            }
-        }
-
-        /* Icons - BixCash Style */
-        .icon-dashboard::before { content: "📊"; }
-        .icon-users::before { content: "👥"; }
-        .icon-slides::before { content: "🖼️"; }
-        .icon-categories::before { content: "📂"; }
-        .icon-brands::before { content: "🏪"; }
-        .icon-promotions::before { content: "🎁"; }
-        .icon-analytics::before { content: "📈"; }
-        .icon-reports::before { content: "📄"; }
-        .icon-settings::before { content: "⚙️"; }
-
-        /* Badge Notification */
-        .badge-notification {
-            display: inline-block;
-            background: #e74c3c;
-            color: white;
-            font-size: 0.7rem;
-            font-weight: 700;
-            padding: 0.2rem 0.5rem;
-            border-radius: 10px;
-            margin-left: 0.5rem;
-            min-width: 20px;
-            text-align: center;
-        }
-        .nav-link.active .badge-notification {
-            background: var(--bix-dark-blue);
-        }
-
-        /* Submenu Styles */
-        .nav-item.has-submenu > .nav-link {
-            cursor: pointer;
-            position: relative;
-        }
-        .nav-item.has-submenu > .nav-link::after {
-            content: "▼";
-            position: absolute;
-            right: 1.5rem;
-            font-size: 0.7rem;
-            transition: transform 0.3s ease;
-        }
-        .nav-item.has-submenu.open > .nav-link::after {
-            transform: rotate(180deg);
-        }
-        .submenu {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease;
-            background: rgba(0, 0, 0, 0.2);
-        }
-        .nav-item.has-submenu.open .submenu {
-            max-height: 500px;
-        }
-        .submenu .nav-link {
-            padding: 0.75rem 1.5rem 0.75rem 3rem;
-            font-size: 0.9rem;
-        }
-
-        /* Table Styles */
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 1rem;
-        }
-        .table th,
-        .table td {
-            padding: 0.75rem;
-            border-bottom: 1px solid var(--bix-light-gray-2);
-            text-align: left;
-        }
-        .table th {
-            background: var(--bix-light-gray-1);
-            font-weight: 600;
-            color: var(--bix-dark-blue);
-        }
-
-        /* Badge Styles */
-        .badge {
-            display: inline-block;
-            padding: 0.25rem 0.5rem;
-            font-size: 0.75rem;
-            font-weight: 600;
-            border-radius: 5px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .badge-success {
-            background: var(--bix-green);
-            color: var(--bix-dark-blue);
-        }
-        .badge-secondary {
-            background: var(--bix-medium-gray);
-            color: var(--bix-white);
-        }
-        .badge-warning {
-            background: #f39c12;
-            color: var(--bix-white);
-        }
-        .badge-primary {
-            background: var(--bix-dark-blue);
-            color: var(--bix-white);
-        }
-
-        /* Layout Utilities */
-        .row {
-            display: flex;
-            flex-wrap: wrap;
-            margin: 0 -0.75rem;
-        }
-        .col-md-4,
-        .col-md-6,
-        .col-md-8,
-        .col-md-12 {
-            padding: 0 0.75rem;
-            box-sizing: border-box;
-        }
-        .col-md-4 { flex: 0 0 33.333333%; max-width: 33.333333%; }
-        .col-md-6 { flex: 0 0 50%; max-width: 50%; }
-        .col-md-8 { flex: 0 0 66.666667%; max-width: 66.666667%; }
-        .col-md-12 { flex: 0 0 100%; max-width: 100%; }
-
-        /* Form Actions */
-        .form-actions {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-            padding-top: 1.5rem;
-            margin-top: 1.5rem;
-            border-top: 2px solid var(--bix-light-gray-2);
-        }
-
-        /* Text Utilities */
-        .text-center { text-align: center; }
-        .text-muted { color: var(--bix-medium-gray); }
-        .text-sm { font-size: 0.875rem; }
-        .small { font-size: 0.875rem; }
-
-        /* Spacing Utilities */
-        .mb-1 { margin-bottom: 0.25rem; }
-        .mb-2 { margin-bottom: 0.5rem; }
-        .mb-3 { margin-bottom: 1rem; }
-        .mb-4 { margin-bottom: 1.5rem; }
-        .mt-2 { margin-top: 0.5rem; }
-        .mt-3 { margin-top: 1rem; }
-        .mt-4 { margin-top: 1.5rem; }
-        .py-5 { padding: 3rem 0; }
-        .d-block { display: block; }
-        .d-grid { display: grid; }
-        .gap-2 { gap: 0.5rem; }
-
-        /* Button Sizes */
-        .btn-sm {
-            padding: 0.45rem 0.85rem;
-            font-size: 0.8rem;
-        }
-        .w-100 { width: 100%; }
-
-        /* Invalid Feedback */
-        .invalid-feedback {
-            display: block;
-            color: #e74c3c;
-            font-size: 0.875rem;
-            margin-top: 0.25rem;
-            font-weight: 500;
-        }
-
-        /* Additional Form Elements */
-        .form-check {
-            display: flex;
-            align-items: center;
-            margin-bottom: 0.5rem;
-        }
-        .form-check-input {
-            margin-right: 0.5rem;
-            width: 16px;
-            height: 16px;
-        }
-        .form-check-label {
-            margin-bottom: 0;
-            font-weight: 500;
-        }
-
-        /* List Styles */
-        .list-unstyled {
-            list-style: none;
-            padding-left: 0;
-        }
-
-        /* Button Groups */
-        .btn + .btn {
-            margin-left: 0.5rem;
-        }
-
-        /* Mobile Responsive Columns */
-        @media (max-width: 768px) {
-            .col-md-4,
-            .col-md-6,
-            .col-md-8,
-            .col-md-12 {
-                flex: 0 0 100%;
-                max-width: 100%;
-                margin-bottom: 1rem;
-            }
-            .form-actions {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .form-actions .btn {
-                width: 100%;
-                margin: 0.25rem 0;
-            }
-        }
-    </style>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body>
-    <div class="admin-wrapper">
-        <!-- Sidebar -->
-        <nav class="sidebar">
-            <div class="sidebar-header">
-                <h2>BixCash</h2>
-                <p>Admin Panel</p>
+<body class="h-full font-sans antialiased">
+    <div class="flex h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/20 overflow-hidden">
+        {{-- Sidebar --}}
+        <nav class="hidden lg:flex lg:flex-shrink-0">
+            <div class="flex flex-col w-72">
+                {{-- Sidebar content --}}
+                <div class="flex flex-col flex-grow bg-gradient-to-b from-[#021c47] to-[#032a6b] overflow-y-auto border-r border-white/10 shadow-2xl">
+                    {{-- Logo/Brand --}}
+                    <div class="flex items-center flex-shrink-0 px-6 py-8 border-b border-white/10 bg-white/5 backdrop-blur-sm">
+                        <div class="w-full text-center">
+                            <h2 class="text-3xl font-bold text-white tracking-tight mb-1">BixCash</h2>
+                            <p class="text-sm font-medium text-blue-200/80 uppercase tracking-wider">Admin Panel</p>
+                        </div>
+                    </div>
+
+                    {{-- Navigation --}}
+                    <div class="flex-1 flex flex-col px-3 py-4 space-y-1">
+                        {{-- Dashboard --}}
+                        <a href="{{ route('admin.dashboard') }}"
+                           class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.dashboard') ? 'bg-[#76d37a] text-[#021c47] shadow-lg shadow-green-500/30' : 'text-white/80 hover:bg-white/10 hover:text-white hover:translate-x-1' }}">
+                            <svg class="mr-3 h-5 w-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                            </svg>
+                            Dashboard
+                        </a>
+
+                        @if(auth()->user() && auth()->user()->hasPermission('manage_users'))
+                        {{-- Users --}}
+                        <a href="{{ route('admin.users.index') }}"
+                           class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.users.*') ? 'bg-[#76d37a] text-[#021c47] shadow-lg shadow-green-500/30' : 'text-white/80 hover:bg-white/10 hover:text-white hover:translate-x-1' }}">
+                            <svg class="mr-3 h-5 w-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                            </svg>
+                            Users
+                        </a>
+
+                        {{-- Customers --}}
+                        <a href="{{ route('admin.customers.index') }}"
+                           class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.customers.*') ? 'bg-[#76d37a] text-[#021c47] shadow-lg shadow-green-500/30' : 'text-white/80 hover:bg-white/10 hover:text-white hover:translate-x-1' }}">
+                            <svg class="mr-3 h-5 w-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                            Customers
+                        </a>
+
+                        {{-- Partners --}}
+                        <a href="{{ route('admin.partners.index') }}"
+                           class="group flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.partners.*') ? 'bg-[#76d37a] text-[#021c47] shadow-lg shadow-green-500/30' : 'text-white/80 hover:bg-white/10 hover:text-white hover:translate-x-1' }}">
+                            <div class="flex items-center">
+                                <svg class="mr-3 h-5 w-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                </svg>
+                                Partners
+                            </div>
+                            @php
+                                $pendingPartnersCount = \App\Models\User::whereHas('role', function($q) {
+                                    $q->where('name', 'partner');
+                                })->whereHas('partnerProfile', function($q) {
+                                    $q->where('status', 'pending');
+                                })->count();
+                            @endphp
+                            @if($pendingPartnersCount > 0)
+                                <span class="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-500 rounded-full min-w-[20px] shadow-lg shadow-red-500/50">{{ $pendingPartnersCount }}</span>
+                            @endif
+                        </a>
+                        @endif
+
+                        @if(auth()->user() && auth()->user()->hasPermission('manage_content'))
+                        {{-- Hero Slides --}}
+                        <a href="{{ route('admin.slides.index') }}"
+                           class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.slides.*') ? 'bg-[#76d37a] text-[#021c47] shadow-lg shadow-green-500/30' : 'text-white/80 hover:bg-white/10 hover:text-white hover:translate-x-1' }}">
+                            <svg class="mr-3 h-5 w-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            Hero Slides
+                        </a>
+
+                        {{-- Categories --}}
+                        <a href="{{ route('admin.categories.index') }}"
+                           class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.categories.*') ? 'bg-[#76d37a] text-[#021c47] shadow-lg shadow-green-500/30' : 'text-white/80 hover:bg-white/10 hover:text-white hover:translate-x-1' }}">
+                            <svg class="mr-3 h-5 w-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                            </svg>
+                            Categories
+                        </a>
+
+                        {{-- Brands --}}
+                        <a href="{{ route('admin.brands.index') }}"
+                           class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.brands.*') ? 'bg-[#76d37a] text-[#021c47] shadow-lg shadow-green-500/30' : 'text-white/80 hover:bg-white/10 hover:text-white hover:translate-x-1' }}">
+                            <svg class="mr-3 h-5 w-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                            </svg>
+                            Brands
+                        </a>
+
+                        {{-- Promotions --}}
+                        <a href="{{ route('admin.promotions.index') }}"
+                           class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.promotions.*') ? 'bg-[#76d37a] text-[#021c47] shadow-lg shadow-green-500/30' : 'text-white/80 hover:bg-white/10 hover:text-white hover:translate-x-1' }}">
+                            <svg class="mr-3 h-5 w-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
+                            </svg>
+                            Promotions
+                        </a>
+                        @endif
+
+                        {{-- Customer Queries --}}
+                        <a href="{{ route('admin.queries.index') }}"
+                           class="group flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.queries.*') ? 'bg-[#76d37a] text-[#021c47] shadow-lg shadow-green-500/30' : 'text-white/80 hover:bg-white/10 hover:text-white hover:translate-x-1' }}">
+                            <div class="flex items-center">
+                                <svg class="mr-3 h-5 w-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                </svg>
+                                Customer Queries
+                            </div>
+                            @php
+                                $unreadCount = \App\Models\CustomerQuery::whereNull('read_at')->count();
+                            @endphp
+                            @if($unreadCount > 0)
+                                <span class="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-500 rounded-full min-w-[20px] shadow-lg shadow-red-500/50">{{ $unreadCount }}</span>
+                            @endif
+                        </a>
+
+                        @if(auth()->user() && auth()->user()->hasPermission('view_analytics'))
+                        {{-- Analytics --}}
+                        <a href="{{ route('admin.analytics') }}"
+                           class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.analytics') ? 'bg-[#76d37a] text-[#021c47] shadow-lg shadow-green-500/30' : 'text-white/80 hover:bg-white/10 hover:text-white hover:translate-x-1' }}">
+                            <svg class="mr-3 h-5 w-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                            </svg>
+                            Analytics
+                        </a>
+
+                        {{-- Reports --}}
+                        <a href="{{ route('admin.reports') }}"
+                           class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.reports') ? 'bg-[#76d37a] text-[#021c47] shadow-lg shadow-green-500/30' : 'text-white/80 hover:bg-white/10 hover:text-white hover:translate-x-1' }}">
+                            <svg class="mr-3 h-5 w-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            Reports
+                        </a>
+                        @endif
+
+                        @if(auth()->user() && auth()->user()->hasPermission('manage_settings'))
+                        {{-- Settings (with submenu) --}}
+                        <div x-data="{ open: {{ request()->routeIs('admin.settings*') ? 'true' : 'false' }} }" class="space-y-1">
+                            <button @click="open = !open"
+                                    class="w-full group flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.settings*') ? 'bg-[#76d37a] text-[#021c47] shadow-lg shadow-green-500/30' : 'text-white/80 hover:bg-white/10 hover:text-white hover:translate-x-1' }}">
+                                <div class="flex items-center">
+                                    <svg class="mr-3 h-5 w-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
+                                    Settings
+                                </div>
+                                <svg class="h-4 w-4 transform transition-transform duration-200" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+                            <div x-show="open" x-collapse class="ml-11 space-y-1">
+                                <a href="{{ route('admin.settings') }}"
+                                   class="block px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('admin.settings') && !request()->routeIs('admin.settings.email') ? 'bg-white/20 text-white' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
+                                    General Settings
+                                </a>
+                                <a href="{{ route('admin.settings.email') }}"
+                                   class="block px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('admin.settings.email') ? 'bg-white/20 text-white' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
+                                    Email Settings
+                                </a>
+                            </div>
+                        </div>
+                        @endif
+                    </div>
+                </div>
             </div>
-
-            <ul class="nav-menu">
-                <li class="nav-item">
-                    <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-                        <span class="nav-icon icon-dashboard"></span>
-                        Dashboard
-                    </a>
-                </li>
-
-                @if(auth()->user() && auth()->user()->hasPermission('manage_users'))
-                <li class="nav-item">
-                    <a href="{{ route('admin.users.index') }}" class="nav-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
-                        <span class="nav-icon icon-users"></span>
-                        Users
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('admin.customers.index') }}" class="nav-link {{ request()->routeIs('admin.customers.*') ? 'active' : '' }}">
-                        <span class="nav-icon">👤</span>
-                        Customers
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('admin.partners.index') }}" class="nav-link {{ request()->routeIs('admin.partners.*') ? 'active' : '' }}">
-                        <span class="nav-icon">🤝</span>
-                        Partners
-                        @php
-                            $pendingPartnersCount = \App\Models\User::whereHas('role', function($q) {
-                                $q->where('name', 'partner');
-                            })->whereHas('partnerProfile', function($q) {
-                                $q->where('status', 'pending');
-                            })->count();
-                        @endphp
-                        @if($pendingPartnersCount > 0)
-                            <span class="badge-notification">{{ $pendingPartnersCount }}</span>
-                        @endif
-                    </a>
-                </li>
-                @endif
-
-                @if(auth()->user() && auth()->user()->hasPermission('manage_content'))
-                <li class="nav-item">
-                    <a href="{{ route('admin.slides.index') }}" class="nav-link {{ request()->routeIs('admin.slides.*') ? 'active' : '' }}">
-                        <span class="nav-icon icon-slides"></span>
-                        Hero Slides
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('admin.categories.index') }}" class="nav-link {{ request()->routeIs('admin.categories.*') ? 'active' : '' }}">
-                        <span class="nav-icon icon-categories"></span>
-                        Categories
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('admin.brands.index') }}" class="nav-link {{ request()->routeIs('admin.brands.*') ? 'active' : '' }}">
-                        <span class="nav-icon icon-brands"></span>
-                        Brands
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('admin.promotions.index') }}" class="nav-link {{ request()->routeIs('admin.promotions.*') ? 'active' : '' }}">
-                        <span class="nav-icon icon-promotions"></span>
-                        Promotions
-                    </a>
-                </li>
-                @endif
-
-                <li class="nav-item">
-                    <a href="{{ route('admin.queries.index') }}" class="nav-link {{ request()->routeIs('admin.queries.*') ? 'active' : '' }}">
-                        <span class="nav-icon">📧</span>
-                        Customer Queries
-                        @php
-                            $unreadCount = \App\Models\CustomerQuery::whereNull('read_at')->count();
-                        @endphp
-                        @if($unreadCount > 0)
-                            <span class="badge-notification">{{ $unreadCount }}</span>
-                        @endif
-                    </a>
-                </li>
-
-                @if(auth()->user() && auth()->user()->hasPermission('view_analytics'))
-                <li class="nav-item">
-                    <a href="{{ route('admin.analytics') }}" class="nav-link {{ request()->routeIs('admin.analytics') ? 'active' : '' }}">
-                        <span class="nav-icon icon-analytics"></span>
-                        Analytics
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('admin.reports') }}" class="nav-link {{ request()->routeIs('admin.reports') ? 'active' : '' }}">
-                        <span class="nav-icon icon-reports"></span>
-                        Reports
-                    </a>
-                </li>
-                @endif
-
-                @if(auth()->user() && auth()->user()->hasPermission('manage_settings'))
-                <li class="nav-item has-submenu {{ request()->routeIs('admin.settings*') ? 'open' : '' }}">
-                    <a class="nav-link {{ request()->routeIs('admin.settings*') ? 'active' : '' }}" onclick="toggleSubmenu(this)">
-                        <span class="nav-icon icon-settings"></span>
-                        Settings
-                    </a>
-                    <ul class="submenu">
-                        <li class="nav-item">
-                            <a href="{{ route('admin.settings') }}" class="nav-link {{ request()->routeIs('admin.settings') && !request()->routeIs('admin.settings.email') ? 'active' : '' }}">
-                                General Settings
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('admin.settings.email') }}" class="nav-link {{ request()->routeIs('admin.settings.email') ? 'active' : '' }}">
-                                Email Settings
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                @endif
-            </ul>
         </nav>
 
-        <!-- Main Content -->
-        <div class="main-content">
-            <!-- Header -->
-            <header class="main-header">
-                <h1 class="page-title">@yield('page-title', 'Dashboard')</h1>
+        {{-- Main Content Area --}}
+        <div class="flex-1 overflow-auto focus:outline-none">
+            {{-- Top Header --}}
+            <header class="bg-white/80 backdrop-blur-xl border-b border-gray-200/50 sticky top-0 z-40 shadow-sm">
+                <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex items-center justify-between h-16">
+                        {{-- Page Title --}}
+                        <h1 class="text-2xl font-bold text-gray-900 tracking-tight">@yield('page-title', 'Dashboard')</h1>
 
-                <div class="header-actions">
-                    <div class="user-info">
-                        <span>{{ auth()->user()->name }}</span>
-                        <span class="role-badge">{{ auth()->user()->role->display_name ?? 'Admin' }}</span>
+                        {{-- Right Side: User Info & Logout --}}
+                        <div class="flex items-center space-x-4">
+                            <div class="flex items-center space-x-3 px-4 py-2 bg-gradient-to-r from-blue-50 to-purple-50 rounded-full border border-blue-200/50">
+                                <span class="text-sm font-semibold text-gray-900">{{ auth()->user()->name }}</span>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-gradient-to-r from-[#76d37a] to-[#93db4d] text-[#021c47] shadow-md">
+                                    {{ auth()->user()->role->display_name ?? 'Admin' }}
+                                </span>
+                            </div>
+                            <form method="POST" action="{{ route('admin.logout') }}">
+                                @csrf
+                                <button type="submit"
+                                        class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-semibold rounded-lg text-white bg-gradient-to-r from-[#021c47] to-[#032a6b] hover:from-[#76d37a] hover:to-[#93db4d] hover:text-[#021c47] transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5">
+                                    <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                    </svg>
+                                    Logout
+                                </button>
+                            </form>
+                        </div>
                     </div>
-                    <form method="POST" action="{{ route('admin.logout') }}" style="display: inline;">
-                        @csrf
-                        <button type="submit" class="logout-btn">Logout</button>
-                    </form>
                 </div>
             </header>
 
-            <!-- Content Area -->
-            <main class="content-area">
-                <!-- Flash Messages -->
+            {{-- Main Content --}}
+            <main class="max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                {{-- Flash Messages --}}
                 @if (session('success'))
-                    <div class="alert alert-success">
-                        {{ session('success') }}
+                    <div class="mb-6 rounded-xl bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 p-4 shadow-lg shadow-green-500/10">
+                        <div class="flex items-center">
+                            <svg class="h-5 w-5 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <p class="text-sm font-semibold text-green-900">{{ session('success') }}</p>
+                        </div>
                     </div>
                 @endif
 
                 @if (session('error'))
-                    <div class="alert alert-danger">
-                        {{ session('error') }}
+                    <div class="mb-6 rounded-xl bg-gradient-to-r from-red-50 to-pink-50 border border-red-200 p-4 shadow-lg shadow-red-500/10">
+                        <div class="flex items-center">
+                            <svg class="h-5 w-5 text-red-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <p class="text-sm font-semibold text-red-900">{{ session('error') }}</p>
+                        </div>
                     </div>
                 @endif
 
                 @if (session('warning'))
-                    <div class="alert alert-warning">
-                        {{ session('warning') }}
+                    <div class="mb-6 rounded-xl bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 p-4 shadow-lg shadow-yellow-500/10">
+                        <div class="flex items-center">
+                            <svg class="h-5 w-5 text-yellow-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                            <p class="text-sm font-semibold text-yellow-900">{{ session('warning') }}</p>
+                        </div>
                     </div>
                 @endif
 
                 @if ($errors->any())
-                    <div class="alert alert-danger">
-                        <ul style="margin: 0; padding-left: 1.5rem;">
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
+                    <div class="mb-6 rounded-xl bg-gradient-to-r from-red-50 to-pink-50 border border-red-200 p-4 shadow-lg shadow-red-500/10">
+                        <div class="flex">
+                            <svg class="h-5 w-5 text-red-600 mr-3 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <ul class="text-sm font-semibold text-red-900 space-y-1">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
                     </div>
                 @endif
 
-                <!-- Page Content -->
+                {{-- Page Content --}}
                 @yield('content')
             </main>
         </div>
     </div>
 
-    <!-- JavaScript -->
+    {{-- Alpine.js for dropdown functionality --}}
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    {{-- Auto-hide alerts --}}
     <script>
-        // Submenu toggle function
-        function toggleSubmenu(element) {
-            const navItem = element.closest('.nav-item.has-submenu');
-            navItem.classList.toggle('open');
-        }
-
-        // Mobile menu toggle (if needed)
-        document.addEventListener('DOMContentLoaded', function() {
-            // Add mobile menu functionality if needed
-        });
-
-        // Auto-hide alerts after 5 seconds
         setTimeout(function() {
-            const alerts = document.querySelectorAll('.alert');
+            const alerts = document.querySelectorAll('[class*="from-green-50"], [class*="from-red-50"], [class*="from-yellow-50"]');
             alerts.forEach(alert => {
-                alert.style.transition = 'opacity 0.5s';
-                alert.style.opacity = '0';
-                setTimeout(() => alert.remove(), 500);
+                if (alert.parentElement.tagName === 'MAIN') {
+                    alert.style.transition = 'opacity 0.5s, transform 0.5s';
+                    alert.style.opacity = '0';
+                    alert.style.transform = 'translateY(-10px)';
+                    setTimeout(() => alert.remove(), 500);
+                }
             });
         }, 5000);
     </script>
