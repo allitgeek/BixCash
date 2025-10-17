@@ -38,10 +38,10 @@
 
     <div class="max-w-7xl mx-auto px-4 py-6 space-y-6">
 
-        {{-- Compact Stats in Single Row --}}
-        <div class="grid grid-cols-4 gap-3">
+        {{-- Compact Stats in Single Row (Responsive: 2 cols mobile, 4 desktop) --}}
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {{-- Total Revenue Card - Green Theme --}}
-            <div class="bg-gradient-to-br from-green-50/80 to-emerald-50/50 rounded-xl border-l-4 border-green-500 p-3 shadow-lg shadow-green-900/10 hover:shadow-xl hover:-translate-y-1 hover:shadow-green-900/20 transition-all duration-300">
+            <div class="bg-gradient-to-br from-green-50/80 to-emerald-50/50 rounded-xl border-l-4 border-green-500 p-2 sm:p-3 shadow-lg shadow-green-900/10 hover:shadow-xl hover:-translate-y-1 hover:shadow-green-900/20 transition-all duration-300">
                 <div class="flex items-center gap-2 mb-1.5">
                     <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center text-white shadow-md">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -54,7 +54,7 @@
             </div>
 
             {{-- Your Profit Card - Navy/Blue Theme --}}
-            <div class="bg-gradient-to-br from-blue-50/80 to-indigo-50/50 rounded-xl border-l-4 border-blue-600 p-3 shadow-lg shadow-blue-900/10 hover:shadow-xl hover:-translate-y-1 hover:shadow-blue-900/20 transition-all duration-300">
+            <div class="bg-gradient-to-br from-blue-50/80 to-indigo-50/50 rounded-xl border-l-4 border-blue-600 p-2 sm:p-3 shadow-lg shadow-blue-900/10 hover:shadow-xl hover:-translate-y-1 hover:shadow-blue-900/20 transition-all duration-300">
                 <div class="flex items-center gap-2 mb-1.5">
                     <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-blue-900 flex items-center justify-center text-white shadow-md">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -67,7 +67,7 @@
             </div>
 
             {{-- Transactions Card - Purple Theme --}}
-            <div class="bg-gradient-to-br from-purple-50/80 to-violet-50/50 rounded-xl border-l-4 border-purple-600 p-3 shadow-lg shadow-purple-900/10 hover:shadow-xl hover:-translate-y-1 hover:shadow-purple-900/20 transition-all duration-300">
+            <div class="bg-gradient-to-br from-purple-50/80 to-violet-50/50 rounded-xl border-l-4 border-purple-600 p-2 sm:p-3 shadow-lg shadow-purple-900/10 hover:shadow-xl hover:-translate-y-1 hover:shadow-purple-900/20 transition-all duration-300">
                 <div class="flex items-center gap-2 mb-1.5">
                     <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-600 to-violet-600 flex items-center justify-center text-white shadow-md">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -80,7 +80,7 @@
             </div>
 
             {{-- Pending Card - Orange Theme --}}
-            <div class="bg-gradient-to-br from-orange-50/80 to-amber-50/50 rounded-xl border-l-4 border-orange-600 p-3 shadow-lg shadow-orange-900/10 hover:shadow-xl hover:-translate-y-1 hover:shadow-orange-900/20 transition-all duration-300">
+            <div class="bg-gradient-to-br from-orange-50/80 to-amber-50/50 rounded-xl border-l-4 border-orange-600 p-2 sm:p-3 shadow-lg shadow-orange-900/10 hover:shadow-xl hover:-translate-y-1 hover:shadow-orange-900/20 transition-all duration-300">
                 <div class="flex items-center gap-2 mb-1.5">
                     <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-600 to-amber-600 flex items-center justify-center text-white shadow-md">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -3,14 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#021c47">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Transaction History - BixCash</title>
     @vite(['resources/css/app.css'])
 </head>
-<body class="bg-gray-50 min-h-screen pb-24">
+<body class="bg-gray-50 min-h-screen pb-24" style="margin: 0; padding: 0;">
 
-    {{-- Glassmorphism Header --}}
-    <header class="bg-white/90 backdrop-blur-xl shadow-lg shadow-blue-900/10 sticky top-0 z-40">
+    {{-- Header --}}
+    <header class="bg-gray-100 shadow-md shadow-gray-900/5 sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 py-4">
             <div class="flex items-center justify-between">
                 <div class="flex-1">
