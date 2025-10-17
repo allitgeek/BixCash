@@ -112,54 +112,97 @@
         </div>
     </div>
 
-    {{-- Recent Users Card with Modern Design --}}
-    <div class="bg-white/70 backdrop-blur-xl rounded-2xl border border-white/20 shadow-lg overflow-hidden">
-        <div class="px-6 py-5 border-b border-gray-200/50 bg-gradient-to-r from-gray-50/50 to-transparent">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-3">
-                    <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/30">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+    {{-- Recent Activity Cards - 3 Column Layout --}}
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        {{-- Recent Customers Card --}}
+        <div class="bg-white rounded-xl border border-gray-200/60 shadow-sm overflow-hidden">
+            <div class="px-5 py-4 border-b border-gray-200/60 bg-gradient-to-r from-blue-50/50 to-transparent">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg bg-blue-500 flex items-center justify-center">
+                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                         </svg>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-800 tracking-tight">Recent Users</h3>
+                    <h3 class="text-base font-bold text-gray-800">Recent Customers</h3>
                 </div>
-                <span class="text-sm font-medium text-gray-500">Latest registrations</span>
+            </div>
+            <div class="p-4">
+                <ul class="space-y-2">
+                    @forelse($recentCustomers as $customer)
+                        <li class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors duration-150">
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-semibold text-gray-900 truncate">{{ $customer->name }}</p>
+                                <p class="text-xs text-gray-500 mt-0.5">{{ $customer->phone ?? $customer->email }}</p>
+                            </div>
+                        </li>
+                    @empty
+                        <li class="text-center py-8 text-gray-400 text-sm">
+                            No customers yet
+                        </li>
+                    @endforelse
+                </ul>
             </div>
         </div>
-        <div class="p-6">
-            <ul class="space-y-1">
-                @forelse($recentUsers as $recentUser)
-                    <li class="group flex items-center justify-between p-4 rounded-xl hover:bg-gray-50/80 border border-transparent hover:border-gray-200/50 transition-all duration-200 ease-in-out">
-                        <div class="flex items-center space-x-4">
-                            <div class="flex-shrink-0">
-                                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-lg shadow-lg group-hover:scale-110 transition-transform duration-200">
-                                    {{ strtoupper(substr($recentUser->name, 0, 1)) }}
-                                </div>
+
+        {{-- Recent Transactions Card --}}
+        <div class="bg-white rounded-xl border border-gray-200/60 shadow-sm overflow-hidden">
+            <div class="px-5 py-4 border-b border-gray-200/60 bg-gradient-to-r from-green-50/50 to-transparent">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg bg-green-500 flex items-center justify-center">
+                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-base font-bold text-gray-800">Recent Transactions</h3>
+                </div>
+            </div>
+            <div class="p-4">
+                <ul class="space-y-2">
+                    @forelse($recentTransactions as $transaction)
+                        <li class="p-3 rounded-lg hover:bg-gray-50 transition-colors duration-150">
+                            <div class="flex items-center justify-between mb-1">
+                                <p class="text-xs text-gray-500">{{ $transaction->customer->name ?? 'N/A' }}</p>
+                                <p class="text-sm font-bold text-green-600">${{ number_format($transaction->invoice_amount, 2) }}</p>
                             </div>
+                            <p class="text-xs text-gray-400 truncate">→ {{ $transaction->partner->partnerProfile->business_name ?? 'N/A' }}</p>
+                        </li>
+                    @empty
+                        <li class="text-center py-8 text-gray-400 text-sm">
+                            No transactions yet
+                        </li>
+                    @endforelse
+                </ul>
+            </div>
+        </div>
+
+        {{-- Recent Partners Card --}}
+        <div class="bg-white rounded-xl border border-gray-200/60 shadow-sm overflow-hidden">
+            <div class="px-5 py-4 border-b border-gray-200/60 bg-gradient-to-r from-orange-50/50 to-transparent">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg bg-orange-500 flex items-center justify-center">
+                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-base font-bold text-gray-800">Recent Partners</h3>
+                </div>
+            </div>
+            <div class="p-4">
+                <ul class="space-y-2">
+                    @forelse($recentPartners as $partner)
+                        <li class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors duration-150">
                             <div class="flex-1 min-w-0">
-                                <p class="text-base font-semibold text-gray-900 truncate">{{ $recentUser->name }}</p>
-                                <p class="text-sm text-gray-500 truncate">{{ $recentUser->email }}</p>
+                                <p class="text-sm font-semibold text-gray-900 truncate">{{ $partner->partnerProfile->business_name ?? 'N/A' }}</p>
+                                <p class="text-xs text-gray-500 mt-0.5 capitalize">{{ $partner->partnerProfile->business_type ?? 'N/A' }}</p>
                             </div>
-                        </div>
-                        <div class="flex-shrink-0">
-                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-blue-500/10 to-purple-500/10 text-blue-700 border border-blue-200/50">
-                                {{ $recentUser->role->display_name ?? 'No Role' }}
-                            </span>
-                        </div>
-                    </li>
-                @empty
-                    <li class="flex items-center justify-center p-8 text-gray-500 text-sm">
-                        <div class="text-center">
-                            <svg class="mx-auto h-12 w-12 text-gray-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-                            </svg>
-                            <p class="font-medium">No recent users found</p>
-                            <p class="text-xs text-gray-400 mt-1">New user registrations will appear here</p>
-                        </div>
-                    </li>
-                @endforelse
-            </ul>
+                        </li>
+                    @empty
+                        <li class="text-center py-8 text-gray-400 text-sm">
+                            No partners yet
+                        </li>
+                    @endforelse
+                </ul>
+            </div>
         </div>
     </div>
 @endsection

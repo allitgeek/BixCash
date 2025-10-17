@@ -8,6 +8,7 @@ use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Slide;
 use App\Models\SocialMediaLink;
+use App\Models\PartnerTransaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -37,13 +38,32 @@ class DashboardController extends Controller
             'active_slides' => Slide::active()->count(),
         ];
 
-        // Get recent activities (for now, just recent users)
-        $recentUsers = User::with('role')
+        // Get recent customers (last 5 with phone numbers)
+        $recentCustomers = User::with('role', 'customerProfile')
+            ->whereHas('role', function ($q) {
+                $q->where('name', 'customer');
+            })
             ->latest()
             ->limit(5)
             ->get();
 
-        return view('admin.dashboard.index', compact('stats', 'recentUsers', 'user'));
+        // Get recent transactions (last 5 with customer, partner, and amount)
+        $recentTransactions = PartnerTransaction::with(['customer', 'partner.partnerProfile'])
+            ->latest()
+            ->limit(5)
+            ->get();
+
+        // Get recent partners (last 5 with business name and type)
+        $recentPartners = User::with('role', 'partnerProfile')
+            ->whereHas('role', function ($q) {
+                $q->where('name', 'partner');
+            })
+            ->whereHas('partnerProfile')
+            ->latest()
+            ->limit(5)
+            ->get();
+
+        return view('admin.dashboard.index', compact('stats', 'recentCustomers', 'recentTransactions', 'recentPartners', 'user'));
     }
 
     public function analytics()
