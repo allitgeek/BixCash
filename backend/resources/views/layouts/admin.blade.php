@@ -8,7 +8,7 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="h-full font-sans antialiased">
+<body class="h-full font-sans antialiased" style="padding-top: 0 !important;">
     <div class="flex h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/20 overflow-hidden">
         {{-- Sidebar --}}
         <nav class="hidden lg:flex lg:flex-shrink-0">
