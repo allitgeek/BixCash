@@ -11,11 +11,8 @@
 </head>
 <body class="bg-gradient-to-br from-gray-50 via-blue-50/20 to-gray-50 min-h-screen pb-20">
 
-    {{-- Navy Gradient Accent Bar --}}
-    <div class="h-1 bg-gradient-to-r from-blue-900 via-blue-600 to-blue-500"></div>
-
-    {{-- Glassmorphism Header with New Transaction Button --}}
-    <header class="bg-white/90 backdrop-blur-xl shadow-lg shadow-blue-900/10 sticky top-0 z-40">
+    {{-- Header with New Transaction Button --}}
+    <header class="bg-gray-100 shadow-md shadow-gray-900/5 sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 py-4">
             <div class="flex items-center justify-between gap-4">
                 <div class="flex items-center gap-3">
