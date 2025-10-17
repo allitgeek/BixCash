@@ -7,745 +7,388 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Dashboard - BixCash</title>
     @vite(['resources/css/app.css'])
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        :root {
-            --primary: #93db4d;
-            --primary-dark: #7bc33a;
-            --secondary: #021c47;
-            --text-dark: #1a202c;
-            --text-light: #718096;
-            --border: #e2e8f0;
-            --bg-light: #f7fafc;
-            --success: #48bb78;
-            --warning: #ed8936;
-            --danger: #f56565;
-            --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background: var(--bg-light);
-            color: var(--text-dark);
-            padding-bottom: 80px;
-        }
-
-        /* Header */
-        .dashboard-header {
-            background: linear-gradient(135deg, var(--secondary) 0%, #0a2f5f 100%);
-            color: white;
-            padding: 1.5rem 1rem;
-            box-shadow: var(--shadow-lg);
-        }
-
-        .header-content {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .user-greeting {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .greeting-text h1 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 0.25rem;
-        }
-
-        .greeting-text p {
-            font-size: 0.9rem;
-            opacity: 0.9;
-        }
-
-        .user-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: white;
-        }
-
-        /* Wallet Card */
-        .wallet-card {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            border-radius: 20px;
-            padding: 1.5rem;
-            color: white;
-            box-shadow: var(--shadow-lg);
-        }
-
-        .wallet-balance {
-            font-size: 0.9rem;
-            opacity: 0.9;
-            margin-bottom: 0.5rem;
-        }
-
-        .balance-amount {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-        }
-
-        .wallet-actions {
-            display: flex;
-            gap: 0.75rem;
-        }
-
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-            text-align: center;
-        }
-
-        .btn-white {
-            background: white;
-            color: var(--primary);
-        }
-
-        .btn-white:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-
-        .btn-outline {
-            background: transparent;
-            color: white;
-            border: 2px solid white;
-        }
-
-        .btn-outline:hover {
-            background: white;
-            color: var(--primary);
-        }
-
-        /* Main Content */
-        .dashboard-content {
-            max-width: 1200px;
-            margin: -40px auto 0;
-            padding: 0 1rem;
-            position: relative;
-            z-index: 1;
-        }
-
-        /* Quick Stats */
-        .quick-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .stat-card {
-            background: white;
-            border-radius: 16px;
-            padding: 1.25rem;
-            box-shadow: var(--shadow-md);
-            transition: transform 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-4px);
-        }
-
-        .stat-label {
-            font-size: 0.75rem;
-            color: var(--text-light);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-dark);
-        }
-
-        /* Section Cards */
-        .section {
-            background: white;
-            border-radius: 16px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-
-        .section-title {
-            font-size: 1.125rem;
-            font-weight: 700;
-            color: var(--text-dark);
-        }
-
-        .section-link {
-            color: var(--primary);
-            font-size: 0.875rem;
-            font-weight: 600;
-            text-decoration: none;
-        }
-
-        /* Table */
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .table th {
-            text-align: left;
-            font-size: 0.75rem;
-            color: var(--text-light);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            padding-bottom: 0.75rem;
-            border-bottom: 2px solid var(--border);
-        }
-
-        .table td {
-            padding: 1rem 0;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .brand-info {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .brand-logo {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            background: var(--bg-light);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            color: var(--text-light);
-        }
-
-        .status-badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .status-pending { background: #fef3c7; color: #92400e; }
-        .status-completed { background: #d1fae5; color: #065f46; }
-        .status-processing { background: #dbeafe; color: #1e40af; }
-        .status-rejected { background: #fee2e2; color: #991b1b; }
-
-        .empty-state {
-            text-align: center;
-            padding: 3rem 1rem;
-            color: var(--text-light);
-        }
-
-        .empty-state svg {
-            width: 64px;
-            height: 64px;
-            margin-bottom: 1rem;
-            opacity: 0.3;
-        }
-
-        /* Bottom Navigation */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: white;
-            border-top: 1px solid var(--border);
-            padding: 0.75rem 0;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
-            z-index: 100;
-        }
-
-        .nav-items {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.25rem;
-            color: var(--text-light);
-            text-decoration: none;
-            padding: 0.5rem 1rem;
-            border-radius: 12px;
-            transition: all 0.3s ease;
-        }
-
-        .nav-item.active {
-            color: var(--primary);
-            background: rgba(147, 219, 77, 0.1);
-        }
-
-        .nav-item svg {
-            width: 24px;
-            height: 24px;
-        }
-
-        .nav-item span {
-            font-size: 0.7rem;
-            font-weight: 600;
-        }
-
-        /* Profile Complete Modal */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            padding: 1rem;
-        }
-
-        .modal {
-            background: white;
-            border-radius: 20px;
-            padding: 2rem;
-            max-width: 500px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .modal-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-
-        .modal-subtitle {
-            color: var(--text-light);
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group {
-            margin-bottom: 1.25rem;
-        }
-
-        .form-label {
-            display: block;
-            font-size: 0.875rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: var(--text-dark);
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 2px solid var(--border);
-            border-radius: 12px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(147, 219, 77, 0.1);
-        }
-
-        .form-hint {
-            font-size: 0.75rem;
-            color: var(--text-light);
-            margin-top: 0.25rem;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-            width: 100%;
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-dark);
-        }
-
-        @media (max-width: 768px) {
-            .balance-amount { font-size: 2rem; }
-            .wallet-actions { flex-direction: column; }
-            .btn { width: 100%; }
-            .table { font-size: 0.875rem; }
-        }
-    </style>
 </head>
-<body>
+<body class="bg-gray-50 min-h-screen pb-24" style="margin: 0; padding: 0;">
 
     @if(!$profileComplete)
-    <!-- Profile Completion Modal -->
-    <div class="modal-overlay" id="profileModal">
-        <div class="modal">
-            <h2 class="modal-title">Complete Your Profile</h2>
-            <p class="modal-subtitle">Welcome! Let's set up your account</p>
+    {{-- Profile Completion Modal --}}
+    <div id="profileModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[1000] p-4" role="dialog" aria-modal="true" aria-labelledby="profileModalTitle">
+        <div class="bg-white rounded-2xl p-6 sm:p-8 max-w-md w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+            <h2 id="profileModalTitle" class="text-2xl font-bold text-gray-800 mb-2">Complete Your Profile</h2>
+            <p class="text-gray-500 mb-6">Welcome! Let's set up your account</p>
 
             <form method="POST" action="{{ route('customer.complete-profile') }}" id="profileForm">
                 @csrf
-                <div class="form-group">
-                    <label class="form-label">Full Name *</label>
-                    <input type="text" name="name" class="form-input" required placeholder="Enter your full name" value="{{ $user->name }}">
+                <div class="mb-5">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Full Name *</label>
+                    <input type="text" name="name" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-base focus:outline-none focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition-all" required placeholder="Enter your full name" value="{{ $user->name }}">
                 </div>
 
-                <div class="form-group">
-                    <label class="form-label">Email (Optional)</label>
-                    <input type="email" name="email" class="form-input" placeholder="your@email.com" value="{{ $user->email }}">
-                    <div class="form-hint">We'll use this for important updates</div>
+                <div class="mb-5">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Email (Optional)</label>
+                    <input type="email" name="email" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-base focus:outline-none focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition-all" placeholder="your@email.com" value="{{ $user->email }}">
+                    <p class="text-xs text-gray-500 mt-1">We'll use this for important updates</p>
                 </div>
 
-                <div class="form-group">
-                    <label class="form-label">Date of Birth (Optional)</label>
-                    <input type="date" name="date_of_birth" class="form-input" max="{{ date('Y-m-d') }}">
+                <div class="mb-6">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Date of Birth (Optional)</label>
+                    <input type="date" name="date_of_birth" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-base focus:outline-none focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition-all" max="{{ date('Y-m-d') }}">
                 </div>
 
-                <button type="submit" class="btn btn-primary">Complete Profile</button>
+                <button type="submit" class="w-full px-4 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold rounded-xl hover:from-green-600 hover:to-green-700 hover:-translate-y-0.5 transition-all duration-200 shadow-sm shadow-green-500/30 hover:shadow-md hover:shadow-green-500/40">
+                    Complete Profile
+                </button>
             </form>
-            <p style="text-align: center; font-size: 0.85rem; color: var(--text-light); margin-top: 1rem;">
+            <p class="text-center text-sm text-gray-500 mt-4">
                 Please complete your profile to continue using the dashboard
             </p>
         </div>
     </div>
     @endif
 
-    <!-- Header -->
-    <header class="dashboard-header">
-        <div class="header-content">
-            <div class="user-greeting">
-                <div class="greeting-text">
-                    <h1>Hello, {{ explode(' ', $user->name)[0] }}! 👋</h1>
-                    <p>Welcome back to your dashboard</p>
+    {{-- Header with Wallet Card --}}
+    <header class="bg-gradient-to-br from-blue-900 via-blue-950 to-gray-900 text-white px-4 py-6 shadow-xl">
+        <div class="max-w-7xl mx-auto">
+            {{-- User Greeting --}}
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h1 class="text-2xl font-bold mb-1">Hello, {{ explode(' ', $user->name)[0] }}! 👋</h1>
+                    <p class="text-blue-100 text-sm">Welcome back to your dashboard</p>
                 </div>
-                <div class="user-avatar">
+                <div class="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center text-xl font-bold shadow-lg flex-shrink-0">
                     {{ strtoupper(substr($user->name, 0, 1)) }}
                 </div>
             </div>
 
-            <!-- Wallet Card -->
-            <div class="wallet-card">
-                <div class="wallet-balance">Your Balance</div>
-                <div class="balance-amount">Rs. {{ number_format($wallet->balance, 2) }}</div>
-                <div class="wallet-actions">
-                    <a href="{{ route('customer.wallet') }}" class="btn btn-white">Withdraw</a>
-                    <a href="{{ route('customer.purchases') }}" class="btn btn-outline">History</a>
+            {{-- Wallet Card --}}
+            <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl p-6 shadow-xl">
+                <div class="text-sm text-white/90 mb-2">Your Balance</div>
+                <div class="text-4xl font-bold text-white mb-4">Rs {{ number_format($wallet->balance, 2) }}</div>
+                <div class="flex gap-3">
+                    <a href="{{ route('customer.wallet') }}" class="flex-1 px-4 py-3 bg-white text-green-600 font-semibold rounded-xl hover:-translate-y-1 hover:shadow-lg transition-all duration-200 text-center">
+                        Withdraw
+                    </a>
+                    <a href="{{ route('customer.purchases') }}" class="flex-1 px-4 py-3 bg-transparent border-2 border-white text-white font-semibold rounded-xl hover:bg-white hover:text-green-600 transition-all duration-200 text-center">
+                        History
+                    </a>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="dashboard-content">
+    {{-- Main Content --}}
+    <main class="max-w-7xl mx-auto px-4 -mt-10 relative z-10">
 
-        <!-- Quick Stats -->
-        <div class="quick-stats">
-            <div class="stat-card">
-                <div class="stat-label">Total Earned</div>
-                <div class="stat-value">Rs. {{ number_format($wallet->total_earned, 0) }}</div>
+        {{-- Quick Stats --}}
+        <div class="grid grid-cols-3 gap-3 mb-6">
+            {{-- Total Earned - Green Theme --}}
+            <div class="bg-white rounded-xl p-3 sm:p-4 shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-200 border border-gray-200/60">
+                <div class="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wide mb-1">Total Earned</div>
+                <div class="text-lg sm:text-2xl font-bold text-gray-800">Rs {{ number_format($wallet->total_earned, 0) }}</div>
             </div>
-            <div class="stat-card">
-                <div class="stat-label">Withdrawn</div>
-                <div class="stat-value">Rs. {{ number_format($wallet->total_withdrawn, 0) }}</div>
+
+            {{-- Withdrawn - Blue Theme --}}
+            <div class="bg-white rounded-xl p-3 sm:p-4 shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-200 border border-gray-200/60">
+                <div class="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wide mb-1">Withdrawn</div>
+                <div class="text-lg sm:text-2xl font-bold text-gray-800">Rs {{ number_format($wallet->total_withdrawn, 0) }}</div>
             </div>
-            <div class="stat-card">
-                <div class="stat-label">Purchases</div>
-                <div class="stat-value">{{ $recentPurchases->count() }}</div>
+
+            {{-- Purchases - Purple Theme --}}
+            <div class="bg-white rounded-xl p-3 sm:p-4 shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-200 border border-gray-200/60">
+                <div class="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wide mb-1">Purchases</div>
+                <div class="text-lg sm:text-2xl font-bold text-gray-800">{{ $recentPurchases->count() }}</div>
             </div>
         </div>
 
-        <!-- Pending Transactions -->
+        {{-- Pending Transactions --}}
         @if(isset($pendingTransactions) && $pendingTransactions->count() > 0)
-        <div class="section" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b;">
-            <div class="section-header">
-                <h2 class="section-title" style="color: #92400e;">⏱️ Confirm Purchase</h2>
-                <span style="font-size: 0.875rem; color: #92400e; font-weight: 600;">{{ $pendingTransactions->count() }} pending</span>
+        <div class="bg-gradient-to-r from-orange-50 to-yellow-50 rounded-xl border-2 border-orange-300 p-4 sm:p-6 mb-6 shadow-lg animate-pulse">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-bold text-orange-900 flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+                    </svg>
+                    Confirm Purchase
+                </h2>
+                <span class="text-sm text-orange-900 font-semibold px-3 py-1 bg-orange-200 rounded-full">{{ $pendingTransactions->count() }} pending</span>
             </div>
 
             @foreach($pendingTransactions as $transaction)
-            <div class="transaction-confirm-card" data-transaction-id="{{ $transaction->id }}" data-deadline="{{ $transaction->confirmation_deadline->timestamp }}" style="background: white; border-radius: 16px; padding: 1.25rem; margin-bottom: 1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+            <div class="transaction-confirm-card bg-white rounded-xl p-4 mb-3 last:mb-0 shadow-md" data-transaction-id="{{ $transaction->id }}" data-deadline="{{ $transaction->confirmation_deadline->timestamp }}">
+                <div class="flex justify-between items-start mb-4">
                     <div>
-                        <div style="font-weight: 700; font-size: 1.125rem; color: var(--text-dark); margin-bottom: 0.25rem;">
-                            Rs {{ number_format($transaction->invoice_amount, 0) }}
-                        </div>
-                        <div style="font-size: 0.875rem; color: var(--text-light);">
-                            at {{ $transaction->partner->partnerProfile->business_name ?? 'Unknown Partner' }}
-                        </div>
-                        <div style="font-size: 0.75rem; color: var(--text-light); margin-top: 0.25rem;">
-                            Code: {{ $transaction->transaction_code }}
-                        </div>
+                        <div class="text-xl font-bold text-gray-800 mb-1">Rs {{ number_format($transaction->invoice_amount, 0) }}</div>
+                        <div class="text-sm text-gray-600">at {{ $transaction->partner->partnerProfile->business_name ?? 'Unknown Partner' }}</div>
+                        <div class="text-xs text-gray-500 mt-1">Code: {{ $transaction->transaction_code }}</div>
                     </div>
-                    <div class="countdown-timer" style="text-align: center; background: var(--danger); color: white; padding: 0.5rem 1rem; border-radius: 12px; min-width: 80px;">
-                        <div style="font-size: 1.5rem; font-weight: 700;" class="timer-display">60</div>
-                        <div style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.5px;">seconds</div>
+                    <div class="countdown-timer text-center bg-red-500 text-white px-3 py-2 rounded-xl min-w-[80px]">
+                        <div class="text-2xl font-bold timer-display">60</div>
+                        <div class="text-[10px] uppercase tracking-wide">seconds</div>
                     </div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
-                    <button onclick="confirmTransaction({{ $transaction->id }})" class="btn-confirm" style="background: var(--success); color: white; border: none; padding: 0.75rem; border-radius: 12px; font-weight: 600; cursor: pointer;">
-                        ✓ Confirm
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="confirmTransaction({{ $transaction->id }})" class="btn-confirm bg-green-500 text-white px-4 py-3 rounded-xl font-semibold hover:bg-green-600 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <svg class="confirm-spinner hidden animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span class="confirm-text">✓ Confirm</span>
                     </button>
-                    <button onclick="showRejectModal({{ $transaction->id }})" class="btn-reject" style="background: var(--danger); color: white; border: none; padding: 0.75rem; border-radius: 12px; font-weight: 600; cursor: pointer;">
-                        ✗ Reject
+                    <button onclick="showRejectModal({{ $transaction->id }})" class="btn-reject bg-red-500 text-white px-4 py-3 rounded-xl font-semibold hover:bg-red-600 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <span>✗ Reject</span>
                     </button>
                 </div>
             </div>
             @endforeach
 
-            <div style="text-align: center; margin-top: 1rem; font-size: 0.75rem; color: #92400e;">
-                ⚠️ Transactions auto-confirm after 60 seconds
+            <div class="text-center text-xs text-orange-900 mt-4 flex items-center justify-center gap-1">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                </svg>
+                Transactions auto-confirm after 60 seconds
             </div>
         </div>
         @endif
 
-        <!-- Recent Purchases -->
-        <div class="section">
-            <div class="section-header">
-                <h2 class="section-title">Recent Purchases</h2>
-                <a href="{{ route('customer.purchases') }}" class="section-link">View All →</a>
+        {{-- Recent Purchases --}}
+        <div class="bg-white rounded-xl p-4 sm:p-6 mb-6 shadow-sm border border-gray-200/60">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-bold bg-gradient-to-r from-gray-800 to-blue-900 bg-clip-text text-transparent">Recent Purchases</h2>
+                <a href="{{ route('customer.purchases') }}" class="text-sm text-green-600 font-semibold hover:text-green-700 transition-colors">View All →</a>
             </div>
 
             @if($recentPurchases->count() > 0)
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Brand</th>
-                            <th>Amount</th>
-                            <th>Cashback</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($recentPurchases as $purchase)
-                        <tr>
-                            <td>
-                                <div class="brand-info">
-                                    <div class="brand-logo">{{ substr($purchase->brand->name ?? 'N/A', 0, 1) }}</div>
-                                    <span>{{ $purchase->brand->name ?? 'Unknown' }}</span>
-                                </div>
-                            </td>
-                            <td>Rs. {{ number_format($purchase->amount, 2) }}</td>
-                            <td style="color: var(--success); font-weight: 600;">+Rs. {{ number_format($purchase->cashback_amount, 2) }}</td>
-                            <td>
-                                <span class="status-badge status-{{ $purchase->status }}">
-                                    {{ ucfirst($purchase->status) }}
-                                </span>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                <div class="overflow-x-auto -mx-4 sm:mx-0">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b-2 border-gray-200">
+                                <th class="text-left text-xs text-gray-500 uppercase tracking-wide pb-3 px-4 sm:px-0">Brand</th>
+                                <th class="text-left text-xs text-gray-500 uppercase tracking-wide pb-3">Amount</th>
+                                <th class="text-left text-xs text-gray-500 uppercase tracking-wide pb-3">Cashback</th>
+                                <th class="text-left text-xs text-gray-500 uppercase tracking-wide pb-3">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm">
+                            @foreach($recentPurchases as $purchase)
+                            <tr class="border-b border-gray-100 hover:bg-blue-50/50 transition-colors">
+                                <td class="py-4 px-4 sm:px-0">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center font-semibold text-gray-600 flex-shrink-0">
+                                            {{ substr($purchase->brand->name ?? 'N', 0, 1) }}
+                                        </div>
+                                        <span class="font-medium text-gray-800">{{ $purchase->brand->name ?? 'Unknown' }}</span>
+                                    </div>
+                                </td>
+                                <td class="py-4 font-medium text-gray-800">Rs {{ number_format($purchase->amount, 2) }}</td>
+                                <td class="py-4 font-semibold text-green-600">+Rs {{ number_format($purchase->cashback_amount, 2) }}</td>
+                                <td class="py-4">
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold
+                                        @if($purchase->status === 'completed') bg-green-100 text-green-700
+                                        @elseif($purchase->status === 'pending') bg-yellow-100 text-yellow-700
+                                        @elseif($purchase->status === 'processing') bg-blue-100 text-blue-700
+                                        @else bg-red-100 text-red-700 @endif">
+                                        {{ ucfirst($purchase->status) }}
+                                    </span>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
             @else
-                <div class="empty-state">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="text-center py-12">
+                    <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                     </svg>
-                    <p>No purchases yet</p>
+                    <p class="text-gray-500">No purchases yet</p>
                 </div>
             @endif
         </div>
 
-        <!-- Recent Withdrawals -->
-        <div class="section">
-            <div class="section-header">
-                <h2 class="section-title">Recent Withdrawals</h2>
-                <a href="{{ route('customer.wallet') }}" class="section-link">View All →</a>
+        {{-- Recent Withdrawals --}}
+        <div class="bg-white rounded-xl p-4 sm:p-6 mb-6 shadow-sm border border-gray-200/60">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-bold bg-gradient-to-r from-gray-800 to-blue-900 bg-clip-text text-transparent">Recent Withdrawals</h2>
+                <a href="{{ route('customer.wallet') }}" class="text-sm text-green-600 font-semibold hover:text-green-700 transition-colors">View All →</a>
             </div>
 
             @if($recentWithdrawals->count() > 0)
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Amount</th>
-                            <th>Date</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($recentWithdrawals as $withdrawal)
-                        <tr>
-                            <td style="font-weight: 600;">Rs. {{ number_format($withdrawal->amount, 2) }}</td>
-                            <td>{{ $withdrawal->created_at->format('M d, Y') }}</td>
-                            <td>
-                                <span class="status-badge status-{{ $withdrawal->status }}">
-                                    {{ ucfirst($withdrawal->status) }}
-                                </span>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                <div class="overflow-x-auto -mx-4 sm:mx-0">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b-2 border-gray-200">
+                                <th class="text-left text-xs text-gray-500 uppercase tracking-wide pb-3 px-4 sm:px-0">Amount</th>
+                                <th class="text-left text-xs text-gray-500 uppercase tracking-wide pb-3">Date</th>
+                                <th class="text-left text-xs text-gray-500 uppercase tracking-wide pb-3">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm">
+                            @foreach($recentWithdrawals as $withdrawal)
+                            <tr class="border-b border-gray-100 hover:bg-blue-50/50 transition-colors">
+                                <td class="py-4 font-semibold text-gray-800 px-4 sm:px-0">Rs {{ number_format($withdrawal->amount, 2) }}</td>
+                                <td class="py-4 text-gray-600">{{ $withdrawal->created_at->format('M d, Y') }}</td>
+                                <td class="py-4">
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold
+                                        @if($withdrawal->status === 'completed') bg-green-100 text-green-700
+                                        @elseif($withdrawal->status === 'pending') bg-yellow-100 text-yellow-700
+                                        @elseif($withdrawal->status === 'processing') bg-blue-100 text-blue-700
+                                        @else bg-red-100 text-red-700 @endif">
+                                        {{ ucfirst($withdrawal->status) }}
+                                    </span>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
             @else
-                <div class="empty-state">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="text-center py-12">
+                    <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
-                    <p>No withdrawals yet</p>
+                    <p class="text-gray-500">No withdrawals yet</p>
                 </div>
             @endif
         </div>
 
     </main>
 
-    <!-- Bottom Navigation -->
-    <nav class="bottom-nav">
-        <div class="nav-items">
-            <a href="{{ route('customer.dashboard') }}" class="nav-item active">
-                <svg fill="currentColor" viewBox="0 0 20 20">
+    {{-- Bottom Navigation --}}
+    <nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl shadow-lg shadow-blue-900/10 border-t border-gray-200/60 z-50">
+        <div class="grid grid-cols-5 max-w-7xl mx-auto">
+            {{-- Home (Active) --}}
+            <a href="{{ route('customer.dashboard') }}" class="flex flex-col items-center py-3 px-2 text-white bg-gradient-to-r from-blue-600 to-blue-900 border-t-2 border-blue-500 transition-all duration-200">
+                <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
                 </svg>
-                <span>Home</span>
+                <span class="text-xs font-bold">Home</span>
             </a>
 
-            <a href="{{ route('customer.wallet') }}" class="nav-item">
-                <svg fill="currentColor" viewBox="0 0 20 20">
+            {{-- Wallet --}}
+            <a href="{{ route('customer.wallet') }}" class="flex flex-col items-center py-3 px-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all duration-200">
+                <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"></path>
                     <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"></path>
                 </svg>
-                <span>Wallet</span>
+                <span class="text-xs font-medium">Wallet</span>
             </a>
 
-            <a href="{{ route('customer.purchases') }}" class="nav-item">
-                <svg fill="currentColor" viewBox="0 0 20 20">
+            {{-- Purchases --}}
+            <a href="{{ route('customer.purchases') }}" class="flex flex-col items-center py-3 px-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all duration-200">
+                <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"></path>
                 </svg>
-                <span>Purchases</span>
+                <span class="text-xs font-medium">Purchases</span>
             </a>
 
-            <a href="{{ route('customer.profile') }}" class="nav-item">
-                <svg fill="currentColor" viewBox="0 0 20 20">
+            {{-- Profile --}}
+            <a href="{{ route('customer.profile') }}" class="flex flex-col items-center py-3 px-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all duration-200">
+                <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
                 </svg>
-                <span>Profile</span>
+                <span class="text-xs font-medium">Profile</span>
             </a>
 
-            <form method="POST" action="{{ route('customer.logout') }}" style="display: contents;" onsubmit="return confirm('Are you sure you want to logout?');">
+            {{-- Logout --}}
+            <form method="POST" action="{{ route('customer.logout') }}" class="contents" onsubmit="return confirm('Are you sure you want to logout?');">
                 @csrf
-                <button type="submit" class="nav-item" style="background: none; border: none; cursor: pointer; color: var(--text-light);">
-                    <svg fill="currentColor" viewBox="0 0 20 20">
+                <button type="submit" class="flex flex-col items-center py-3 px-2 text-gray-500 hover:text-red-600 hover:bg-red-50/50 transition-all duration-200">
+                    <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"></path>
                     </svg>
-                    <span>Logout</span>
+                    <span class="text-xs font-medium">Logout</span>
                 </button>
             </form>
         </div>
     </nav>
 
+    {{-- Success Message --}}
     @if(session('success'))
-    <div style="position: fixed; top: 20px; right: 20px; background: var(--success); color: white; padding: 1rem 1.5rem; border-radius: 12px; box-shadow: var(--shadow-lg); z-index: 2000; animation: slideIn 0.3s ease;">
+    <div id="successMessage" class="fixed top-5 right-5 bg-green-500 text-white px-6 py-4 rounded-xl shadow-2xl z-[2000] flex items-center gap-3 animate-slideIn">
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+        </svg>
         {{ session('success') }}
     </div>
     @endif
 
+    {{-- Rejection Modal --}}
+    <div id="rejectModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-[2000] items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="rejectModalTitle">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 sm:p-8 shadow-2xl">
+            <h3 id="rejectModalTitle" class="text-2xl font-bold text-gray-800 mb-2">Reject Transaction</h3>
+            <p class="text-gray-500 mb-6">Please provide a reason for rejecting this transaction:</p>
+
+            <textarea id="rejectReason" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-base min-h-[120px] resize-y focus:outline-none focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all" placeholder="Enter reason..."></textarea>
+
+            <div class="grid grid-cols-2 gap-3 mt-6">
+                <button onclick="closeRejectModal()" class="px-4 py-3 bg-gray-200 text-gray-800 font-semibold rounded-xl hover:bg-gray-300 transition-colors">
+                    Cancel
+                </button>
+                <button onclick="submitRejection()" class="px-4 py-3 bg-red-500 text-white font-semibold rounded-xl hover:bg-red-600 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed" id="rejectSubmitBtn">
+                    <svg class="reject-spinner hidden animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span class="reject-text">Reject Transaction</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    {{-- Animations --}}
     <style>
         @keyframes slideIn {
             from { transform: translateX(100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
         }
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .animate-slideIn {
+            animation: slideIn 0.3s ease;
+        }
     </style>
 
     <script>
-        // Handle form submission
+        // Profile form loading state
         document.addEventListener('DOMContentLoaded', function() {
             const profileForm = document.getElementById('profileForm');
             if (profileForm) {
                 profileForm.addEventListener('submit', function(e) {
-                    // Show loading state
                     const submitBtn = this.querySelector('button[type="submit"]');
-                    const originalText = submitBtn.textContent;
                     submitBtn.textContent = 'Saving...';
                     submitBtn.disabled = true;
                 });
             }
         });
 
-        // Auto-hide success message after 3 seconds
+        // Auto-hide success message
         @if(session('success'))
         setTimeout(() => {
-            const successMsg = document.querySelector('[style*="position: fixed"]');
+            const successMsg = document.getElementById('successMessage');
             if (successMsg) {
                 successMsg.style.animation = 'slideOut 0.3s ease';
                 setTimeout(() => successMsg.remove(), 300);
             }
         }, 3000);
 
-        // If profile was completed successfully, hide modal
+        // Hide profile modal if completed
         const modal = document.getElementById('profileModal');
         if (modal) {
             modal.style.animation = 'fadeOut 0.3s ease';
             setTimeout(() => modal.style.display = 'none', 300);
         }
         @endif
-    </script>
-
-    <style>
-        @keyframes slideOut {
-            from { transform: translateX(0); opacity: 1; }
-            to { transform: translateX(100%); opacity: 0; }
-        }
-
-        @keyframes fadeOut {
-            from { opacity: 1; }
-            to { opacity: 0; }
-        }
-    </style>
-
-    <!-- Rejection Modal -->
-    <div id="rejectModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 2000; align-items: center; justify-content: center; padding: 1rem;">
-        <div style="background: white; border-radius: 20px; max-width: 500px; width: 100%; padding: 2rem;">
-            <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; color: var(--text-dark);">Reject Transaction</h3>
-            <p style="color: var(--text-light); margin-bottom: 1.5rem;">Please provide a reason for rejecting this transaction:</p>
-
-            <textarea id="rejectReason" style="width: 100%; padding: 1rem; border: 2px solid var(--border); border-radius: 12px; font-size: 1rem; min-height: 120px; resize: vertical;" placeholder="Enter reason..."></textarea>
-
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem;">
-                <button onclick="closeRejectModal()" style="background: var(--border); color: var(--text-dark); border: none; padding: 1rem; border-radius: 12px; font-weight: 600; cursor: pointer;">
-                    Cancel
-                </button>
-                <button onclick="submitRejection()" style="background: var(--danger); color: white; border: none; padding: 1rem; border-radius: 12px; font-weight: 600; cursor: pointer;">
-                    Reject Transaction
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        let rejectingTransactionId = null;
 
         // Countdown timers
         function updateCountdowns() {
@@ -762,10 +405,12 @@
                     // Change color based on urgency
                     const timerEl = card.querySelector('.countdown-timer');
                     if (secondsRemaining <= 10) {
-                        timerEl.style.background = 'var(--danger)';
+                        timerEl.classList.remove('bg-orange-500');
+                        timerEl.classList.add('bg-red-500');
                         timerEl.style.animation = 'pulse 1s infinite';
                     } else if (secondsRemaining <= 30) {
-                        timerEl.style.background = 'var(--warning)';
+                        timerEl.classList.remove('bg-red-500');
+                        timerEl.classList.add('bg-orange-500');
                     }
 
                     // Auto-remove if expired
@@ -774,7 +419,6 @@
                             card.style.animation = 'fadeOut 0.5s ease';
                             setTimeout(() => {
                                 card.remove();
-                                // Reload if no more pending transactions
                                 if (document.querySelectorAll('.transaction-confirm-card').length === 0) {
                                     location.reload();
                                 }
@@ -786,12 +430,22 @@
         }
 
         // Start countdown timers
-        updateCountdowns();
-        setInterval(updateCountdowns, 1000);
+        if (document.querySelector('.transaction-confirm-card')) {
+            updateCountdowns();
+            setInterval(updateCountdowns, 1000);
+        }
 
-        // Confirm transaction
+        // Confirm transaction with loading state
         async function confirmTransaction(transactionId) {
             if (!confirm('Confirm this purchase?')) return;
+
+            const btn = event.target.closest('.btn-confirm');
+            const spinner = btn.querySelector('.confirm-spinner');
+            const text = btn.querySelector('.confirm-text');
+
+            btn.disabled = true;
+            spinner.classList.remove('hidden');
+            text.textContent = 'Confirming...';
 
             try {
                 const response = await fetch(`/customer/confirm-transaction/${transactionId}`, {
@@ -809,26 +463,37 @@
                     location.reload();
                 } else {
                     alert('Error: ' + data.message);
+                    btn.disabled = false;
+                    spinner.classList.add('hidden');
+                    text.textContent = '✓ Confirm';
                 }
             } catch (error) {
                 alert('Network error. Please try again.');
+                btn.disabled = false;
+                spinner.classList.add('hidden');
+                text.textContent = '✓ Confirm';
             }
         }
 
-        // Show reject modal
+        // Rejection modal functions
+        let rejectingTransactionId = null;
+
         function showRejectModal(transactionId) {
             rejectingTransactionId = transactionId;
-            document.getElementById('rejectModal').style.display = 'flex';
+            const modal = document.getElementById('rejectModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
             document.getElementById('rejectReason').value = '';
+            document.getElementById('rejectReason').focus();
         }
 
-        // Close reject modal
         function closeRejectModal() {
-            document.getElementById('rejectModal').style.display = 'none';
+            const modal = document.getElementById('rejectModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
             rejectingTransactionId = null;
         }
 
-        // Submit rejection
         async function submitRejection() {
             const reason = document.getElementById('rejectReason').value.trim();
 
@@ -838,6 +503,14 @@
             }
 
             if (!rejectingTransactionId) return;
+
+            const btn = document.getElementById('rejectSubmitBtn');
+            const spinner = btn.querySelector('.reject-spinner');
+            const text = btn.querySelector('.reject-text');
+
+            btn.disabled = true;
+            spinner.classList.remove('hidden');
+            text.textContent = 'Rejecting...';
 
             try {
                 const response = await fetch(`/customer/reject-transaction/${rejectingTransactionId}`, {
@@ -857,9 +530,15 @@
                     location.reload();
                 } else {
                     alert('Error: ' + data.message);
+                    btn.disabled = false;
+                    spinner.classList.add('hidden');
+                    text.textContent = 'Reject Transaction';
                 }
             } catch (error) {
                 alert('Network error. Please try again.');
+                btn.disabled = false;
+                spinner.classList.add('hidden');
+                text.textContent = 'Reject Transaction';
             }
         }
 
@@ -869,14 +548,17 @@
                 closeRejectModal();
             }
         });
-    </script>
 
-    <style>
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-    </style>
+        // Keyboard support - ESC to close modals
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const rejectModal = document.getElementById('rejectModal');
+                if (rejectModal && !rejectModal.classList.contains('hidden')) {
+                    closeRejectModal();
+                }
+            }
+        });
+    </script>
 
 </body>
 </html>
