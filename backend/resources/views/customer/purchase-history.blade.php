@@ -3,204 +3,195 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#021c47">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Purchase History - BixCash</title>
     @vite(['resources/css/app.css'])
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        :root {
-            --primary: #93db4d;
-            --primary-dark: #7bc33a;
-            --secondary: #021c47;
-            --text-dark: #1a202c;
-            --text-light: #718096;
-            --border: #e2e8f0;
-            --bg-light: #f7fafc;
-        }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; background: var(--bg-light); padding-bottom: 80px; }
-        .header { background: var(--secondary); color: white; padding: 1.5rem 1rem; }
-        .header-content { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; gap: 1rem; }
-        .back-btn { color: white; text-decoration: none; font-size: 1.5rem; }
-        .header-title { font-size: 1.25rem; font-weight: 700; }
-        .content { max-width: 1200px; margin: 0 auto; padding: 1.5rem 1rem; }
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
-        .stat-card { background: white; border-radius: 16px; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .stat-label { font-size: 0.875rem; color: var(--text-light); margin-bottom: 0.5rem; }
-        .stat-value { font-size: 1.75rem; font-weight: 700; color: var(--text-dark); }
-        .stat-value.primary { color: var(--primary); }
-        .section { background: white; border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .section-title { font-size: 1.125rem; font-weight: 700; margin-bottom: 1rem; color: var(--text-dark); }
-        .filters { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
-        .filter-btn { padding: 0.5rem 1rem; border-radius: 12px; border: 2px solid var(--border); background: white; cursor: pointer; font-weight: 600; transition: all 0.3s ease; }
-        .filter-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
-        .purchase-card { background: white; border: 2px solid var(--border); border-radius: 16px; padding: 1.25rem; margin-bottom: 1rem; transition: all 0.3s ease; }
-        .purchase-card:hover { border-color: var(--primary); box-shadow: 0 4px 12px rgba(147, 219, 77, 0.15); }
-        .purchase-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem; }
-        .brand-info { display: flex; align-items: center; gap: 1rem; }
-        .brand-logo { width: 50px; height: 50px; border-radius: 12px; object-fit: cover; background: var(--bg-light); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700; color: var(--primary); }
-        .brand-details { flex: 1; }
-        .brand-name { font-size: 1rem; font-weight: 700; color: var(--text-dark); margin-bottom: 0.25rem; }
-        .order-id { font-size: 0.75rem; color: var(--text-light); }
-        .purchase-amount { text-align: right; }
-        .amount { font-size: 1.25rem; font-weight: 700; color: var(--text-dark); }
-        .cashback { font-size: 0.875rem; color: var(--primary); font-weight: 600; margin-top: 0.25rem; }
-        .purchase-details { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); }
-        .detail-item { }
-        .detail-label { font-size: 0.75rem; color: var(--text-light); margin-bottom: 0.25rem; }
-        .detail-value { font-size: 0.875rem; font-weight: 600; color: var(--text-dark); }
-        .status-badge { padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600; display: inline-block; }
-        .status-pending { background: #fef3c7; color: #92400e; }
-        .status-confirmed { background: #d1fae5; color: #065f46; }
-        .status-cancelled { background: #fee2e2; color: #991b1b; }
-        .empty-state { text-align: center; padding: 4rem 2rem; }
-        .empty-icon { font-size: 4rem; margin-bottom: 1rem; opacity: 0.3; }
-        .empty-title { font-size: 1.25rem; font-weight: 700; color: var(--text-dark); margin-bottom: 0.5rem; }
-        .empty-text { color: var(--text-light); }
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top: 1px solid var(--border); padding: 0.75rem 0; }
-        .nav-items { display: flex; justify-content: space-around; max-width: 600px; margin: 0 auto; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; color: var(--text-light); text-decoration: none; padding: 0.5rem 1rem; }
-        .nav-item.active { color: var(--primary); }
-        .nav-item svg { width: 24px; height: 24px; }
-        .nav-item span { font-size: 0.7rem; font-weight: 600; }
-        .pagination { display: flex; justify-content: center; gap: 0.5rem; margin-top: 1.5rem; }
-        .pagination a, .pagination span { padding: 0.5rem 0.75rem; border-radius: 8px; border: 2px solid var(--border); background: white; text-decoration: none; color: var(--text-dark); font-weight: 600; }
-        .pagination .active { background: var(--primary); color: white; border-color: var(--primary); }
-
-        @media (max-width: 768px) {
-            .stats-grid { grid-template-columns: 1fr 1fr; }
-            .purchase-header { flex-direction: column; gap: 1rem; }
-            .purchase-amount { text-align: left; }
-            .brand-logo { width: 40px; height: 40px; font-size: 1.25rem; }
-            .brand-name { font-size: 0.9rem; }
-            .amount { font-size: 1.1rem; }
-        }
-    </style>
 </head>
-<body>
+<body class="bg-gray-50 min-h-screen pb-24" style="margin: 0; padding: 0;">
 
-    <header class="header">
-        <div class="header-content">
-            <a href="{{ route('customer.dashboard') }}" class="back-btn">←</a>
-            <h1 class="header-title">Purchase History</h1>
+    {{-- Header --}}
+    <header class="bg-gradient-to-br from-blue-900 via-blue-950 to-gray-900 text-white px-4 py-6 shadow-xl">
+        <div class="max-w-7xl mx-auto flex items-center gap-3">
+            <a href="{{ route('customer.dashboard') }}" class="text-white hover:text-blue-200 transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+            </a>
+            <h1 class="text-2xl font-bold">Purchase History</h1>
         </div>
     </header>
 
-    <main class="content">
+    {{-- Main Content --}}
+    <main class="max-w-7xl mx-auto px-4 mt-6">
 
-        <!-- Stats Overview -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-label">Total Purchases</div>
-                <div class="stat-value">{{ $purchases->total() }}</div>
+        {{-- Stats Overview --}}
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
+            {{-- Total Purchases --}}
+            <div class="bg-white rounded-xl p-4 shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-200 border border-gray-200/60">
+                <div class="text-xs text-gray-500 uppercase tracking-wide mb-2">Total Purchases</div>
+                <div class="text-2xl font-bold text-gray-800">{{ $purchases->total() }}</div>
             </div>
-            <div class="stat-card">
-                <div class="stat-label">Total Spent</div>
-                <div class="stat-value">Rs. {{ number_format($totalSpent, 0) }}</div>
+
+            {{-- Total Spent --}}
+            <div class="bg-white rounded-xl p-4 shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-200 border border-gray-200/60">
+                <div class="text-xs text-gray-500 uppercase tracking-wide mb-2">Total Spent</div>
+                <div class="text-2xl font-bold text-gray-800">Rs {{ number_format($totalSpent, 0) }}</div>
             </div>
-            <div class="stat-card">
-                <div class="stat-label">Total Cashback</div>
-                <div class="stat-value primary">Rs. {{ number_format($totalCashback, 0) }}</div>
+
+            {{-- Total Cashback --}}
+            <div class="bg-white rounded-xl p-4 shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-200 border border-gray-200/60 col-span-2 sm:col-span-1">
+                <div class="text-xs text-gray-500 uppercase tracking-wide mb-2">Total Cashback</div>
+                <div class="text-2xl font-bold text-green-600">Rs {{ number_format($totalCashback, 0) }}</div>
             </div>
         </div>
 
-        <!-- Filters -->
-        <div class="filters">
-            <button class="filter-btn active" onclick="filterPurchases('all')">All</button>
-            <button class="filter-btn" onclick="filterPurchases('confirmed')">Confirmed</button>
-            <button class="filter-btn" onclick="filterPurchases('pending')">Pending</button>
-            <button class="filter-btn" onclick="filterPurchases('cancelled')">Cancelled</button>
+        {{-- Filters --}}
+        <div class="flex gap-2 mb-6 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
+            <button class="filter-btn px-4 py-2 rounded-xl font-semibold transition-all duration-200 whitespace-nowrap border-2 bg-gradient-to-r from-blue-600 to-blue-900 text-white border-blue-900 shadow-sm" data-status="all" onclick="filterPurchases('all')">
+                All
+            </button>
+            <button class="filter-btn px-4 py-2 rounded-xl font-semibold transition-all duration-200 whitespace-nowrap border-2 border-gray-200 bg-white text-gray-700 hover:border-blue-300 hover:bg-blue-50" data-status="confirmed" onclick="filterPurchases('confirmed')">
+                Confirmed
+            </button>
+            <button class="filter-btn px-4 py-2 rounded-xl font-semibold transition-all duration-200 whitespace-nowrap border-2 border-gray-200 bg-white text-gray-700 hover:border-blue-300 hover:bg-blue-50" data-status="pending" onclick="filterPurchases('pending')">
+                Pending
+            </button>
+            <button class="filter-btn px-4 py-2 rounded-xl font-semibold transition-all duration-200 whitespace-nowrap border-2 border-gray-200 bg-white text-gray-700 hover:border-blue-300 hover:bg-blue-50" data-status="cancelled" onclick="filterPurchases('cancelled')">
+                Cancelled
+            </button>
         </div>
 
-        <!-- Purchase List -->
-        <div class="section">
-            @if($purchases->count() > 0)
-                <div id="purchase-list">
-                    @foreach($purchases as $purchase)
-                    <div class="purchase-card" data-status="{{ $purchase->status }}">
-                        <div class="purchase-header">
-                            <div class="brand-info">
-                                <div class="brand-logo">
-                                    @if($purchase->brand && $purchase->brand->logo)
-                                        <img src="{{ asset('storage/' . $purchase->brand->logo) }}" alt="{{ $purchase->brand->name }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;">
-                                    @else
-                                        {{ $purchase->brand ? strtoupper(substr($purchase->brand->name, 0, 1)) : '?' }}
-                                    @endif
-                                </div>
-                                <div class="brand-details">
-                                    <div class="brand-name">{{ $purchase->brand->name ?? 'Unknown Brand' }}</div>
-                                    <div class="order-id">Order #{{ $purchase->order_id }}</div>
-                                </div>
-                            </div>
-                            <div class="purchase-amount">
-                                <div class="amount">Rs. {{ number_format($purchase->amount, 0) }}</div>
-                                @if($purchase->cashback_amount > 0)
-                                    <div class="cashback">+Rs. {{ number_format($purchase->cashback_amount, 0) }} cashback</div>
+        {{-- Purchase List --}}
+        @if($purchases->count() > 0)
+            <div id="purchase-list" class="space-y-4 mb-6">
+                @foreach($purchases as $purchase)
+                <div class="purchase-card bg-white rounded-xl border-2 border-gray-200/60 p-4 sm:p-5 shadow-sm hover:border-blue-300 hover:shadow-lg transition-all duration-200" data-status="{{ $purchase->status }}">
+                    <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4">
+                        {{-- Brand Info --}}
+                        <div class="flex items-center gap-3 flex-1">
+                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center flex-shrink-0 border border-blue-200/50">
+                                @if($purchase->brand && $purchase->brand->logo)
+                                    <img src="{{ asset('storage/' . $purchase->brand->logo) }}" alt="{{ $purchase->brand->name }}" class="w-full h-full object-cover rounded-xl">
+                                @else
+                                    <span class="text-xl font-bold text-blue-600">{{ $purchase->brand ? strtoupper(substr($purchase->brand->name, 0, 1)) : '?' }}</span>
                                 @endif
                             </div>
-                        </div>
-                        <div class="purchase-details">
-                            <div class="detail-item">
-                                <div class="detail-label">Purchase Date</div>
-                                <div class="detail-value">{{ $purchase->purchase_date->format('M d, Y') }}</div>
-                            </div>
-                            <div class="detail-item">
-                                <div class="detail-label">Cashback Rate</div>
-                                <div class="detail-value">{{ number_format($purchase->cashback_percentage, 1) }}%</div>
-                            </div>
-                            <div class="detail-item">
-                                <div class="detail-label">Status</div>
-                                <div class="detail-value">
-                                    <span class="status-badge status-{{ $purchase->status }}">{{ ucfirst($purchase->status) }}</span>
-                                </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="font-bold text-gray-800 truncate">{{ $purchase->brand->name ?? 'Unknown Brand' }}</div>
+                                <div class="text-xs text-gray-500">Order #{{ $purchase->order_id }}</div>
                             </div>
                         </div>
-                        @if($purchase->description)
-                        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border);">
-                            <div class="detail-label">Description</div>
-                            <div class="detail-value">{{ $purchase->description }}</div>
-                        </div>
-                        @endif
-                    </div>
-                    @endforeach
-                </div>
 
-                <!-- Pagination -->
-                <div style="margin-top: 1.5rem;">
-                    {{ $purchases->links() }}
+                        {{-- Amount --}}
+                        <div class="sm:text-right">
+                            <div class="text-xl font-bold text-gray-800">Rs {{ number_format($purchase->amount, 0) }}</div>
+                            @if($purchase->cashback_amount > 0)
+                                <div class="text-sm text-green-600 font-semibold">+Rs {{ number_format($purchase->cashback_amount, 0) }} cashback</div>
+                            @endif
+                        </div>
+                    </div>
+
+                    {{-- Purchase Details --}}
+                    <div class="grid grid-cols-3 gap-4 pt-4 border-t border-gray-200/60">
+                        <div>
+                            <div class="text-xs text-gray-500 uppercase tracking-wide mb-1">Date</div>
+                            <div class="text-sm font-semibold text-gray-800">{{ $purchase->purchase_date->format('M d, Y') }}</div>
+                        </div>
+                        <div>
+                            <div class="text-xs text-gray-500 uppercase tracking-wide mb-1">Rate</div>
+                            <div class="text-sm font-semibold text-gray-800">{{ number_format($purchase->cashback_percentage, 1) }}%</div>
+                        </div>
+                        <div>
+                            <div class="text-xs text-gray-500 uppercase tracking-wide mb-1">Status</div>
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold
+                                @if($purchase->status === 'confirmed') bg-green-100 text-green-700
+                                @elseif($purchase->status === 'pending') bg-yellow-100 text-yellow-700
+                                @else bg-red-100 text-red-700 @endif">
+                                {{ ucfirst($purchase->status) }}
+                            </span>
+                        </div>
+                    </div>
+
+                    @if($purchase->description)
+                    <div class="mt-4 pt-4 border-t border-gray-200/60">
+                        <div class="text-xs text-gray-500 uppercase tracking-wide mb-1">Description</div>
+                        <div class="text-sm text-gray-700">{{ $purchase->description }}</div>
+                    </div>
+                    @endif
                 </div>
-            @else
-                <div class="empty-state">
-                    <div class="empty-icon">🛍️</div>
-                    <div class="empty-title">No Purchases Yet</div>
-                    <div class="empty-text">Start shopping with our partner brands to earn cashback!</div>
-                </div>
+                @endforeach
+            </div>
+
+            {{-- Pagination --}}
+            @if($purchases->hasPages())
+            <div class="bg-white rounded-xl border border-gray-200/60 shadow-sm p-4">
+                {{ $purchases->links() }}
+            </div>
             @endif
-        </div>
+        @else
+            {{-- Empty State --}}
+            <div class="bg-white rounded-xl border border-gray-200/60 shadow-lg shadow-blue-900/5 p-12 text-center">
+                <svg class="w-24 h-24 mx-auto text-gray-300 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                </svg>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">No Purchases Yet</h3>
+                <p class="text-gray-500 mb-6">Start shopping with our partner brands to earn cashback!</p>
+                <a href="{{ route('customer.dashboard') }}" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-900 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-blue-950 hover:-translate-y-0.5 transition-all duration-200 shadow-sm shadow-blue-500/30">
+                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
+                    </svg>
+                    Go to Dashboard
+                </a>
+            </div>
+        @endif
 
     </main>
 
-    <nav class="bottom-nav">
-        <div class="nav-items">
-            <a href="{{ route('customer.dashboard') }}" class="nav-item">
-                <svg fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg>
-                <span>Home</span>
+    {{-- Bottom Navigation (Matching Dashboard) --}}
+    <nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl shadow-lg shadow-blue-900/10 border-t border-gray-200/60 z-50">
+        <div class="grid grid-cols-5 max-w-7xl mx-auto">
+            {{-- Home --}}
+            <a href="{{ route('customer.dashboard') }}" class="flex flex-col items-center py-3 px-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all duration-200">
+                <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
+                </svg>
+                <span class="text-xs font-medium">Home</span>
             </a>
-            <a href="{{ route('customer.wallet') }}" class="nav-item">
-                <svg fill="currentColor" viewBox="0 0 20 20"><path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"></path><path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"></path></svg>
-                <span>Wallet</span>
+
+            {{-- Wallet --}}
+            <a href="{{ route('customer.wallet') }}" class="flex flex-col items-center py-3 px-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all duration-200">
+                <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"></path>
+                    <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"></path>
+                </svg>
+                <span class="text-xs font-medium">Wallet</span>
             </a>
-            <a href="{{ route('customer.purchases') }}" class="nav-item active">
-                <svg fill="currentColor" viewBox="0 0 20 20"><path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"></path></svg>
-                <span>Purchases</span>
+
+            {{-- Purchases (Active) --}}
+            <a href="{{ route('customer.purchases') }}" class="flex flex-col items-center py-3 px-2 text-white bg-gradient-to-r from-blue-600 to-blue-900 border-t-2 border-blue-500 transition-all duration-200">
+                <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"></path>
+                </svg>
+                <span class="text-xs font-bold">Purchases</span>
             </a>
-            <a href="{{ route('customer.profile') }}" class="nav-item">
-                <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
-                <span>Profile</span>
+
+            {{-- Profile --}}
+            <a href="{{ route('customer.profile') }}" class="flex flex-col items-center py-3 px-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all duration-200">
+                <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+                </svg>
+                <span class="text-xs font-medium">Profile</span>
             </a>
-            <form method="POST" action="{{ route('customer.logout') }}" style="display: contents;" onsubmit="return confirm('Are you sure you want to logout?');">
+
+            {{-- Logout --}}
+            <form method="POST" action="{{ route('customer.logout') }}" class="contents" onsubmit="return confirm('Are you sure you want to logout?');">
                 @csrf
-                <button type="submit" class="nav-item" style="background: none; border: none; cursor: pointer; color: var(--text-light);">
-                    <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"></path></svg>
-                    <span>Logout</span>
+                <button type="submit" class="flex flex-col items-center py-3 px-2 text-gray-500 hover:text-red-600 hover:bg-red-50/50 transition-all duration-200">
+                    <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"></path>
+                    </svg>
+                    <span class="text-xs font-medium">Logout</span>
                 </button>
             </form>
         </div>
@@ -209,18 +200,32 @@
     <script>
         function filterPurchases(status) {
             // Update active button
-            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('bg-gradient-to-r', 'from-blue-600', 'to-blue-900', 'text-white', 'border-blue-900', 'shadow-sm');
+                btn.classList.add('border-gray-200', 'bg-white', 'text-gray-700');
+            });
+
+            event.target.classList.remove('border-gray-200', 'bg-white', 'text-gray-700');
+            event.target.classList.add('bg-gradient-to-r', 'from-blue-600', 'to-blue-900', 'text-white', 'border-blue-900', 'shadow-sm');
 
             // Filter cards
             const cards = document.querySelectorAll('.purchase-card');
+            let visibleCount = 0;
+
             cards.forEach(card => {
                 if (status === 'all' || card.dataset.status === status) {
                     card.style.display = 'block';
+                    visibleCount++;
                 } else {
                     card.style.display = 'none';
                 }
             });
+
+            // Show/hide empty message if needed
+            const purchaseList = document.getElementById('purchase-list');
+            if (visibleCount === 0 && purchaseList) {
+                // Could add dynamic empty state here
+            }
         }
     </script>
 

@@ -21,21 +21,21 @@
                 @csrf
                 <div class="mb-5">
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Full Name *</label>
-                    <input type="text" name="name" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-base focus:outline-none focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition-all" required placeholder="Enter your full name" value="{{ $user->name }}">
+                    <input type="text" name="name" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-base focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all" required placeholder="Enter your full name" value="{{ $user->name }}">
                 </div>
 
                 <div class="mb-5">
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Email (Optional)</label>
-                    <input type="email" name="email" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-base focus:outline-none focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition-all" placeholder="your@email.com" value="{{ $user->email }}">
+                    <input type="email" name="email" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-base focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all" placeholder="your@email.com" value="{{ $user->email }}">
                     <p class="text-xs text-gray-500 mt-1">We'll use this for important updates</p>
                 </div>
 
                 <div class="mb-6">
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Date of Birth (Optional)</label>
-                    <input type="date" name="date_of_birth" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-base focus:outline-none focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition-all" max="{{ date('Y-m-d') }}">
+                    <input type="date" name="date_of_birth" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-base focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all" max="{{ date('Y-m-d') }}">
                 </div>
 
-                <button type="submit" class="w-full px-4 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold rounded-xl hover:from-green-600 hover:to-green-700 hover:-translate-y-0.5 transition-all duration-200 shadow-sm shadow-green-500/30 hover:shadow-md hover:shadow-green-500/40">
+                <button type="submit" class="w-full px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-900 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-blue-950 hover:-translate-y-0.5 transition-all duration-200 shadow-sm shadow-blue-500/30 hover:shadow-md hover:shadow-blue-500/40">
                     Complete Profile
                 </button>
             </form>
@@ -55,20 +55,20 @@
                     <h1 class="text-2xl font-bold mb-1">Hello, {{ explode(' ', $user->name)[0] }}! 👋</h1>
                     <p class="text-blue-100 text-sm">Welcome back to your dashboard</p>
                 </div>
-                <div class="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center text-xl font-bold shadow-lg flex-shrink-0">
+                <div class="w-12 h-12 rounded-full bg-blue-500 flex items-center justify-center text-xl font-bold shadow-lg flex-shrink-0">
                     {{ strtoupper(substr($user->name, 0, 1)) }}
                 </div>
             </div>
 
-            {{-- Wallet Card --}}
-            <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl p-6 shadow-xl">
-                <div class="text-sm text-white/90 mb-2">Your Balance</div>
+            {{-- Wallet Card - Blue Gradient (Matching Partner Portal) --}}
+            <div class="bg-gradient-to-br from-blue-600 to-blue-900 rounded-2xl p-6 shadow-xl shadow-blue-900/20">
+                <div class="text-sm text-blue-100 mb-2">Your Balance</div>
                 <div class="text-4xl font-bold text-white mb-4">Rs {{ number_format($wallet->balance, 2) }}</div>
                 <div class="flex gap-3">
-                    <a href="{{ route('customer.wallet') }}" class="flex-1 px-4 py-3 bg-white text-green-600 font-semibold rounded-xl hover:-translate-y-1 hover:shadow-lg transition-all duration-200 text-center">
+                    <a href="{{ route('customer.wallet') }}" class="flex-1 px-4 py-3 bg-white text-blue-600 font-semibold rounded-xl hover:-translate-y-1 hover:shadow-lg transition-all duration-200 text-center">
                         Withdraw
                     </a>
-                    <a href="{{ route('customer.purchases') }}" class="flex-1 px-4 py-3 bg-transparent border-2 border-white text-white font-semibold rounded-xl hover:bg-white hover:text-green-600 transition-all duration-200 text-center">
+                    <a href="{{ route('customer.purchases') }}" class="flex-1 px-4 py-3 bg-transparent border-2 border-white text-white font-semibold rounded-xl hover:bg-white hover:text-blue-600 transition-all duration-200 text-center">
                         History
                     </a>
                 </div>
@@ -155,7 +155,7 @@
         <div class="bg-white rounded-xl p-4 sm:p-6 mb-6 shadow-sm border border-gray-200/60">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-lg font-bold bg-gradient-to-r from-gray-800 to-blue-900 bg-clip-text text-transparent">Recent Purchases</h2>
-                <a href="{{ route('customer.purchases') }}" class="text-sm text-green-600 font-semibold hover:text-green-700 transition-colors">View All →</a>
+                <a href="{{ route('customer.purchases') }}" class="text-sm text-blue-600 font-semibold hover:text-blue-700 transition-colors">View All →</a>
             </div>
 
             @if($recentPurchases->count() > 0)
@@ -210,7 +210,7 @@
         <div class="bg-white rounded-xl p-4 sm:p-6 mb-6 shadow-sm border border-gray-200/60">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-lg font-bold bg-gradient-to-r from-gray-800 to-blue-900 bg-clip-text text-transparent">Recent Withdrawals</h2>
-                <a href="{{ route('customer.wallet') }}" class="text-sm text-green-600 font-semibold hover:text-green-700 transition-colors">View All →</a>
+                <a href="{{ route('customer.wallet') }}" class="text-sm text-blue-600 font-semibold hover:text-blue-700 transition-colors">View All →</a>
             </div>
 
             @if($recentWithdrawals->count() > 0)
