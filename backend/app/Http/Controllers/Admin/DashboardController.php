@@ -63,7 +63,53 @@ class DashboardController extends Controller
             ->limit(5)
             ->get();
 
-        return view('admin.dashboard.index', compact('stats', 'recentCustomers', 'recentTransactions', 'recentPartners', 'user'));
+        // Get 7-day data for charts
+        $last7Days = collect();
+        for ($i = 6; $i >= 0; $i--) {
+            $date = now()->subDays($i)->format('Y-m-d');
+            $last7Days->push([
+                'date' => $date,
+                'label' => now()->subDays($i)->format('M j'),
+            ]);
+        }
+
+        // Customer registrations per day (last 7 days)
+        $customerChartData = $last7Days->map(function ($day) {
+            return User::whereHas('role', function ($q) {
+                $q->where('name', 'customer');
+            })
+            ->whereDate('created_at', $day['date'])
+            ->count();
+        });
+
+        // Transaction amounts per day (last 7 days)
+        $transactionChartData = $last7Days->map(function ($day) {
+            return PartnerTransaction::whereDate('created_at', $day['date'])
+                ->sum('invoice_amount');
+        });
+
+        // Partner registrations per day (last 7 days)
+        $partnerChartData = $last7Days->map(function ($day) {
+            return User::whereHas('role', function ($q) {
+                $q->where('name', 'partner');
+            })
+            ->whereDate('created_at', $day['date'])
+            ->count();
+        });
+
+        $chartLabels = $last7Days->pluck('label');
+
+        return view('admin.dashboard.index', compact(
+            'stats',
+            'recentCustomers',
+            'recentTransactions',
+            'recentPartners',
+            'user',
+            'chartLabels',
+            'customerChartData',
+            'transactionChartData',
+            'partnerChartData'
+        ));
     }
 
     public function analytics()

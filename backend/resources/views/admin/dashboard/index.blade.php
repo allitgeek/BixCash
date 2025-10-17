@@ -113,7 +113,7 @@
     </div>
 
     {{-- Recent Activity Cards - 3 Column Layout --}}
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
         {{-- Recent Customers Card --}}
         <div class="bg-white rounded-xl border border-gray-200/60 shadow-sm overflow-hidden">
             <div class="px-5 py-4 border-b border-gray-200/60 bg-gradient-to-r from-blue-50/50 to-transparent">
@@ -205,4 +205,159 @@
             </div>
         </div>
     </div>
+
+    {{-- 7-Day Trend Charts --}}
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        {{-- Customer Registrations Chart --}}
+        <div class="bg-white rounded-xl border border-gray-200/60 shadow-sm overflow-hidden p-5">
+            <h4 class="text-sm font-semibold text-gray-700 mb-4">Customer Registrations (7 Days)</h4>
+            <canvas id="customerChart" height="120"></canvas>
+        </div>
+
+        {{-- Transactions Chart --}}
+        <div class="bg-white rounded-xl border border-gray-200/60 shadow-sm overflow-hidden p-5">
+            <h4 class="text-sm font-semibold text-gray-700 mb-4">Transaction Volume (7 Days)</h4>
+            <canvas id="transactionChart" height="120"></canvas>
+        </div>
+
+        {{-- Partner Registrations Chart --}}
+        <div class="bg-white rounded-xl border border-gray-200/60 shadow-sm overflow-hidden p-5">
+            <h4 class="text-sm font-semibold text-gray-700 mb-4">Partner Registrations (7 Days)</h4>
+            <canvas id="partnerChart" height="120"></canvas>
+        </div>
+    </div>
 @endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+    // Chart configuration
+    const chartLabels = @json($chartLabels);
+    const customerData = @json($customerChartData);
+    const transactionData = @json($transactionChartData);
+    const partnerData = @json($partnerChartData);
+
+    // Common chart options
+    const commonOptions = {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+            legend: {
+                display: false
+            },
+            tooltip: {
+                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                padding: 12,
+                cornerRadius: 8,
+                titleFont: {
+                    size: 13
+                },
+                bodyFont: {
+                    size: 12
+                }
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    precision: 0,
+                    font: {
+                        size: 11
+                    }
+                },
+                grid: {
+                    color: 'rgba(0, 0, 0, 0.05)'
+                }
+            },
+            x: {
+                ticks: {
+                    font: {
+                        size: 11
+                    }
+                },
+                grid: {
+                    display: false
+                }
+            }
+        }
+    };
+
+    // Customer Chart
+    new Chart(document.getElementById('customerChart'), {
+        type: 'line',
+        data: {
+            labels: chartLabels,
+            datasets: [{
+                label: 'Customers',
+                data: customerData,
+                borderColor: 'rgb(59, 130, 246)',
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4,
+                pointBackgroundColor: 'rgb(59, 130, 246)',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 4,
+                pointHoverRadius: 6
+            }]
+        },
+        options: commonOptions
+    });
+
+    // Transaction Chart
+    new Chart(document.getElementById('transactionChart'), {
+        type: 'bar',
+        data: {
+            labels: chartLabels,
+            datasets: [{
+                label: 'Amount ($)',
+                data: transactionData,
+                backgroundColor: 'rgba(34, 197, 94, 0.8)',
+                borderColor: 'rgb(34, 197, 94)',
+                borderWidth: 0,
+                borderRadius: 6,
+                hoverBackgroundColor: 'rgba(34, 197, 94, 1)'
+            }]
+        },
+        options: {
+            ...commonOptions,
+            plugins: {
+                ...commonOptions.plugins,
+                tooltip: {
+                    ...commonOptions.plugins.tooltip,
+                    callbacks: {
+                        label: function(context) {
+                            return 'Amount: $' + context.parsed.y.toFixed(2);
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // Partner Chart
+    new Chart(document.getElementById('partnerChart'), {
+        type: 'line',
+        data: {
+            labels: chartLabels,
+            datasets: [{
+                label: 'Partners',
+                data: partnerData,
+                borderColor: 'rgb(249, 115, 22)',
+                backgroundColor: 'rgba(249, 115, 22, 0.1)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4,
+                pointBackgroundColor: 'rgb(249, 115, 22)',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 4,
+                pointHoverRadius: 6
+            }]
+        },
+        options: commonOptions
+    });
+</script>
+@endpush
