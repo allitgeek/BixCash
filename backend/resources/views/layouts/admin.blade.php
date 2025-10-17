@@ -16,7 +16,7 @@
                 {{-- Sidebar content --}}
                 <div class="flex flex-col flex-grow bg-gradient-to-b from-[#021c47] to-[#032a6b] overflow-y-auto border-r border-white/10 shadow-2xl">
                     {{-- Logo/Brand --}}
-                    <div class="flex items-center flex-shrink-0 px-6 py-8 border-b border-white/10 bg-white/5 backdrop-blur-sm">
+                    <div class="flex items-center flex-shrink-0 px-6 py-5 border-b border-white/10 bg-white/5 backdrop-blur-sm">
                         <div class="w-full text-center">
                             <h2 class="text-3xl font-bold text-white tracking-tight mb-1">BixCash</h2>
                             <p class="text-sm font-medium text-blue-200/80 uppercase tracking-wider">Admin Panel</p>
@@ -187,7 +187,7 @@
         <div class="flex-1 overflow-auto focus:outline-none">
             {{-- Top Header --}}
             <header class="bg-white/80 backdrop-blur-xl border-b border-gray-200/50 sticky top-0 z-40 shadow-sm">
-                <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="max-w-full mx-auto px-6">
                     <div class="flex items-center justify-between h-14">
                         {{-- Page Title --}}
                         <h1 class="text-xl font-bold text-gray-900 tracking-tight">@yield('page-title', 'Dashboard')</h1>
@@ -216,7 +216,7 @@
             </header>
 
             {{-- Main Content --}}
-            <main class="max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <main class="max-w-full mx-auto px-6 py-4">
                 {{-- Flash Messages --}}
                 @if (session('success'))
                     <div class="mb-6 rounded-xl bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 p-4 shadow-lg shadow-green-500/10">
