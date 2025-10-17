@@ -7,7 +7,7 @@
     <title>Transaction History - BixCash</title>
     @vite(['resources/css/app.css'])
 </head>
-<body class="bg-gradient-to-br from-blue-900 via-blue-950 to-gray-900 min-h-screen pb-24">
+<body class="bg-gray-50 min-h-screen pb-24">
 
     {{-- Glassmorphism Header --}}
     <header class="bg-white/90 backdrop-blur-xl shadow-lg shadow-blue-900/10 sticky top-0 z-40">
