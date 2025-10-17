@@ -8,6 +8,15 @@
     <title>Partner Dashboard - BixCash</title>
     @vite(['resources/css/app.css'])
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+            animation: fadeIn 0.3s ease-out;
+        }
+    </style>
 </head>
 <body class="bg-gradient-to-br from-gray-50 via-blue-50/20 to-gray-50 min-h-screen pb-20" style="margin: 0; padding: 0;">
 
@@ -79,13 +88,17 @@
                 <h3 class="text-xl font-bold bg-gradient-to-r from-purple-600 to-violet-600 bg-clip-text text-transparent">{{ $stats['total_transactions'] }}</h3>
             </div>
 
-            {{-- Pending Card - Orange Theme --}}
-            <div class="bg-gradient-to-br from-orange-50/80 to-amber-50/50 rounded-xl border-l-4 border-orange-600 p-2 sm:p-3 shadow-lg shadow-orange-900/10 hover:shadow-xl hover:-translate-y-1 hover:shadow-orange-900/20 transition-all duration-300">
+            {{-- Pending Card - Orange Theme with Pulse Animation --}}
+            <div class="bg-gradient-to-br from-orange-50/80 to-amber-50/50 rounded-xl border-l-4 border-orange-600 p-2 sm:p-3 shadow-lg shadow-orange-900/10 hover:shadow-xl hover:-translate-y-1 hover:shadow-orange-900/20 transition-all duration-300 @if($stats['pending_confirmations'] > 0) animate-pulse @endif">
                 <div class="flex items-center gap-2 mb-1.5">
-                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-600 to-amber-600 flex items-center justify-center text-white shadow-md">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-600 to-amber-600 flex items-center justify-center text-white shadow-md relative">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
+                        @if($stats['pending_confirmations'] > 0)
+                        <span class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 border-2 border-white rounded-full animate-ping"></span>
+                        <span class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 border-2 border-white rounded-full"></span>
+                        @endif
                     </div>
                     <p class="text-xs text-gray-700 font-semibold">Pending</p>
                 </div>
@@ -121,7 +134,7 @@
 
             <div class="divide-y divide-gray-200/60">
                 @forelse($recentTransactions as $transaction)
-                <div class="p-4 hover:bg-gradient-to-r hover:from-blue-50/50 hover:to-purple-50/30 transition-all duration-200 flex items-center justify-between">
+                <div class="p-4 hover:bg-gradient-to-r hover:from-blue-50/50 hover:to-purple-50/30 transition-all duration-200 flex items-center justify-between animate-fadeIn">
                     <div class="flex-1 min-w-0">
                         <h4 class="text-sm font-semibold text-gray-900 truncate">{{ $transaction->customer->name }}</h4>
                         <p class="text-xs text-gray-500 mt-0.5">{{ $transaction->transaction_code }} • {{ $transaction->created_at->format('M d, h:i A') }}</p>
@@ -150,12 +163,20 @@
                     </div>
                 </div>
                 @empty
-                <div class="text-center py-10">
-                    <svg class="w-12 h-12 mx-auto text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                    <p class="text-gray-500 font-medium text-sm">No transactions yet</p>
-                    <p class="text-xs text-gray-400 mt-1">Create your first transaction above!</p>
+                <div class="text-center py-12 px-4">
+                    <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center animate-bounce">
+                        <svg class="w-10 h-10 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                    </div>
+                    <h4 class="text-gray-900 font-bold text-base mb-2">Ready to Get Started?</h4>
+                    <p class="text-gray-500 text-sm mb-4">Create your first transaction using the button above</p>
+                    <button onclick="openTransactionModal()" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white text-sm font-semibold shadow-lg shadow-green-500/30 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
+                        Create First Transaction
+                    </button>
                 </div>
                 @endforelse
             </div>
@@ -198,12 +219,12 @@
         </div>
     </nav>
 
-    {{-- Transaction Modal --}}
-    <div id="transactionModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    {{-- Transaction Modal with Accessibility --}}
+    <div id="transactionModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto shadow-2xl">
             <div class="px-6 py-5 border-b border-gray-200 flex items-center justify-between bg-gradient-to-r from-blue-50/70 to-transparent">
-                <h3 class="text-xl font-bold bg-gradient-to-r from-blue-900 to-blue-700 bg-clip-text text-transparent">New Transaction</h3>
-                <button onclick="closeTransactionModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                <h3 id="modalTitle" class="text-xl font-bold bg-gradient-to-r from-blue-900 to-blue-700 bg-clip-text text-transparent">New Transaction</h3>
+                <button onclick="closeTransactionModal()" aria-label="Close modal" class="text-gray-400 hover:text-gray-600 transition-colors">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
@@ -222,8 +243,12 @@
                             <input type="text" id="customerPhone" class="flex-1 px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all" placeholder="3001234567" maxlength="10" pattern="[0-9]{10}">
                         </div>
                     </div>
-                    <button onclick="searchCustomer()" class="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-xl py-3 font-semibold shadow-lg shadow-green-500/30 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200">
-                        Search Customer
+                    <button id="searchBtn" onclick="searchCustomer()" class="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-xl py-3 font-semibold shadow-lg shadow-green-500/30 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2">
+                        <svg id="searchSpinner" class="hidden animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span id="searchBtnText">Search Customer</span>
                     </button>
                 </div>
 
@@ -234,8 +259,12 @@
                         <label class="block text-sm font-semibold text-gray-700 mb-2">Invoice Amount (Rs)</label>
                         <input type="number" id="invoiceAmount" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all" placeholder="0" min="1" step="0.01">
                     </div>
-                    <button onclick="createTransaction()" class="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-xl py-3 font-semibold shadow-lg shadow-green-500/30 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200">
-                        Create Transaction
+                    <button id="createBtn" onclick="createTransaction()" class="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-xl py-3 font-semibold shadow-lg shadow-green-500/30 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2">
+                        <svg id="createSpinner" class="hidden animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span id="createBtnText">Create Transaction</span>
                     </button>
                     <button onclick="backToStep1()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl py-3 font-semibold transition-colors duration-200">
                         Back
@@ -261,12 +290,21 @@
         function openTransactionModal() {
             document.getElementById('transactionModal').classList.remove('hidden');
             resetModal();
+            // Focus first input
+            setTimeout(() => document.getElementById('customerPhone')?.focus(), 100);
         }
 
         function closeTransactionModal() {
             document.getElementById('transactionModal').classList.add('hidden');
             resetModal();
         }
+
+        // ESC key to close modal
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !document.getElementById('transactionModal').classList.contains('hidden')) {
+                closeTransactionModal();
+            }
+        });
 
         function resetModal() {
             showStep(1);
@@ -300,6 +338,14 @@
                 return;
             }
 
+            // Show loading state
+            const btn = document.getElementById('searchBtn');
+            const btnText = document.getElementById('searchBtnText');
+            const spinner = document.getElementById('searchSpinner');
+            btn.disabled = true;
+            btnText.textContent = 'Searching...';
+            spinner.classList.remove('hidden');
+
             try {
                 const response = await fetch('{{ route('partner.search-customer') }}', {
                     method: 'POST',
@@ -321,6 +367,11 @@
                 }
             } catch (error) {
                 showAlert('Network error. Please try again.');
+            } finally {
+                // Hide loading state
+                btn.disabled = false;
+                btnText.textContent = 'Search Customer';
+                spinner.classList.add('hidden');
             }
         }
 
@@ -345,6 +396,14 @@
                 return;
             }
 
+            // Show loading state
+            const btn = document.getElementById('createBtn');
+            const btnText = document.getElementById('createBtnText');
+            const spinner = document.getElementById('createSpinner');
+            btn.disabled = true;
+            btnText.textContent = 'Creating...';
+            spinner.classList.remove('hidden');
+
             try {
                 const response = await fetch('{{ route('partner.create-transaction') }}', {
                     method: 'POST',
@@ -367,6 +426,11 @@
                 }
             } catch (error) {
                 showAlert('Network error. Please try again.');
+            } finally {
+                // Hide loading state
+                btn.disabled = false;
+                btnText.textContent = 'Create Transaction';
+                spinner.classList.add('hidden');
             }
         }
 
