@@ -34,7 +34,18 @@ class DashboardController extends Controller
             'pending_confirmations' => PartnerTransaction::where('partner_id', $partner->id)
                 ->where('status', 'pending_confirmation')
                 ->count(),
+            'today_revenue' => PartnerTransaction::where('partner_id', $partner->id)
+                ->where('status', 'confirmed')
+                ->whereDate('transaction_date', today())
+                ->sum('invoice_amount'),
+            'notification_count' => PartnerTransaction::where('partner_id', $partner->id)
+                ->where('status', 'pending_confirmation')
+                ->count(),
         ];
+
+        // Get time-based greeting
+        $hour = now()->hour;
+        $greeting = $hour < 12 ? 'morning' : ($hour < 17 ? 'afternoon' : 'evening');
 
         // Get next profit batch date
         $nextBatchSchedule = BatchScheduleConfig::getActiveSchedule();
@@ -47,12 +58,22 @@ class DashboardController extends Controller
             ->limit(5)
             ->get();
 
+        // Get pending transactions for notification dropdown
+        $pendingTransactions = PartnerTransaction::where('partner_id', $partner->id)
+            ->where('status', 'pending_confirmation')
+            ->with('customer')
+            ->orderBy('created_at', 'desc')
+            ->limit(5)
+            ->get();
+
         return view('partner.dashboard', compact(
             'partner',
             'partnerProfile',
             'stats',
             'nextBatchDate',
-            'recentTransactions'
+            'recentTransactions',
+            'greeting',
+            'pendingTransactions'
         ));
     }
 

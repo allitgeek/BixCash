@@ -20,41 +20,132 @@
 </head>
 <body class="bg-gradient-to-br from-gray-50 via-blue-50/20 to-gray-50 min-h-screen pb-20" style="margin: 0; padding: 0;">
 
-    {{-- Header with Logo and New Transaction Button --}}
-    <header class="bg-gray-100 shadow-md shadow-gray-900/5 sticky top-0 z-40">
-        <div class="max-w-7xl mx-auto px-4 py-4">
-            <div class="flex items-center justify-between gap-4">
-                <div class="flex items-center gap-3">
-                    {{-- Logo Placeholder (You can replace with partner logo) --}}
-                    <div class="w-24 h-24 rounded-2xl bg-gradient-to-br from-blue-600 to-blue-900 flex items-center justify-center shadow-lg flex-shrink-0">
-                        <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    {{-- Enhanced Modern Header with Glassmorphism --}}
+    <header class="bg-white/80 backdrop-blur-xl shadow-lg shadow-blue-900/5 border-b border-gray-200/60 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 py-3">
+            <div class="flex items-center justify-between gap-3">
+                {{-- Left: Logo + Business Info --}}
+                <div class="flex items-center gap-3 flex-1 min-w-0">
+                    {{-- Logo (64px) --}}
+                    <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-gradient-to-br from-blue-600 to-blue-900 flex items-center justify-center shadow-md flex-shrink-0">
+                        <svg class="w-7 h-7 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                         </svg>
-                        {{-- Uncomment below to use actual logo --}}
+                        {{-- Uncomment to use actual logo --}}
                         {{-- @if($partnerProfile->logo)
-                        <img src="{{ asset('storage/' . $partnerProfile->logo) }}" alt="Logo" class="w-full h-full object-cover rounded-2xl">
-                        @else
-                        <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                        </svg>
+                        <img src="{{ asset('storage/' . $partnerProfile->logo) }}" alt="Logo" class="w-full h-full object-cover rounded-xl">
                         @endif --}}
                     </div>
-                    <div class="flex-1">
-                        <h1 class="text-xl font-bold bg-gradient-to-r from-blue-900 to-blue-700 bg-clip-text text-transparent">
+
+                    {{-- Business Info --}}
+                    <div class="flex-1 min-w-0">
+                        <div class="hidden sm:block">
+                            <p class="text-xs font-semibold text-gray-700 mb-0.5">Good {{ $greeting }}, {{ $partnerProfile->contact_person_name }}! 👋</p>
+                        </div>
+                        <h1 class="text-base sm:text-lg font-bold bg-gradient-to-r from-blue-900 to-blue-700 bg-clip-text text-transparent truncate">
                             {{ $partnerProfile->business_name }}
                         </h1>
-                        <p class="text-sm text-gray-600 mt-0.5 capitalize">{{ $partnerProfile->business_type }}</p>
-                    </div>
-                    <div class="px-3 py-1.5 rounded-full bg-gradient-to-r from-blue-900 to-blue-700 text-white text-xs font-bold shadow-md shadow-blue-900/30">
-                        Partner
+                        <div class="flex items-center gap-2 text-xs">
+                            <span class="text-gray-600 capitalize">{{ $partnerProfile->business_type }}</span>
+                            <span class="text-gray-400">•</span>
+                            <div class="flex items-center gap-1">
+                                <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
+                                <span class="text-green-700 font-semibold">Active</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <button onclick="openTransactionModal()" class="px-4 py-2 rounded-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white text-sm font-semibold shadow-md shadow-green-500/30 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-2 whitespace-nowrap">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                    </svg>
-                    New Transaction
-                </button>
+
+                {{-- Right: Stats + Actions --}}
+                <div class="flex items-center gap-1.5 sm:gap-2">
+                    {{-- Today's Revenue Pill --}}
+                    <div class="hidden md:flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-full shadow-sm">
+                        <svg class="w-3.5 h-3.5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span class="text-xs font-bold text-green-700">Rs {{ number_format($stats['today_revenue'], 0) }}</span>
+                    </div>
+
+                    {{-- Pending Badge (only if > 0) --}}
+                    @if($stats['pending_confirmations'] > 0)
+                    <div class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-orange-50 to-yellow-50 border border-orange-200 rounded-full shadow-sm animate-pulse">
+                        <svg class="w-3.5 h-3.5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span class="text-xs font-bold text-orange-700">{{ $stats['pending_confirmations'] }}</span>
+                    </div>
+                    @endif
+
+                    {{-- Notification Bell --}}
+                    <div x-data="{ open: false }" class="relative">
+                        <button @click="open = !open" class="relative p-2 rounded-lg hover:bg-gray-100 transition-colors">
+                            <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                            </svg>
+                            @if($stats['notification_count'] > 0)
+                            <span class="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">{{ $stats['notification_count'] }}</span>
+                            @endif
+                        </button>
+
+                        {{-- Notification Dropdown --}}
+                        <div x-show="open" @click.away="open = false" x-transition class="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-2xl border border-gray-200 py-2 z-50">
+                            <div class="px-4 py-2 border-b border-gray-200">
+                                <p class="text-sm font-bold text-gray-800">Pending Confirmations</p>
+                            </div>
+                            @if($pendingTransactions->count() > 0)
+                                @foreach($pendingTransactions as $transaction)
+                                <div class="px-4 py-2.5 hover:bg-gray-50 transition-colors">
+                                    <p class="text-sm font-semibold text-gray-800">{{ $transaction->customer->name }}</p>
+                                    <p class="text-xs text-gray-500">Rs {{ number_format($transaction->invoice_amount, 0) }} • {{ $transaction->transaction_code }}</p>
+                                </div>
+                                @endforeach
+                            @else
+                                <div class="px-4 py-6 text-center text-sm text-gray-500">No pending confirmations</div>
+                            @endif
+                        </div>
+                    </div>
+
+                    {{-- Profile Dropdown --}}
+                    <div x-data="{ open: false }" class="relative">
+                        <button @click="open = !open" class="flex items-center gap-1.5 px-2 py-1.5 rounded-lg hover:bg-gray-100 transition-colors">
+                            <div class="w-7 h-7 rounded-full bg-gradient-to-br from-blue-600 to-blue-900 text-white text-xs font-bold flex items-center justify-center">
+                                {{ strtoupper(substr($partnerProfile->contact_person_name, 0, 1)) }}
+                            </div>
+                            <svg class="w-3 h-3 text-gray-600 hidden sm:block" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+
+                        {{-- Profile Menu --}}
+                        <div x-show="open" @click.away="open = false" x-transition class="absolute right-0 mt-2 w-52 bg-white rounded-xl shadow-2xl border border-gray-200 py-2 z-50">
+                            <a href="{{ route('partner.profile') }}" class="flex items-center gap-3 px-4 py-2.5 hover:bg-blue-50 transition-colors">
+                                <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                </svg>
+                                <span class="text-sm font-medium text-gray-700">View Profile</span>
+                            </a>
+                            <hr class="my-2 border-gray-200">
+                            <form method="POST" action="{{ route('partner.logout') }}">
+                                @csrf
+                                <button type="submit" class="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-red-50 text-red-600 transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                    </svg>
+                                    <span class="text-sm font-medium">Logout</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    {{-- New Transaction Button --}}
+                    <button onclick="openTransactionModal()" class="px-3 sm:px-4 py-2 rounded-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white text-sm font-semibold shadow-md shadow-green-500/30 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-2 whitespace-nowrap">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
+                        <span class="hidden sm:inline">New Transaction</span>
+                        <span class="sm:hidden">New</span>
+                    </button>
+                </div>
             </div>
         </div>
     </header>

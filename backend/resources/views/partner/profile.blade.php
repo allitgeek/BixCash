@@ -10,30 +10,30 @@
 </head>
 <body class="bg-gradient-to-br from-gray-50 via-blue-50/20 to-gray-50 min-h-screen pb-24" style="margin: 0; padding: 0;">
 
-    {{-- Header with Logout Button --}}
-    <header class="bg-gray-100 shadow-md shadow-gray-900/5 sticky top-0 z-40">
-        <div class="max-w-7xl mx-auto px-4 py-4">
+    {{-- Header with Glassmorphism --}}
+    <header class="bg-white/80 backdrop-blur-xl shadow-lg shadow-blue-900/5 border-b border-gray-200/60 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 py-3">
             <div class="flex items-center justify-between">
                 <div class="flex-1">
-                    <h1 class="text-xl font-bold bg-gradient-to-r from-blue-900 to-blue-700 bg-clip-text text-transparent">
+                    <h1 class="text-lg sm:text-xl font-bold bg-gradient-to-r from-blue-900 to-blue-700 bg-clip-text text-transparent">
                         Partner Profile
                     </h1>
-                    <p class="text-sm text-gray-500 mt-0.5">View and manage your profile</p>
+                    <p class="text-xs sm:text-sm text-gray-500 mt-0.5">View and manage your profile</p>
                 </div>
-                <div class="flex items-center gap-2">
-                    <a href="{{ route('partner.dashboard') }}" class="px-4 py-2 rounded-full bg-white border border-gray-200 text-gray-700 text-xs font-semibold hover:bg-gray-50 hover:border-gray-300 hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-1.5">
+                <div class="flex items-center gap-1.5 sm:gap-2">
+                    <a href="{{ route('partner.dashboard') }}" class="px-3 sm:px-4 py-2 rounded-full bg-white border border-gray-200 text-gray-700 text-xs font-semibold hover:bg-gray-50 hover:border-gray-300 hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-1.5 shadow-sm">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                         </svg>
-                        Back
+                        <span class="hidden sm:inline">Back</span>
                     </a>
                     <form method="POST" action="{{ route('partner.logout') }}" class="inline">
                         @csrf
-                        <button type="submit" class="px-4 py-2 rounded-full bg-gradient-to-r from-red-600 to-red-700 text-white text-xs font-semibold shadow-md shadow-red-500/30 hover:shadow-lg hover:shadow-red-500/40 hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-1.5">
+                        <button type="submit" class="px-3 sm:px-4 py-2 rounded-full bg-gradient-to-r from-red-600 to-red-700 text-white text-xs font-semibold shadow-md shadow-red-500/30 hover:shadow-lg hover:shadow-red-500/40 hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-1.5">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                             </svg>
-                            Logout
+                            <span class="hidden sm:inline">Logout</span>
                         </button>
                     </form>
                 </div>
