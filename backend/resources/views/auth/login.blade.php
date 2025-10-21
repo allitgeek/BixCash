@@ -304,7 +304,9 @@
         <a href="/" class="logo">
             <img src="/images/logos/logos-01.png" alt="BixCash Logo">
         </a>
-        <nav>
+
+        <!-- Desktop Navigation -->
+        <nav class="desktop-nav">
             <ul>
                 <li><a href="/#home">Home</a></li>
                 <li><a href="/#brands">Brands</a></li>
@@ -314,8 +316,46 @@
                 <li><a href="/#contact">Contact Us</a></li>
             </ul>
         </nav>
-        <!-- No Sign In button since we're on the login page -->
+
+        <!-- Mobile Menu Button -->
+        <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle mobile menu">
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+        </button>
     </header>
+
+    <!-- Mobile Navigation Overlay -->
+    <div class="mobile-nav-overlay" id="mobile-nav-overlay">
+        <div class="mobile-nav-content">
+            <div class="mobile-nav-header">
+                <img src="/images/logos/logos-01.png" alt="BixCash Logo" class="mobile-nav-logo">
+                <button class="mobile-nav-close" id="mobile-nav-close" aria-label="Close mobile menu">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <nav class="mobile-nav">
+                <ul>
+                    <li><a href="/#home" class="mobile-nav-link">Home</a></li>
+                    <li><a href="/#brands" class="mobile-nav-link">Brands</a></li>
+                    <li><a href="/#how-it-works" class="mobile-nav-link">How It Works</a></li>
+                    <li><a href="/#partner" class="mobile-nav-link">Partner with us</a></li>
+                    <li><a href="/#promotions" class="mobile-nav-link">Promotions</a></li>
+                    <li><a href="/#contact" class="mobile-nav-link">Contact Us</a></li>
+                </ul>
+                <div class="mobile-nav-auth">
+                    @auth
+                        <a href="{{ route('customer.dashboard') }}" class="mobile-auth-btn">
+                            <svg fill="currentColor" viewBox="0 0 20 20" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 0.5rem;"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
+                            {{ Auth::user()->name }}
+                        </a>
+                    @else
+                        <a href="{{ route('login') }}" class="mobile-auth-btn">Sign In</a>
+                    @endauth
+                </div>
+            </nav>
+        </div>
+    </div>
 
     <!-- Main Content -->
     <div class="main-content">
@@ -1201,7 +1241,85 @@
         // Initialize the authentication system when page loads
         document.addEventListener('DOMContentLoaded', () => {
             new BixCashAuth();
+            initializeMobileNavigation();
         });
+
+        // =================================
+        // MOBILE NAVIGATION SYSTEM
+        // =================================
+        function initializeMobileNavigation() {
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileNavOverlay = document.getElementById('mobile-nav-overlay');
+            const mobileNavClose = document.getElementById('mobile-nav-close');
+            const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+            const body = document.body;
+
+            // Check if elements exist
+            if (!mobileMenuBtn || !mobileNavOverlay || !mobileNavClose) {
+                console.log('Mobile navigation elements not found');
+                return;
+            }
+
+            // Open mobile menu
+            function openMobileMenu() {
+                mobileNavOverlay.classList.add('active');
+                mobileMenuBtn.classList.add('active');
+                body.classList.add('mobile-menu-open');
+
+                // Focus management for accessibility
+                setTimeout(() => {
+                    mobileNavClose.focus();
+                }, 100);
+            }
+
+            // Close mobile menu
+            function closeMobileMenu() {
+                mobileNavOverlay.classList.remove('active');
+                mobileMenuBtn.classList.remove('active');
+                body.classList.remove('mobile-menu-open');
+
+                // Return focus to menu button
+                setTimeout(() => {
+                    mobileMenuBtn.focus();
+                }, 100);
+            }
+
+            // Toggle menu
+            mobileMenuBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (mobileNavOverlay.classList.contains('active')) {
+                    closeMobileMenu();
+                } else {
+                    openMobileMenu();
+                }
+            });
+
+            // Close menu
+            mobileNavClose.addEventListener('click', () => {
+                closeMobileMenu();
+            });
+
+            // Close on link click
+            mobileNavLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    closeMobileMenu();
+                });
+            });
+
+            // Close when clicking on overlay background
+            mobileNavOverlay.addEventListener('click', (e) => {
+                if (e.target === mobileNavOverlay) {
+                    closeMobileMenu();
+                }
+            });
+
+            // Keyboard support - ESC to close
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && mobileNavOverlay.classList.contains('active')) {
+                    closeMobileMenu();
+                }
+            });
+        }
     </script>
 </body>
 </html>

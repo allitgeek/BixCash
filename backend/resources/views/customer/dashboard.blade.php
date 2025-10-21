@@ -21,12 +21,12 @@
                 @csrf
                 <div class="mb-5">
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Full Name *</label>
-                    <input type="text" name="name" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-base focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all" required placeholder="Enter your full name" value="{{ $user->name }}">
+                    <input type="text" name="name" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-base focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all" required placeholder="Enter your full name">
                 </div>
 
                 <div class="mb-5">
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Email (Optional)</label>
-                    <input type="email" name="email" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-base focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all" placeholder="your@email.com" value="{{ $user->email }}">
+                    <input type="email" name="email" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-base focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all" placeholder="your@email.com">
                     <p class="text-xs text-gray-500 mt-1">We'll use this for important updates</p>
                 </div>
 
