@@ -14,6 +14,11 @@ class UserController extends Controller
     {
         $query = User::with('role');
 
+        // Only show admin users (exclude customers and partners)
+        $query->whereHas('role', function ($q) {
+            $q->whereIn('name', ['super_admin', 'admin', 'moderator']);
+        });
+
         // Search functionality
         if ($request->filled('search')) {
             $search = $request->search;
@@ -40,14 +45,17 @@ class UserController extends Controller
         }
 
         $users = $query->orderBy('created_at', 'desc')->paginate(15);
-        $roles = Role::all();
+
+        // Only show admin roles in the filter dropdown
+        $roles = Role::whereIn('name', ['super_admin', 'admin', 'moderator'])->get();
 
         return view('admin.users.index', compact('users', 'roles'));
     }
 
     public function create()
     {
-        $roles = Role::all();
+        // Only allow creating admin users (not customers or partners)
+        $roles = Role::whereIn('name', ['super_admin', 'admin', 'moderator'])->get();
         return view('admin.users.create', compact('roles'));
     }
 
@@ -78,7 +86,8 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
-        $roles = Role::all();
+        // Only allow editing admin users (not customers or partners)
+        $roles = Role::whereIn('name', ['super_admin', 'admin', 'moderator'])->get();
         return view('admin.users.edit', compact('user', 'roles'));
     }
 

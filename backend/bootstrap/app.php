@@ -35,5 +35,16 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        // Handle CSRF token mismatch (419 Page Expired)
+        $exceptions->render(function (\Illuminate\Session\TokenMismatchException $e, Request $request) {
+            // If it's an admin login request, redirect to admin login
+            if ($request->is('admin/login') || $request->is('admin/*')) {
+                return redirect()->route('admin.login')
+                    ->withErrors(['session' => 'Your session has expired. Please login again.']);
+            }
+
+            // For other routes, redirect to home or respective login
+            return redirect('/login')
+                ->withErrors(['session' => 'Your session has expired. Please login again.']);
+        });
     })->create();

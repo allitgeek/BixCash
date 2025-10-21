@@ -8,7 +8,7 @@
     <title>My Profile - BixCash</title>
     @vite(['resources/css/app.css'])
 </head>
-<body class="bg-gradient-to-br from-gray-50 via-blue-50/20 to-gray-50 min-h-screen pb-24" style="margin: 0; padding: 0;">
+<body class="bg-gradient-to-br from-gray-50 via-blue-50/20 to-gray-50 min-h-screen" style="margin: 0; padding: 0;">
 
     {{-- Header with Logout Button --}}
     <header class="bg-gray-100 shadow-md shadow-gray-900/5 sticky top-0 z-40">
@@ -42,7 +42,7 @@
     </header>
 
     {{-- Main Content --}}
-    <div class="max-w-5xl mx-auto px-4 py-6 space-y-6">
+    <div class="max-w-5xl mx-auto px-4 py-6 space-y-6" style="padding-bottom: 10rem;">
 
         {{-- Profile Header Card --}}
         <div class="bg-white rounded-xl border border-gray-200/60 shadow-lg shadow-blue-900/5 overflow-hidden">

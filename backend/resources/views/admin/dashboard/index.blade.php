@@ -162,7 +162,7 @@
                         <li class="p-3 rounded-lg hover:bg-blue-50/50 transition-colors duration-150">
                             <div class="flex items-center justify-between mb-1">
                                 <p class="text-xs text-gray-500">{{ $transaction->customer->name ?? 'N/A' }}</p>
-                                <p class="text-sm font-bold text-green-600">${{ number_format($transaction->invoice_amount, 2) }}</p>
+                                <p class="text-sm font-bold text-green-600">Rs. {{ number_format($transaction->invoice_amount, 2) }}</p>
                             </div>
                             <p class="text-xs text-gray-400 truncate">→ {{ $transaction->partner->partnerProfile->business_name ?? 'N/A' }}</p>
                         </li>
@@ -315,7 +315,7 @@
         data: {
             labels: chartLabels,
             datasets: [{
-                label: 'Amount ($)',
+                label: 'Amount (Rs.)',
                 data: transactionData,
                 backgroundColor: 'rgba(34, 197, 94, 0.8)',
                 borderColor: 'rgb(30, 64, 175)',
@@ -332,7 +332,7 @@
                     ...commonOptions.plugins.tooltip,
                     callbacks: {
                         label: function(context) {
-                            return 'Amount: $' + context.parsed.y.toFixed(2);
+                            return 'Amount: Rs. ' + context.parsed.y.toFixed(2);
                         }
                     }
                 }

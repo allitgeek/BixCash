@@ -11,7 +11,7 @@
 <body class="bg-gray-50 min-h-screen pb-24" style="margin: 0; padding: 0;">
 
     {{-- Header --}}
-    <header class="bg-gradient-to-br from-blue-900 via-blue-950 to-gray-900 text-white px-4 py-6 shadow-xl">
+    <header class="bg-gradient-to-br from-blue-900 via-blue-950 to-gray-900 text-white px-4 py-8 shadow-xl">
         <div class="max-w-7xl mx-auto flex items-center gap-3">
             <a href="{{ route('customer.dashboard') }}" class="text-white hover:text-blue-200 transition-colors">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -23,7 +23,7 @@
     </header>
 
     {{-- Wallet Balance Card --}}
-    <div class="max-w-7xl mx-auto px-4 -mt-8 relative z-10">
+    <div class="max-w-7xl mx-auto px-4 -mt-6 relative z-10">
         <div class="bg-gradient-to-br from-blue-600 to-blue-900 rounded-2xl p-6 shadow-xl shadow-blue-900/20 text-white">
             <div class="text-sm text-blue-100 mb-2 text-center">Available Balance</div>
             <div class="text-4xl font-bold text-center mb-6">Rs {{ number_format($wallet->balance, 2) }}</div>

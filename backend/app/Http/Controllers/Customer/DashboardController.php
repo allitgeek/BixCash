@@ -303,7 +303,16 @@ class DashboardController extends Controller
             ->latest('purchase_date')
             ->paginate(15);
 
-        return view('customer.purchase-history', compact('purchases'));
+        // Calculate total spent and total cashback
+        $totalSpent = PurchaseHistory::where('user_id', $user->id)
+            ->where('status', 'confirmed')
+            ->sum('amount');
+
+        $totalCashback = PurchaseHistory::where('user_id', $user->id)
+            ->where('status', 'confirmed')
+            ->sum('cashback_amount');
+
+        return view('customer.purchase-history', compact('purchases', 'totalSpent', 'totalCashback'));
     }
 
     /**
