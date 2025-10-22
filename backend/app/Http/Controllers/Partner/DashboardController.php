@@ -335,7 +335,23 @@ class DashboardController extends Controller
             'email' => 'nullable|email|max:255',
             'business_address' => 'nullable|string|max:500',
             'business_city' => 'nullable|string|max:100',
+            'logo' => 'nullable|image|mimes:jpeg,jpg,png|max:2048', // Max 2MB
         ]);
+
+        // Handle logo upload
+        if ($request->hasFile('logo')) {
+            // Delete old logo if exists
+            if ($partnerProfile->logo) {
+                $oldLogoPath = storage_path('app/public/' . $partnerProfile->logo);
+                if (file_exists($oldLogoPath)) {
+                    unlink($oldLogoPath);
+                }
+            }
+
+            // Store new logo
+            $logoPath = $request->file('logo')->store('partner-logos', 'public');
+            $partnerProfile->update(['logo' => $logoPath]);
+        }
 
         // Update user
         $partner->update([

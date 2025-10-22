@@ -17,9 +17,15 @@
             {{-- Top Row: Avatar + User Info + Actions --}}
             <div class="flex items-center justify-between gap-3 mb-3">
                 <div class="flex items-center gap-3 flex-1 min-w-0">
-                    {{-- User Avatar --}}
-                    <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-blue-600 to-blue-900 text-white flex items-center justify-center shadow-lg flex-shrink-0 border-4 border-white">
-                        <span class="text-xl sm:text-2xl font-bold">{{ strtoupper(substr($partnerProfile->contact_person_name, 0, 1)) }}</span>
+                    {{-- Partner Brand Logo --}}
+                    <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-gradient-to-br from-blue-600 to-blue-900 flex items-center justify-center shadow-md flex-shrink-0 overflow-hidden">
+                        @if($partnerProfile->logo)
+                        <img src="{{ asset('storage/' . $partnerProfile->logo) }}" alt="Logo" class="w-full h-full object-cover rounded-xl">
+                        @else
+                        <svg class="w-7 h-7 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                        </svg>
+                        @endif
                     </div>
                     {{-- User Info --}}
                     <div class="flex-1 min-w-0">
@@ -101,20 +107,26 @@
                 {{-- Content --}}
                 <div class="relative px-6 py-8">
                     <div class="flex items-center gap-6">
-                        {{-- Partner Logo (Replace this with actual logo) --}}
-                        <div class="w-24 h-24 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-xl border-4 border-white/30 overflow-hidden">
-                            {{-- Default Icon (shown when no logo uploaded) --}}
-                            <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                            </svg>
-                            {{-- Uncomment below to use actual partner logo --}}
-                            {{-- @if($partnerProfile->logo)
-                            <img src="{{ asset('storage/' . $partnerProfile->logo) }}" alt="{{ $partnerProfile->business_name }} Logo" class="w-full h-full object-cover">
-                            @else
-                            <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                            </svg>
-                            @endif --}}
+                        {{-- Partner Logo with Click-to-Upload (64x64px to match all headers) --}}
+                        <div class="relative group cursor-pointer" onclick="document.getElementById('logoInput').click()">
+                            <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-xl border-4 border-white/30 overflow-hidden">
+                                @if($partnerProfile->logo)
+                                <img src="{{ asset('storage/' . $partnerProfile->logo) }}" alt="{{ $partnerProfile->business_name }} Logo" class="w-full h-full object-cover" id="logoPreview">
+                                @else
+                                <svg class="w-7 h-7 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                </svg>
+                                @endif
+                            </div>
+                            {{-- Upload overlay on hover --}}
+                            <div class="absolute inset-0 bg-black/50 backdrop-blur-sm rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200">
+                                <div class="text-center">
+                                    <svg class="w-6 h-6 text-white mx-auto mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    <p class="text-[10px] text-white font-semibold">Upload</p>
+                                </div>
+                            </div>
                         </div>
 
                         {{-- Info --}}
@@ -322,6 +334,58 @@
             </a>
         </div>
     </nav>
+
+    {{-- Hidden Logo Upload Form --}}
+    <form id="logoForm" action="{{ route('partner.profile.update') }}" method="POST" enctype="multipart/form-data" class="hidden">
+        @csrf
+        <input type="file" id="logoInput" name="logo" accept="image/jpeg,image/jpg,image/png" onchange="handleLogoUpload(event)">
+        <input type="hidden" name="contact_person_name" value="{{ $partnerProfile->contact_person_name }}">
+    </form>
+
+    {{-- JavaScript for Logo Upload --}}
+    <script>
+        function handleLogoUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // Validate file size (max 2MB)
+            if (file.size > 2 * 1024 * 1024) {
+                alert('File size must be less than 2MB');
+                event.target.value = '';
+                return;
+            }
+
+            // Validate file type
+            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+            if (!allowedTypes.includes(file.type)) {
+                alert('Only JPG and PNG images are allowed');
+                event.target.value = '';
+                return;
+            }
+
+            // Show preview
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const preview = document.getElementById('logoPreview');
+                if (preview) {
+                    preview.src = e.target.result;
+                } else {
+                    // Create preview if not exists
+                    const logoContainer = document.querySelector('.w-24.h-24.rounded-2xl');
+                    logoContainer.innerHTML = `<img src="${e.target.result}" alt="Logo Preview" class="w-full h-full object-cover" id="logoPreview">`;
+                }
+            };
+            reader.readAsDataURL(file);
+
+            // Auto-submit form after file selection
+            if (confirm('Upload this logo?')) {
+                document.getElementById('logoForm').submit();
+            } else {
+                event.target.value = '';
+                location.reload(); // Reset preview
+            }
+        }
+    </script>
 
 </body>
 </html>

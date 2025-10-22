@@ -2312,6 +2312,23 @@ html {
     .footer-links {
         grid-template-columns: repeat(2, 1fr);
         gap: 2rem;
+        text-align: left;
+    }
+
+    .footer-column {
+        text-align: left;
+    }
+
+    .footer-column-title {
+        text-align: left;
+    }
+
+    .footer-menu {
+        text-align: left;
+    }
+
+    .footer-contact {
+        text-align: left;
     }
 
     .footer-social {

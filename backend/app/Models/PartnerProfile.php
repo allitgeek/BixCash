@@ -11,6 +11,8 @@ class PartnerProfile extends Model
     protected $fillable = [
         'user_id',
         'business_name',
+        'contact_person_name',
+        'logo',
         'business_type',
         'business_license',
         'business_description',
@@ -26,7 +28,10 @@ class PartnerProfile extends Model
         'rejection_reason',
         'approved_at',
         'approved_by',
-        'is_featured'
+        'is_featured',
+        'registration_date',
+        'approval_notes',
+        'rejection_notes'
     ];
 
     protected $casts = [
