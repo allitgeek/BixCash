@@ -391,4 +391,37 @@ class PartnerController extends Controller
 
         return back()->with('success', 'Business logo updated successfully!');
     }
+
+    /**
+     * Remove partner logo
+     */
+    public function removeLogo($id)
+    {
+        $partner = User::with('partnerProfile')->findOrFail($id);
+
+        if (!$partner->isPartner()) {
+            return back()->withErrors(['error' => 'Invalid partner account']);
+        }
+
+        $partnerProfile = $partner->partnerProfile;
+
+        if (!$partnerProfile) {
+            return back()->withErrors(['error' => 'Partner profile not found']);
+        }
+
+        if ($partnerProfile->logo) {
+            // Delete logo file
+            $logoPath = storage_path('app/public/' . $partnerProfile->logo);
+            if (file_exists($logoPath)) {
+                unlink($logoPath);
+            }
+
+            // Update database
+            $partnerProfile->update(['logo' => null]);
+
+            return back()->with('success', 'Business logo removed successfully!');
+        }
+
+        return back()->with('info', 'No logo to remove.');
+    }
 }

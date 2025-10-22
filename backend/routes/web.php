@@ -108,6 +108,7 @@ Route::prefix('partner')->name('partner.')->middleware(['auth', 'partner'])->gro
     // Profile
     Route::get('/profile', [PartnerDashboard::class, 'profile'])->name('profile');
     Route::post('/profile', [PartnerDashboard::class, 'updateProfile'])->name('profile.update');
+    Route::delete('/profile/logo', [PartnerDashboard::class, 'removeLogo'])->name('profile.remove-logo');
 
     // Logout
     Route::post('/logout', [PartnerDashboard::class, 'logout'])->name('logout');

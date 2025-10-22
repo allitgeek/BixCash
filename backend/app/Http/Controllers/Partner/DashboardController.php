@@ -371,6 +371,32 @@ class DashboardController extends Controller
     }
 
     /**
+     * Remove partner logo
+     */
+    public function removeLogo()
+    {
+        $partner = Auth::user();
+        $partnerProfile = $partner->partnerProfile;
+
+        if ($partnerProfile && $partnerProfile->logo) {
+            // Delete logo file
+            $logoPath = storage_path('app/public/' . $partnerProfile->logo);
+            if (file_exists($logoPath)) {
+                unlink($logoPath);
+            }
+
+            // Update database
+            $partnerProfile->update(['logo' => null]);
+
+            return redirect()->route('partner.profile')
+                ->with('success', 'Logo removed successfully!');
+        }
+
+        return redirect()->route('partner.profile')
+            ->with('info', 'No logo to remove.');
+    }
+
+    /**
      * Logout
      */
     public function logout()

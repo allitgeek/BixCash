@@ -102,10 +102,17 @@
                     <td style="padding: 0.75rem;">
                         @if($partner->partnerProfile && $partner->partnerProfile->logo)
                             <div style="display: flex; align-items: center; gap: 1rem;">
-                                <img src="{{ asset('storage/' . $partner->partnerProfile->logo) }}" alt="Business Logo" style="width: 64px; height: 64px; object-fit: cover; border-radius: 8px; border: 2px solid #e2e8f0;">
+                                <img src="{{ asset('storage/' . $partner->partnerProfile->logo) }}" alt="Business Logo" style="width: 64px; height: 64px; object-fit: cover; border-radius: 8px; border: 2px solid #e2e8f0; background: white;">
                                 <button type="button" class="btn btn-sm btn-primary" onclick="document.getElementById('logo-modal').style.display='block'">
                                     Update Logo
                                 </button>
+                                <form method="POST" action="{{ route('admin.partners.remove-logo', $partner) }}" style="display: inline;" onsubmit="return confirm('Remove this logo? This action cannot be undone.');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-danger">
+                                        Remove Logo
+                                    </button>
+                                </form>
                             </div>
                         @else
                             <div style="display: flex; align-items: center; gap: 1rem;">
