@@ -97,6 +97,47 @@
     {{-- Main Content --}}
     <div class="max-w-5xl mx-auto px-4 py-6 space-y-6">
 
+        {{-- Success/Error Messages --}}
+        @if(session('success'))
+        <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded-lg shadow-md">
+            <div class="flex items-center">
+                <svg class="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                </svg>
+                <p class="text-sm font-medium text-green-800">{{ session('success') }}</p>
+            </div>
+        </div>
+        @endif
+
+        @if(session('error'))
+        <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg shadow-md">
+            <div class="flex items-center">
+                <svg class="w-5 h-5 text-red-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                </svg>
+                <p class="text-sm font-medium text-red-800">{{ session('error') }}</p>
+            </div>
+        </div>
+        @endif
+
+        @if($errors->any())
+        <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg shadow-md">
+            <div class="flex items-start">
+                <svg class="w-5 h-5 text-red-500 mr-3 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                </svg>
+                <div class="flex-1">
+                    <p class="text-sm font-medium text-red-800 mb-1">There were errors with your submission:</p>
+                    <ul class="list-disc list-inside text-sm text-red-700">
+                        @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            </div>
+        </div>
+        @endif
+
         {{-- Profile Header Card --}}
         <div class="bg-white rounded-xl border border-gray-200/60 shadow-lg shadow-blue-900/5 overflow-hidden">
             <div class="relative">
@@ -353,7 +394,12 @@
     <form id="logoForm" action="{{ route('partner.profile.update') }}" method="POST" enctype="multipart/form-data" class="hidden">
         @csrf
         <input type="file" id="logoInput" name="logo" accept="image/jpeg,image/jpg,image/png" onchange="handleLogoUpload(event)">
-        <input type="hidden" name="contact_person_name" value="{{ $partnerProfile->contact_person_name }}">
+        <input type="hidden" name="contact_person_name" value="{{ $partnerProfile->contact_person_name ?? '' }}">
+        <input type="hidden" name="email" value="{{ $partner->email ?? '' }}">
+        <input type="hidden" name="business_address" value="{{ $partnerProfile->business_address ?? '' }}">
+        <input type="hidden" name="business_city" value="{{ $partnerProfile->business_city ?? '' }}">
+        <input type="hidden" name="logo_only" value="1">
+        <button type="submit" id="logoSubmitBtn" style="display: none;">Submit</button>
     </form>
 
     {{-- JavaScript for Logo Upload --}}
@@ -393,9 +439,10 @@
             };
             reader.readAsDataURL(file);
 
-            // Auto-submit form after file selection
+            // Auto-submit form after file selection using submit button (more reliable for file uploads)
             if (confirm('Upload this logo?')) {
-                document.getElementById('logoForm').submit();
+                // Use hidden submit button instead of form.submit() for better file upload compatibility
+                document.getElementById('logoSubmitBtn').click();
             } else {
                 event.target.value = '';
                 location.reload(); // Reset preview

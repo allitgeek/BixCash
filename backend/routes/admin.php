@@ -92,6 +92,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::post('/', [PartnerController::class, 'store'])->name('store');
             Route::get('/pending', [PartnerController::class, 'pendingApplications'])->name('pending');
             Route::get('/{partner}', [PartnerController::class, 'show'])->name('show');
+            Route::get('/{partner}/edit', [PartnerController::class, 'edit'])->name('edit');
+            Route::put('/{partner}', [PartnerController::class, 'update'])->name('update');
             Route::post('/{partner}/approve', [PartnerController::class, 'approve'])->name('approve');
             Route::post('/{partner}/reject', [PartnerController::class, 'reject'])->name('reject');
             Route::patch('/{partner}/status', [PartnerController::class, 'updateStatus'])->name('update-status');

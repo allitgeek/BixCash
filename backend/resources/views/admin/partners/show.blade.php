@@ -8,6 +8,7 @@
         <div class="card-header">
             <h3 class="card-title">{{ $partner->partnerProfile->business_name ?? $partner->name }}</h3>
             <div style="display: flex; gap: 0.5rem;">
+                <a href="{{ route('admin.partners.edit', $partner) }}" class="btn btn-primary">✏️ Edit Profile</a>
                 <a href="{{ route('admin.partners.index') }}" class="btn btn-secondary">Back to Partners</a>
             </div>
         </div>

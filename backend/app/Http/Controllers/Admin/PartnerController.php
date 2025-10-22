@@ -186,6 +186,60 @@ class PartnerController extends Controller
     }
 
     /**
+     * Show edit partner form
+     */
+    public function edit($id)
+    {
+        $partner = User::with('partnerProfile')->findOrFail($id);
+
+        if (!$partner->isPartner()) {
+            abort(404, 'Partner not found');
+        }
+
+        return view('admin.partners.edit', compact('partner'));
+    }
+
+    /**
+     * Update partner profile
+     */
+    public function update(Request $request, $id)
+    {
+        $partner = User::with('partnerProfile')->findOrFail($id);
+
+        if (!$partner->isPartner()) {
+            return back()->withErrors(['error' => 'Invalid partner account']);
+        }
+
+        $validated = $request->validate([
+            'business_name' => 'required|string|max:255',
+            'contact_person_name' => 'required|string|max:255',
+            'email' => 'nullable|email|max:255',
+            'business_type' => 'required|string|max:100',
+            'business_address' => 'nullable|string|max:500',
+            'business_city' => 'nullable|string|max:100',
+        ]);
+
+        // Update user
+        $partner->update([
+            'name' => $validated['contact_person_name'],
+            'email' => $validated['email'] ?? null,
+        ]);
+
+        // Update partner profile
+        $partnerProfile = $partner->partnerProfile;
+        $partnerProfile->update([
+            'business_name' => $validated['business_name'],
+            'contact_person_name' => $validated['contact_person_name'],
+            'business_type' => $validated['business_type'],
+            'business_address' => $validated['business_address'] ?? null,
+            'business_city' => $validated['business_city'] ?? null,
+        ]);
+
+        return redirect()->route('admin.partners.show', $partner)
+            ->with('success', "Partner profile updated successfully!");
+    }
+
+    /**
      * Approve partner application
      */
     public function approve(Request $request, $id)

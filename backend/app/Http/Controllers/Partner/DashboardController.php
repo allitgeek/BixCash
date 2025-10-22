@@ -330,41 +330,76 @@ class DashboardController extends Controller
         $partner = Auth::user();
         $partnerProfile = $partner->partnerProfile;
 
-        $validated = $request->validate([
-            'contact_person_name' => 'required|string|max:255',
-            'email' => 'nullable|email|max:255',
-            'business_address' => 'nullable|string|max:500',
-            'business_city' => 'nullable|string|max:100',
-            'logo' => 'nullable|image|mimes:jpeg,jpg,png|max:2048', // Max 2MB
+        // Log request info for debugging
+        \Log::info('Partner profile update attempt', [
+            'partner_id' => $partner->id,
+            'has_file' => $request->hasFile('logo'),
+            'logo_only' => $request->input('logo_only'),
+            'contact_person_name' => $request->input('contact_person_name')
         ]);
+
+        // If logo_only flag is set, skip other validations
+        $isLogoOnly = $request->input('logo_only') == '1';
+
+        $rules = [
+            'logo' => 'nullable|image|mimes:jpeg,jpg,png|max:2048', // Max 2MB
+        ];
+
+        // Only validate other fields if not logo-only upload
+        if (!$isLogoOnly) {
+            $rules['contact_person_name'] = 'required|string|max:255';
+            $rules['email'] = 'nullable|email|max:255';
+            $rules['business_address'] = 'nullable|string|max:500';
+            $rules['business_city'] = 'nullable|string|max:100';
+        }
+
+        $validated = $request->validate($rules);
 
         // Handle logo upload
         if ($request->hasFile('logo')) {
+            \Log::info('Processing logo upload', [
+                'file_name' => $request->file('logo')->getClientOriginalName(),
+                'file_size' => $request->file('logo')->getSize(),
+                'mime_type' => $request->file('logo')->getMimeType()
+            ]);
+
             // Delete old logo if exists
             if ($partnerProfile->logo) {
                 $oldLogoPath = storage_path('app/public/' . $partnerProfile->logo);
                 if (file_exists($oldLogoPath)) {
                     unlink($oldLogoPath);
+                    \Log::info('Deleted old logo', ['path' => $oldLogoPath]);
                 }
             }
 
             // Store new logo
             $logoPath = $request->file('logo')->store('partner-logos', 'public');
             $partnerProfile->update(['logo' => $logoPath]);
+            \Log::info('Logo uploaded successfully', ['path' => $logoPath]);
+
+            // If logo-only upload, return early
+            if ($isLogoOnly) {
+                return redirect()->route('partner.profile')
+                    ->with('success', 'Logo uploaded successfully!');
+            }
+        } else {
+            \Log::info('No logo file in request');
         }
 
-        // Update user
-        $partner->update([
-            'name' => $validated['contact_person_name'],
-            'email' => $validated['email'] ?? null,
-        ]);
+        // Update user (only if not logo-only)
+        if (!$isLogoOnly) {
+            $partner->update([
+                'name' => $validated['contact_person_name'],
+                'email' => $validated['email'] ?? null,
+            ]);
 
-        // Update partner profile
-        $partnerProfile->update([
-            'contact_person_name' => $validated['contact_person_name'],
-            'business_address' => $validated['business_address'] ?? null,
-            'business_city' => $validated['business_city'] ?? null,
-        ]);
+            // Update partner profile
+            $partnerProfile->update([
+                'contact_person_name' => $validated['contact_person_name'],
+                'business_address' => $validated['business_address'] ?? null,
+                'business_city' => $validated['business_city'] ?? null,
+            ]);
+        }
 
         return redirect()->route('partner.profile')
             ->with('success', 'Profile updated successfully!');
