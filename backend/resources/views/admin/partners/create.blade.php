@@ -21,7 +21,7 @@
             </div>
             @endif
 
-            <form method="POST" action="{{ route('admin.partners.store') }}" id="createPartnerForm">
+            <form method="POST" action="{{ route('admin.partners.store') }}" id="createPartnerForm" enctype="multipart/form-data">
                 @csrf
 
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
@@ -93,6 +93,19 @@
                         <input type="text" id="city" name="city" class="form-control"
                                value="{{ old('city') }}" placeholder="e.g., Lahore">
                     </div>
+
+                    <!-- Logo -->
+                    <div class="form-group">
+                        <label for="logo" style="display: block; font-weight: 600; margin-bottom: 0.5rem;">
+                            Business Logo (Optional)
+                        </label>
+                        <input type="file" id="logo" name="logo" class="form-control" accept="image/jpeg,image/jpg,image/png"
+                               onchange="previewLogo(event)">
+                        <small style="color: #718096; font-size: 0.75rem;">JPG or PNG, max 2MB</small>
+                        <div id="logoPreview" style="margin-top: 0.75rem; display: none;">
+                            <img id="logoPreviewImg" src="" alt="Logo Preview" style="width: 64px; height: 64px; object-fit: cover; border-radius: 8px; border: 2px solid #e2e8f0;">
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Business Address (Full Width) -->
@@ -136,6 +149,37 @@
         phoneInput.addEventListener('input', function(e) {
             this.value = this.value.replace(/[^0-9]/g, '').substring(0, 10);
         });
+    }
+
+    // Logo preview function
+    function previewLogo(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        // Validate file size (max 2MB)
+        if (file.size > 2 * 1024 * 1024) {
+            alert('File size must be less than 2MB');
+            event.target.value = '';
+            return;
+        }
+
+        // Validate file type
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+        if (!allowedTypes.includes(file.type)) {
+            alert('Only JPG and PNG images are allowed');
+            event.target.value = '';
+            return;
+        }
+
+        // Show preview
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const previewDiv = document.getElementById('logoPreview');
+            const previewImg = document.getElementById('logoPreviewImg');
+            previewImg.src = e.target.result;
+            previewDiv.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
     }
 
     // Form submission handler

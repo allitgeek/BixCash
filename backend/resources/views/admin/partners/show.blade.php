@@ -98,6 +98,26 @@
             <h4 style="margin-top: 2rem; margin-bottom: 1rem;">Business Information</h4>
             <table style="width: 100%; border-collapse: collapse; margin-bottom: 2rem;">
                 <tr style="border-bottom: 1px solid #dee2e6;">
+                    <td style="padding: 0.75rem; font-weight: 600; width: 30%;">Business Logo:</td>
+                    <td style="padding: 0.75rem;">
+                        @if($partner->partnerProfile && $partner->partnerProfile->logo)
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <img src="{{ asset('storage/' . $partner->partnerProfile->logo) }}" alt="Business Logo" style="width: 64px; height: 64px; object-fit: cover; border-radius: 8px; border: 2px solid #e2e8f0;">
+                                <button type="button" class="btn btn-sm btn-primary" onclick="document.getElementById('logo-modal').style.display='block'">
+                                    Update Logo
+                                </button>
+                            </div>
+                        @else
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <span style="color: #999;">No logo uploaded</span>
+                                <button type="button" class="btn btn-sm btn-primary" onclick="document.getElementById('logo-modal').style.display='block'">
+                                    Upload Logo
+                                </button>
+                            </div>
+                        @endif
+                    </td>
+                </tr>
+                <tr style="border-bottom: 1px solid #dee2e6;">
                     <td style="padding: 0.75rem; font-weight: 600; width: 30%;">Business Name:</td>
                     <td style="padding: 0.75rem;">{{ $partner->partnerProfile->business_name ?? '-' }}</td>
                 </tr>
@@ -281,6 +301,37 @@
             </div>
         </div>
     </div>
+
+    <!-- Logo Upload Modal -->
+    <div id="logo-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999;">
+        <div style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;">
+            <div style="background: white; padding: 2rem; border-radius: 10px; max-width: 500px; width: 90%;">
+                <h3 style="margin-bottom: 1rem;">📷 {{ $partner->partnerProfile && $partner->partnerProfile->logo ? 'Update' : 'Upload' }} Business Logo</h3>
+                <p style="color: #666; margin-bottom: 1.5rem;">Upload a business logo (JPG or PNG, max 2MB)</p>
+                <form method="POST" action="{{ route('admin.partners.update-logo', $partner) }}" enctype="multipart/form-data">
+                    @csrf
+                    @method('PATCH')
+                    <div class="form-group">
+                        <label for="logo_file">Business Logo *</label>
+                        <input type="file" id="logo_file" name="logo" class="form-control" accept="image/jpeg,image/jpg,image/png" required
+                               onchange="previewLogoInModal(event)">
+                        <small style="color: #718096; font-size: 0.75rem;">JPG or PNG, max 2MB</small>
+                        <div id="logoModalPreview" style="margin-top: 1rem; display: none;">
+                            <img id="logoModalPreviewImg" src="" alt="Logo Preview" style="width: 64px; height: 64px; object-fit: cover; border-radius: 8px; border: 2px solid #e2e8f0;">
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 1rem;">
+                        <button type="button" class="btn btn-secondary" onclick="document.getElementById('logo-modal').style.display='none'">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            {{ $partner->partnerProfile && $partner->partnerProfile->logo ? 'Update' : 'Upload' }} Logo
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @push('scripts')
@@ -289,6 +340,7 @@
     const rejectModal = document.getElementById('reject-modal');
     const setPinModal = document.getElementById('set-pin-modal');
     const resetPinModal = document.getElementById('reset-pin-modal');
+    const logoModal = document.getElementById('logo-modal');
 
     // Close modals when clicking outside
     window.onclick = function(event) {
@@ -301,6 +353,9 @@
         if (event.target == resetPinModal) {
             resetPinModal.style.display = 'none';
         }
+        if (event.target == logoModal) {
+            logoModal.style.display = 'none';
+        }
     }
 
     // PIN input validation - only numbers
@@ -310,5 +365,36 @@
             this.value = this.value.replace(/[^0-9]/g, '').substring(0, 4);
         });
     });
+
+    // Logo preview function
+    function previewLogoInModal(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        // Validate file size (max 2MB)
+        if (file.size > 2 * 1024 * 1024) {
+            alert('File size must be less than 2MB');
+            event.target.value = '';
+            return;
+        }
+
+        // Validate file type
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+        if (!allowedTypes.includes(file.type)) {
+            alert('Only JPG and PNG images are allowed');
+            event.target.value = '';
+            return;
+        }
+
+        // Show preview
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const previewDiv = document.getElementById('logoModalPreview');
+            const previewImg = document.getElementById('logoModalPreviewImg');
+            previewImg.src = e.target.result;
+            previewDiv.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    }
 </script>
 @endpush

@@ -97,6 +97,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::patch('/{partner}/status', [PartnerController::class, 'updateStatus'])->name('update-status');
             Route::post('/{partner}/set-pin', [PartnerController::class, 'setPin'])->name('set-pin');
             Route::post('/{partner}/reset-pin', [PartnerController::class, 'resetPin'])->name('reset-pin');
+            Route::patch('/{partner}/logo', [PartnerController::class, 'updateLogo'])->name('update-logo');
             Route::get('/{partner}/transactions', [PartnerController::class, 'transactions'])->name('transactions');
         });
 

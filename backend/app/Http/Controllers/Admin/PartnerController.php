@@ -35,6 +35,7 @@ class PartnerController extends Controller
             'business_address' => 'nullable|string|max:500',
             'city' => 'nullable|string|max:100',
             'auto_approve' => 'nullable|boolean',
+            'logo' => 'nullable|image|mimes:jpeg,jpg,png|max:2048', // Max 2MB
         ]);
 
         // Format phone number to E.164
@@ -62,6 +63,12 @@ class PartnerController extends Controller
         $status = $autoApprove ? 'approved' : 'pending';
         $isActive = $autoApprove ? true : false;
 
+        // Handle logo upload
+        $logoPath = null;
+        if ($request->hasFile('logo')) {
+            $logoPath = $request->file('logo')->store('partner-logos', 'public');
+        }
+
         // Create user account
         $user = User::create([
             'name' => $validated['contact_person_name'],
@@ -76,6 +83,7 @@ class PartnerController extends Controller
             'user_id' => $user->id,
             'business_name' => $validated['business_name'],
             'contact_person_name' => $validated['contact_person_name'],
+            'logo' => $logoPath,
             'business_type' => $validated['business_type'],
             'business_phone' => $phone,
             'business_address' => $validated['business_address'] ?? null,
@@ -346,5 +354,41 @@ class PartnerController extends Controller
         $partner->resetPin($request->new_pin);
 
         return back()->with('success', "PIN reset successfully for partner '{$partner->name}'");
+    }
+
+    /**
+     * Update partner logo
+     */
+    public function updateLogo(Request $request, $id)
+    {
+        $request->validate([
+            'logo' => 'required|image|mimes:jpeg,jpg,png|max:2048', // Max 2MB
+        ]);
+
+        $partner = User::with('partnerProfile')->findOrFail($id);
+
+        if (!$partner->isPartner()) {
+            return back()->withErrors(['error' => 'Invalid partner account']);
+        }
+
+        $partnerProfile = $partner->partnerProfile;
+
+        if (!$partnerProfile) {
+            return back()->withErrors(['error' => 'Partner profile not found']);
+        }
+
+        // Delete old logo if exists
+        if ($partnerProfile->logo) {
+            $oldLogoPath = storage_path('app/public/' . $partnerProfile->logo);
+            if (file_exists($oldLogoPath)) {
+                unlink($oldLogoPath);
+            }
+        }
+
+        // Store new logo
+        $logoPath = $request->file('logo')->store('partner-logos', 'public');
+        $partnerProfile->update(['logo' => $logoPath]);
+
+        return back()->with('success', 'Business logo updated successfully!');
     }
 }
