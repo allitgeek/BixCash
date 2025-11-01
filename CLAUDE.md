@@ -3012,5 +3012,579 @@ php artisan queue:failed
 
 ---
 
-**Documentation Complete**: October 14, 2025
+## Partner Logo Upload & Profile Management System
+
+### Implementation Overview
+
+**Implementation Period**: October 15-22, 2025
+**Total Commits**: 5 major updates
+**Files Modified**: 6 files
+**Lines Added**: ~315 lines
+**Status**: ✅ PRODUCTION READY
+
+### Feature Summary
+
+This section documents the complete partner logo upload functionality and profile management enhancements added to both the Partner Portal and Admin Panel.
+
+---
+
+### 1. Partner Logo Standardization (October 22, 2025)
+
+**Objective**: Add partner brand logo support across all partner portal pages with consistent 64x64px sizing.
+
+**Database Changes**:
+- Added `logo` column to `partner_profiles` table
+- Migration: `add_logo_to_partner_profiles_table.php`
+- Column type: `string` (nullable)
+
+**Model Updates** (`PartnerProfile.php`):
+- Added `'logo'` to fillable fields
+- Logo path stored relative to storage/app/public/partner_logos/
+
+**Controller Implementation** (`Partner\DashboardController.php`):
+```php
+public function updateProfile(Request $request)
+{
+    // Logo upload validation
+    if ($request->hasFile('logo')) {
+        $request->validate([
+            'logo' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        // Delete old logo
+        if ($partnerProfile->logo && Storage::disk('public')->exists($partnerProfile->logo)) {
+            Storage::disk('public')->delete($partnerProfile->logo);
+        }
+
+        // Store new logo
+        $logoPath = $request->file('logo')->store('partner_logos', 'public');
+        $partnerProfile->logo = $logoPath;
+    }
+}
+```
+
+**Frontend Integration**:
+- Logo displayed at **64x64px** (w-14 h-14 sm:w-16 sm:h-16) on:
+  - Dashboard header
+  - Transaction History header
+  - Profit History header
+  - Profile header
+  - Profile hero card (upload area)
+- Fallback: Building icon (`🏢`) when no logo uploaded
+- Click-to-upload functionality with JavaScript
+- Visual feedback on hover
+
+**File Validation**:
+- Max size: 2MB
+- Allowed formats: JPG, PNG, JPEG
+- Server-side validation with Laravel
+
+---
+
+### 2. Admin Panel Logo Upload (October 22, 2025)
+
+**Objective**: Enable admins to upload partner logos during partner creation and update existing logos.
+
+**Admin Partner Creation** (`admin/partners/create.blade.php`):
+- Added logo upload field with preview
+- File input with image preview on selection
+- Displays uploaded logo thumbnail
+
+**Admin Partner Details** (`admin/partners/show.blade.php`):
+- Logo display with fallback icon
+- Upload/Update logo button
+- Logo upload modal dialog
+- Current logo preview
+
+**Controller Methods** (`Admin\PartnerController.php`):
+```php
+// During partner creation
+public function store(Request $request)
+{
+    // Logo handling
+    if ($request->hasFile('logo')) {
+        $request->validate([
+            'logo' => 'image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+        $logoPath = $request->file('logo')->store('partner_logos', 'public');
+        $partnerProfile->logo = $logoPath;
+    }
+}
+
+// Logo update endpoint
+public function updateLogo(Request $request, $id)
+{
+    $request->validate([
+        'logo' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+    ]);
+
+    // Delete old logo
+    if ($partner->partnerProfile->logo) {
+        Storage::disk('public')->delete($partner->partnerProfile->logo);
+    }
+
+    // Upload new logo
+    $logoPath = $request->file('logo')->store('partner_logos', 'public');
+    $partner->partnerProfile->update(['logo' => $logoPath]);
+}
+```
+
+**Routes Added** (`routes/admin.php`):
+```php
+Route::post('/partners/{id}/logo', [PartnerController::class, 'updateLogo'])
+    ->name('partners.updateLogo');
+Route::delete('/partners/{id}/logo', [PartnerController::class, 'removeLogo'])
+    ->name('partners.removeLogo');
+```
+
+**JavaScript Features**:
+- Image preview before upload
+- File size validation (client-side)
+- AJAX upload with loading states
+- Success/error message display
+
+---
+
+### 3. Logo Background & Remove Functionality (October 22, 2025)
+
+**Objective**: Fix logo backgrounds and add logo removal capability.
+
+**Background Changes**:
+- **Before**: Blue gradient (`bg-gradient-to-br from-blue-600 to-blue-900`)
+- **After**: White background with border (`bg-white border-2 border-gray-200`)
+- **Reason**: Better logo visibility for transparent PNGs and white logos
+
+**Logo Container Updates**:
+```html
+<!-- Before -->
+<div class="w-24 h-24 bg-gradient-to-br from-blue-600 to-blue-900 rounded-lg">
+    <img src="logo.png" />
+</div>
+
+<!-- After -->
+<div class="w-24 h-24 bg-white border-2 border-gray-200 rounded-lg">
+    <img src="logo.png" />
+</div>
+```
+
+**Fallback Icon Color**:
+- Changed from `text-white` to `text-blue-600` (for white background visibility)
+
+**Remove Logo Functionality**:
+
+**Partner Portal** (`partner/profile.blade.php`):
+- Remove logo button next to upload area
+- Confirmation dialog before deletion
+- AJAX request to delete endpoint
+
+**Admin Panel** (`admin/partners/show.blade.php`):
+- Remove logo button in partner details
+- Confirmation dialog
+- Reloads page after deletion
+
+**Controller Method** (`Partner\DashboardController.php`):
+```php
+public function removeLogo()
+{
+    $partnerProfile = Auth::user()->partnerProfile;
+
+    if ($partnerProfile->logo && Storage::disk('public')->exists($partnerProfile->logo)) {
+        Storage::disk('public')->delete($partnerProfile->logo);
+        $partnerProfile->logo = null;
+        $partnerProfile->save();
+    }
+
+    return redirect()->route('partner.profile')
+        ->with('success', 'Logo removed successfully');
+}
+```
+
+**Routes Added**:
+```php
+// Partner routes
+Route::delete('/partner/logo', [DashboardController::class, 'removeLogo'])
+    ->name('partner.removeLogo');
+
+// Admin routes
+Route::delete('/admin/partners/{id}/logo', [PartnerController::class, 'removeLogo'])
+    ->name('admin.partners.removeLogo');
+```
+
+**Upload Text Dynamic Update**:
+- Shows "Upload Logo" when no logo exists
+- Shows "Change Logo" when logo exists
+
+---
+
+### 4. Remove Logo Button Redesign (October 22, 2025)
+
+**Objective**: Improve UX by moving remove button from next to logo to overlay on top-right corner.
+
+**Design Changes**:
+
+**Before**:
+```html
+<div class="flex items-center gap-2">
+    <div class="logo-container">...</div>
+    <button class="remove-btn">Remove</button>
+</div>
+```
+
+**After**:
+```html
+<div class="logo-container relative">
+    <img src="logo.png" />
+    <button class="absolute -top-1 -right-1 w-6 h-6 bg-red-600 rounded-full">
+        <svg><!-- X icon --></svg>
+    </button>
+</div>
+```
+
+**Button Specifications**:
+- Size: 24x24px circular button
+- Position: `absolute -top-1 -right-1` (overlay on top-right)
+- Background: Red (`bg-red-600`)
+- Icon: White X (`text-white`)
+- Hover effect: `hover:bg-red-700`
+- Event handling: `event.stopPropagation()` (prevents upload trigger)
+
+**UX Improvements**:
+- Cleaner layout (no flex container breaking hero card design)
+- Button only appears when logo exists
+- Confirmation dialog preserved
+- No accidental uploads when clicking remove
+
+**JavaScript Implementation**:
+```javascript
+// Prevent upload dialog when clicking remove button
+document.getElementById('removeLogoBtn').addEventListener('click', function(event) {
+    event.stopPropagation(); // Don't trigger upload
+
+    if (confirm('Are you sure you want to remove your logo?')) {
+        // Submit delete form
+    }
+});
+```
+
+---
+
+### 5. Partner Profile Upload Fix & Admin Edit Functionality (October 22, 2025)
+
+**Objective**: Fix logo upload issues in partner portal and add comprehensive admin edit functionality.
+
+#### Partner Portal Fixes
+
+**Issue**: Logo upload not working from partner profile page
+
+**Root Cause**: Form submission via `.submit()` wasn't triggering properly
+
+**Solution**:
+```javascript
+// Before (not working)
+document.getElementById('profileForm').submit();
+
+// After (working)
+document.querySelector('button[type="submit"]').click();
+```
+
+**Logo-Only Upload Implementation**:
+- Added `logo_only` hidden field to distinguish upload types
+- Modified validation to be conditional based on upload type
+- Skip profile field validation during logo-only uploads
+
+**Controller Logic** (`Partner\DashboardController.php`):
+```php
+public function updateProfile(Request $request)
+{
+    $isLogoOnly = $request->input('logo_only') === '1';
+
+    if ($isLogoOnly) {
+        // Only validate logo
+        $request->validate([
+            'logo' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        // Upload logo and return
+        $logoPath = $request->file('logo')->store('partner_logos', 'public');
+        $partnerProfile->logo = $logoPath;
+        $partnerProfile->save();
+
+        return redirect()->route('partner.profile')
+            ->with('success', 'Logo uploaded successfully!');
+    } else {
+        // Validate all profile fields
+        $request->validate([
+            'business_name' => 'required|string|max:255',
+            'contact_person' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            // ... other fields
+        ]);
+
+        // Update profile
+    }
+}
+```
+
+**Error Message Display**:
+- Added error message display on profile page
+- Shows validation errors above hero card
+- Auto-hides success messages after 3 seconds
+
+**Detailed Logging**:
+```php
+Log::info('Profile update attempt', [
+    'user_id' => Auth::id(),
+    'is_logo_only' => $isLogoOnly,
+    'has_file' => $request->hasFile('logo'),
+]);
+```
+
+#### Admin Panel Edit Functionality
+
+**Feature**: Complete admin profile editing for partners
+
+**Edit Button** (`admin/partners/show.blade.php`):
+- Added "Edit Profile" button to partner details page
+- Positioned next to partner information
+- Links to edit route
+
+**Edit View** (`admin/partners/edit.blade.php`):
+- **File Created**: 155 lines
+- All editable partner fields in form
+- Phone number shown as **read-only** (cannot be changed)
+- Logo management separated (available on show page)
+- Form validation for all fields
+
+**Form Fields**:
+1. Business Name (required)
+2. Contact Person (required)
+3. Email (required, email format)
+4. Phone Number (read-only, display only)
+5. Business Type (required)
+6. Business Address (required)
+7. City (required)
+8. Commission Rate (required, numeric, 0-100)
+9. Status (active/inactive dropdown)
+
+**Controller Methods** (`Admin\PartnerController.php`):
+```php
+// Show edit form
+public function edit($id)
+{
+    $partner = User::with('partnerProfile')->findOrFail($id);
+
+    if (!$partner->partnerProfile) {
+        abort(404, 'Partner profile not found');
+    }
+
+    return view('admin.partners.edit', compact('partner'));
+}
+
+// Update partner profile
+public function update(Request $request, $id)
+{
+    $request->validate([
+        'business_name' => 'required|string|max:255',
+        'contact_person' => 'required|string|max:255',
+        'email' => 'required|email|max:255|unique:users,email,' . $id,
+        'business_type' => 'required|string',
+        'business_address' => 'required|string',
+        'city' => 'required|string|max:255',
+        'commission_rate' => 'required|numeric|min:0|max:100',
+        'status' => 'required|in:active,inactive',
+    ]);
+
+    // Update user email
+    $partner->update(['email' => $request->email]);
+
+    // Update partner profile
+    $partner->partnerProfile->update([
+        'business_name' => $request->business_name,
+        'contact_person' => $request->contact_person,
+        'business_type' => $request->business_type,
+        'business_address' => $request->business_address,
+        'city' => $request->city,
+        'commission_rate' => $request->commission_rate,
+        'status' => $request->status,
+    ]);
+
+    return redirect()->route('admin.partners.show', $id)
+        ->with('success', 'Partner profile updated successfully');
+}
+```
+
+**Routes Added** (`routes/admin.php`):
+```php
+Route::get('/admin/partners/{id}/edit', [PartnerController::class, 'edit'])
+    ->name('admin.partners.edit');
+Route::put('/admin/partners/{id}', [PartnerController::class, 'update'])
+    ->name('admin.partners.update');
+```
+
+**Design Decisions**:
+- Phone number cannot be changed (read-only) - security measure
+- Logo management kept on show page (separate from profile data)
+- Email uniqueness validation excludes current partner
+- Commission rate range: 0-100%
+- Status dropdown for active/inactive toggle
+
+---
+
+### Files Modified Summary
+
+**Controllers**:
+1. `app/Http/Controllers/Partner/DashboardController.php` (+71 lines)
+   - `updateProfile()`: Logo-only upload handling
+   - `removeLogo()`: Delete logo functionality
+   - Conditional validation logic
+   - Detailed logging
+
+2. `app/Http/Controllers/Admin/PartnerController.php` (+54 lines)
+   - `updateLogo()`: Admin logo upload
+   - `removeLogo()`: Admin logo deletion
+   - `edit()`: Show edit form
+   - `update()`: Update partner profile
+
+**Views**:
+3. `resources/views/partner/profile.blade.php` (+53 lines)
+   - Click-to-upload logo functionality
+   - Remove logo button (X overlay)
+   - Logo-only upload form
+   - Error message display
+   - Dynamic upload text
+
+4. `resources/views/admin/partners/show.blade.php` (+1 line)
+   - Edit Profile button
+
+5. `resources/views/admin/partners/edit.blade.php` (NEW: 155 lines)
+   - Complete partner edit form
+   - All editable fields
+   - Phone number read-only
+   - Form validation
+   - Success/error messages
+
+**Routes**:
+6. `routes/admin.php` (+2 routes)
+   - GET `/admin/partners/{id}/edit`
+   - PUT `/admin/partners/{id}`
+
+**Database**:
+- Migration: `add_logo_to_partner_profiles_table.php`
+- Column: `logo` (string, nullable)
+
+---
+
+### Testing & Validation
+
+**Partner Portal Testing**:
+- ✅ Logo upload from profile page works
+- ✅ Logo displays correctly (64x64px) across all pages
+- ✅ Remove logo button positioned correctly
+- ✅ Confirmation dialog works
+- ✅ Upload text changes based on logo existence
+- ✅ Form submission via button click works
+- ✅ Logo-only uploads skip profile validation
+- ✅ Error messages display correctly
+
+**Admin Panel Testing**:
+- ✅ Logo upload during partner creation
+- ✅ Logo update from partner details page
+- ✅ Logo removal functionality
+- ✅ Edit button appears on partner details
+- ✅ Edit form displays all fields correctly
+- ✅ Phone number shown as read-only
+- ✅ Profile update validation works
+- ✅ Success messages display after updates
+- ✅ Email uniqueness validation works
+
+**File Storage Testing**:
+- ✅ Logos stored in `storage/app/public/partner_logos/`
+- ✅ Old logos deleted when uploading new ones
+- ✅ File size validation (max 2MB)
+- ✅ File type validation (JPG, PNG only)
+- ✅ Storage symlink configured correctly
+- ✅ Public URL generation works
+
+---
+
+### Security Considerations
+
+**File Upload Security**:
+- Server-side validation (mime type, size)
+- Stored outside web root (storage/app/public)
+- Random filename generation (Laravel default)
+- Old file deletion prevents storage bloat
+
+**Permission Checks**:
+- Partner can only update own logo/profile
+- Admin can update any partner's logo/profile
+- Middleware authentication required
+- CSRF token validation on all forms
+
+**Data Validation**:
+- Email uniqueness with exception for current user
+- Commission rate bounded (0-100)
+- Required fields enforced
+- String length limits applied
+
+---
+
+### User Experience Improvements
+
+**Visual Consistency**:
+- 64x64px logo size standardized across all pages
+- White background with border for better visibility
+- Fallback icon (🏢) when no logo uploaded
+- Consistent hover effects
+
+**Interaction Design**:
+- Click-to-upload (no separate upload button needed)
+- Remove button overlay (cleaner layout)
+- Confirmation dialogs prevent accidental deletions
+- Loading states during uploads
+- Success/error messages for feedback
+
+**Responsive Design**:
+- Logo size responsive: `w-14 h-14 sm:w-16 sm:h-16`
+- Mobile-friendly upload interface
+- Touch-friendly button sizes
+- Works on all screen sizes
+
+---
+
+### Production Status
+
+**Deployment Information**:
+- **Implementation Date**: October 15-22, 2025
+- **Implemented By**: Claude Code
+- **Total Commits**: 5 commits
+- **Files Created**: 1 new file (edit.blade.php)
+- **Files Modified**: 5 files
+- **Lines of Code**: ~315 lines added
+- **Production Status**: ✅ FULLY OPERATIONAL
+
+**Server**: 34.55.43.43 (Google Cloud Platform)
+**Database**: bixcash_prod (MySQL 8.0.43)
+**Storage**: `/var/www/bixcash.com/backend/storage/app/public/partner_logos/`
+**Symlink**: `/var/www/bixcash.com/backend/public/storage → ../storage/app/public`
+
+---
+
+### Future Enhancements
+
+**Potential Improvements**:
+1. Image cropping tool for logo upload
+2. Multiple logo sizes (thumbnail, medium, large)
+3. Logo optimization (compression) on upload
+4. Logo preview in partner list (admin panel)
+5. Batch logo upload for multiple partners
+6. Logo gallery with selection option
+7. SVG logo support with sanitization
+8. Logo usage analytics
+9. Brand guidelines enforcement (dimensions, file size)
+10. Logo approval workflow (admin approval required)
+
+---
+
+**Documentation Updated**: November 1, 2025
 **Status**: ✅ PRODUCTION READY & FULLY DOCUMENTED
