@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#021c47">
+    <meta name="theme-color" content="#1a5928">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Purchase History - BixCash</title>
     @vite(['resources/css/app.css'])
@@ -12,13 +12,13 @@
 <body class="bg-gradient-to-br from-gray-50 via-blue-50/20 to-gray-50 min-h-screen pb-24" style="margin: 0; padding: 0;">
 
     {{-- Enhanced Header with Glassmorphism --}}
-    <header class="bg-white/80 backdrop-blur-xl shadow-lg shadow-blue-900/5 border-b border-gray-200/60 sticky top-0 z-40">
+    <header class="bg-white/80 backdrop-blur-xl shadow-lg shadow-green-900/5 border-b border-gray-200/60 sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 py-3">
             {{-- Top Row: Logo + Title + Back Button --}}
             <div class="flex items-center justify-between gap-3 mb-3">
                 <div class="flex items-center gap-3 flex-1 min-w-0">
                     {{-- Logo --}}
-                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-blue-600 to-blue-900 flex items-center justify-center shadow-md flex-shrink-0">
+                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-[#76d37a] to-[#93db4d] flex items-center justify-center shadow-md flex-shrink-0">
                         <svg class="w-6 h-6 sm:w-7 sm:h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                         </svg>
@@ -51,7 +51,7 @@
                 {{-- Total Spent --}}
                 <div class="bg-gradient-to-br from-blue-50/80 to-indigo-50/50 rounded-lg border-l-4 border-blue-600 p-2 sm:p-3 shadow-sm">
                     <p class="text-xs text-gray-600 font-semibold mb-0.5">Spent</p>
-                    <p class="text-sm sm:text-base font-bold text-blue-600">Rs {{ number_format($totalSpent, 0) }}</p>
+                    <p class="text-sm sm:text-base font-bold text-[#76d37a]">Rs {{ number_format($totalSpent, 0) }}</p>
                 </div>
 
                 {{-- Total Cashback --}}
@@ -67,24 +67,24 @@
     <div class="max-w-7xl mx-auto px-4 py-6">
 
         {{-- Purchase List Card with Navy Accents --}}
-        <div class="bg-white rounded-xl border border-gray-200/60 shadow-sm overflow-hidden hover:border-blue-800/40 hover:shadow-md hover:shadow-blue-900/5 transition-all duration-200">
+        <div class="bg-white rounded-xl border border-gray-200/60 shadow-sm overflow-hidden hover:border-blue-800/40 hover:shadow-md hover:shadow-green-900/5 transition-all duration-200">
 
             {{-- Card Header with Navy Gradient --}}
-            <div class="px-5 py-4 border-b border-gray-200/60 bg-gradient-to-r from-blue-50/70 via-blue-900/5 to-transparent">
+            <div class="px-5 py-4 border-b border-gray-200/60 bg-gradient-to-r from-green-50/70 via-green-900/5 to-transparent">
                 <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-blue-900 flex items-center justify-center shadow-sm shadow-blue-900/20">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-[#76d37a] to-[#93db4d] flex items-center justify-center shadow-sm shadow-green-900/20">
                         <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                         </svg>
                     </div>
-                    <h3 class="text-base font-bold bg-gradient-to-r from-gray-800 to-blue-900 bg-clip-text text-transparent">All Purchases</h3>
+                    <h3 class="text-base font-bold bg-gradient-to-r from-gray-800 to-green-900 bg-clip-text text-transparent">All Purchases</h3>
                 </div>
             </div>
 
             {{-- Purchase Items --}}
             <div class="divide-y divide-gray-200/60">
                 @forelse($purchases as $purchase)
-                <div class="group p-4 hover:bg-blue-50/50 transition-colors duration-150">
+                <div class="group p-4 hover:bg-green-50/50 transition-colors duration-150">
                     <div class="flex items-center justify-between gap-4">
                         {{-- Purchase Info --}}
                         <div class="flex-1 min-w-0">
@@ -159,10 +159,10 @@
     </div>
 
     {{-- Bottom Navigation --}}
-    <nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl shadow-lg shadow-blue-900/10 border-t border-gray-200/60 z-50">
+    <nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl shadow-lg shadow-green-900/10 border-t border-gray-200/60 z-50">
         <div class="grid grid-cols-5 max-w-7xl mx-auto">
             {{-- Home --}}
-            <a href="{{ route('customer.dashboard') }}" class="flex flex-col items-center py-3 px-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all duration-200">
+            <a href="{{ route('customer.dashboard') }}" class="flex flex-col items-center py-3 px-2 text-gray-500 hover:text-[#76d37a] hover:bg-green-50/50 transition-all duration-200">
                 <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
                 </svg>
@@ -170,7 +170,7 @@
             </a>
 
             {{-- Wallet --}}
-            <a href="{{ route('customer.wallet') }}" class="flex flex-col items-center py-3 px-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all duration-200">
+            <a href="{{ route('customer.wallet') }}" class="flex flex-col items-center py-3 px-2 text-gray-500 hover:text-[#76d37a] hover:bg-green-50/50 transition-all duration-200">
                 <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"></path>
                     <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"></path>
@@ -179,7 +179,7 @@
             </a>
 
             {{-- Purchases (Active) --}}
-            <a href="{{ route('customer.purchases') }}" class="flex flex-col items-center py-3 px-2 text-white bg-gradient-to-r from-blue-600 to-blue-900 border-t-2 border-blue-500 transition-all duration-200">
+            <a href="{{ route('customer.purchases') }}" class="flex flex-col items-center py-3 px-2 text-white bg-gradient-to-r from-[#76d37a] to-[#93db4d] border-t-2 border-[#76d37a] transition-all duration-200">
                 <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"></path>
                 </svg>
@@ -187,7 +187,7 @@
             </a>
 
             {{-- Profile --}}
-            <a href="{{ route('customer.profile') }}" class="flex flex-col items-center py-3 px-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all duration-200">
+            <a href="{{ route('customer.profile') }}" class="flex flex-col items-center py-3 px-2 text-gray-500 hover:text-[#76d37a] hover:bg-green-50/50 transition-all duration-200">
                 <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
                 </svg>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#021c47">
+    <meta name="theme-color" content="#1a5928">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>My Profile - BixCash</title>
     @vite(['resources/css/app.css'])
@@ -45,10 +45,10 @@
     <div class="max-w-5xl mx-auto px-4 py-6 space-y-6" style="padding-bottom: 10rem;">
 
         {{-- Profile Header Card --}}
-        <div class="bg-white rounded-xl border border-gray-200/60 shadow-lg shadow-blue-900/5 overflow-hidden">
+        <div class="bg-white rounded-xl border border-gray-200/60 shadow-lg shadow-green-900/5 overflow-hidden">
             <div class="relative">
                 {{-- Background Pattern --}}
-                <div class="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-900 opacity-90"></div>
+                <div class="absolute inset-0 bg-gradient-to-r from-[#76d37a] to-[#93db4d] opacity-90"></div>
                 <div class="absolute inset-0 opacity-10" style="background-image: url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'1\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
 
                 {{-- Content --}}
@@ -89,15 +89,15 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
             {{-- Personal Information Card --}}
-            <div class="bg-white rounded-xl border border-gray-200/60 shadow-lg shadow-blue-900/5 overflow-hidden hover:border-blue-800/40 hover:shadow-xl hover:shadow-blue-900/10 transition-all duration-300">
-                <div class="px-5 py-4 border-b border-gray-200/60 bg-gradient-to-r from-blue-50/70 via-blue-900/5 to-transparent">
+            <div class="bg-white rounded-xl border border-gray-200/60 shadow-lg shadow-green-900/5 overflow-hidden hover:border-blue-800/40 hover:shadow-xl hover:shadow-green-900/10 transition-all duration-300">
+                <div class="px-5 py-4 border-b border-gray-200/60 bg-gradient-to-r from-green-50/70 via-green-900/5 to-transparent">
                     <div class="flex items-center gap-2">
-                        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-blue-900 flex items-center justify-center shadow-sm">
+                        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-[#76d37a] to-[#93db4d] flex items-center justify-center shadow-sm">
                             <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                             </svg>
                         </div>
-                        <h3 class="text-base font-bold bg-gradient-to-r from-gray-800 to-blue-900 bg-clip-text text-transparent">Personal Information</h3>
+                        <h3 class="text-base font-bold bg-gradient-to-r from-gray-800 to-green-900 bg-clip-text text-transparent">Personal Information</h3>
                     </div>
                 </div>
                 <div class="p-5">
@@ -106,7 +106,7 @@
                         <div class="space-y-4">
                             <div>
                                 <label class="block text-xs font-semibold text-gray-700 mb-2">Full Name *</label>
-                                <input type="text" name="name" class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl text-sm focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all" required value="{{ old('name', $user->name) }}">
+                                <input type="text" name="name" class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#76d37a] focus:ring-4 focus:ring-blue-500/10 transition-all" required value="{{ old('name', $user->name) }}">
                             </div>
                             <div>
                                 <label class="block text-xs font-semibold text-gray-700 mb-2">Phone Number</label>
@@ -114,11 +114,11 @@
                             </div>
                             <div>
                                 <label class="block text-xs font-semibold text-gray-700 mb-2">Email</label>
-                                <input type="email" name="email" class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl text-sm focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all" value="{{ old('email', $user->email) }}">
+                                <input type="email" name="email" class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#76d37a] focus:ring-4 focus:ring-blue-500/10 transition-all" value="{{ old('email', $user->email) }}">
                             </div>
                             <div>
                                 <label class="block text-xs font-semibold text-gray-700 mb-2">Date of Birth</label>
-                                <input type="date" name="date_of_birth" class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl text-sm focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all" value="{{ old('date_of_birth', $profile && $profile->date_of_birth ? $profile->date_of_birth->format('Y-m-d') : '') }}">
+                                <input type="date" name="date_of_birth" class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#76d37a] focus:ring-4 focus:ring-blue-500/10 transition-all" value="{{ old('date_of_birth', $profile && $profile->date_of_birth ? $profile->date_of_birth->format('Y-m-d') : '') }}">
                             </div>
                             <button type="submit" class="w-full px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-blue-800 hover:-translate-y-0.5 transition-all duration-200 shadow-sm shadow-blue-500/30 hover:shadow-md hover:shadow-blue-500/40">
                                 Update Profile
@@ -129,7 +129,7 @@
             </div>
 
             {{-- Location Information Card --}}
-            <div class="bg-white rounded-xl border border-gray-200/60 shadow-lg shadow-blue-900/5 overflow-hidden hover:border-green-800/40 hover:shadow-xl hover:shadow-green-900/10 transition-all duration-300">
+            <div class="bg-white rounded-xl border border-gray-200/60 shadow-lg shadow-green-900/5 overflow-hidden hover:border-green-800/40 hover:shadow-xl hover:shadow-green-900/10 transition-all duration-300">
                 <div class="px-5 py-4 border-b border-gray-200/60 bg-gradient-to-r from-green-50/70 via-green-900/5 to-transparent">
                     <div class="flex items-center gap-2">
                         <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-green-600 to-emerald-600 flex items-center justify-center shadow-sm">
@@ -164,7 +164,7 @@
         </div>
 
         {{-- Bank Details Card --}}
-        <div class="bg-white rounded-xl border border-gray-200/60 shadow-lg shadow-blue-900/5 overflow-hidden hover:border-orange-800/40 hover:shadow-xl hover:shadow-orange-900/10 transition-all duration-300">
+        <div class="bg-white rounded-xl border border-gray-200/60 shadow-lg shadow-green-900/5 overflow-hidden hover:border-orange-800/40 hover:shadow-xl hover:shadow-orange-900/10 transition-all duration-300">
             <div class="px-5 py-4 border-b border-gray-200/60 bg-gradient-to-r from-orange-50/70 via-orange-900/5 to-transparent">
                 <div class="flex items-center gap-2">
                     <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-600 to-amber-600 flex items-center justify-center shadow-sm">
@@ -257,10 +257,10 @@
     </div>
 
     {{-- Bottom Navigation --}}
-    <nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl shadow-lg shadow-blue-900/10 border-t border-gray-200/60 z-50">
+    <nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl shadow-lg shadow-green-900/10 border-t border-gray-200/60 z-50">
         <div class="grid grid-cols-5 max-w-7xl mx-auto">
             {{-- Home --}}
-            <a href="{{ route('customer.dashboard') }}" class="flex flex-col items-center py-3 px-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all duration-200">
+            <a href="{{ route('customer.dashboard') }}" class="flex flex-col items-center py-3 px-2 text-gray-500 hover:text-[#76d37a] hover:bg-green-50/50 transition-all duration-200">
                 <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
                 </svg>
@@ -268,7 +268,7 @@
             </a>
 
             {{-- Wallet --}}
-            <a href="{{ route('customer.wallet') }}" class="flex flex-col items-center py-3 px-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all duration-200">
+            <a href="{{ route('customer.wallet') }}" class="flex flex-col items-center py-3 px-2 text-gray-500 hover:text-[#76d37a] hover:bg-green-50/50 transition-all duration-200">
                 <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"></path>
                     <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"></path>
@@ -277,7 +277,7 @@
             </a>
 
             {{-- Purchases --}}
-            <a href="{{ route('customer.purchases') }}" class="flex flex-col items-center py-3 px-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all duration-200">
+            <a href="{{ route('customer.purchases') }}" class="flex flex-col items-center py-3 px-2 text-gray-500 hover:text-[#76d37a] hover:bg-green-50/50 transition-all duration-200">
                 <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"></path>
                 </svg>
@@ -285,7 +285,7 @@
             </a>
 
             {{-- Profile (Active) --}}
-            <a href="{{ route('customer.profile') }}" class="flex flex-col items-center py-3 px-2 text-white bg-gradient-to-r from-blue-600 to-blue-900 border-t-2 border-blue-500 transition-all duration-200">
+            <a href="{{ route('customer.profile') }}" class="flex flex-col items-center py-3 px-2 text-white bg-gradient-to-r from-[#76d37a] to-[#93db4d] border-t-2 border-[#76d37a] transition-all duration-200">
                 <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
                 </svg>

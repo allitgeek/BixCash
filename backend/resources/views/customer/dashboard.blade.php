@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#021c47">
+    <meta name="theme-color" content="#1a5928">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Dashboard - BixCash</title>
     @vite(['resources/css/app.css'])
@@ -21,21 +21,21 @@
                 @csrf
                 <div class="mb-5">
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Full Name *</label>
-                    <input type="text" name="name" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-base focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all" required placeholder="Enter your full name">
+                    <input type="text" name="name" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-base focus:outline-none focus:border-[#76d37a] focus:ring-4 focus:ring-green-500/10 transition-all" required placeholder="Enter your full name">
                 </div>
 
                 <div class="mb-5">
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Email (Optional)</label>
-                    <input type="email" name="email" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-base focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all" placeholder="your@email.com">
+                    <input type="email" name="email" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-base focus:outline-none focus:border-[#76d37a] focus:ring-4 focus:ring-green-500/10 transition-all" placeholder="your@email.com">
                     <p class="text-xs text-gray-500 mt-1">We'll use this for important updates</p>
                 </div>
 
                 <div class="mb-6">
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Date of Birth (Optional)</label>
-                    <input type="date" name="date_of_birth" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-base focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all" max="{{ date('Y-m-d') }}">
+                    <input type="date" name="date_of_birth" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-base focus:outline-none focus:border-[#76d37a] focus:ring-4 focus:ring-green-500/10 transition-all" max="{{ date('Y-m-d') }}">
                 </div>
 
-                <button type="submit" class="w-full px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-900 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-blue-950 hover:-translate-y-0.5 transition-all duration-200 shadow-sm shadow-blue-500/30 hover:shadow-md hover:shadow-blue-500/40">
+                <button type="submit" class="w-full px-4 py-3 bg-gradient-to-r from-[#76d37a] to-[#93db4d] text-white font-semibold rounded-xl hover:from-[#5cb85c] hover:to-[#76d37a] hover:-translate-y-0.5 transition-all duration-200 shadow-sm shadow-green-500/30 hover:shadow-md hover:shadow-green-500/40">
                     Complete Profile
                 </button>
             </form>
@@ -47,28 +47,28 @@
     @endif
 
     {{-- Header with Wallet Card --}}
-    <header class="bg-gradient-to-br from-blue-900 via-blue-950 to-gray-900 text-white px-4 py-6 shadow-xl">
+    <header class="bg-gradient-to-br from-green-900 via-green-950 to-gray-900 text-white px-4 py-6 shadow-xl">
         <div class="max-w-7xl mx-auto">
             {{-- User Greeting --}}
             <div class="flex items-center justify-between mb-6">
                 <div>
                     <h1 class="text-2xl font-bold mb-1">Hello, {{ explode(' ', $user->name)[0] }}! 👋</h1>
-                    <p class="text-blue-100 text-sm">Welcome back to your dashboard</p>
+                    <p class="text-green-100 text-sm">Welcome back to your dashboard</p>
                 </div>
-                <div class="w-12 h-12 rounded-full bg-blue-500 flex items-center justify-center text-xl font-bold shadow-lg flex-shrink-0">
+                <div class="w-12 h-12 rounded-full bg-[#76d37a] flex items-center justify-center text-xl font-bold shadow-lg flex-shrink-0">
                     {{ strtoupper(substr($user->name, 0, 1)) }}
                 </div>
             </div>
 
-            {{-- Wallet Card - Blue Gradient (Matching Partner Portal) --}}
-            <div class="bg-gradient-to-br from-blue-600 to-blue-900 rounded-2xl p-6 shadow-xl shadow-blue-900/20">
-                <div class="text-sm text-blue-100 mb-2">Your Balance</div>
+            {{-- Wallet Card - Green Gradient (BixCash Brand) --}}
+            <div class="bg-gradient-to-br from-[#76d37a] to-[#93db4d] rounded-2xl p-6 shadow-xl shadow-green-900/20">
+                <div class="text-sm text-green-900 mb-2">Your Balance</div>
                 <div class="text-4xl font-bold text-white mb-4">Rs {{ number_format($wallet->balance, 2) }}</div>
                 <div class="flex gap-3">
-                    <a href="{{ route('customer.wallet') }}" class="flex-1 px-4 py-3 bg-white text-blue-600 font-semibold rounded-xl hover:-translate-y-1 hover:shadow-lg transition-all duration-200 text-center">
+                    <a href="{{ route('customer.wallet') }}" class="flex-1 px-4 py-3 bg-white text-[#76d37a] font-semibold rounded-xl hover:-translate-y-1 hover:shadow-lg transition-all duration-200 text-center">
                         Withdraw
                     </a>
-                    <a href="{{ route('customer.purchases') }}" class="flex-1 px-4 py-3 bg-transparent border-2 border-white text-white font-semibold rounded-xl hover:bg-white hover:text-blue-600 transition-all duration-200 text-center">
+                    <a href="{{ route('customer.purchases') }}" class="flex-1 px-4 py-3 bg-transparent border-2 border-white text-white font-semibold rounded-xl hover:bg-white hover:text-[#76d37a] transition-all duration-200 text-center">
                         History
                     </a>
                 </div>
@@ -154,8 +154,8 @@
         {{-- Recent Purchases --}}
         <div class="bg-white rounded-xl p-4 sm:p-6 mb-6 shadow-sm border border-gray-200/60">
             <div class="flex items-center justify-between mb-4">
-                <h2 class="text-lg font-bold bg-gradient-to-r from-gray-800 to-blue-900 bg-clip-text text-transparent">Recent Purchases</h2>
-                <a href="{{ route('customer.purchases') }}" class="text-sm text-blue-600 font-semibold hover:text-blue-700 transition-colors">View All →</a>
+                <h2 class="text-lg font-bold bg-gradient-to-r from-gray-800 to-green-900 bg-clip-text text-transparent">Recent Purchases</h2>
+                <a href="{{ route('customer.purchases') }}" class="text-sm text-[#76d37a] font-semibold hover:text-[#5cb85c] transition-colors">View All →</a>
             </div>
 
             @if($recentPurchases->count() > 0)
@@ -171,7 +171,7 @@
                         </thead>
                         <tbody class="text-sm">
                             @foreach($recentPurchases as $purchase)
-                            <tr class="border-b border-gray-100 hover:bg-blue-50/50 transition-colors">
+                            <tr class="border-b border-gray-100 hover:bg-green-50/50 transition-colors">
                                 <td class="py-4 px-4 sm:px-0">
                                     <div class="flex items-center gap-3">
                                         <div class="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center font-semibold text-gray-600 flex-shrink-0">
@@ -186,7 +186,7 @@
                                     <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold
                                         @if($purchase->status === 'completed') bg-green-100 text-green-700
                                         @elseif($purchase->status === 'pending') bg-yellow-100 text-yellow-700
-                                        @elseif($purchase->status === 'processing') bg-blue-100 text-blue-700
+                                        @elseif($purchase->status === 'processing') bg-green-100 text-green-700
                                         @else bg-red-100 text-red-700 @endif">
                                         {{ ucfirst($purchase->status) }}
                                     </span>
@@ -209,8 +209,8 @@
         {{-- Recent Withdrawals --}}
         <div class="bg-white rounded-xl p-4 sm:p-6 mb-6 shadow-sm border border-gray-200/60">
             <div class="flex items-center justify-between mb-4">
-                <h2 class="text-lg font-bold bg-gradient-to-r from-gray-800 to-blue-900 bg-clip-text text-transparent">Recent Withdrawals</h2>
-                <a href="{{ route('customer.wallet') }}" class="text-sm text-blue-600 font-semibold hover:text-blue-700 transition-colors">View All →</a>
+                <h2 class="text-lg font-bold bg-gradient-to-r from-gray-800 to-green-900 bg-clip-text text-transparent">Recent Withdrawals</h2>
+                <a href="{{ route('customer.wallet') }}" class="text-sm text-[#76d37a] font-semibold hover:text-[#5cb85c] transition-colors">View All →</a>
             </div>
 
             @if($recentWithdrawals->count() > 0)
@@ -225,14 +225,14 @@
                         </thead>
                         <tbody class="text-sm">
                             @foreach($recentWithdrawals as $withdrawal)
-                            <tr class="border-b border-gray-100 hover:bg-blue-50/50 transition-colors">
+                            <tr class="border-b border-gray-100 hover:bg-green-50/50 transition-colors">
                                 <td class="py-4 font-semibold text-gray-800 px-4 sm:px-0">Rs {{ number_format($withdrawal->amount, 2) }}</td>
                                 <td class="py-4 text-gray-600">{{ $withdrawal->created_at->format('M d, Y') }}</td>
                                 <td class="py-4">
                                     <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold
                                         @if($withdrawal->status === 'completed') bg-green-100 text-green-700
                                         @elseif($withdrawal->status === 'pending') bg-yellow-100 text-yellow-700
-                                        @elseif($withdrawal->status === 'processing') bg-blue-100 text-blue-700
+                                        @elseif($withdrawal->status === 'processing') bg-green-100 text-green-700
                                         @else bg-red-100 text-red-700 @endif">
                                         {{ ucfirst($withdrawal->status) }}
                                     </span>
@@ -255,10 +255,10 @@
     </main>
 
     {{-- Bottom Navigation --}}
-    <nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl shadow-lg shadow-blue-900/10 border-t border-gray-200/60 z-50">
+    <nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl shadow-lg shadow-green-900/10 border-t border-gray-200/60 z-50">
         <div class="grid grid-cols-5 max-w-7xl mx-auto">
             {{-- Home (Active) --}}
-            <a href="{{ route('customer.dashboard') }}" class="flex flex-col items-center py-3 px-2 text-white bg-gradient-to-r from-blue-600 to-blue-900 border-t-2 border-blue-500 transition-all duration-200">
+            <a href="{{ route('customer.dashboard') }}" class="flex flex-col items-center py-3 px-2 text-white bg-gradient-to-r from-[#76d37a] to-[#93db4d] border-t-2 border-[#76d37a] transition-all duration-200">
                 <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
                 </svg>
@@ -266,7 +266,7 @@
             </a>
 
             {{-- Wallet --}}
-            <a href="{{ route('customer.wallet') }}" class="flex flex-col items-center py-3 px-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all duration-200">
+            <a href="{{ route('customer.wallet') }}" class="flex flex-col items-center py-3 px-2 text-gray-500 hover:text-[#76d37a] hover:bg-green-50/50 transition-all duration-200">
                 <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"></path>
                     <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"></path>
@@ -275,7 +275,7 @@
             </a>
 
             {{-- Purchases --}}
-            <a href="{{ route('customer.purchases') }}" class="flex flex-col items-center py-3 px-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all duration-200">
+            <a href="{{ route('customer.purchases') }}" class="flex flex-col items-center py-3 px-2 text-gray-500 hover:text-[#76d37a] hover:bg-green-50/50 transition-all duration-200">
                 <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"></path>
                 </svg>
@@ -283,7 +283,7 @@
             </a>
 
             {{-- Profile --}}
-            <a href="{{ route('customer.profile') }}" class="flex flex-col items-center py-3 px-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all duration-200">
+            <a href="{{ route('customer.profile') }}" class="flex flex-col items-center py-3 px-2 text-gray-500 hover:text-[#76d37a] hover:bg-green-50/50 transition-all duration-200">
                 <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
                 </svg>
