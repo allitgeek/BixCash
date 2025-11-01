@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\CustomerQueryController;
 use App\Http\Controllers\Admin\EmailSettingController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\PartnerController;
+use App\Http\Controllers\Admin\ContextController;
 
 /*
 |--------------------------------------------------------------------------
@@ -112,6 +113,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::post('/{query}/reply', [CustomerQueryController::class, 'reply'])->name('reply');
             Route::delete('/{query}', [CustomerQueryController::class, 'destroy'])->name('destroy');
         });
+
+        // Project Context Documentation - Redirect to standalone HTML
+        Route::get('/context', function () {
+            return redirect('/context.html');
+        })->name('context');
 
         // Email Settings (Super Admin & Admin)
         Route::prefix('settings')->name('settings.')->group(function () {
