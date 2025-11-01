@@ -85,6 +85,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::post('customers/{customer}/reset-pin', [CustomerController::class, 'resetPin'])->name('customers.reset-pin');
             Route::post('customers/{customer}/unlock-pin', [CustomerController::class, 'unlockPin'])->name('customers.unlock-pin');
             Route::get('customers/{customer}/transactions', [CustomerController::class, 'transactions'])->name('customers.transactions');
+            Route::post('customers/{customer}/verify-phone', [CustomerController::class, 'verifyPhone'])->name('customers.verify-phone');
         });
 
         // Partner Management
@@ -104,6 +105,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::patch('/{partner}/logo', [PartnerController::class, 'updateLogo'])->name('update-logo');
             Route::delete('/{partner}/logo', [PartnerController::class, 'removeLogo'])->name('remove-logo');
             Route::get('/{partner}/transactions', [PartnerController::class, 'transactions'])->name('transactions');
+            Route::post('/{partner}/verify-phone', [PartnerController::class, 'verifyPhone'])->name('verify-phone');
         });
 
         // Customer Queries Management

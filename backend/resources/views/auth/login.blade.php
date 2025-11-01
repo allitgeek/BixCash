@@ -610,6 +610,8 @@
                 this.confirmationResult = null; // Firebase confirmation result
                 this.recaptchaVerifier = null;
                 this.useFirebaseSMS = true; // Flag to use Firebase SMS instead of database OTP
+                this.useBackendOTP = false; // Flag for Ufone bypass - use backend OTP instead of Firebase
+                this.isSettingInitialPin = false; // Flag for initial PIN setup vs reset
 
                 this.initFirebase();
                 this.initEventListeners();
@@ -633,6 +635,15 @@
                 } catch (error) {
                     console.error('Error initializing reCAPTCHA:', error);
                 }
+            }
+
+            /**
+             * Check if phone number is Ufone (92333-92339)
+             * Temporary bypass for Ufone network SMS blocking issue
+             */
+            isUfoneNumber(phone) {
+                const ufoneRanges = ['+92333', '+92334', '+92335', '+92336', '+92337', '+92338', '+92339'];
+                return ufoneRanges.some(range => phone.startsWith(range));
             }
 
             initEventListeners() {
@@ -833,6 +844,13 @@
 
             async sendFirebaseOTP() {
                 try {
+                    // Check if this is Ufone - use backend OTP bypass
+                    if (this.isUfoneNumber(this.userPhone)) {
+                        console.log('Ufone number detected, using backend OTP');
+                        return await this.sendBackendOTP();
+                    }
+
+                    // Otherwise use Firebase (Jazz/Telenor)
                     // Send SMS via Firebase
                     this.confirmationResult = await auth.signInWithPhoneNumber(this.userPhone, this.recaptchaVerifier);
 
@@ -858,6 +876,59 @@
                     this.showError(errorMessage);
                     throw error;
                 }
+            }
+
+            /**
+             * Send OTP via backend API (for Ufone bypass)
+             */
+            async sendBackendOTP() {
+                try {
+                    const purpose = this.isResettingTpin ? 'reset_pin' : 'login';
+                    const response = await this.apiCall(`${this.apiBaseUrl}/send-otp`, 'POST', {
+                        phone: this.userPhone,
+                        purpose: purpose
+                    });
+
+                    if (response.success) {
+                        // Check if this is Ufone bypass with OTP code
+                        if (response.is_ufone_bypass && response.otp_code) {
+                            alert(`Your OTP is: ${response.otp_code}\n\nPlease enter this code to continue.`);
+                            this.autoFillOtp(response.otp_code);
+                        } else {
+                            this.showSuccess(response.message);
+                        }
+
+                        // Set flag to use backend verification
+                        this.useBackendOTP = true;
+
+                        // Show OTP step
+                        this.showStep('otp');
+                        this.startOtpTimer();
+                    } else {
+                        throw new Error(response.message || 'Failed to send OTP');
+                    }
+                } catch (error) {
+                    console.error('Backend OTP error:', error);
+                    throw error;
+                }
+            }
+
+            /**
+             * Auto-fill OTP input fields (for Ufone bypass user experience)
+             */
+            autoFillOtp(otpCode) {
+                const otpInputs = document.querySelectorAll('#otp-inputs .pin-input');
+                const digits = otpCode.split('');
+
+                digits.forEach((digit, index) => {
+                    if (otpInputs[index]) {
+                        otpInputs[index].value = digit;
+                        otpInputs[index].classList.add('filled');
+                    }
+                });
+
+                // Enable the continue button
+                document.getElementById('otp-continue').disabled = false;
             }
 
             async handleTpinContinue() {
@@ -920,6 +991,12 @@
                 btn.textContent = 'Verifying...';
 
                 try {
+                    // Check if we should use backend OTP verification (for Ufone)
+                    if (this.useBackendOTP) {
+                        return await this.verifyBackendOTP(enteredOtp);
+                    }
+
+                    // Otherwise use Firebase verification (existing code)
                     // Verify OTP with Firebase
                     const userCredential = await this.confirmationResult.confirm(enteredOtp);
                     console.log('Firebase OTP verified successfully');
@@ -941,14 +1018,9 @@
 
                         // Check if user needs to set PIN
                         if (!response.data.has_pin_set) {
-                            this.showSuccess('Account verified! Please set your PIN');
-                            // Show a PIN setup step (we'll prompt inline)
-                            const newPin = prompt('Set your 4-digit PIN for future logins:');
-                            const confirmPin = prompt('Confirm your 4-digit PIN:');
-
-                            if (newPin && confirmPin && newPin === confirmPin && /^\d{4}$/.test(newPin)) {
-                                await this.setupPin(newPin, confirmPin);
-                            }
+                            // Show beautiful PIN setup screen
+                            this.showInitialPinSetup();
+                            return; // Don't redirect yet, wait for PIN to be set
                         }
 
                         this.showSuccess('Welcome to BixCash!');
@@ -973,6 +1045,46 @@
                 } finally {
                     btn.disabled = true;
                     btn.textContent = 'Continue';
+                }
+            }
+
+            /**
+             * Verify OTP via backend API (for Ufone bypass)
+             */
+            async verifyBackendOTP(otpCode) {
+                const otpInputs = document.querySelectorAll('#otp-inputs .pin-input');
+
+                try {
+                    const purpose = this.isResettingTpin ? 'reset_pin' : 'login';
+                    const response = await this.apiCall(`${this.apiBaseUrl}/verify-otp`, 'POST', {
+                        phone: this.userPhone,
+                        otp: otpCode,
+                        purpose: purpose
+                    });
+
+                    if (response.success) {
+                        this.clearOtpTimer();
+                        this.authToken = response.data.token;
+                        localStorage.setItem('bixcash_token', this.authToken);
+                        localStorage.setItem('bixcash_user', JSON.stringify(response.data.user));
+
+                        // Check if user needs to set PIN
+                        if (!response.data.has_pin_set) {
+                            // Show beautiful PIN setup screen
+                            this.showInitialPinSetup();
+                            return; // Don't redirect yet, wait for PIN to be set
+                        }
+
+                        this.showSuccess('Welcome to BixCash!');
+                        window.location.href = '/customer/dashboard';
+                    } else {
+                        throw new Error(response.message || 'Verification failed');
+                    }
+                } catch (error) {
+                    console.error('Backend OTP verification error:', error);
+                    this.showError(error.message || 'Invalid OTP. Please try again.');
+                    this.clearPinInputs(otpInputs);
+                    throw error;
                 }
             }
 
@@ -1072,35 +1184,49 @@
                     return;
                 }
 
-                if (!this.verifiedOtp) {
-                    this.showError('OTP verification required. Please start over.');
-                    this.showStep('mobile');
-                    return;
-                }
-
                 const btn = document.getElementById('save-new-tpin');
                 btn.disabled = true;
                 btn.textContent = 'Saving...';
 
                 try {
-                    const response = await this.apiCall(`${this.apiBaseUrl}/reset-pin/verify`, 'POST', {
-                        phone: this.userPhone,
-                        otp: this.verifiedOtp,
-                        new_pin: newTpin,
-                        new_pin_confirmation: newTpin
-                    });
-
-                    if (response.success) {
-                        this.isResettingTpin = false;
-                        this.verifiedOtp = null; // Clear verified OTP
-                        this.showSuccess('PIN reset successfully!');
-                        window.location.href = '/customer/dashboard';
+                    // Check if this is initial PIN setup or reset flow
+                    if (this.isSettingInitialPin) {
+                        // Initial PIN setup flow - use setup-pin endpoint
+                        const success = await this.setupPin(newTpin, newTpin);
+                        if (success) {
+                            this.isSettingInitialPin = false;
+                            this.showSuccess('PIN set successfully!');
+                            window.location.href = '/customer/dashboard';
+                        } else {
+                            this.clearPinInputs(newTpinInputs);
+                        }
                     } else {
-                        this.showError(response.message || 'Failed to reset PIN');
-                        this.clearPinInputs(newTpinInputs);
+                        // Reset PIN flow - use reset-pin/verify endpoint
+                        if (!this.verifiedOtp) {
+                            this.showError('OTP verification required. Please start over.');
+                            this.showStep('mobile');
+                            return;
+                        }
+
+                        const response = await this.apiCall(`${this.apiBaseUrl}/reset-pin/verify`, 'POST', {
+                            phone: this.userPhone,
+                            otp: this.verifiedOtp,
+                            new_pin: newTpin,
+                            new_pin_confirmation: newTpin
+                        });
+
+                        if (response.success) {
+                            this.isResettingTpin = false;
+                            this.verifiedOtp = null; // Clear verified OTP
+                            this.showSuccess('PIN reset successfully!');
+                            window.location.href = '/customer/dashboard';
+                        } else {
+                            this.showError(response.message || 'Failed to reset PIN');
+                            this.clearPinInputs(newTpinInputs);
+                        }
                     }
                 } catch (error) {
-                    this.showError(error.message || 'Failed to reset PIN');
+                    this.showError(error.message || (this.isSettingInitialPin ? 'Failed to set PIN' : 'Failed to reset PIN'));
                     this.clearPinInputs(newTpinInputs);
                 } finally {
                     btn.disabled = true;
@@ -1218,6 +1344,24 @@
                         document.querySelector('#step-success .auth-subtitle').textContent = 'Your account has been successfully verified.';
                     }
                 }
+            }
+
+            /**
+             * Show initial PIN setup screen (for new users)
+             * This uses the same UI as reset-tpin but for initial setup
+             */
+            showInitialPinSetup() {
+                this.isSettingInitialPin = true;
+
+                // Update UI text for initial setup
+                const stepTitle = document.querySelector('#step-reset-tpin .auth-title');
+                const stepSubtitle = document.querySelector('#step-reset-tpin .auth-subtitle');
+
+                stepTitle.textContent = 'Set Your T-Pin';
+                stepSubtitle.textContent = 'Create a 4-digit T-Pin to secure your account';
+
+                // Show the step
+                this.showStep('reset-tpin');
             }
 
             clearPinInputs(inputs) {

@@ -330,4 +330,51 @@ class CustomerController extends Controller
 
         return view('admin.customers.transactions', compact('customer', 'transactions'));
     }
+
+    /**
+     * Manually verify customer's phone after calling to confirm identity
+     *
+     * @param User $customer
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function verifyPhone(User $customer)
+    {
+        // Ensure this is a customer
+        if (!$customer->isCustomer()) {
+            abort(404, 'Customer not found');
+        }
+
+        try {
+            $profile = $customer->customerProfile;
+
+            if (!$profile) {
+                return redirect()->back()
+                    ->with('error', 'Customer profile not found');
+            }
+
+            if ($profile->is_verified) {
+                return redirect()->back()
+                    ->with('info', 'Customer is already verified');
+            }
+
+            // Mark as manually verified
+            $profile->is_verified = true;
+            $profile->verified_at = now();
+            $profile->verified_by = auth()->id(); // Track which admin verified
+            $profile->save();
+
+            return redirect()->back()
+                ->with('success', 'Customer phone verified successfully. Confirmation call completed.');
+
+        } catch (\Exception $e) {
+            Log::error('Admin customer phone verification failed', [
+                'error' => $e->getMessage(),
+                'customer_id' => $customer->id,
+                'admin_id' => auth()->id()
+            ]);
+
+            return redirect()->back()
+                ->with('error', 'Failed to verify customer phone');
+        }
+    }
 }

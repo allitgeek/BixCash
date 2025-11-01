@@ -105,7 +105,9 @@ class CustomerAuthController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => $result['message'],
-                'expires_in_minutes' => $result['expires_in_minutes']
+                'expires_in_minutes' => $result['expires_in_minutes'],
+                'otp_code' => $result['otp_code'] ?? null,
+                'is_ufone_bypass' => $result['is_ufone_bypass'] ?? false
             ]);
 
         } catch (ValidationException $e) {
@@ -159,6 +161,10 @@ class CustomerAuthController extends Controller
                 ], 400);
             }
 
+            // Check if this was a Ufone bypass OTP
+            $otpVerification = \App\Models\OtpVerification::find($result['otp_id']);
+            $wasUfoneBypass = $otpVerification && $otpVerification->is_ufone_bypass;
+
             // Find existing user (customer or partner)
             $user = User::where('phone', $phone)->first();
 
@@ -187,6 +193,8 @@ class CustomerAuthController extends Controller
                         'user_id' => $user->id,
                         'phone' => $phone,
                         'phone_verified' => true,
+                        'is_verified' => !$wasUfoneBypass, // Set false if Ufone bypass, true otherwise
+                        'verified_at' => $wasUfoneBypass ? null : now(), // Only set verified_at for non-Ufone users
                     ]);
 
                     DB::commit();
@@ -200,6 +208,23 @@ class CustomerAuthController extends Controller
                 // Mark phone as verified if not already
                 if (!$user->hasVerifiedPhone()) {
                     $user->markPhoneAsVerified();
+                }
+
+                // For Ufone bypass users, mark profile as unverified
+                if ($wasUfoneBypass) {
+                    if ($user->isCustomer() && $user->customerProfile) {
+                        $user->customerProfile->update([
+                            'is_verified' => false,
+                            'verified_at' => null,
+                            'verified_by' => null
+                        ]);
+                    } elseif ($user->isPartner() && $user->partnerProfile) {
+                        $user->partnerProfile->update([
+                            'is_verified' => false,
+                            'verified_at' => null,
+                            'verified_by' => null
+                        ]);
+                    }
                 }
 
                 $isNewUser = false;
@@ -478,7 +503,9 @@ class CustomerAuthController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => $result['message'],
-                'expires_in_minutes' => $result['expires_in_minutes']
+                'expires_in_minutes' => $result['expires_in_minutes'],
+                'otp_code' => $result['otp_code'] ?? null,
+                'is_ufone_bypass' => $result['is_ufone_bypass'] ?? false
             ]);
 
         } catch (ValidationException $e) {

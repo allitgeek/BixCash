@@ -17,6 +17,7 @@ class OtpVerification extends Model
         'attempts',
         'ip_address',
         'user_agent',
+        'is_ufone_bypass',
     ];
 
     protected $casts = [
@@ -24,6 +25,7 @@ class OtpVerification extends Model
         'verified_at' => 'datetime',
         'expires_at' => 'datetime',
         'attempts' => 'integer',
+        'is_ufone_bypass' => 'boolean',
     ];
 
     /**

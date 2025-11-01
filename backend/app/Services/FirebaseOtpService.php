@@ -89,6 +89,7 @@ class FirebaseOtpService
                     'expires_at' => Carbon::now()->addMinutes($expiryMinutes),
                     'ip_address' => $ipAddress,
                     'user_agent' => $userAgent,
+                    'is_ufone_bypass' => true, // Flag for manual verification tracking
                 ]);
 
                 // Update customer profile tracking
@@ -122,6 +123,7 @@ class FirebaseOtpService
                 'expires_at' => Carbon::now()->addMinutes($expiryMinutes),
                 'ip_address' => $ipAddress,
                 'user_agent' => $userAgent,
+                'is_ufone_bypass' => false, // Not a Ufone bypass (regular OTP)
             ]);
 
             // Update customer profile last_otp_sent_at and increment attempts

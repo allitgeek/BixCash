@@ -478,4 +478,53 @@ class PartnerController extends Controller
 
         return back()->with('info', 'No logo to remove.');
     }
+
+    /**
+     * Manually verify partner's phone after calling to confirm identity
+     *
+     * @param User $partner
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function verifyPhone($id)
+    {
+        $partner = User::with('partnerProfile')->findOrFail($id);
+
+        // Ensure this is a partner
+        if (!$partner->isPartner()) {
+            return back()->withErrors(['error' => 'Invalid partner account']);
+        }
+
+        try {
+            $profile = $partner->partnerProfile;
+
+            if (!$profile) {
+                return redirect()->back()
+                    ->with('error', 'Partner profile not found');
+            }
+
+            if ($profile->is_verified) {
+                return redirect()->back()
+                    ->with('info', 'Partner is already verified');
+            }
+
+            // Mark as manually verified
+            $profile->is_verified = true;
+            $profile->verified_at = now();
+            $profile->verified_by = auth()->id(); // Track which admin verified
+            $profile->save();
+
+            return redirect()->back()
+                ->with('success', 'Partner phone verified successfully. Confirmation call completed.');
+
+        } catch (\Exception $e) {
+            \Log::error('Admin partner phone verification failed', [
+                'error' => $e->getMessage(),
+                'partner_id' => $partner->id,
+                'admin_id' => auth()->id()
+            ]);
+
+            return redirect()->back()
+                ->with('error', 'Failed to verify partner phone');
+        }
+    }
 }

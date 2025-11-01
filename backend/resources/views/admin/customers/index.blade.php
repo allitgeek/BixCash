@@ -91,13 +91,29 @@
                                     <td style="padding: 0.75rem;">
                                         <div>
                                             {{ $customer->phone }}
-                                            @if($customer->hasVerifiedPhone())
+                                            @php
+                                                $profile = $customer->customerProfile;
+                                                $phoneVerified = $customer->hasVerifiedPhone();
+                                                $manuallyVerified = $profile && $profile->is_verified;
+                                            @endphp
+
+                                            @if($phoneVerified && $manuallyVerified)
+                                                {{-- Fully verified (green) --}}
                                                 <span style="background: #27ae60; color: white; padding: 0.15rem 0.3rem; border-radius: 3px; font-size: 0.7rem; margin-left: 0.25rem;">
-                                                    Verified
+                                                    ✓ Verified
                                                 </span>
+                                            @elseif($phoneVerified && !$manuallyVerified)
+                                                {{-- Ufone bypass - needs manual verification (orange) --}}
+                                                <form method="POST" action="{{ route('admin.customers.verify-phone', $customer) }}" style="display: inline;" onsubmit="return confirm('Have you called this customer to confirm their identity?');">
+                                                    @csrf
+                                                    <button type="submit" style="background: #f39c12; color: white; padding: 0.15rem 0.3rem; border-radius: 3px; font-size: 0.7rem; margin-left: 0.25rem; border: none; cursor: pointer;">
+                                                        ⚠ Verify Phone
+                                                    </button>
+                                                </form>
                                             @else
+                                                {{-- Not verified at all (red) --}}
                                                 <span style="background: #e74c3c; color: white; padding: 0.15rem 0.3rem; border-radius: 3px; font-size: 0.7rem; margin-left: 0.25rem;">
-                                                    Unverified
+                                                    ✗ Unverified
                                                 </span>
                                             @endif
                                         </div>

@@ -31,7 +31,10 @@ class PartnerProfile extends Model
         'is_featured',
         'registration_date',
         'approval_notes',
-        'rejection_notes'
+        'rejection_notes',
+        'is_verified',
+        'verified_at',
+        'verified_by'
     ];
 
     protected $casts = [
@@ -39,7 +42,9 @@ class PartnerProfile extends Model
         'total_sales' => 'decimal:2',
         'total_commission_paid' => 'decimal:2',
         'approved_at' => 'datetime',
-        'is_featured' => 'boolean'
+        'is_featured' => 'boolean',
+        'is_verified' => 'boolean',
+        'verified_at' => 'datetime'
     ];
 
     public function user(): BelongsTo

@@ -27,7 +27,8 @@ class CustomerProfile extends Model
         'referred_by',
         'avatar',
         'is_verified',
-        'verified_at'
+        'verified_at',
+        'verified_by'
     ];
 
     protected $casts = [
