@@ -5,85 +5,85 @@
 
 @section('content')
     {{-- Compact Stats Grid - Responsive Layout --}}
-    {{-- Mobile: Horizontal Scroll | Desktop: 7 columns Grid --}}
-    <div class="mb-6 overflow-x-auto lg:overflow-visible pb-4 lg:pb-0 -mx-6 lg:mx-0 px-6 lg:px-0 scroll-smooth snap-x snap-mandatory lg:snap-none hide-scrollbar">
-        <div class="flex lg:grid lg:grid-cols-7 gap-3 min-w-max lg:min-w-0">
+    {{-- Mobile: 2 columns | Tablet: 3 columns | Desktop: 7 columns Grid --}}
+    <div class="mb-6">
+        <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-3">
         {{-- Total Users --}}
-        <div class="group relative bg-gradient-to-br from-blue-50/30 to-transparent rounded-xl border border-gray-200/60 hover:border-blue-600 hover:shadow-lg hover:shadow-blue-600/10 transition-all duration-200 overflow-hidden snap-start lg:snap-align-none flex-shrink-0 lg:flex-shrink w-64 lg:w-auto">
-            <div class="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-500 to-blue-700"></div>
-            <div class="flex items-center gap-3 p-4 pl-5">
-                <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500/20 to-blue-600/30 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
-                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="group relative bg-gradient-to-br from-blue-50/30 to-transparent rounded-xl border border-gray-200/60 hover:border-blue-600 hover:shadow-lg hover:shadow-blue-600/10 transition-all duration-200 overflow-hidden">
+            <div class="hidden sm:block absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-500 to-blue-700"></div>
+            <div class="flex flex-col sm:flex-row items-center sm:gap-3 gap-2 p-3 sm:p-4 sm:pl-5 text-center sm:text-left">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-gradient-to-br from-blue-500/20 to-blue-600/30 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                     </svg>
                 </div>
-                <div class="flex-1 min-w-0">
-                    <h3 class="text-2xl font-black text-gray-900 leading-none">{{ $stats['total_users'] }}</h3>
+                <div class="flex-1 min-w-0 w-full sm:w-auto">
+                    <h3 class="text-xl sm:text-2xl font-black text-gray-900 leading-none">{{ $stats['total_users'] }}</h3>
                     <p class="text-xs font-semibold text-gray-500 uppercase mt-1">Total Users</p>
                 </div>
             </div>
         </div>
 
         {{-- Admin Users --}}
-        <div class="group relative bg-gradient-to-br from-purple-50/30 to-transparent rounded-xl border border-gray-200/60 hover:border-purple-600 hover:shadow-lg hover:shadow-purple-600/10 transition-all duration-200 overflow-hidden snap-start lg:snap-align-none flex-shrink-0 lg:flex-shrink w-64 lg:w-auto">
-            <div class="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-purple-500 to-purple-700"></div>
-            <div class="flex items-center gap-3 p-4 pl-5">
-                <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500/20 to-purple-600/30 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
-                    <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="group relative bg-gradient-to-br from-purple-50/30 to-transparent rounded-xl border border-gray-200/60 hover:border-purple-600 hover:shadow-lg hover:shadow-purple-600/10 transition-all duration-200 overflow-hidden">
+            <div class="hidden sm:block absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-purple-500 to-purple-700"></div>
+            <div class="flex flex-col sm:flex-row items-center sm:gap-3 gap-2 p-3 sm:p-4 sm:pl-5 text-center sm:text-left">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-gradient-to-br from-purple-500/20 to-purple-600/30 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                     </svg>
                 </div>
-                <div class="flex-1 min-w-0">
-                    <h3 class="text-2xl font-black text-gray-900 leading-none">{{ $stats['admin_users'] }}</h3>
+                <div class="flex-1 min-w-0 w-full sm:w-auto">
+                    <h3 class="text-xl sm:text-2xl font-black text-gray-900 leading-none">{{ $stats['admin_users'] }}</h3>
                     <p class="text-xs font-semibold text-gray-500 uppercase mt-1">Admins</p>
                 </div>
             </div>
         </div>
 
         {{-- Customers --}}
-        <div class="group relative bg-gradient-to-br from-green-50/30 to-transparent rounded-xl border border-gray-200/60 hover:border-green-600 hover:shadow-lg hover:shadow-green-600/10 transition-all duration-200 overflow-hidden snap-start lg:snap-align-none flex-shrink-0 lg:flex-shrink w-64 lg:w-auto">
-            <div class="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-green-500 to-green-700"></div>
-            <div class="flex items-center gap-3 p-4 pl-5">
-                <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-green-500/20 to-green-600/30 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
-                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="group relative bg-gradient-to-br from-green-50/30 to-transparent rounded-xl border border-gray-200/60 hover:border-green-600 hover:shadow-lg hover:shadow-green-600/10 transition-all duration-200 overflow-hidden">
+            <div class="hidden sm:block absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-green-500 to-green-700"></div>
+            <div class="flex flex-col sm:flex-row items-center sm:gap-3 gap-2 p-3 sm:p-4 sm:pl-5 text-center sm:text-left">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-gradient-to-br from-green-500/20 to-green-600/30 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
                 </div>
-                <div class="flex-1 min-w-0">
-                    <h3 class="text-2xl font-black text-gray-900 leading-none">{{ $stats['customer_users'] }}</h3>
+                <div class="flex-1 min-w-0 w-full sm:w-auto">
+                    <h3 class="text-xl sm:text-2xl font-black text-gray-900 leading-none">{{ $stats['customer_users'] }}</h3>
                     <p class="text-xs font-semibold text-gray-500 uppercase mt-1">Customers</p>
                 </div>
             </div>
         </div>
 
         {{-- Partners --}}
-        <div class="group relative bg-gradient-to-br from-orange-50/30 to-transparent rounded-xl border border-gray-200/60 hover:border-orange-600 hover:shadow-lg hover:shadow-orange-600/10 transition-all duration-200 overflow-hidden snap-start lg:snap-align-none flex-shrink-0 lg:flex-shrink w-64 lg:w-auto">
-            <div class="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-orange-500 to-orange-700"></div>
-            <div class="flex items-center gap-3 p-4 pl-5">
-                <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-orange-500/20 to-orange-600/30 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
-                    <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="group relative bg-gradient-to-br from-orange-50/30 to-transparent rounded-xl border border-gray-200/60 hover:border-orange-600 hover:shadow-lg hover:shadow-orange-600/10 transition-all duration-200 overflow-hidden">
+            <div class="hidden sm:block absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-orange-500 to-orange-700"></div>
+            <div class="flex flex-col sm:flex-row items-center sm:gap-3 gap-2 p-3 sm:p-4 sm:pl-5 text-center sm:text-left">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-gradient-to-br from-orange-500/20 to-orange-600/30 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
                 </div>
-                <div class="flex-1 min-w-0">
-                    <h3 class="text-2xl font-black text-gray-900 leading-none">{{ $stats['partner_users'] }}</h3>
+                <div class="flex-1 min-w-0 w-full sm:w-auto">
+                    <h3 class="text-xl sm:text-2xl font-black text-gray-900 leading-none">{{ $stats['partner_users'] }}</h3>
                     <p class="text-xs font-semibold text-gray-500 uppercase mt-1">Partners</p>
                 </div>
             </div>
         </div>
 
         {{-- Active Brands --}}
-        <div class="group relative bg-gradient-to-br from-indigo-50/30 to-transparent rounded-xl border border-gray-200/60 hover:border-indigo-600 hover:shadow-lg hover:shadow-indigo-600/10 transition-all duration-200 overflow-hidden snap-start lg:snap-align-none flex-shrink-0 lg:flex-shrink w-64 lg:w-auto">
-            <div class="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-indigo-500 to-indigo-700"></div>
-            <div class="flex items-center gap-3 p-4 pl-5">
-                <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-indigo-500/20 to-indigo-600/30 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
-                    <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="group relative bg-gradient-to-br from-indigo-50/30 to-transparent rounded-xl border border-gray-200/60 hover:border-indigo-600 hover:shadow-lg hover:shadow-indigo-600/10 transition-all duration-200 overflow-hidden">
+            <div class="hidden sm:block absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-indigo-500 to-indigo-700"></div>
+            <div class="flex flex-col sm:flex-row items-center sm:gap-3 gap-2 p-3 sm:p-4 sm:pl-5 text-center sm:text-left">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-gradient-to-br from-indigo-500/20 to-indigo-600/30 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                     </svg>
                 </div>
-                <div class="flex-1 min-w-0">
-                    <h3 class="text-2xl font-black text-gray-900 leading-none">
-                        {{ $stats['active_brands'] }}<span class="text-base text-gray-400 font-normal">/{{ $stats['total_brands'] }}</span>
+                <div class="flex-1 min-w-0 w-full sm:w-auto">
+                    <h3 class="text-xl sm:text-2xl font-black text-gray-900 leading-none">
+                        {{ $stats['active_brands'] }}<span class="text-sm sm:text-base text-gray-400 font-normal">/{{ $stats['total_brands'] }}</span>
                     </h3>
                     <p class="text-xs font-semibold text-gray-500 uppercase mt-1">Brands</p>
                 </div>
@@ -91,17 +91,17 @@
         </div>
 
         {{-- Active Categories --}}
-        <div class="group relative bg-gradient-to-br from-pink-50/30 to-transparent rounded-xl border border-gray-200/60 hover:border-pink-600 hover:shadow-lg hover:shadow-pink-600/10 transition-all duration-200 overflow-hidden snap-start lg:snap-align-none flex-shrink-0 lg:flex-shrink w-64 lg:w-auto">
-            <div class="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-pink-500 to-pink-700"></div>
-            <div class="flex items-center gap-3 p-4 pl-5">
-                <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-pink-500/20 to-pink-600/30 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
-                    <svg class="w-6 h-6 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="group relative bg-gradient-to-br from-pink-50/30 to-transparent rounded-xl border border-gray-200/60 hover:border-pink-600 hover:shadow-lg hover:shadow-pink-600/10 transition-all duration-200 overflow-hidden">
+            <div class="hidden sm:block absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-pink-500 to-pink-700"></div>
+            <div class="flex flex-col sm:flex-row items-center sm:gap-3 gap-2 p-3 sm:p-4 sm:pl-5 text-center sm:text-left">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-gradient-to-br from-pink-500/20 to-pink-600/30 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                     </svg>
                 </div>
-                <div class="flex-1 min-w-0">
-                    <h3 class="text-2xl font-black text-gray-900 leading-none">
-                        {{ $stats['active_categories'] }}<span class="text-base text-gray-400 font-normal">/{{ $stats['total_categories'] }}</span>
+                <div class="flex-1 min-w-0 w-full sm:w-auto">
+                    <h3 class="text-xl sm:text-2xl font-black text-gray-900 leading-none">
+                        {{ $stats['active_categories'] }}<span class="text-sm sm:text-base text-gray-400 font-normal">/{{ $stats['total_categories'] }}</span>
                     </h3>
                     <p class="text-xs font-semibold text-gray-500 uppercase mt-1">Categories</p>
                 </div>
@@ -109,17 +109,17 @@
         </div>
 
         {{-- Active Slides --}}
-        <div class="group relative bg-gradient-to-br from-teal-50/30 to-transparent rounded-xl border border-gray-200/60 hover:border-teal-600 hover:shadow-lg hover:shadow-teal-600/10 transition-all duration-200 overflow-hidden snap-start lg:snap-align-none flex-shrink-0 lg:flex-shrink w-64 lg:w-auto">
-            <div class="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-teal-500 to-teal-700"></div>
-            <div class="flex items-center gap-3 p-4 pl-5">
-                <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-teal-500/20 to-teal-600/30 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
-                    <svg class="w-6 h-6 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="group relative bg-gradient-to-br from-teal-50/30 to-transparent rounded-xl border border-gray-200/60 hover:border-teal-600 hover:shadow-lg hover:shadow-teal-600/10 transition-all duration-200 overflow-hidden">
+            <div class="hidden sm:block absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-teal-500 to-teal-700"></div>
+            <div class="flex flex-col sm:flex-row items-center sm:gap-3 gap-2 p-3 sm:p-4 sm:pl-5 text-center sm:text-left">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-gradient-to-br from-teal-500/20 to-teal-600/30 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
                 </div>
-                <div class="flex-1 min-w-0">
-                    <h3 class="text-2xl font-black text-gray-900 leading-none">
-                        {{ $stats['active_slides'] }}<span class="text-base text-gray-400 font-normal">/{{ $stats['total_slides'] }}</span>
+                <div class="flex-1 min-w-0 w-full sm:w-auto">
+                    <h3 class="text-xl sm:text-2xl font-black text-gray-900 leading-none">
+                        {{ $stats['active_slides'] }}<span class="text-sm sm:text-base text-gray-400 font-normal">/{{ $stats['total_slides'] }}</span>
                     </h3>
                     <p class="text-xs font-semibold text-gray-500 uppercase mt-1">Slides</p>
                 </div>
