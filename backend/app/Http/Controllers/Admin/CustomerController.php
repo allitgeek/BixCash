@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Role;
 use App\Models\CustomerProfile;
+use App\Models\PartnerTransaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -307,5 +308,26 @@ class CustomerController extends Controller
             return redirect()->back()
                 ->with('error', 'Failed to delete customer');
         }
+    }
+
+    /**
+     * View all transactions for a customer
+     *
+     * @param User $customer
+     * @return \Illuminate\View\View
+     */
+    public function transactions(User $customer)
+    {
+        // Ensure this is a customer
+        if (!$customer->isCustomer()) {
+            abort(404, 'Customer not found');
+        }
+
+        $transactions = PartnerTransaction::where('customer_id', $customer->id)
+            ->with(['partner.partnerProfile', 'brand'])
+            ->latest()
+            ->paginate(30);
+
+        return view('admin.customers.transactions', compact('customer', 'transactions'));
     }
 }

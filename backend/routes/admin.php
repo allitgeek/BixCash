@@ -84,6 +84,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::patch('customers/{customer}/toggle-status', [CustomerController::class, 'toggleStatus'])->name('customers.toggle-status');
             Route::post('customers/{customer}/reset-pin', [CustomerController::class, 'resetPin'])->name('customers.reset-pin');
             Route::post('customers/{customer}/unlock-pin', [CustomerController::class, 'unlockPin'])->name('customers.unlock-pin');
+            Route::get('customers/{customer}/transactions', [CustomerController::class, 'transactions'])->name('customers.transactions');
         });
 
         // Partner Management

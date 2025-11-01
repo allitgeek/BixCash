@@ -146,6 +146,10 @@
                                                class="btn btn-warning" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">
                                                 Edit
                                             </a>
+                                            <a href="{{ route('admin.customers.transactions', $customer) }}"
+                                               class="btn btn-info" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">
+                                                Transactions
+                                            </a>
                                             <form method="POST" action="{{ route('admin.customers.toggle-status', $customer) }}" style="display: inline;">
                                                 @csrf
                                                 @method('PATCH')
