@@ -15,7 +15,7 @@
         <div class="max-w-7xl mx-auto px-4 py-4">
             <div class="flex items-center justify-between">
                 <div class="flex-1">
-                    <h1 class="text-xl font-bold bg-gradient-to-r from-blue-900 to-blue-700 bg-clip-text text-transparent">
+                    <h1 class="text-xl font-bold bg-gradient-to-r from-green-900 to-green-700 bg-clip-text text-transparent">
                         My Profile
                     </h1>
                     <p class="text-sm text-gray-500 mt-0.5">View and manage your profile</p>
@@ -66,7 +66,7 @@
                             <h2 class="text-3xl font-bold text-white mb-2">
                                 {{ $user->name }}
                             </h2>
-                            <p class="text-blue-100 text-sm">{{ $user->phone }}</p>
+                            <p class="text-green-100 text-sm">{{ $user->phone }}</p>
                         </div>
                     </div>
                 </div>
@@ -89,7 +89,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
             {{-- Personal Information Card --}}
-            <div class="bg-white rounded-xl border border-gray-200/60 shadow-lg shadow-green-900/5 overflow-hidden hover:border-blue-800/40 hover:shadow-xl hover:shadow-green-900/10 transition-all duration-300">
+            <div class="bg-white rounded-xl border border-gray-200/60 shadow-lg shadow-green-900/5 overflow-hidden hover:border-green-800/40 hover:shadow-xl hover:shadow-green-900/10 transition-all duration-300">
                 <div class="px-5 py-4 border-b border-gray-200/60 bg-gradient-to-r from-green-50/70 via-green-900/5 to-transparent">
                     <div class="flex items-center gap-2">
                         <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-[#76d37a] to-[#93db4d] flex items-center justify-center shadow-sm">
@@ -106,7 +106,7 @@
                         <div class="space-y-4">
                             <div>
                                 <label class="block text-xs font-semibold text-gray-700 mb-2">Full Name *</label>
-                                <input type="text" name="name" class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#76d37a] focus:ring-4 focus:ring-blue-500/10 transition-all" required value="{{ old('name', $user->name) }}">
+                                <input type="text" name="name" class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#76d37a] focus:ring-4 focus:ring-green-500/10 transition-all" required value="{{ old('name', $user->name) }}">
                             </div>
                             <div>
                                 <label class="block text-xs font-semibold text-gray-700 mb-2">Phone Number</label>
@@ -114,13 +114,13 @@
                             </div>
                             <div>
                                 <label class="block text-xs font-semibold text-gray-700 mb-2">Email</label>
-                                <input type="email" name="email" class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#76d37a] focus:ring-4 focus:ring-blue-500/10 transition-all" value="{{ old('email', $user->email) }}">
+                                <input type="email" name="email" class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#76d37a] focus:ring-4 focus:ring-green-500/10 transition-all" value="{{ old('email', $user->email) }}">
                             </div>
                             <div>
                                 <label class="block text-xs font-semibold text-gray-700 mb-2">Date of Birth</label>
-                                <input type="date" name="date_of_birth" class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#76d37a] focus:ring-4 focus:ring-blue-500/10 transition-all" value="{{ old('date_of_birth', $profile && $profile->date_of_birth ? $profile->date_of_birth->format('Y-m-d') : '') }}">
+                                <input type="date" name="date_of_birth" class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#76d37a] focus:ring-4 focus:ring-green-500/10 transition-all" value="{{ old('date_of_birth', $profile && $profile->date_of_birth ? $profile->date_of_birth->format('Y-m-d') : '') }}">
                             </div>
-                            <button type="submit" class="w-full px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-blue-800 hover:-translate-y-0.5 transition-all duration-200 shadow-sm shadow-blue-500/30 hover:shadow-md hover:shadow-blue-500/40">
+                            <button type="submit" class="w-full px-4 py-3 bg-gradient-to-r from-[#76d37a] to-[#93db4d] text-white font-semibold rounded-xl hover:from-[#5cb85c] hover:to-[#76d37a] hover:-translate-y-0.5 transition-all duration-200 shadow-sm shadow-green-500/30 hover:shadow-md hover:shadow-green-500/40">
                                 Update Profile
                             </button>
                         </div>
