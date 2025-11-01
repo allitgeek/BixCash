@@ -4,8 +4,8 @@
 @section('page-title', 'Dashboard')
 
 @section('content')
-    {{-- Compact Stats Grid - Horizontal Layout (All 7 Metrics) --}}
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-3 mb-6">
+    {{-- Compact Stats Grid - Single Row (All 7 Metrics) --}}
+    <div class="grid grid-cols-7 gap-3 mb-6">
         {{-- Total Users --}}
         <div class="group relative bg-gradient-to-br from-blue-50/30 to-transparent rounded-xl border border-gray-200/60 hover:border-blue-600 hover:shadow-lg hover:shadow-blue-600/10 transition-all duration-200 overflow-hidden">
             <div class="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-500 to-blue-700"></div>
