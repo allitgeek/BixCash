@@ -369,8 +369,53 @@
 }
 
 /* ==========================================================================
+   Performance Optimizations
+   ========================================================================== */
+
+/* GPU-accelerated transforms for smooth animations */
+.gpu-accelerated {
+    transform: translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
+}
+
+/* Contain layout/paint for isolated components */
+.contain-layout {
+    contain: layout;
+}
+
+.contain-paint {
+    contain: paint;
+}
+
+.contain-strict {
+    contain: layout paint;
+}
+
+/* Reduce motion for accessibility and battery saving */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ==========================================================================
    Responsive Utilities
    ========================================================================== */
+
+/* Hide scrollbar while keeping functionality */
+.hide-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari and Opera */
+}
 
 @media (max-width: 768px) {
     .stat-card {
@@ -384,5 +429,15 @@
     .stat-card-icon {
         width: 3rem;
         height: 3rem;
+    }
+
+    /* Simplify animations on mobile for better performance */
+    .group:hover .stat-card-icon {
+        transform: scale(1.05);  /* Reduce rotation complexity */
+    }
+
+    /* Reduce particle animation complexity on mobile (if visible) */
+    .particle {
+        animation-duration: 30s;  /* Slower = less CPU */
     }
 }

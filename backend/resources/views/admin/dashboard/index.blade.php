@@ -4,10 +4,12 @@
 @section('page-title', 'Dashboard')
 
 @section('content')
-    {{-- Compact Stats Grid - Single Row (All 7 Metrics) --}}
-    <div class="grid grid-cols-7 gap-3 mb-6">
+    {{-- Compact Stats Grid - Responsive Layout --}}
+    {{-- Mobile: Horizontal Scroll | Desktop: 7 columns Grid --}}
+    <div class="mb-6 overflow-x-auto lg:overflow-visible pb-4 lg:pb-0 -mx-6 lg:mx-0 px-6 lg:px-0 scroll-smooth snap-x snap-mandatory lg:snap-none hide-scrollbar">
+        <div class="flex lg:grid lg:grid-cols-7 gap-3 min-w-max lg:min-w-0">
         {{-- Total Users --}}
-        <div class="group relative bg-gradient-to-br from-blue-50/30 to-transparent rounded-xl border border-gray-200/60 hover:border-blue-600 hover:shadow-lg hover:shadow-blue-600/10 transition-all duration-200 overflow-hidden">
+        <div class="group relative bg-gradient-to-br from-blue-50/30 to-transparent rounded-xl border border-gray-200/60 hover:border-blue-600 hover:shadow-lg hover:shadow-blue-600/10 transition-all duration-200 overflow-hidden snap-start lg:snap-align-none flex-shrink-0 lg:flex-shrink w-64 lg:w-auto">
             <div class="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-500 to-blue-700"></div>
             <div class="flex items-center gap-3 p-4 pl-5">
                 <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500/20 to-blue-600/30 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
@@ -23,7 +25,7 @@
         </div>
 
         {{-- Admin Users --}}
-        <div class="group relative bg-gradient-to-br from-purple-50/30 to-transparent rounded-xl border border-gray-200/60 hover:border-purple-600 hover:shadow-lg hover:shadow-purple-600/10 transition-all duration-200 overflow-hidden">
+        <div class="group relative bg-gradient-to-br from-purple-50/30 to-transparent rounded-xl border border-gray-200/60 hover:border-purple-600 hover:shadow-lg hover:shadow-purple-600/10 transition-all duration-200 overflow-hidden snap-start lg:snap-align-none flex-shrink-0 lg:flex-shrink w-64 lg:w-auto">
             <div class="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-purple-500 to-purple-700"></div>
             <div class="flex items-center gap-3 p-4 pl-5">
                 <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500/20 to-purple-600/30 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
@@ -39,7 +41,7 @@
         </div>
 
         {{-- Customers --}}
-        <div class="group relative bg-gradient-to-br from-green-50/30 to-transparent rounded-xl border border-gray-200/60 hover:border-green-600 hover:shadow-lg hover:shadow-green-600/10 transition-all duration-200 overflow-hidden">
+        <div class="group relative bg-gradient-to-br from-green-50/30 to-transparent rounded-xl border border-gray-200/60 hover:border-green-600 hover:shadow-lg hover:shadow-green-600/10 transition-all duration-200 overflow-hidden snap-start lg:snap-align-none flex-shrink-0 lg:flex-shrink w-64 lg:w-auto">
             <div class="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-green-500 to-green-700"></div>
             <div class="flex items-center gap-3 p-4 pl-5">
                 <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-green-500/20 to-green-600/30 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
@@ -55,7 +57,7 @@
         </div>
 
         {{-- Partners --}}
-        <div class="group relative bg-gradient-to-br from-orange-50/30 to-transparent rounded-xl border border-gray-200/60 hover:border-orange-600 hover:shadow-lg hover:shadow-orange-600/10 transition-all duration-200 overflow-hidden">
+        <div class="group relative bg-gradient-to-br from-orange-50/30 to-transparent rounded-xl border border-gray-200/60 hover:border-orange-600 hover:shadow-lg hover:shadow-orange-600/10 transition-all duration-200 overflow-hidden snap-start lg:snap-align-none flex-shrink-0 lg:flex-shrink w-64 lg:w-auto">
             <div class="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-orange-500 to-orange-700"></div>
             <div class="flex items-center gap-3 p-4 pl-5">
                 <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-orange-500/20 to-orange-600/30 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
@@ -71,7 +73,7 @@
         </div>
 
         {{-- Active Brands --}}
-        <div class="group relative bg-gradient-to-br from-indigo-50/30 to-transparent rounded-xl border border-gray-200/60 hover:border-indigo-600 hover:shadow-lg hover:shadow-indigo-600/10 transition-all duration-200 overflow-hidden">
+        <div class="group relative bg-gradient-to-br from-indigo-50/30 to-transparent rounded-xl border border-gray-200/60 hover:border-indigo-600 hover:shadow-lg hover:shadow-indigo-600/10 transition-all duration-200 overflow-hidden snap-start lg:snap-align-none flex-shrink-0 lg:flex-shrink w-64 lg:w-auto">
             <div class="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-indigo-500 to-indigo-700"></div>
             <div class="flex items-center gap-3 p-4 pl-5">
                 <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-indigo-500/20 to-indigo-600/30 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
@@ -89,7 +91,7 @@
         </div>
 
         {{-- Active Categories --}}
-        <div class="group relative bg-gradient-to-br from-pink-50/30 to-transparent rounded-xl border border-gray-200/60 hover:border-pink-600 hover:shadow-lg hover:shadow-pink-600/10 transition-all duration-200 overflow-hidden">
+        <div class="group relative bg-gradient-to-br from-pink-50/30 to-transparent rounded-xl border border-gray-200/60 hover:border-pink-600 hover:shadow-lg hover:shadow-pink-600/10 transition-all duration-200 overflow-hidden snap-start lg:snap-align-none flex-shrink-0 lg:flex-shrink w-64 lg:w-auto">
             <div class="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-pink-500 to-pink-700"></div>
             <div class="flex items-center gap-3 p-4 pl-5">
                 <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-pink-500/20 to-pink-600/30 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
@@ -107,7 +109,7 @@
         </div>
 
         {{-- Active Slides --}}
-        <div class="group relative bg-gradient-to-br from-teal-50/30 to-transparent rounded-xl border border-gray-200/60 hover:border-teal-600 hover:shadow-lg hover:shadow-teal-600/10 transition-all duration-200 overflow-hidden">
+        <div class="group relative bg-gradient-to-br from-teal-50/30 to-transparent rounded-xl border border-gray-200/60 hover:border-teal-600 hover:shadow-lg hover:shadow-teal-600/10 transition-all duration-200 overflow-hidden snap-start lg:snap-align-none flex-shrink-0 lg:flex-shrink w-64 lg:w-auto">
             <div class="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-teal-500 to-teal-700"></div>
             <div class="flex items-center gap-3 p-4 pl-5">
                 <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-teal-500/20 to-teal-600/30 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
@@ -121,6 +123,8 @@
                     </h3>
                     <p class="text-xs font-semibold text-gray-500 uppercase mt-1">Slides</p>
                 </div>
+            </div>
+        </div>
             </div>
         </div>
     </div>
