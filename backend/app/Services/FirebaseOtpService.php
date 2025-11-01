@@ -10,6 +10,7 @@ use Kreait\Firebase\Factory;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\Notification;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Exception;
 
 class FirebaseOtpService
@@ -74,7 +75,42 @@ class FirebaseOtpService
                 ];
             }
 
-            // Generate OTP code
+            // Check if this is Ufone number - use fixed OTP bypass
+            // Temporary solution for Ufone SMS blocking issue
+            if ($this->isUfoneNumber($phone)) {
+                $otpCode = '999999'; // Fixed OTP for Ufone users
+                $expiryMinutes = 60; // Longer expiry (1 hour) for Ufone
+
+                // Save OTP to database
+                OtpVerification::create([
+                    'phone' => $phone,
+                    'otp_code' => $otpCode,
+                    'purpose' => $purpose,
+                    'expires_at' => Carbon::now()->addMinutes($expiryMinutes),
+                    'ip_address' => $ipAddress,
+                    'user_agent' => $userAgent,
+                ]);
+
+                // Update customer profile tracking
+                $this->updateCustomerOtpTracking($phone);
+
+                // Log for monitoring (security tracking)
+                Log::info('Ufone bypass OTP generated', [
+                    'phone' => $this->maskPhone($phone),
+                    'purpose' => $purpose,
+                    'is_ufone_bypass' => true
+                ]);
+
+                return [
+                    'success' => true,
+                    'message' => 'For Ufone users, please enter: 999999',
+                    'otp_code' => '999999',
+                    'expires_in_minutes' => $expiryMinutes,
+                    'is_ufone_bypass' => true
+                ];
+            }
+
+            // Generate OTP code (for non-Ufone numbers)
             $otpCode = $this->generateOtpCode();
             $expiryMinutes = config('firebase.otp.expiry_minutes', 5);
 
@@ -409,5 +445,22 @@ class FirebaseOtpService
     public static function cleanupExpiredOtps(): int
     {
         return OtpVerification::deleteExpired();
+    }
+
+    /**
+     * Check if phone number is Ufone (92333-92339)
+     * Temporary bypass for Ufone network SMS blocking issue
+     *
+     * @param string $phone Phone number in format +92XXXXXXXXXX
+     * @return bool
+     */
+    protected function isUfoneNumber(string $phone): bool
+    {
+        $ufoneRanges = [
+            '+92333', '+92334', '+92335', '+92336',
+            '+92337', '+92338', '+92339'
+        ];
+
+        return Str::startsWith($phone, $ufoneRanges);
     }
 }
