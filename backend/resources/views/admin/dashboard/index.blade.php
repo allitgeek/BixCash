@@ -4,88 +4,123 @@
 @section('page-title', 'Dashboard')
 
 @section('content')
-    {{-- Enhanced Stats Grid - 4 Beautiful Cards --}}
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        {{-- Total Users Card --}}
-        <div class="group relative bg-white rounded-2xl border-2 border-gray-200/60 p-6 hover:border-blue-900 hover:shadow-2xl hover:shadow-blue-900/20 transition-all duration-300 overflow-hidden">
-            <!-- Gradient accent bar -->
-            <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 to-blue-900 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-
-            <div class="flex items-start justify-between mb-4">
-                <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-500/20 to-blue-600/20 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
-                    <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    {{-- Compact Stats Grid - Horizontal Layout (All 7 Metrics) --}}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-3 mb-6">
+        {{-- Total Users --}}
+        <div class="group relative bg-gradient-to-br from-blue-50/30 to-transparent rounded-xl border border-gray-200/60 hover:border-blue-600 hover:shadow-lg hover:shadow-blue-600/10 transition-all duration-200 overflow-hidden">
+            <div class="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-500 to-blue-700"></div>
+            <div class="flex items-center gap-3 p-4 pl-5">
+                <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500/20 to-blue-600/30 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
+                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                     </svg>
                 </div>
-            </div>
-
-            <div>
-                <h3 class="text-4xl font-black text-gray-900 mb-2">{{ $stats['total_users'] }}</h3>
-                <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Total Users</p>
-                <p class="text-xs text-gray-400 mt-2">All registered users</p>
+                <div class="flex-1 min-w-0">
+                    <h3 class="text-2xl font-black text-gray-900 leading-none">{{ $stats['total_users'] }}</h3>
+                    <p class="text-xs font-semibold text-gray-500 uppercase mt-1">Total Users</p>
+                </div>
             </div>
         </div>
 
-        {{-- Customers Card --}}
-        <div class="group relative bg-white rounded-2xl border-2 border-gray-200/60 p-6 hover:border-green-600 hover:shadow-2xl hover:shadow-green-600/20 transition-all duration-300 overflow-hidden">
-            <!-- Gradient accent bar -->
-            <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-green-500 to-green-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        {{-- Admin Users --}}
+        <div class="group relative bg-gradient-to-br from-purple-50/30 to-transparent rounded-xl border border-gray-200/60 hover:border-purple-600 hover:shadow-lg hover:shadow-purple-600/10 transition-all duration-200 overflow-hidden">
+            <div class="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-purple-500 to-purple-700"></div>
+            <div class="flex items-center gap-3 p-4 pl-5">
+                <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500/20 to-purple-600/30 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
+                    <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <h3 class="text-2xl font-black text-gray-900 leading-none">{{ $stats['admin_users'] }}</h3>
+                    <p class="text-xs font-semibold text-gray-500 uppercase mt-1">Admins</p>
+                </div>
+            </div>
+        </div>
 
-            <div class="flex items-start justify-between mb-4">
-                <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-green-500/20 to-green-600/20 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
-                    <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        {{-- Customers --}}
+        <div class="group relative bg-gradient-to-br from-green-50/30 to-transparent rounded-xl border border-gray-200/60 hover:border-green-600 hover:shadow-lg hover:shadow-green-600/10 transition-all duration-200 overflow-hidden">
+            <div class="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-green-500 to-green-700"></div>
+            <div class="flex items-center gap-3 p-4 pl-5">
+                <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-green-500/20 to-green-600/30 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
+                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
                 </div>
-            </div>
-
-            <div>
-                <h3 class="text-4xl font-black text-gray-900 mb-2">{{ $stats['customer_users'] }}</h3>
-                <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Customers</p>
-                <p class="text-xs text-gray-400 mt-2">Active shoppers</p>
+                <div class="flex-1 min-w-0">
+                    <h3 class="text-2xl font-black text-gray-900 leading-none">{{ $stats['customer_users'] }}</h3>
+                    <p class="text-xs font-semibold text-gray-500 uppercase mt-1">Customers</p>
+                </div>
             </div>
         </div>
 
-        {{-- Partners Card --}}
-        <div class="group relative bg-white rounded-2xl border-2 border-gray-200/60 p-6 hover:border-orange-600 hover:shadow-2xl hover:shadow-orange-600/20 transition-all duration-300 overflow-hidden">
-            <!-- Gradient accent bar -->
-            <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-orange-500 to-orange-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-
-            <div class="flex items-start justify-between mb-4">
-                <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-orange-500/20 to-orange-600/20 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
-                    <svg class="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        {{-- Partners --}}
+        <div class="group relative bg-gradient-to-br from-orange-50/30 to-transparent rounded-xl border border-gray-200/60 hover:border-orange-600 hover:shadow-lg hover:shadow-orange-600/10 transition-all duration-200 overflow-hidden">
+            <div class="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-orange-500 to-orange-700"></div>
+            <div class="flex items-center gap-3 p-4 pl-5">
+                <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-orange-500/20 to-orange-600/30 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
+                    <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
                 </div>
-            </div>
-
-            <div>
-                <h3 class="text-4xl font-black text-gray-900 mb-2">{{ $stats['partner_users'] }}</h3>
-                <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Partners</p>
-                <p class="text-xs text-gray-400 mt-2">Business partners</p>
+                <div class="flex-1 min-w-0">
+                    <h3 class="text-2xl font-black text-gray-900 leading-none">{{ $stats['partner_users'] }}</h3>
+                    <p class="text-xs font-semibold text-gray-500 uppercase mt-1">Partners</p>
+                </div>
             </div>
         </div>
 
-        {{-- Active Brands Card --}}
-        <div class="group relative bg-white rounded-2xl border-2 border-gray-200/60 p-6 hover:border-purple-600 hover:shadow-2xl hover:shadow-purple-600/20 transition-all duration-300 overflow-hidden">
-            <!-- Gradient accent bar -->
-            <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 to-purple-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-
-            <div class="flex items-start justify-between mb-4">
-                <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-purple-500/20 to-purple-600/20 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
-                    <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        {{-- Active Brands --}}
+        <div class="group relative bg-gradient-to-br from-indigo-50/30 to-transparent rounded-xl border border-gray-200/60 hover:border-indigo-600 hover:shadow-lg hover:shadow-indigo-600/10 transition-all duration-200 overflow-hidden">
+            <div class="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-indigo-500 to-indigo-700"></div>
+            <div class="flex items-center gap-3 p-4 pl-5">
+                <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-indigo-500/20 to-indigo-600/30 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
+                    <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                     </svg>
                 </div>
+                <div class="flex-1 min-w-0">
+                    <h3 class="text-2xl font-black text-gray-900 leading-none">
+                        {{ $stats['active_brands'] }}<span class="text-base text-gray-400 font-normal">/{{ $stats['total_brands'] }}</span>
+                    </h3>
+                    <p class="text-xs font-semibold text-gray-500 uppercase mt-1">Brands</p>
+                </div>
             </div>
+        </div>
 
-            <div>
-                <h3 class="text-4xl font-black text-gray-900 mb-2">
-                    {{ $stats['active_brands'] }}
-                    <span class="text-2xl text-gray-400 font-normal">/{{ $stats['total_brands'] }}</span>
-                </h3>
-                <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Active Brands</p>
-                <p class="text-xs text-gray-400 mt-2">Featured brands</p>
+        {{-- Active Categories --}}
+        <div class="group relative bg-gradient-to-br from-pink-50/30 to-transparent rounded-xl border border-gray-200/60 hover:border-pink-600 hover:shadow-lg hover:shadow-pink-600/10 transition-all duration-200 overflow-hidden">
+            <div class="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-pink-500 to-pink-700"></div>
+            <div class="flex items-center gap-3 p-4 pl-5">
+                <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-pink-500/20 to-pink-600/30 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
+                    <svg class="w-6 h-6 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                    </svg>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <h3 class="text-2xl font-black text-gray-900 leading-none">
+                        {{ $stats['active_categories'] }}<span class="text-base text-gray-400 font-normal">/{{ $stats['total_categories'] }}</span>
+                    </h3>
+                    <p class="text-xs font-semibold text-gray-500 uppercase mt-1">Categories</p>
+                </div>
+            </div>
+        </div>
+
+        {{-- Active Slides --}}
+        <div class="group relative bg-gradient-to-br from-teal-50/30 to-transparent rounded-xl border border-gray-200/60 hover:border-teal-600 hover:shadow-lg hover:shadow-teal-600/10 transition-all duration-200 overflow-hidden">
+            <div class="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-teal-500 to-teal-700"></div>
+            <div class="flex items-center gap-3 p-4 pl-5">
+                <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-teal-500/20 to-teal-600/30 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
+                    <svg class="w-6 h-6 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <h3 class="text-2xl font-black text-gray-900 leading-none">
+                        {{ $stats['active_slides'] }}<span class="text-base text-gray-400 font-normal">/{{ $stats['total_slides'] }}</span>
+                    </h3>
+                    <p class="text-xs font-semibold text-gray-500 uppercase mt-1">Slides</p>
+                </div>
             </div>
         </div>
     </div>
@@ -184,24 +219,24 @@
         </div>
     </div>
 
-    {{-- 7-Day Trend Charts with Navy Accents --}}
+    {{-- 7-Day Trend Charts with Navy Accents (Compact & Enhanced) --}}
     <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
         {{-- Customer Registrations Chart --}}
-        <div class="bg-white rounded-xl border border-gray-200/60 shadow-sm overflow-hidden p-5 hover:border-blue-800/40 hover:shadow-md hover:shadow-blue-900/5 transition-all duration-200">
-            <h4 class="text-sm font-semibold bg-gradient-to-r from-gray-700 to-blue-900 bg-clip-text text-transparent mb-4">Customer Registrations (7 Days)</h4>
-            <canvas id="customerChart" height="120"></canvas>
+        <div class="bg-white rounded-xl border border-gray-200/60 shadow-sm overflow-hidden p-4 hover:border-blue-800/40 hover:shadow-lg hover:shadow-blue-600/20 transition-all duration-200">
+            <h4 class="text-sm font-semibold bg-gradient-to-r from-gray-700 to-blue-900 bg-clip-text text-transparent mb-3">Customer Registrations (7 Days)</h4>
+            <canvas id="customerChart" height="80"></canvas>
         </div>
 
         {{-- Transactions Chart --}}
-        <div class="bg-white rounded-xl border border-gray-200/60 shadow-sm overflow-hidden p-5 hover:border-blue-800/40 hover:shadow-md hover:shadow-blue-900/5 transition-all duration-200">
-            <h4 class="text-sm font-semibold bg-gradient-to-r from-gray-700 to-blue-900 bg-clip-text text-transparent mb-4">Transaction Volume (7 Days)</h4>
-            <canvas id="transactionChart" height="120"></canvas>
+        <div class="bg-white rounded-xl border border-gray-200/60 shadow-sm overflow-hidden p-4 hover:border-green-600/40 hover:shadow-lg hover:shadow-green-600/20 transition-all duration-200">
+            <h4 class="text-sm font-semibold bg-gradient-to-r from-gray-700 to-green-700 bg-clip-text text-transparent mb-3">Transaction Volume (7 Days)</h4>
+            <canvas id="transactionChart" height="80"></canvas>
         </div>
 
         {{-- Partner Registrations Chart --}}
-        <div class="bg-white rounded-xl border border-gray-200/60 shadow-sm overflow-hidden p-5 hover:border-blue-800/40 hover:shadow-md hover:shadow-blue-900/5 transition-all duration-200">
-            <h4 class="text-sm font-semibold bg-gradient-to-r from-gray-700 to-blue-900 bg-clip-text text-transparent mb-4">Partner Registrations (7 Days)</h4>
-            <canvas id="partnerChart" height="120"></canvas>
+        <div class="bg-white rounded-xl border border-gray-200/60 shadow-sm overflow-hidden p-4 hover:border-orange-600/40 hover:shadow-lg hover:shadow-orange-600/20 transition-all duration-200">
+            <h4 class="text-sm font-semibold bg-gradient-to-r from-gray-700 to-orange-700 bg-clip-text text-transparent mb-3">Partner Registrations (7 Days)</h4>
+            <canvas id="partnerChart" height="80"></canvas>
         </div>
     </div>
 @endsection
@@ -263,8 +298,14 @@
         }
     };
 
-    // Customer Chart - Navy blue accent
-    new Chart(document.getElementById('customerChart'), {
+    // Customer Chart - Navy blue with gradient fill
+    const customerCtx = document.getElementById('customerChart').getContext('2d');
+    const customerGradient = customerCtx.createLinearGradient(0, 0, 0, 200);
+    customerGradient.addColorStop(0, 'rgba(30, 64, 175, 0.4)');
+    customerGradient.addColorStop(0.5, 'rgba(30, 64, 175, 0.2)');
+    customerGradient.addColorStop(1, 'rgba(30, 64, 175, 0.05)');
+
+    new Chart(customerCtx, {
         type: 'line',
         data: {
             labels: chartLabels,
@@ -272,34 +313,43 @@
                 label: 'Customers',
                 data: customerData,
                 borderColor: 'rgb(30, 64, 175)',
-                backgroundColor: 'rgba(30, 64, 175, 0.1)',
-                borderWidth: 2,
+                backgroundColor: customerGradient,
+                borderWidth: 3,
                 fill: true,
                 tension: 0.4,
                 pointBackgroundColor: 'rgb(30, 64, 175)',
                 pointBorderColor: '#fff',
                 pointBorderWidth: 2,
-                pointRadius: 4,
-                pointHoverRadius: 6,
-                pointHoverBackgroundColor: 'rgb(30, 58, 138)'
+                pointRadius: 5,
+                pointHoverRadius: 7,
+                pointHoverBackgroundColor: 'rgb(30, 58, 138)',
+                pointHoverBorderWidth: 3
             }]
         },
         options: commonOptions
     });
 
-    // Transaction Chart - Green with navy accent
-    new Chart(document.getElementById('transactionChart'), {
+    // Transaction Chart - Green gradient bars
+    const transactionCtx = document.getElementById('transactionChart').getContext('2d');
+    const transactionGradient = transactionCtx.createLinearGradient(0, 0, 0, 200);
+    transactionGradient.addColorStop(0, 'rgba(34, 197, 94, 0.9)');
+    transactionGradient.addColorStop(0.5, 'rgba(118, 211, 122, 0.8)');
+    transactionGradient.addColorStop(1, 'rgba(147, 219, 77, 0.6)');
+
+    new Chart(transactionCtx, {
         type: 'bar',
         data: {
             labels: chartLabels,
             datasets: [{
                 label: 'Amount (Rs.)',
                 data: transactionData,
-                backgroundColor: 'rgba(34, 197, 94, 0.8)',
-                borderColor: 'rgb(30, 64, 175)',
+                backgroundColor: transactionGradient,
+                borderColor: 'rgba(34, 197, 94, 0.3)',
                 borderWidth: 0,
-                borderRadius: 6,
-                hoverBackgroundColor: 'rgba(30, 64, 175, 0.9)'
+                borderRadius: 8,
+                hoverBackgroundColor: 'rgba(30, 64, 175, 0.85)',
+                hoverBorderColor: 'rgba(30, 64, 175, 1)',
+                hoverBorderWidth: 2
             }]
         },
         options: {
@@ -318,8 +368,14 @@
         }
     });
 
-    // Partner Chart - Orange with navy accent
-    new Chart(document.getElementById('partnerChart'), {
+    // Partner Chart - Orange gradient with accent
+    const partnerCtx = document.getElementById('partnerChart').getContext('2d');
+    const partnerGradient = partnerCtx.createLinearGradient(0, 0, 0, 200);
+    partnerGradient.addColorStop(0, 'rgba(249, 115, 22, 0.4)');
+    partnerGradient.addColorStop(0.5, 'rgba(251, 146, 60, 0.25)');
+    partnerGradient.addColorStop(1, 'rgba(253, 186, 116, 0.1)');
+
+    new Chart(partnerCtx, {
         type: 'line',
         data: {
             labels: chartLabels,
@@ -327,16 +383,17 @@
                 label: 'Partners',
                 data: partnerData,
                 borderColor: 'rgb(249, 115, 22)',
-                backgroundColor: 'rgba(249, 115, 22, 0.1)',
-                borderWidth: 2,
+                backgroundColor: partnerGradient,
+                borderWidth: 3,
                 fill: true,
                 tension: 0.4,
                 pointBackgroundColor: 'rgb(249, 115, 22)',
                 pointBorderColor: '#fff',
                 pointBorderWidth: 2,
-                pointRadius: 4,
-                pointHoverRadius: 6,
-                pointHoverBackgroundColor: 'rgb(30, 58, 138)'
+                pointRadius: 5,
+                pointHoverRadius: 7,
+                pointHoverBackgroundColor: 'rgb(30, 58, 138)',
+                pointHoverBorderWidth: 3
             }]
         },
         options: commonOptions

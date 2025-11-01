@@ -7,6 +7,44 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    {{-- Sidebar Particle Animation Styles --}}
+    <style>
+        @keyframes sidebar-particle-float {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+                opacity: 0.15;
+            }
+            25% {
+                transform: translate(20px, -30px) scale(1.1);
+                opacity: 0.25;
+            }
+            50% {
+                transform: translate(-15px, -60px) scale(1.2);
+                opacity: 0.3;
+            }
+            75% {
+                transform: translate(10px, -40px) scale(1.15);
+                opacity: 0.2;
+            }
+        }
+
+        .sidebar-particle {
+            position: absolute;
+            background: rgba(118, 211, 122, 0.15);
+            border-radius: 50%;
+            animation: sidebar-particle-float 25s infinite ease-in-out;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Ensure nav items are above particles */
+        nav > div > div > div:not(.sidebar-particle),
+        nav a, nav button {
+            position: relative;
+            z-index: 1;
+        }
+    </style>
 </head>
 <body class="h-full font-sans antialiased" style="padding-top: 0 !important;">
     <div class="flex h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/20 overflow-hidden">
@@ -14,7 +52,13 @@
         <nav class="hidden lg:flex lg:flex-shrink-0">
             <div class="flex flex-col w-72">
                 {{-- Sidebar content --}}
-                <div class="flex flex-col flex-grow bg-gradient-to-b from-[#021c47] to-[#032a6b] overflow-y-auto border-r border-white/10 shadow-2xl">
+                <div class="flex flex-col flex-grow bg-gradient-to-b from-[#021c47] to-[#032a6b] overflow-y-auto border-r border-white/10 shadow-2xl relative">
+                    {{-- Floating Particles --}}
+                    <div class="sidebar-particle" style="width: 60px; height: 60px; top: 10%; left: 15%; animation-delay: 0s;"></div>
+                    <div class="sidebar-particle" style="width: 40px; height: 40px; top: 30%; left: 60%; animation-delay: 2s;"></div>
+                    <div class="sidebar-particle" style="width: 50px; height: 50px; top: 50%; left: 20%; animation-delay: 4s;"></div>
+                    <div class="sidebar-particle" style="width: 35px; height: 35px; top: 70%; left: 70%; animation-delay: 6s;"></div>
+                    <div class="sidebar-particle" style="width: 45px; height: 45px; top: 85%; left: 40%; animation-delay: 8s;"></div>
                     {{-- Logo/Brand --}}
                     <div class="flex items-center flex-shrink-0 px-6 py-5 border-b border-white/10 bg-white/5 backdrop-blur-sm">
                         <div class="w-full text-center">
