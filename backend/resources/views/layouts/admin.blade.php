@@ -261,14 +261,14 @@
              x-transition:leave-start="translate-x-0"
              x-transition:leave-end="-translate-x-full"
              @keydown.escape.window="mobileMenuOpen = false"
-             class="fixed inset-y-0 left-0 z-50 w-72 lg:hidden"
+             class="fixed inset-y-0 left-0 z-50 w-64 lg:hidden"
              style="display: none;">
             <div class="flex flex-col h-full bg-gradient-to-b from-[#021c47] to-[#032a6b] shadow-2xl">
                 {{-- Mobile Menu Header --}}
-                <div class="flex items-center justify-between px-6 py-5 border-b border-white/10 bg-white/5">
+                <div class="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-white/5">
                     <div>
-                        <h2 class="text-2xl font-bold text-white tracking-tight">BixCash</h2>
-                        <p class="text-xs font-medium text-blue-200/80 uppercase tracking-wider">Admin Panel</p>
+                        <h2 class="text-xl font-bold text-white tracking-tight">BixCash</h2>
+                        <p class="text-[0.65rem] font-medium text-blue-200/80 uppercase tracking-wider">Admin Panel</p>
                     </div>
                     <button @click="mobileMenuOpen = false"
                             type="button"
@@ -281,12 +281,12 @@
                 </div>
 
                 {{-- Mobile Navigation (No Particles for Performance) --}}
-                <div class="flex-1 overflow-y-auto px-3 py-4 space-y-1">
+                <div class="flex-1 min-h-0 max-h-full overflow-y-auto px-3 py-3 space-y-0.5">
                     {{-- Dashboard --}}
                     <a href="{{ route('admin.dashboard') }}"
                        @click="mobileMenuOpen = false"
-                       class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.dashboard') ? 'bg-[#76d37a] text-[#021c47] shadow-lg shadow-green-500/30' : 'text-white/80 hover:bg-white/10 hover:text-white' }}">
-                        <svg class="mr-3 h-5 w-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                       class="group flex items-center px-3 py-2.5 text-[0.8125rem] font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('admin.dashboard') ? 'bg-[#76d37a] text-[#021c47] shadow-lg shadow-green-500/30' : 'text-white/80 hover:bg-white/10 hover:text-white' }}">
+                        <svg class="mr-2.5 h-4 w-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                         </svg>
                         Dashboard
@@ -296,8 +296,8 @@
                     {{-- Users --}}
                     <a href="{{ route('admin.users.index') }}"
                        @click="mobileMenuOpen = false"
-                       class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.users.*') ? 'bg-[#76d37a] text-[#021c47] shadow-lg shadow-green-500/30' : 'text-white/80 hover:bg-white/10 hover:text-white' }}">
-                        <svg class="mr-3 h-5 w-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                       class="group flex items-center px-3 py-2.5 text-[0.8125rem] font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('admin.users.*') ? 'bg-[#76d37a] text-[#021c47] shadow-lg shadow-green-500/30' : 'text-white/80 hover:bg-white/10 hover:text-white' }}">
+                        <svg class="mr-2.5 h-4 w-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                         </svg>
                         Users
@@ -306,8 +306,8 @@
                     {{-- Customers --}}
                     <a href="{{ route('admin.customers.index') }}"
                        @click="mobileMenuOpen = false"
-                       class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.customers.*') ? 'bg-[#76d37a] text-[#021c47] shadow-lg shadow-green-500/30' : 'text-white/80 hover:bg-white/10 hover:text-white' }}">
-                        <svg class="mr-3 h-5 w-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                       class="group flex items-center px-3 py-2.5 text-[0.8125rem] font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('admin.customers.*') ? 'bg-[#76d37a] text-[#021c47] shadow-lg shadow-green-500/30' : 'text-white/80 hover:bg-white/10 hover:text-white' }}">
+                        <svg class="mr-2.5 h-4 w-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                         </svg>
                         Customers
@@ -316,9 +316,9 @@
                     {{-- Partners --}}
                     <a href="{{ route('admin.partners.index') }}"
                        @click="mobileMenuOpen = false"
-                       class="group flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.partners.*') ? 'bg-[#76d37a] text-[#021c47] shadow-lg shadow-green-500/30' : 'text-white/80 hover:bg-white/10 hover:text-white' }}">
+                       class="group flex items-center justify-between px-3 py-2.5 text-[0.8125rem] font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('admin.partners.*') ? 'bg-[#76d37a] text-[#021c47] shadow-lg shadow-green-500/30' : 'text-white/80 hover:bg-white/10 hover:text-white' }}">
                         <div class="flex items-center">
-                            <svg class="mr-3 h-5 w-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="mr-2.5 h-4 w-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                             </svg>
                             Partners
@@ -340,8 +340,8 @@
                     {{-- Hero Slides --}}
                     <a href="{{ route('admin.slides.index') }}"
                        @click="mobileMenuOpen = false"
-                       class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.slides.*') ? 'bg-[#76d37a] text-[#021c47] shadow-lg shadow-green-500/30' : 'text-white/80 hover:bg-white/10 hover:text-white' }}">
-                        <svg class="mr-3 h-5 w-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                       class="group flex items-center px-3 py-2.5 text-[0.8125rem] font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('admin.slides.*') ? 'bg-[#76d37a] text-[#021c47] shadow-lg shadow-green-500/30' : 'text-white/80 hover:bg-white/10 hover:text-white' }}">
+                        <svg class="mr-2.5 h-4 w-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
                         Hero Slides
@@ -350,8 +350,8 @@
                     {{-- Categories --}}
                     <a href="{{ route('admin.categories.index') }}"
                        @click="mobileMenuOpen = false"
-                       class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.categories.*') ? 'bg-[#76d37a] text-[#021c47] shadow-lg shadow-green-500/30' : 'text-white/80 hover:bg-white/10 hover:text-white' }}">
-                        <svg class="mr-3 h-5 w-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                       class="group flex items-center px-3 py-2.5 text-[0.8125rem] font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('admin.categories.*') ? 'bg-[#76d37a] text-[#021c47] shadow-lg shadow-green-500/30' : 'text-white/80 hover:bg-white/10 hover:text-white' }}">
+                        <svg class="mr-2.5 h-4 w-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                         </svg>
                         Categories
@@ -360,8 +360,8 @@
                     {{-- Brands --}}
                     <a href="{{ route('admin.brands.index') }}"
                        @click="mobileMenuOpen = false"
-                       class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.brands.*') ? 'bg-[#76d37a] text-[#021c47] shadow-lg shadow-green-500/30' : 'text-white/80 hover:bg-white/10 hover:text-white' }}">
-                        <svg class="mr-3 h-5 w-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                       class="group flex items-center px-3 py-2.5 text-[0.8125rem] font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('admin.brands.*') ? 'bg-[#76d37a] text-[#021c47] shadow-lg shadow-green-500/30' : 'text-white/80 hover:bg-white/10 hover:text-white' }}">
+                        <svg class="mr-2.5 h-4 w-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                         </svg>
                         Brands
@@ -370,8 +370,8 @@
                     {{-- Promotions --}}
                     <a href="{{ route('admin.promotions.index') }}"
                        @click="mobileMenuOpen = false"
-                       class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.promotions.*') ? 'bg-[#76d37a] text-[#021c47] shadow-lg shadow-green-500/30' : 'text-white/80 hover:bg-white/10 hover:text-white' }}">
-                        <svg class="mr-3 h-5 w-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                       class="group flex items-center px-3 py-2.5 text-[0.8125rem] font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('admin.promotions.*') ? 'bg-[#76d37a] text-[#021c47] shadow-lg shadow-green-500/30' : 'text-white/80 hover:bg-white/10 hover:text-white' }}">
+                        <svg class="mr-2.5 h-4 w-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
                         </svg>
                         Promotions
@@ -381,9 +381,9 @@
                     {{-- Customer Queries --}}
                     <a href="{{ route('admin.queries.index') }}"
                        @click="mobileMenuOpen = false"
-                       class="group flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.queries.*') ? 'bg-[#76d37a] text-[#021c47] shadow-lg shadow-green-500/30' : 'text-white/80 hover:bg-white/10 hover:text-white' }}">
+                       class="group flex items-center justify-between px-3 py-2.5 text-[0.8125rem] font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('admin.queries.*') ? 'bg-[#76d37a] text-[#021c47] shadow-lg shadow-green-500/30' : 'text-white/80 hover:bg-white/10 hover:text-white' }}">
                         <div class="flex items-center">
-                            <svg class="mr-3 h-5 w-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="mr-2.5 h-4 w-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                             </svg>
                             Customer Queries
@@ -399,8 +399,8 @@
                     {{-- Project Context --}}
                     <a href="{{ route('admin.context') }}"
                        @click="mobileMenuOpen = false"
-                       class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.context') ? 'bg-[#76d37a] text-[#021c47] shadow-lg shadow-green-500/30' : 'text-white/80 hover:bg-white/10 hover:text-white' }}">
-                        <svg class="mr-3 h-5 w-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                       class="group flex items-center px-3 py-2.5 text-[0.8125rem] font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('admin.context') ? 'bg-[#76d37a] text-[#021c47] shadow-lg shadow-green-500/30' : 'text-white/80 hover:bg-white/10 hover:text-white' }}">
+                        <svg class="mr-2.5 h-4 w-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                         </svg>
                         Context
@@ -410,8 +410,8 @@
                     {{-- Analytics --}}
                     <a href="{{ route('admin.analytics') }}"
                        @click="mobileMenuOpen = false"
-                       class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.analytics') ? 'bg-[#76d37a] text-[#021c47] shadow-lg shadow-green-500/30' : 'text-white/80 hover:bg-white/10 hover:text-white' }}">
-                        <svg class="mr-3 h-5 w-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                       class="group flex items-center px-3 py-2.5 text-[0.8125rem] font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('admin.analytics') ? 'bg-[#76d37a] text-[#021c47] shadow-lg shadow-green-500/30' : 'text-white/80 hover:bg-white/10 hover:text-white' }}">
+                        <svg class="mr-2.5 h-4 w-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                         </svg>
                         Analytics
@@ -420,8 +420,8 @@
                     {{-- Reports --}}
                     <a href="{{ route('admin.reports') }}"
                        @click="mobileMenuOpen = false"
-                       class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.reports') ? 'bg-[#76d37a] text-[#021c47] shadow-lg shadow-green-500/30' : 'text-white/80 hover:bg-white/10 hover:text-white' }}">
-                        <svg class="mr-3 h-5 w-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                       class="group flex items-center px-3 py-2.5 text-[0.8125rem] font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('admin.reports') ? 'bg-[#76d37a] text-[#021c47] shadow-lg shadow-green-500/30' : 'text-white/80 hover:bg-white/10 hover:text-white' }}">
+                        <svg class="mr-2.5 h-4 w-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
                         Reports
@@ -430,11 +430,11 @@
 
                     @if(auth()->user() && auth()->user()->hasPermission('manage_settings'))
                     {{-- Settings (with submenu) --}}
-                    <div x-data="{ open: {{ request()->routeIs('admin.settings*') ? 'true' : 'false' }} }" class="space-y-1">
+                    <div x-data="{ open: {{ request()->routeIs('admin.settings*') ? 'true' : 'false' }} }" class="space-y-0.5">
                         <button @click="open = !open"
-                                class="w-full group flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.settings*') ? 'bg-[#76d37a] text-[#021c47] shadow-lg shadow-green-500/30' : 'text-white/80 hover:bg-white/10 hover:text-white' }}">
+                                class="w-full group flex items-center justify-between px-3 py-2.5 text-[0.8125rem] font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('admin.settings*') ? 'bg-[#76d37a] text-[#021c47] shadow-lg shadow-green-500/30' : 'text-white/80 hover:bg-white/10 hover:text-white' }}">
                             <div class="flex items-center">
-                                <svg class="mr-3 h-5 w-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="mr-2.5 h-4 w-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                 </svg>
@@ -444,15 +444,15 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                             </svg>
                         </button>
-                        <div x-show="open" x-collapse class="ml-11 space-y-1">
+                        <div x-show="open" x-collapse class="ml-8 space-y-0.5">
                             <a href="{{ route('admin.settings') }}"
                                @click="mobileMenuOpen = false"
-                               class="block px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('admin.settings') && !request()->routeIs('admin.settings.email') ? 'bg-white/20 text-white' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
+                               class="block px-3 py-1.5 text-[0.75rem] font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('admin.settings') && !request()->routeIs('admin.settings.email') ? 'bg-white/20 text-white' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
                                 General Settings
                             </a>
                             <a href="{{ route('admin.settings.email') }}"
                                @click="mobileMenuOpen = false"
-                               class="block px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('admin.settings.email') ? 'bg-white/20 text-white' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
+                               class="block px-3 py-1.5 text-[0.75rem] font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('admin.settings.email') ? 'bg-white/20 text-white' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
                                 Email Settings
                             </a>
                         </div>
@@ -461,11 +461,11 @@
                 </div>
 
                 {{-- Mobile Menu Footer (Logout) --}}
-                <div class="border-t border-white/10 p-4">
+                <div class="border-t border-white/10 p-3">
                     <form method="POST" action="{{ route('admin.logout') }}">
                         @csrf
                         <button type="submit"
-                                class="w-full flex items-center justify-center px-4 py-3 text-sm font-semibold rounded-lg text-white bg-white/10 hover:bg-white/20 transition-all duration-200">
+                                class="w-full flex items-center justify-center px-3 py-2.5 text-[0.8125rem] font-semibold rounded-lg text-white bg-white/10 hover:bg-white/20 transition-all duration-200">
                             <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                             </svg>
