@@ -4,110 +4,88 @@
 @section('page-title', 'Dashboard')
 
 @section('content')
-    {{-- Stats Grid - Single Row Layout with Navy Accents --}}
-    <div class="grid grid-cols-7 gap-3 mb-6 overflow-x-auto">
+    {{-- Enhanced Stats Grid - 4 Beautiful Cards --}}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {{-- Total Users Card --}}
-        <div class="group bg-white rounded-lg border border-gray-200/60 p-4 hover:border-blue-800 hover:shadow-lg hover:shadow-blue-900/10 hover:ring-1 hover:ring-blue-900/20 transition-all duration-200 min-w-[160px]">
-            <div class="flex flex-col items-center text-center space-y-2">
-                <div class="w-11 h-11 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-600 group-hover:bg-gradient-to-br group-hover:from-blue-700 group-hover:to-blue-900 group-hover:text-white transition-all duration-200">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="group relative bg-white rounded-2xl border-2 border-gray-200/60 p-6 hover:border-blue-900 hover:shadow-2xl hover:shadow-blue-900/20 transition-all duration-300 overflow-hidden">
+            <!-- Gradient accent bar -->
+            <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 to-blue-900 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+            <div class="flex items-start justify-between mb-4">
+                <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-500/20 to-blue-600/20 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                    <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                     </svg>
                 </div>
-                <div>
-                    <h3 class="text-2xl font-bold text-gray-900">{{ $stats['total_users'] }}</h3>
-                    <p class="text-xs text-gray-500 mt-1 group-hover:text-blue-900 transition-colors duration-200">Total Users</p>
-                </div>
             </div>
-        </div>
 
-        {{-- Admin Users Card --}}
-        <div class="group bg-white rounded-lg border border-gray-200/60 p-4 hover:border-blue-800 hover:shadow-lg hover:shadow-blue-900/10 hover:ring-1 hover:ring-blue-900/20 transition-all duration-200 min-w-[160px]">
-            <div class="flex flex-col items-center text-center space-y-2">
-                <div class="w-11 h-11 rounded-full bg-purple-500/10 flex items-center justify-center text-purple-600 group-hover:bg-gradient-to-br group-hover:from-purple-600 group-hover:to-blue-900 group-hover:text-white transition-all duration-200">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                    </svg>
-                </div>
-                <div>
-                    <h3 class="text-2xl font-bold text-gray-900">{{ $stats['admin_users'] }}</h3>
-                    <p class="text-xs text-gray-500 mt-1 group-hover:text-blue-900 transition-colors duration-200">Admin Users</p>
-                </div>
+            <div>
+                <h3 class="text-4xl font-black text-gray-900 mb-2">{{ $stats['total_users'] }}</h3>
+                <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Total Users</p>
+                <p class="text-xs text-gray-400 mt-2">All registered users</p>
             </div>
         </div>
 
         {{-- Customers Card --}}
-        <div class="group bg-white rounded-lg border border-gray-200/60 p-4 hover:border-blue-800 hover:shadow-lg hover:shadow-blue-900/10 hover:ring-1 hover:ring-blue-900/20 transition-all duration-200 min-w-[160px]">
-            <div class="flex flex-col items-center text-center space-y-2">
-                <div class="w-11 h-11 rounded-full bg-green-500/10 flex items-center justify-center text-green-600 group-hover:bg-gradient-to-br group-hover:from-green-600 group-hover:to-blue-900 group-hover:text-white transition-all duration-200">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="group relative bg-white rounded-2xl border-2 border-gray-200/60 p-6 hover:border-green-600 hover:shadow-2xl hover:shadow-green-600/20 transition-all duration-300 overflow-hidden">
+            <!-- Gradient accent bar -->
+            <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-green-500 to-green-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+            <div class="flex items-start justify-between mb-4">
+                <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-green-500/20 to-green-600/20 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                    <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
                 </div>
-                <div>
-                    <h3 class="text-2xl font-bold text-gray-900">{{ $stats['customer_users'] }}</h3>
-                    <p class="text-xs text-gray-500 mt-1 group-hover:text-blue-900 transition-colors duration-200">Customers</p>
-                </div>
+            </div>
+
+            <div>
+                <h3 class="text-4xl font-black text-gray-900 mb-2">{{ $stats['customer_users'] }}</h3>
+                <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Customers</p>
+                <p class="text-xs text-gray-400 mt-2">Active shoppers</p>
             </div>
         </div>
 
         {{-- Partners Card --}}
-        <div class="group bg-white rounded-lg border border-gray-200/60 p-4 hover:border-blue-800 hover:shadow-lg hover:shadow-blue-900/10 hover:ring-1 hover:ring-blue-900/20 transition-all duration-200 min-w-[160px]">
-            <div class="flex flex-col items-center text-center space-y-2">
-                <div class="w-11 h-11 rounded-full bg-orange-500/10 flex items-center justify-center text-orange-600 group-hover:bg-gradient-to-br group-hover:from-orange-600 group-hover:to-blue-900 group-hover:text-white transition-all duration-200">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="group relative bg-white rounded-2xl border-2 border-gray-200/60 p-6 hover:border-orange-600 hover:shadow-2xl hover:shadow-orange-600/20 transition-all duration-300 overflow-hidden">
+            <!-- Gradient accent bar -->
+            <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-orange-500 to-orange-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+            <div class="flex items-start justify-between mb-4">
+                <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-orange-500/20 to-orange-600/20 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                    <svg class="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
                 </div>
-                <div>
-                    <h3 class="text-2xl font-bold text-gray-900">{{ $stats['partner_users'] }}</h3>
-                    <p class="text-xs text-gray-500 mt-1 group-hover:text-blue-900 transition-colors duration-200">Partners</p>
-                </div>
+            </div>
+
+            <div>
+                <h3 class="text-4xl font-black text-gray-900 mb-2">{{ $stats['partner_users'] }}</h3>
+                <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Partners</p>
+                <p class="text-xs text-gray-400 mt-2">Business partners</p>
             </div>
         </div>
 
         {{-- Active Brands Card --}}
-        <div class="group bg-white rounded-lg border border-gray-200/60 p-4 hover:border-blue-800 hover:shadow-lg hover:shadow-blue-900/10 hover:ring-1 hover:ring-blue-900/20 transition-all duration-200 min-w-[160px]">
-            <div class="flex flex-col items-center text-center space-y-2">
-                <div class="w-11 h-11 rounded-full bg-indigo-500/10 flex items-center justify-center text-indigo-600 group-hover:bg-gradient-to-br group-hover:from-indigo-600 group-hover:to-blue-900 group-hover:text-white transition-all duration-200">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="group relative bg-white rounded-2xl border-2 border-gray-200/60 p-6 hover:border-purple-600 hover:shadow-2xl hover:shadow-purple-600/20 transition-all duration-300 overflow-hidden">
+            <!-- Gradient accent bar -->
+            <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 to-purple-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+            <div class="flex items-start justify-between mb-4">
+                <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-purple-500/20 to-purple-600/20 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                    <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                     </svg>
                 </div>
-                <div>
-                    <h3 class="text-2xl font-bold text-gray-900">{{ $stats['active_brands'] }}<span class="text-sm text-gray-400 ml-1">/{{ $stats['total_brands'] }}</span></h3>
-                    <p class="text-xs text-gray-500 mt-1 group-hover:text-blue-900 transition-colors duration-200">Active Brands</p>
-                </div>
             </div>
-        </div>
 
-        {{-- Active Categories Card --}}
-        <div class="group bg-white rounded-lg border border-gray-200/60 p-4 hover:border-blue-800 hover:shadow-lg hover:shadow-blue-900/10 hover:ring-1 hover:ring-blue-900/20 transition-all duration-200 min-w-[160px]">
-            <div class="flex flex-col items-center text-center space-y-2">
-                <div class="w-11 h-11 rounded-full bg-pink-500/10 flex items-center justify-center text-pink-600 group-hover:bg-gradient-to-br group-hover:from-pink-600 group-hover:to-blue-900 group-hover:text-white transition-all duration-200">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                    </svg>
-                </div>
-                <div>
-                    <h3 class="text-2xl font-bold text-gray-900">{{ $stats['active_categories'] }}<span class="text-sm text-gray-400 ml-1">/{{ $stats['total_categories'] }}</span></h3>
-                    <p class="text-xs text-gray-500 mt-1 group-hover:text-blue-900 transition-colors duration-200">Active Categories</p>
-                </div>
-            </div>
-        </div>
-
-        {{-- Active Slides Card --}}
-        <div class="group bg-white rounded-lg border border-gray-200/60 p-4 hover:border-blue-800 hover:shadow-lg hover:shadow-blue-900/10 hover:ring-1 hover:ring-blue-900/20 transition-all duration-200 min-w-[160px]">
-            <div class="flex flex-col items-center text-center space-y-2">
-                <div class="w-11 h-11 rounded-full bg-teal-500/10 flex items-center justify-center text-teal-600 group-hover:bg-gradient-to-br group-hover:from-teal-600 group-hover:to-blue-900 group-hover:text-white transition-all duration-200">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                </div>
-                <div>
-                    <h3 class="text-2xl font-bold text-gray-900">{{ $stats['active_slides'] }}<span class="text-sm text-gray-400 ml-1">/{{ $stats['total_slides'] }}</span></h3>
-                    <p class="text-xs text-gray-500 mt-1 group-hover:text-blue-900 transition-colors duration-200">Active Slides</p>
-                </div>
+            <div>
+                <h3 class="text-4xl font-black text-gray-900 mb-2">
+                    {{ $stats['active_brands'] }}
+                    <span class="text-2xl text-gray-400 font-normal">/{{ $stats['total_brands'] }}</span>
+                </h3>
+                <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Active Brands</p>
+                <p class="text-xs text-gray-400 mt-2">Featured brands</p>
             </div>
         </div>
     </div>
