@@ -5,9 +5,9 @@
 
 @section('content')
     {{-- Compact Stats Grid - Responsive Layout --}}
-    {{-- Mobile: 2 columns | Tablet: 3 columns | Desktop: 7 columns Grid --}}
+    {{-- Mobile: 2 columns | Tablet: 3 columns | Desktop: 6 columns Grid --}}
     <div class="mb-6">
-        <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-3">
+        <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
         {{-- Total Users --}}
         <div class="group relative bg-gradient-to-br from-blue-50/30 to-transparent rounded-xl border border-gray-200/60 hover:border-blue-600 hover:shadow-lg hover:shadow-blue-600/10 transition-all duration-200 overflow-hidden">
             <div class="hidden sm:block absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-500 to-blue-700"></div>
@@ -108,23 +108,6 @@
             </div>
         </div>
 
-        {{-- Active Slides --}}
-        <div class="group relative bg-gradient-to-br from-teal-50/30 to-transparent rounded-xl border border-gray-200/60 hover:border-teal-600 hover:shadow-lg hover:shadow-teal-600/10 transition-all duration-200 overflow-hidden">
-            <div class="hidden sm:block absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-teal-500 to-teal-700"></div>
-            <div class="flex flex-col sm:flex-row items-center sm:gap-3 gap-2 p-3 sm:p-4 sm:pl-5 text-center sm:text-left">
-                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-gradient-to-br from-teal-500/20 to-teal-600/30 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
-                    <svg class="w-5 h-5 sm:w-6 sm:h-6 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                </div>
-                <div class="flex-1 min-w-0 w-full sm:w-auto">
-                    <h3 class="text-xl sm:text-2xl font-black text-gray-900 leading-none">
-                        {{ $stats['active_slides'] }}<span class="text-sm sm:text-base text-gray-400 font-normal">/{{ $stats['total_slides'] }}</span>
-                    </h3>
-                    <p class="text-xs font-semibold text-gray-500 uppercase mt-1">Slides</p>
-                </div>
-            </div>
-        </div>
         </div>
     </div>
 
