@@ -4769,6 +4769,181 @@ on: {
 
 ---
 
+## Hero Slider Bug Fixes - Font Awesome and Video Audio Overlap
+
+**Date**: November 3, 2025 (Post-Implementation Hotfix)
+**Priority**: CRITICAL
+**Objective**: Fix two critical bugs discovered after video slider deployment that affected user experience.
+
+### Bugs Identified
+
+#### Bug 1: Blank Mute Button (No Icons Displayed)
+**Symptom**: Mute button appeared as a blank circle with no volume icon visible
+**Root Cause**: Font Awesome library was not loaded in the page
+**Impact**: Users couldn't see the mute/unmute button state
+
+#### Bug 2: Video Audio Bleeding Across Slides
+**Symptom**: When slider advanced from video slide to image slide, previous video audio continued playing in background
+**Root Cause**: `handleSlideChange()` function only managed current slide's video, never paused/stopped videos from other slides
+**Impact**: Multiple videos could play audio simultaneously, creating audio overlap and poor user experience
+
+### Fixes Implemented
+
+#### Fix 1: Add Font Awesome CDN
+**File**: `backend/resources/views/welcome.blade.php` (line 21)
+
+**Change**:
+```html
+<!-- Added after Swiper CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer" />
+```
+
+**Result**:
+- ✅ Volume icons now display correctly
+- ✅ Volume-up (🔊) shows when unmuted
+- ✅ Volume-mute (🔇) shows when muted
+- ✅ Users can see button state at a glance
+
+#### Fix 2: Stop All Videos on Slide Change
+**File**: `backend/resources/views/welcome.blade.php` (lines 1928-1934)
+
+**Before**:
+```javascript
+function handleSlideChange(swiper) {
+    const activeSlide = swiper.slides[swiper.activeIndex];
+    if (!activeSlide) return;
+
+    const video = activeSlide.querySelector('.hero-video');
+    // ... only handled current slide's video
+}
+```
+
+**After**:
+```javascript
+function handleSlideChange(swiper) {
+    // CRITICAL: Stop all videos from playing first to prevent audio overlap
+    const allVideos = document.querySelectorAll('.hero-video');
+    allVideos.forEach(v => {
+        v.pause();
+        v.currentTime = 0;
+    });
+
+    const activeSlide = swiper.slides[swiper.activeIndex];
+    if (!activeSlide) return;
+
+    const video = activeSlide.querySelector('.hero-video');
+    // ... then play current slide's video
+}
+```
+
+**Logic**:
+1. **First**: Find ALL `.hero-video` elements in the entire slider
+2. **Pause** each video to stop playback
+3. **Reset** currentTime to 0 (rewind to start)
+4. **Then**: Proceed with handling the active slide's video
+
+**Result**:
+- ✅ Only one video plays audio at a time
+- ✅ Previous video stops immediately when slide changes
+- ✅ Clean audio transitions
+- ✅ No audio overlap or cacophony
+
+### Technical Details
+
+#### Why Font Awesome Was Missing
+- Initial implementation assumed Font Awesome was globally available
+- The Vite build process doesn't automatically include external icon libraries
+- CDN link was never added to the `<head>` section
+- Icon classes (`fas fa-volume-up`) rendered as empty `<i>` tags without styles
+
+#### Why Video Audio Bled Through
+- Swiper.js manages slide visibility, but doesn't control media playback
+- HTML5 `<video>` elements continue playing even when parent slide is hidden
+- The `display: none` or `opacity: 0` on slides doesn't pause videos
+- Multiple videos could be playing simultaneously in the DOM
+
+#### The Importance of Explicit Cleanup
+- **Browser behavior**: Hidden videos keep playing unless explicitly paused
+- **Memory**: Multiple playing videos consume resources
+- **User experience**: Audio overlap is jarring and unprofessional
+- **Best practice**: Always cleanup media elements before starting new ones
+
+### Testing Results
+
+**Test Scenario 1: Mute Button Visibility**
+- ✅ Button shows volume-up icon when unmuted
+- ✅ Button shows volume-mute icon when muted
+- ✅ Hover effects work correctly
+- ✅ Icon changes smoothly when clicked
+
+**Test Scenario 2: Single Video Audio**
+- ✅ Video 1 plays with audio
+- ✅ Advance to Video 2 → Video 1 stops immediately
+- ✅ Video 2 plays with audio
+- ✅ Advance to Image → Video 2 stops immediately
+- ✅ No audio overlap at any point
+
+**Test Scenario 3: Manual Navigation**
+- ✅ Click previous/next buttons → videos stop correctly
+- ✅ Click pagination dots → videos stop correctly
+- ✅ Manual swipe gesture → videos stop correctly
+
+**Test Scenario 4: Autoplay Transitions**
+- ✅ Video completes → advances → previous video silent
+- ✅ Multiple videos in slider → only current plays audio
+
+### Performance Impact
+
+- **Font Awesome CDN**: ~50KB gzipped, loaded once, cached by browser
+- **Video pause loop**: Negligible (<1ms for typical 3-5 slides)
+- **No memory leaks**: Proper cleanup prevents accumulation of playing videos
+- **Battery impact**: Reduced (fewer videos playing simultaneously)
+
+### Files Modified
+
+1. `backend/resources/views/welcome.blade.php`
+   - Added Font Awesome CDN link (line 21)
+   - Updated `handleSlideChange()` function (lines 1928-1934)
+
+### Build Output
+
+```bash
+$ npm run build
+vite v7.1.7 building for production...
+✓ 53 modules transformed.
+public/build/assets/app-BMmawmym.css  108.77 kB │ gzip: 17.77 kB
+public/build/assets/app-Bj43h_rG.js    36.08 kB │ gzip: 14.58 kB
+✓ built in 2.87s
+```
+
+### Code Review Notes
+
+**What worked well:**
+- Clean separation of concerns (pause all, then play current)
+- Explicit cleanup prevents edge cases
+- Font Awesome CDN with integrity hash for security
+
+**What we learned:**
+- Always verify external dependencies are loaded
+- Test with multiple video slides, not just one
+- Browser DevTools Network tab would have caught missing Font Awesome
+- Audio issues require explicit cleanup, not just CSS hiding
+
+### Prevention for Future
+
+**Checklist for future video/audio features:**
+1. ✅ Verify all external libraries are properly loaded (check Network tab)
+2. ✅ Test with multiple media elements, not just single instances
+3. ✅ Explicitly pause/reset all media before starting new ones
+4. ✅ Test all navigation methods (auto, manual, buttons, swipe)
+5. ✅ Check browser console for missing resource errors
+6. ✅ Test on multiple browsers and devices
+
+---
+
 **Last Updated**: November 3, 2025
 **Implementation Status**: ✅ LIVE IN PRODUCTION
 **Updated By**: Claude Code

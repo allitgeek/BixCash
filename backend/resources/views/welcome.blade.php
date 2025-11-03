@@ -18,6 +18,7 @@
 
     <!-- Stylesheets -->
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <!-- Dynamic Content Loading Styles -->
@@ -1925,6 +1926,13 @@
             }
 
             function handleSlideChange(swiper) {
+                // CRITICAL: Stop all videos from playing first to prevent audio overlap
+                const allVideos = document.querySelectorAll('.hero-video');
+                allVideos.forEach(v => {
+                    v.pause();
+                    v.currentTime = 0;
+                });
+
                 const activeSlide = swiper.slides[swiper.activeIndex];
                 if (!activeSlide) return;
 
