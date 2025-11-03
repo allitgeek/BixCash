@@ -130,6 +130,56 @@
             height: 100%;
         }
 
+        /* Mobile-responsive video enhancements */
+        @media (max-width: 768px) {
+            /* Show full video on mobile without cropping (important for TVC content) */
+            .hero-video {
+                object-fit: contain !important;
+                background: #000; /* Letterbox background for proper video display */
+            }
+
+            /* Responsive mute button for small screens */
+            .video-mute-toggle {
+                width: 40px !important;
+                height: 40px !important;
+                bottom: 12px !important;
+                right: 12px !important;
+                box-shadow: 0 3px 10px rgba(0,0,0,0.4) !important;
+            }
+
+            /* Smaller icon for mobile button */
+            .video-mute-toggle i {
+                font-size: 16px !important;
+            }
+
+            /* Enhanced touch feedback for mobile */
+            .video-mute-toggle:active {
+                transform: scale(0.9) !important;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.3) !important;
+            }
+        }
+
+        /* Medium mobile devices (481px - 767px) */
+        @media (min-width: 481px) and (max-width: 767px) {
+            .video-mute-toggle {
+                width: 45px !important;
+                height: 45px !important;
+                bottom: 15px !important;
+                right: 15px !important;
+            }
+
+            .video-mute-toggle i {
+                font-size: 18px !important;
+            }
+        }
+
+        /* Tablet and landscape modes - use cover for dramatic effect */
+        @media (min-width: 769px) {
+            .hero-video {
+                object-fit: cover;
+            }
+        }
+
         /* Error states */
         .error-message {
             background: #fee;
@@ -1807,7 +1857,7 @@
                             } else {
                                 // Direct video file - use video tag with audio enabled
                                 slideElement.innerHTML = `
-                                    <div style="position: relative; width: 100%; height: 100%;">
+                                    <div style="position: relative; width: 100%; height: 100%; background: #000; display: flex; align-items: center; justify-content: center;">
                                         <video class="hero-video" autoplay playsinline style="width: 100%; height: 100%; object-fit: cover;" data-slide-id="${slide.id || Date.now()}">
                                             <source src="${slide.media_path}" type="video/mp4">
                                         </video>
