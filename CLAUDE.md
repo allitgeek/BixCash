@@ -4440,3 +4440,135 @@ npm run build
 **Last Updated**: November 2, 2025
 **Implementation Status**: ✅ LIVE IN PRODUCTION
 **Updated By**: Claude Code
+
+---
+
+## File Upload Limit Increase (200MB)
+
+**Date**: November 3, 2025
+**Objective**: Increase file upload limits from 50MB to 200MB for admin slide management to support larger video files.
+
+### Changes Made
+
+#### 1. PHP Configuration (`/etc/php/8.3/apache2/php.ini`)
+
+```ini
+# Before:
+upload_max_filesize = 50M
+post_max_size = 20M
+
+# After:
+upload_max_filesize = 200M
+post_max_size = 210M
+```
+
+**Rationale**: `post_max_size` set slightly higher (210M) to account for other form data beyond the file itself.
+
+#### 2. Laravel Validation (`SlideController.php`)
+
+**Lines 66, 119**: Changed validation rule from `max:20480` (20MB) to `max:204800` (200MB)
+
+```php
+// Before:
+$rules['media_file'] = 'required|file|mimes:jpg,jpeg,png,gif,webp,mp4,avi,mov,wmv|max:20480'; // 20MB max
+
+// After:
+$rules['media_file'] = 'required|file|mimes:jpg,jpeg,png,gif,webp,mp4,avi,mov,wmv|max:204800'; // 200MB max
+```
+
+#### 3. Frontend Messages (`create.blade.php`, `edit.blade.php`)
+
+**User-Facing Message**:
+```html
+<!-- Before -->
+<strong>Supported formats:</strong> JPG, PNG, GIF, WebP, MP4, AVI, MOV, WMV (Max: 50MB)
+
+<!-- After -->
+<strong>Supported formats:</strong> JPG, PNG, GIF, WebP, MP4, AVI, MOV, WMV (Max: 200MB)
+```
+
+#### 4. JavaScript Validation
+
+**Hard Limit Alert** (blocks upload):
+- Before: `if (fileSize > 50)`
+- After: `if (fileSize > 200)`
+
+**Warning Thresholds** (allows upload with warning):
+- Before: 10MB warning, 20MB stronger warning
+- After: 50MB warning, 100MB stronger warning
+
+```javascript
+// Before:
+if (fileSize > 50) {
+    alert(`Maximum allowed: 50MB`);
+    return;
+}
+if (fileSize > 20) {
+    // Warning...
+} else if (fileSize > 10) {
+    // Warning...
+}
+
+// After:
+if (fileSize > 200) {
+    alert(`Maximum allowed: 200MB`);
+    return;
+}
+if (fileSize > 100) {
+    // Warning...
+} else if (fileSize > 50) {
+    // Warning...
+}
+```
+
+### Files Modified
+
+1. `/etc/php/8.3/apache2/php.ini`
+2. `backend/app/Http/Controllers/Admin/SlideController.php`
+3. `backend/resources/views/admin/slides/create.blade.php`
+4. `backend/resources/views/admin/slides/edit.blade.php`
+
+### Technical Details
+
+**File Size Validation Layers**:
+1. **PHP Level**: Rejects uploads > 200MB before Laravel sees them
+2. **Laravel Level**: Validates max:204800 (200MB in KB)
+3. **Frontend Level**: Blocks selection of files > 200MB with immediate feedback
+
+**Warning System**:
+- **50-100MB**: "File is acceptable but consider optimizing"
+- **100-200MB**: "Upload may take longer. Consider optimizing"
+- **>200MB**: Hard block with error message
+
+### Deployment
+
+1. Updated PHP configuration
+2. Restarted Apache2 (`sudo systemctl restart apache2`)
+3. No database migrations required
+4. No cache clearing required
+
+### Testing Checklist
+
+- ✅ PHP configuration updated (upload_max_filesize: 200M, post_max_size: 210M)
+- ✅ Laravel validation rules updated to 200MB
+- ✅ Frontend messages show "Max: 200MB"
+- ✅ JavaScript blocks files >200MB
+- ✅ Warning messages trigger at 50MB and 100MB
+- ✅ Apache2 restarted successfully
+
+### URL
+
+- https://bixcash.com/admin/slides (Create/Edit pages)
+
+### Notes
+
+- **Backup Created**: Git tag `backup-green-theme-20251103-131643` and branch `backup-green-theme-nov2-2025`
+- **Rollback Ready**: Can restore to previous state if needed
+- **Performance**: Large uploads (100-200MB) may take 30-60 seconds on slower connections
+- **Best Practices**: Recommend users optimize videos to 10-50MB range for best user experience
+
+---
+
+**Last Updated**: November 3, 2025
+**Implementation Status**: ✅ LIVE IN PRODUCTION
+**Updated By**: Claude Code

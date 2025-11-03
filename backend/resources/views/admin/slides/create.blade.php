@@ -80,7 +80,7 @@
                                    accept="image/*,video/*"
                                    style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem;">
                             <small style="color: #666;">
-                                <strong>Supported formats:</strong> JPG, PNG, GIF, WebP, MP4, AVI, MOV, WMV (Max: 50MB)<br>
+                                <strong>Supported formats:</strong> JPG, PNG, GIF, WebP, MP4, AVI, MOV, WMV (Max: 200MB)<br>
                                 <strong>📸 Best for Images:</strong> WebP/JPG at 1920x1080px (500KB-1MB) |
                                 <strong>🎥 Best for Videos:</strong> MP4 H.264 at 1920x1080p (3-15MB)
                             </small>
@@ -301,17 +301,17 @@
                 const fileType = file.type;
 
                 // Check if file exceeds server limit
-                if (fileSize > 50) {
-                    alert(`❌ File is too large!\n\nFile: ${fileName}\nSize: ${fileSize}MB\nMaximum allowed: 50MB\n\nPlease compress your video or choose a smaller file.`);
+                if (fileSize > 200) {
+                    alert(`❌ File is too large!\n\nFile: ${fileName}\nSize: ${fileSize}MB\nMaximum allowed: 200MB\n\nPlease compress your video or choose a smaller file.`);
                     this.value = '';
                     return;
                 }
 
-                // Show warning for files over 20MB (still allowed, but warn user)
-                if (fileSize > 20) {
+                // Show warning for files over 100MB (still allowed, but warn user)
+                if (fileSize > 100) {
                     fileSizeWarning.style.display = 'block';
                     fileSizeMessage.textContent = `File size is ${fileSize}MB. Upload may take longer. Consider optimizing for faster loading.`;
-                } else if (fileSize > 10) {
+                } else if (fileSize > 50) {
                     fileSizeWarning.style.display = 'block';
                     fileSizeMessage.textContent = `File size is ${fileSize}MB. This is acceptable but consider optimizing for better performance.`;
                 }

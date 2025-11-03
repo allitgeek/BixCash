@@ -63,7 +63,7 @@ class SlideController extends Controller
 
         // Add validation for either file or URL
         if ($request->hasFile('media_file')) {
-            $rules['media_file'] = 'required|file|mimes:jpg,jpeg,png,gif,webp,mp4,avi,mov,wmv|max:20480'; // 20MB max
+            $rules['media_file'] = 'required|file|mimes:jpg,jpeg,png,gif,webp,mp4,avi,mov,wmv|max:204800'; // 200MB max
         } else {
             $rules['media_path'] = 'required|url|max:500';
         }
@@ -116,7 +116,7 @@ class SlideController extends Controller
 
         // Add validation for file upload or URL (both optional for update)
         if ($request->hasFile('media_file')) {
-            $rules['media_file'] = 'required|file|mimes:jpg,jpeg,png,gif,webp,mp4,avi,mov,wmv|max:20480'; // 20MB max
+            $rules['media_file'] = 'required|file|mimes:jpg,jpeg,png,gif,webp,mp4,avi,mov,wmv|max:204800'; // 200MB max
         } elseif ($request->filled('media_path')) {
             $rules['media_path'] = 'required|url|max:500';
         }
