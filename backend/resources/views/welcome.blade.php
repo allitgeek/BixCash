@@ -102,6 +102,33 @@
             100% { background-position: 200% 0; }
         }
 
+        /* Video mute toggle button styles */
+        .video-mute-toggle {
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .video-mute-toggle:hover {
+            background: rgba(0,0,0,0.8) !important;
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+        }
+
+        .video-mute-toggle:active {
+            transform: scale(0.95);
+        }
+
+        .video-mute-toggle.muted {
+            background: rgba(220, 53, 69, 0.8) !important;
+        }
+
+        /* Ensure videos fit properly */
+        .hero-video {
+            object-fit: cover;
+            width: 100%;
+            height: 100%;
+        }
+
         /* Error states */
         .error-message {
             background: #fee;
@@ -1777,11 +1804,16 @@
                                     </iframe>
                                 `;
                             } else {
-                                // Direct video file - use video tag
+                                // Direct video file - use video tag with audio enabled
                                 slideElement.innerHTML = `
-                                    <video autoplay muted loop style="width: 100%; height: 100%; object-fit: cover;">
-                                        <source src="${slide.media_path}" type="video/mp4">
-                                    </video>
+                                    <div style="position: relative; width: 100%; height: 100%;">
+                                        <video class="hero-video" autoplay playsinline style="width: 100%; height: 100%; object-fit: cover;" data-slide-id="${slide.id || Date.now()}">
+                                            <source src="${slide.media_path}" type="video/mp4">
+                                        </video>
+                                        <button class="video-mute-toggle" aria-label="Toggle sound" style="position: absolute; bottom: 20px; right: 20px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 50%; width: 50px; height: 50px; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease;">
+                                            <i class="fas fa-volume-up" style="font-size: 20px;"></i>
+                                        </button>
+                                    </div>
                                 `;
                             }
 
@@ -1828,6 +1860,106 @@
                 }
             }
 
+            // Video handler functions for dynamic timing and audio control
+            function setupVideoHandlers(swiper) {
+                const videos = document.querySelectorAll('.hero-video');
+                const muteButtons = document.querySelectorAll('.video-mute-toggle');
+
+                // Get mute preference from localStorage (default: unmuted)
+                const isMuted = localStorage.getItem('videoMuted') === 'true';
+
+                videos.forEach((video, index) => {
+                    // Set initial mute state
+                    video.muted = isMuted;
+
+                    // Update button icon based on mute state
+                    const muteButton = muteButtons[index];
+                    if (muteButton) {
+                        updateMuteButton(muteButton, isMuted);
+
+                        // Add click handler for mute button
+                        muteButton.addEventListener('click', (e) => {
+                            e.stopPropagation(); // Prevent slide click
+                            video.muted = !video.muted;
+                            updateMuteButton(muteButton, video.muted);
+                            localStorage.setItem('videoMuted', video.muted);
+
+                            // Sync mute state across all videos
+                            videos.forEach(v => v.muted = video.muted);
+                            muteButtons.forEach(btn => updateMuteButton(btn, video.muted));
+                        });
+                    }
+
+                    // Handle video metadata loaded - get duration
+                    video.addEventListener('loadedmetadata', function() {
+                        const duration = Math.ceil(video.duration * 1000); // Convert to milliseconds
+                        console.log(`Video duration detected: ${duration}ms (${(duration/1000).toFixed(1)}s)`);
+
+                        // Store duration on the slide element
+                        this.closest('.swiper-slide').dataset.videoDuration = duration;
+                    });
+
+                    // Handle video ended - advance to next slide
+                    video.addEventListener('ended', function() {
+                        console.log('Video ended, advancing to next slide');
+                        if (swiper && swiper.slideNext) {
+                            swiper.slideNext();
+                        }
+                    });
+                });
+            }
+
+            function updateMuteButton(button, isMuted) {
+                const icon = button.querySelector('i');
+                if (icon) {
+                    if (isMuted) {
+                        icon.className = 'fas fa-volume-mute';
+                        button.classList.add('muted');
+                        button.setAttribute('aria-label', 'Unmute video');
+                    } else {
+                        icon.className = 'fas fa-volume-up';
+                        button.classList.remove('muted');
+                        button.setAttribute('aria-label', 'Mute video');
+                    }
+                }
+            }
+
+            function handleSlideChange(swiper) {
+                const activeSlide = swiper.slides[swiper.activeIndex];
+                if (!activeSlide) return;
+
+                const video = activeSlide.querySelector('.hero-video');
+
+                // Pause autoplay and play video for its full duration
+                if (video) {
+                    swiper.autoplay.stop();
+
+                    // Get video duration from metadata or wait for it
+                    const duration = activeSlide.dataset.videoDuration;
+
+                    if (duration) {
+                        console.log(`Playing video for ${duration}ms`);
+                        video.currentTime = 0; // Reset video to start
+                        video.play().catch(e => console.log('Video play failed:', e));
+                    } else {
+                        // Wait for metadata to load
+                        video.addEventListener('loadedmetadata', function onMetadata() {
+                            const dur = Math.ceil(video.duration * 1000);
+                            activeSlide.dataset.videoDuration = dur;
+                            console.log(`Playing video for ${dur}ms (detected on slide change)`);
+                            video.currentTime = 0;
+                            video.play().catch(e => console.log('Video play failed:', e));
+                            video.removeEventListener('loadedmetadata', onMetadata);
+                        });
+                    }
+                } else {
+                    // For image slides, use default timing and restart autoplay
+                    if (swiper.autoplay && !swiper.autoplay.running) {
+                        swiper.autoplay.start();
+                    }
+                }
+            }
+
             // Initialize all carousels with enhanced error handling
             function initializeCarousels() {
                 try {
@@ -1835,11 +1967,11 @@
                     const heroSlides = document.querySelectorAll('#home .swiper-slide');
                     const hasMultipleSlides = heroSlides.length > 1;
 
-                    // Hero carousel with enhanced options
+                    // Hero carousel with enhanced options and dynamic timing support
                     const heroSwiper = new Swiper('#home .swiper-container', {
                         loop: hasMultipleSlides,
                         autoplay: hasMultipleSlides ? {
-                            delay: 5000,
+                            delay: 5000, // Default delay for images
                             disableOnInteraction: false,
                             pauseOnMouseEnter: true
                         } : false,
@@ -1861,12 +1993,16 @@
                         on: {
                             init: function () {
                                 console.log('Hero carousel initialized');
+                                setupVideoHandlers(this);
                             },
                             slideChange: function () {
-                                // Add any slide change analytics here
+                                handleSlideChange(this);
                             }
                         }
                     });
+
+                    // Store swiper instance globally for video control
+                    window.heroSwiper = heroSwiper;
 
                     // Initialize brands carousel separately
                     initializeBrandsCarousel();

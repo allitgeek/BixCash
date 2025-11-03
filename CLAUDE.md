@@ -4572,3 +4572,203 @@ if (fileSize > 100) {
 **Last Updated**: November 3, 2025
 **Implementation Status**: ✅ LIVE IN PRODUCTION
 **Updated By**: Claude Code
+
+---
+
+## Hero Slider Video Enhancements with Audio and Dynamic Timing
+
+**Date**: November 3, 2025
+**Objective**: Enhance video slider functionality to play videos with audio, add mute controls, and use dynamic timing based on video duration instead of fixed delays.
+
+### Problems Solved
+
+1. **Videos were muted** - Users couldn't hear video audio
+2. **Fixed 5-second timing** - All slides (images and videos) advanced after 5 seconds regardless of video length
+3. **No audio controls** - Users had no way to mute/unmute videos
+4. **Videos looped** - Videos repeated instead of playing once and advancing
+
+### Features Implemented
+
+#### 1. Audio-Enabled Videos
+- Removed `muted` attribute from video elements
+- Videos now play with sound by default
+- Added `playsinline` for mobile Safari compatibility
+
+#### 2. Mute/Unmute Button
+**Visual Design:**
+- Floating circular button (50px × 50px)
+- Positioned bottom-right (20px margins)
+- Semi-transparent black background (rgba(0,0,0,0.6))
+- White icons (volume-up / volume-mute)
+- Smooth hover effects with scale transform
+
+**Functionality:**
+- Toggle mute/unmute on click
+- Visual feedback (red background when muted)
+- Persists preference in localStorage
+- Syncs across all video slides
+
+#### 3. Dynamic Video Duration Detection
+- Uses `loadedmetadata` event to detect video duration
+- Stores duration in `data-video-duration` attribute
+- Each video plays for its actual length (30s, 50s, etc.)
+- Falls back to 5-second default for images
+
+#### 4. Smart Slide Advancement
+- Videos play to completion, then auto-advance
+- Uses `ended` event to trigger next slide
+- Pauses Swiper autoplay during video playback
+- Resumes autoplay for image slides
+
+### Technical Implementation
+
+#### CSS Changes (lines 105-130)
+```css
+/* Video mute toggle button */
+.video-mute-toggle {
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.video-mute-toggle:hover {
+    background: rgba(0,0,0,0.8);
+    transform: scale(1.1);
+}
+
+.video-mute-toggle.muted {
+    background: rgba(220, 53, 69, 0.8);
+}
+
+.hero-video {
+    object-fit: cover;
+}
+```
+
+#### HTML Structure Changes (lines 1780-1790)
+**Before:**
+```html
+<video autoplay muted loop>
+    <source src="..." type="video/mp4">
+</video>
+```
+
+**After:**
+```html
+<div style="position: relative;">
+    <video class="hero-video" autoplay playsinline data-slide-id="...">
+        <source src="..." type="video/mp4">
+    </video>
+    <button class="video-mute-toggle">
+        <i class="fas fa-volume-up"></i>
+    </button>
+</div>
+```
+
+#### JavaScript Functions Added (lines 1863-1961)
+
+**1. `setupVideoHandlers(swiper)`**
+- Initializes all video event listeners
+- Loads mute preference from localStorage
+- Sets up mute button click handlers
+- Adds `loadedmetadata` listeners for duration detection
+- Adds `ended` listeners for slide advancement
+
+**2. `updateMuteButton(button, isMuted)`**
+- Updates button icon (volume-up / volume-mute)
+- Toggles visual classes
+- Updates ARIA labels for accessibility
+
+**3. `handleSlideChange(swiper)`**
+- Detects if current slide contains video
+- Stops Swiper autoplay for videos
+- Resets video to beginning
+- Starts video playback
+- Resumes autoplay for image slides
+
+#### Swiper Configuration Updates (lines 1893-1901)
+```javascript
+on: {
+    init: function () {
+        setupVideoHandlers(this);
+    },
+    slideChange: function () {
+        handleSlideChange(this);
+    }
+}
+```
+
+### User Experience Flow
+
+1. **Page Load:**
+   - Slider initializes
+   - First slide plays (video or image)
+   - Mute button appears on video slides
+
+2. **Video Slide:**
+   - Video plays with audio (or muted if user preference set)
+   - Duration detected automatically
+   - Plays for full duration (e.g., 30s)
+   - Advances to next slide when video ends
+
+3. **Image Slide:**
+   - Displays for 5 seconds (default)
+   - Auto-advances to next slide
+
+4. **Mute Control:**
+   - User clicks mute button
+   - All videos instantly muted/unmuted
+   - Preference saved to localStorage
+   - Persists across page reloads
+
+### Files Modified
+
+- `backend/resources/views/welcome.blade.php` (main slider implementation)
+
+### Code Statistics
+
+- **Lines Added**: ~140 lines
+- **CSS Rules**: 4 new rules for video controls
+- **JavaScript Functions**: 3 new functions
+- **Event Handlers**: 3 types (loadedmetadata, ended, click)
+
+### Testing Checklist
+
+- ✅ Videos play with audio by default
+- ✅ Mute button appears on video slides
+- ✅ Mute button toggles audio on/off
+- ✅ Mute preference persists in localStorage
+- ✅ 30-second video plays for 30 seconds before advancing
+- ✅ 50-second video plays for 50 seconds before advancing
+- ✅ Image slides still advance after 5 seconds
+- ✅ Video resets to beginning on each loop through slides
+- ✅ Hover effects work on mute button
+- ✅ Visual feedback when muted (red background)
+- ✅ Build completes successfully
+
+### Browser Compatibility
+
+- **Desktop**: Chrome, Firefox, Safari, Edge
+- **Mobile**: iOS Safari (playsinline), Chrome Mobile, Firefox Mobile
+- **Audio Autoplay**: Requires user interaction on some browsers (first click starts audio)
+
+### Performance Considerations
+
+- Video metadata loaded asynchronously
+- Duration detection doesn't block rendering
+- LocalStorage read/write for mute preference (minimal overhead)
+- Event listeners properly scoped to avoid memory leaks
+
+### Future Enhancements
+
+1. **Volume Control Slider** - Fine-grained volume adjustment
+2. **Play/Pause Button** - Manual video control
+3. **Progress Bar** - Visual indicator of video progress
+4. **Preloading** - Load next video in background
+5. **Analytics** - Track video completion rates
+6. **Captions** - Subtitle support for accessibility
+
+---
+
+**Last Updated**: November 3, 2025
+**Implementation Status**: ✅ LIVE IN PRODUCTION
+**Updated By**: Claude Code
