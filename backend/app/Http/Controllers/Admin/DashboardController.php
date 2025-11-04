@@ -154,13 +154,13 @@ class DashboardController extends Controller
     {
         // Load active criteria settings
         $customerCriteria = SystemSetting::get('active_customer_min_spending', 0);
-        $partnerCriteriaType = SystemSetting::get('active_partner_criteria_type', 'customers');
-        $partnerCriteria = SystemSetting::get('active_partner_min_value', 0);
+        $partnerMinCustomers = SystemSetting::get('active_partner_min_customers', 0);
+        $partnerMinAmount = SystemSetting::get('active_partner_min_amount', 0);
 
         return view('admin.dashboard.admin-settings', compact(
             'customerCriteria',
-            'partnerCriteriaType',
-            'partnerCriteria'
+            'partnerMinCustomers',
+            'partnerMinAmount'
         ));
     }
 
@@ -170,14 +170,15 @@ class DashboardController extends Controller
     public function updateActiveCriteria(Request $request)
     {
         $validated = $request->validate([
-            'active_customer_min_spending' => 'required|string',
-            'active_partner_criteria_type' => 'required|in:customers,amount',
+            'active_customer_min_spending' => 'nullable|string',
             'active_partner_min_customers' => 'nullable|integer|min:0',
             'active_partner_min_amount' => 'nullable|string',
         ]);
 
-        // Clean and convert customer spending amount
-        $customerSpending = preg_replace('/[^\d]/', '', $validated['active_customer_min_spending']);
+        // Clean and convert customer spending amount (default to 0 if empty)
+        $customerSpending = !empty($validated['active_customer_min_spending'])
+            ? preg_replace('/[^\d]/', '', $validated['active_customer_min_spending'])
+            : '0';
 
         // Save customer criteria
         SystemSetting::set(
@@ -188,28 +189,28 @@ class DashboardController extends Controller
             'Minimum spending amount for a customer to be considered active'
         );
 
-        // Save partner criteria type
-        SystemSetting::set(
-            'active_partner_criteria_type',
-            $validated['active_partner_criteria_type'],
-            'text',
-            'criteria',
-            'Type of criteria for active partners: customers or amount'
-        );
-
-        // Clean and save partner criteria value based on type
-        if ($validated['active_partner_criteria_type'] === 'customers') {
-            $partnerValue = $validated['active_partner_min_customers'] ?? 0;
-        } else {
-            $partnerValue = preg_replace('/[^\d]/', '', $validated['active_partner_min_amount'] ?? '0');
-        }
+        // Save partner minimum customers (default to 0 if empty)
+        $partnerMinCustomers = $validated['active_partner_min_customers'] ?? 0;
 
         SystemSetting::set(
-            'active_partner_min_value',
-            $partnerValue,
+            'active_partner_min_customers',
+            $partnerMinCustomers,
             'number',
             'criteria',
-            'Minimum value for active partner criteria (number of customers or transaction amount)'
+            'Minimum number of customers/orders for a partner to be considered active'
+        );
+
+        // Clean and save partner minimum amount (default to 0 if empty)
+        $partnerMinAmount = !empty($validated['active_partner_min_amount'])
+            ? preg_replace('/[^\d]/', '', $validated['active_partner_min_amount'])
+            : '0';
+
+        SystemSetting::set(
+            'active_partner_min_amount',
+            $partnerMinAmount,
+            'number',
+            'criteria',
+            'Minimum transaction amount for a partner to be considered active'
         );
 
         return redirect()->route('admin.settings.admin')
