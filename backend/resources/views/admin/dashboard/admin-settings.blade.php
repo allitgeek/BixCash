@@ -47,12 +47,12 @@
                             Active Customer Criteria
                         </label>
                         <div class="relative">
-                            <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-500 text-sm">Rs.</span>
+                            <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-700 text-sm font-semibold">Rs.</span>
                             <input type="text"
                                    id="active_customer_min_spending"
                                    name="active_customer_min_spending"
                                    value="{{ number_format($customerCriteria ?? 0, 0, '.', ',') }}"
-                                   class="pl-9 w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                                   class="pl-11 w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
                                    placeholder="30,000"
                                    oninput="formatCurrency(this)">
                         </div>
@@ -79,11 +79,11 @@
                             Partner: Min. Amount
                         </label>
                         <div class="relative">
-                            <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-500 text-sm">Rs.</span>
+                            <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-700 text-sm font-semibold">Rs.</span>
                             <input type="text"
                                    name="active_partner_min_amount"
                                    value="{{ number_format($partnerMinAmount ?? 0, 0, '.', ',') }}"
-                                   class="pl-9 w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                                   class="pl-11 w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
                                    placeholder="50,000"
                                    oninput="formatCurrency(this)">
                         </div>
