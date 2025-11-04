@@ -76,6 +76,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::middleware(['role.permission:view_analytics'])->group(function () {
             Route::get('analytics', [DashboardController::class, 'analytics'])->name('analytics');
             Route::get('reports', [DashboardController::class, 'reports'])->name('reports');
+            Route::get('profit-sharing', [DashboardController::class, 'profitSharing'])->name('profit-sharing');
         });
 
         // Customer Management

@@ -124,6 +124,12 @@ class DashboardController extends Controller
         return view('admin.dashboard.reports');
     }
 
+    public function profitSharing()
+    {
+        // Placeholder for profit sharing page
+        return view('admin.dashboard.profit-sharing');
+    }
+
     public function settings()
     {
         $socialMediaLinks = SocialMediaLink::ordered()->get();

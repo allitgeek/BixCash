@@ -178,6 +178,20 @@
             .hero-video {
                 object-fit: cover;
             }
+
+            /* Portrait videos (9:16, shot vertically) - show full content on desktop */
+            .hero-video.portrait-video {
+                object-fit: contain !important;
+                max-width: 70%; /* Prevent portrait videos from being too wide */
+                margin: 0 auto; /* Center horizontally */
+            }
+
+            /* Landscape videos (16:9, shot horizontally) - dramatic full-screen */
+            .hero-video.landscape-video {
+                object-fit: cover;
+                width: 100%;
+                max-width: 100%;
+            }
         }
 
         /* Error states */
@@ -1858,14 +1872,33 @@
                                 // Direct video file - use video tag with audio enabled
                                 slideElement.innerHTML = `
                                     <div style="position: relative; width: 100%; height: 100%; background: #000; display: flex; align-items: center; justify-content: center;">
-                                        <video class="hero-video" autoplay playsinline style="width: 100%; height: 100%; object-fit: cover;" data-slide-id="${slide.id || Date.now()}">
+                                        <video class="hero-video" autoplay muted playsinline preload="metadata" style="width: 100%; height: 100%; object-fit: cover;" data-slide-id="${slide.id || Date.now()}">
                                             <source src="${slide.media_path}" type="video/mp4">
                                         </video>
-                                        <button class="video-mute-toggle" aria-label="Toggle sound" style="position: absolute; bottom: 20px; right: 20px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 50%; width: 50px; height: 50px; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease;">
-                                            <i class="fas fa-volume-up" style="font-size: 20px;"></i>
+                                        <button class="video-mute-toggle muted" aria-label="Unmute video" style="position: absolute; bottom: 20px; right: 20px; background: rgba(220, 53, 69, 0.8); color: white; border: none; border-radius: 50%; width: 50px; height: 50px; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease;">
+                                            <i class="fas fa-volume-mute" style="font-size: 20px;"></i>
                                         </button>
                                     </div>
                                 `;
+
+                                // Detect video aspect ratio for smart display (portrait vs landscape)
+                                const videoElement = slideElement.querySelector('.hero-video');
+                                if (videoElement) {
+                                    videoElement.addEventListener('loadedmetadata', function() {
+                                        const aspectRatio = this.videoWidth / this.videoHeight;
+                                        console.log(`Video aspect ratio: ${aspectRatio.toFixed(2)} (${this.videoWidth}x${this.videoHeight})`);
+
+                                        if (aspectRatio < 1) {
+                                            // Portrait video (e.g., 9:16, 1080x1920)
+                                            this.classList.add('portrait-video');
+                                            console.log('✓ Portrait video detected - will use contain on desktop');
+                                        } else {
+                                            // Landscape video (e.g., 16:9, 1920x1080)
+                                            this.classList.add('landscape-video');
+                                            console.log('✓ Landscape video detected - will use cover on desktop');
+                                        }
+                                    });
+                                }
                             }
 
                             // Add click handler for target URL if provided
@@ -1916,18 +1949,10 @@
                 const videos = document.querySelectorAll('.hero-video');
                 const muteButtons = document.querySelectorAll('.video-mute-toggle');
 
-                // Get mute preference from localStorage (default: unmuted)
-                const isMuted = localStorage.getItem('videoMuted') === 'true';
-
                 videos.forEach((video, index) => {
-                    // Set initial mute state
-                    video.muted = isMuted;
-
-                    // Update button icon based on mute state
+                    // Note: Initial mute state is set in HTML (muted) and managed by handleSlideChange()
                     const muteButton = muteButtons[index];
                     if (muteButton) {
-                        updateMuteButton(muteButton, isMuted);
-
                         // Add click handler for mute button
                         muteButton.addEventListener('click', (e) => {
                             e.stopPropagation(); // Prevent slide click
@@ -1992,24 +2017,58 @@
                 if (video) {
                     swiper.autoplay.stop();
 
-                    // Get video duration from metadata or wait for it
-                    const duration = activeSlide.dataset.videoDuration;
+                    // Get user's mute preference from localStorage
+                    const userWantsMuted = localStorage.getItem('videoMuted') === 'true';
+                    const muteButton = activeSlide.querySelector('.video-mute-toggle');
 
-                    if (duration) {
-                        console.log(`Playing video for ${duration}ms`);
-                        video.currentTime = 0; // Reset video to start
-                        video.play().catch(e => console.log('Video play failed:', e));
-                    } else {
-                        // Wait for metadata to load
-                        video.addEventListener('loadedmetadata', function onMetadata() {
-                            const dur = Math.ceil(video.duration * 1000);
-                            activeSlide.dataset.videoDuration = dur;
-                            console.log(`Playing video for ${dur}ms (detected on slide change)`);
-                            video.currentTime = 0;
-                            video.play().catch(e => console.log('Video play failed:', e));
-                            video.removeEventListener('loadedmetadata', onMetadata);
-                        });
+                    // MOBILE FIX: Always start muted for autoplay compatibility
+                    video.muted = true;
+                    video.currentTime = 0;
+
+                    // Prevent multiple play attempts
+                    if (video.dataset.playAttempted) {
+                        console.log('⚠️ Play already attempted for this video, skipping');
+                        return;
                     }
+                    video.dataset.playAttempted = 'true';
+
+                    // Function to actually play the video
+                    const playVideo = () => {
+                        video.play()
+                            .then(() => {
+                                console.log('✓ Video playing (MUTED)');
+
+                                // CRITICAL FIX: Keep video MUTED - do NOT try to unmute
+                                // Unmuting causes browser to PAUSE the video!
+                                // User can click mute button if they want audio
+
+                                if (muteButton) {
+                                    updateMuteButton(muteButton, true);  // Show muted state
+                                }
+                            })
+                            .catch(e => {
+                                console.log('⚠️ Video play blocked:', e);
+                                if (muteButton) {
+                                    updateMuteButton(muteButton, true);
+                                }
+                            });
+                    };
+
+                    // CRITICAL: Check if video metadata is loaded before playing
+                    if (video.readyState >= 1) {  // HAVE_METADATA or better
+                        // Video is ready, play immediately
+                        console.log('Video ready (readyState: ' + video.readyState + '), playing immediately');
+                        playVideo();
+                    } else {
+                        // Video not ready yet, wait for metadata to load
+                        console.log('Waiting for video metadata... (readyState: ' + video.readyState + ')');
+
+                        video.addEventListener('loadedmetadata', function onReady() {
+                            console.log('✓ Video metadata loaded, playing now');
+                            playVideo();
+                        }, { once: true });
+                    }
+
                 } else {
                     // For image slides, use default timing and restart autoplay
                     if (swiper.autoplay && !swiper.autoplay.running) {
@@ -2052,6 +2111,8 @@
                             init: function () {
                                 console.log('Hero carousel initialized');
                                 setupVideoHandlers(this);
+                                // CRITICAL FIX: Play first slide's video immediately on init
+                                handleSlideChange(this);
                             },
                             slideChange: function () {
                                 handleSlideChange(this);
