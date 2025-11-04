@@ -127,8 +127,104 @@ class DashboardController extends Controller
 
     public function profitSharing()
     {
-        // Placeholder for profit sharing page
-        return view('admin.dashboard.profit-sharing');
+        // Get current year and month for criteria checking
+        $currentYear = now()->year;
+        $currentMonth = now()->month;
+
+        // Get criteria settings
+        $minSpending = floatval(SystemSetting::get('active_customer_min_spending', 0));
+        $minCustomers = intval(SystemSetting::get('active_partner_min_customers', 0));
+        $minAmount = floatval(SystemSetting::get('active_partner_min_amount', 0));
+
+        // Get level statistics
+        $levels = [];
+        for ($i = 1; $i <= 7; $i++) {
+            // Get all users in this level
+            $usersInLevel = User::where('profit_sharing_level', $i)
+                ->with(['role', 'customerProfile', 'partnerProfile'])
+                ->orderBy('profit_sharing_qualified_at', 'ASC')
+                ->get();
+
+            // Calculate active/inactive counts
+            $activeCount = 0;
+            $inactiveCount = 0;
+
+            foreach ($usersInLevel as $user) {
+                // Check if user still meets criteria
+                $meetsCriteria = false;
+
+                if ($user->isCustomer()) {
+                    $totalSpending = PartnerTransaction::where('customer_id', $user->id)
+                        ->where('status', 'confirmed')
+                        ->whereYear('transaction_date', $currentYear)
+                        ->whereMonth('transaction_date', $currentMonth)
+                        ->sum('invoice_amount');
+
+                    $meetsCriteria = floatval($totalSpending) >= $minSpending;
+                } elseif ($user->isPartner()) {
+                    $stats = PartnerTransaction::where('partner_id', $user->id)
+                        ->where('status', 'confirmed')
+                        ->whereYear('transaction_date', $currentYear)
+                        ->whereMonth('transaction_date', $currentMonth)
+                        ->selectRaw('COUNT(DISTINCT customer_id) as unique_customers, COALESCE(SUM(invoice_amount), 0) as total_amount')
+                        ->first();
+
+                    $uniqueCustomers = intval($stats->unique_customers ?? 0);
+                    $totalAmount = floatval($stats->total_amount ?? 0);
+                    $meetsCriteria = ($uniqueCustomers >= $minCustomers) && ($totalAmount >= $minAmount);
+                }
+
+                if ($meetsCriteria) {
+                    $activeCount++;
+                } else {
+                    $inactiveCount++;
+                }
+            }
+
+            $threshold = intval(SystemSetting::get("customer_threshold_level_{$i}", 0));
+
+            $levels[$i] = [
+                'level' => $i,
+                'threshold' => $threshold,
+                'total' => $usersInLevel->count(),
+                'active' => $activeCount,
+                'inactive' => $inactiveCount,
+                'users' => $usersInLevel,
+            ];
+        }
+
+        return view('admin.dashboard.profit-sharing', compact('levels'));
+    }
+
+    /**
+     * Run profit sharing level assignment command manually
+     */
+    public function runProfitSharingAssignment()
+    {
+        try {
+            // Run the assignment command
+            \Artisan::call('profit-sharing:assign-levels');
+
+            // Get command output
+            $output = \Artisan::output();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Profit sharing levels recalculated successfully! Please refresh the page to see updated data.',
+                'output' => $output
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Profit sharing assignment failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to run level assignment: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     public function settings()
@@ -157,10 +253,17 @@ class DashboardController extends Controller
         $partnerMinCustomers = SystemSetting::get('active_partner_min_customers', 0);
         $partnerMinAmount = SystemSetting::get('active_partner_min_amount', 0);
 
+        // Load customer threshold levels
+        $customerThresholds = [];
+        for ($i = 1; $i <= 7; $i++) {
+            $customerThresholds[$i] = SystemSetting::get("customer_threshold_level_{$i}", 0);
+        }
+
         return view('admin.dashboard.admin-settings', compact(
             'customerCriteria',
             'partnerMinCustomers',
-            'partnerMinAmount'
+            'partnerMinAmount',
+            'customerThresholds'
         ));
     }
 
@@ -169,11 +272,19 @@ class DashboardController extends Controller
      */
     public function updateActiveCriteria(Request $request)
     {
-        $validated = $request->validate([
+        // Build validation rules including threshold levels
+        $validationRules = [
             'active_customer_min_spending' => 'nullable|string',
             'active_partner_min_customers' => 'nullable|integer|min:0',
             'active_partner_min_amount' => 'nullable|string',
-        ]);
+        ];
+
+        // Add validation for customer threshold levels
+        for ($i = 1; $i <= 7; $i++) {
+            $validationRules["customer_threshold_level_{$i}"] = 'nullable|integer|min:0';
+        }
+
+        $validated = $request->validate($validationRules);
 
         // Clean and convert customer spending amount (default to 0 if empty)
         $customerSpending = !empty($validated['active_customer_min_spending'])
@@ -213,8 +324,22 @@ class DashboardController extends Controller
             'Minimum transaction amount for a partner to be considered active'
         );
 
+        // Save customer threshold levels
+        for ($i = 1; $i <= 7; $i++) {
+            $key = "customer_threshold_level_{$i}";
+            $value = $request->input($key, 0);
+
+            SystemSetting::set(
+                $key,
+                $value,
+                'number',
+                'thresholds',
+                "Number of customers required for Level {$i}"
+            );
+        }
+
         return redirect()->route('admin.settings.admin')
-            ->with('success', 'Active criteria settings updated successfully!');
+            ->with('success', 'Settings updated successfully!');
     }
 
     /**

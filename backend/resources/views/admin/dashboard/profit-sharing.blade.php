@@ -6,9 +6,17 @@
 @section('content')
     <div class="max-w-7xl mx-auto">
         {{-- Page Header --}}
-        <div class="mb-6">
-            <h2 class="text-2xl font-bold text-gray-900 mb-2">Profit Sharing Management</h2>
-            <p class="text-gray-600">Manage partner profit sharing, commissions, and payouts</p>
+        <div class="mb-6 flex items-center justify-between">
+            <div>
+                <h2 class="text-2xl font-bold text-gray-900 mb-2">Profit Sharing Management</h2>
+                <p class="text-gray-600">Manage partner profit sharing, commissions, and payouts</p>
+            </div>
+            <button
+                onclick="recalculateLevels()"
+                class="px-5 py-2.5 bg-gradient-to-r from-purple-600 to-purple-900 text-white text-sm font-semibold rounded-lg shadow-md hover:shadow-lg hover:from-purple-700 hover:to-purple-950 transition-all duration-200 hover:-translate-y-0.5"
+            >
+                🔄 Recalculate FIFO Levels
+            </button>
         </div>
 
         {{-- Stats Overview Cards --}}
@@ -180,8 +188,13 @@
                                     <span class="text-sm text-gray-600">%</span>
                                 </div>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
-                                ---
+                            <td class="px-6 py-4 whitespace-nowrap text-sm border-r border-gray-200">
+                                @if(isset($levels[1]))
+                                    <div class="text-gray-900 font-semibold">{{ $levels[1]['total'] }}</div>
+                                    <div class="text-xs text-gray-600">A = <span class="text-green-600 font-medium">{{ $levels[1]['active'] }}</span>, I = <span class="text-red-600 font-medium">{{ $levels[1]['inactive'] }}</span></div>
+                                @else
+                                    ---
+                                @endif
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
                                 ---
@@ -210,8 +223,13 @@
                                     <span class="text-sm text-gray-600">%</span>
                                 </div>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
-                                ---
+                            <td class="px-6 py-4 whitespace-nowrap text-sm border-r border-gray-200">
+                                @if(isset($levels[2]))
+                                    <div class="text-gray-900 font-semibold">{{ $levels[2]['total'] }}</div>
+                                    <div class="text-xs text-gray-600">A = <span class="text-green-600 font-medium">{{ $levels[2]['active'] }}</span>, I = <span class="text-red-600 font-medium">{{ $levels[2]['inactive'] }}</span></div>
+                                @else
+                                    ---
+                                @endif
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
                                 ---
@@ -240,8 +258,13 @@
                                     <span class="text-sm text-gray-600">%</span>
                                 </div>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
-                                ---
+                            <td class="px-6 py-4 whitespace-nowrap text-sm border-r border-gray-200">
+                                @if(isset($levels[3]))
+                                    <div class="text-gray-900 font-semibold">{{ $levels[3]['total'] }}</div>
+                                    <div class="text-xs text-gray-600">A = <span class="text-green-600 font-medium">{{ $levels[3]['active'] }}</span>, I = <span class="text-red-600 font-medium">{{ $levels[3]['inactive'] }}</span></div>
+                                @else
+                                    ---
+                                @endif
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
                                 ---
@@ -270,8 +293,13 @@
                                     <span class="text-sm text-gray-600">%</span>
                                 </div>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
-                                ---
+                            <td class="px-6 py-4 whitespace-nowrap text-sm border-r border-gray-200">
+                                @if(isset($levels[4]))
+                                    <div class="text-gray-900 font-semibold">{{ $levels[4]['total'] }}</div>
+                                    <div class="text-xs text-gray-600">A = <span class="text-green-600 font-medium">{{ $levels[4]['active'] }}</span>, I = <span class="text-red-600 font-medium">{{ $levels[4]['inactive'] }}</span></div>
+                                @else
+                                    ---
+                                @endif
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
                                 ---
@@ -300,8 +328,13 @@
                                     <span class="text-sm text-gray-600">%</span>
                                 </div>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
-                                ---
+                            <td class="px-6 py-4 whitespace-nowrap text-sm border-r border-gray-200">
+                                @if(isset($levels[5]))
+                                    <div class="text-gray-900 font-semibold">{{ $levels[5]['total'] }}</div>
+                                    <div class="text-xs text-gray-600">A = <span class="text-green-600 font-medium">{{ $levels[5]['active'] }}</span>, I = <span class="text-red-600 font-medium">{{ $levels[5]['inactive'] }}</span></div>
+                                @else
+                                    ---
+                                @endif
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
                                 ---
@@ -330,8 +363,13 @@
                                     <span class="text-sm text-gray-600">%</span>
                                 </div>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
-                                ---
+                            <td class="px-6 py-4 whitespace-nowrap text-sm border-r border-gray-200">
+                                @if(isset($levels[6]))
+                                    <div class="text-gray-900 font-semibold">{{ $levels[6]['total'] }}</div>
+                                    <div class="text-xs text-gray-600">A = <span class="text-green-600 font-medium">{{ $levels[6]['active'] }}</span>, I = <span class="text-red-600 font-medium">{{ $levels[6]['inactive'] }}</span></div>
+                                @else
+                                    ---
+                                @endif
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
                                 ---
@@ -360,8 +398,13 @@
                                     <span class="text-sm text-gray-600">%</span>
                                 </div>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
-                                ---
+                            <td class="px-6 py-4 whitespace-nowrap text-sm border-r border-gray-200">
+                                @if(isset($levels[7]))
+                                    <div class="text-gray-900 font-semibold">{{ $levels[7]['total'] }}</div>
+                                    <div class="text-xs text-gray-600">A = <span class="text-green-600 font-medium">{{ $levels[7]['active'] }}</span>, I = <span class="text-red-600 font-medium">{{ $levels[7]['inactive'] }}</span></div>
+                                @else
+                                    ---
+                                @endif
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
                                 ---
@@ -502,5 +545,44 @@
         console.log('Disperse clicked with amount:', amount);
         // TODO: Add disperse functionality
     });
+
+    /**
+     * Recalculate FIFO levels by running the assignment command
+     */
+    function recalculateLevels() {
+        if (!confirm('This will recalculate all profit sharing levels based on current criteria and thresholds. Continue?')) {
+            return;
+        }
+
+        const button = event.target;
+        const originalText = button.innerHTML;
+        button.innerHTML = '⏳ Calculating...';
+        button.disabled = true;
+
+        fetch('{{ route("admin.profit-sharing.run-assignment") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.message);
+                window.location.reload();
+            } else {
+                alert('Error: ' + data.message);
+            }
+        })
+        .catch(error => {
+            alert('Error running assignment: ' + error);
+            console.error('Assignment error:', error);
+        })
+        .finally(() => {
+            button.innerHTML = originalText;
+            button.disabled = false;
+        });
+    }
 </script>
 @endpush

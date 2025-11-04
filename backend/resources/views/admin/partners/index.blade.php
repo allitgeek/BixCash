@@ -67,6 +67,17 @@
                         {{ $partners->filter(fn($p) => $p->partnerProfile && $p->partnerProfile->status === 'approved')->count() }}
                     </div>
                 </div>
+                <div style="flex: 1; min-width: 200px; padding: 1rem; background: #fff3e0; border-radius: 8px;">
+                    <div style="font-size: 0.9rem; color: #f57c00; font-weight: 500;">Active (Criteria)</div>
+                    <div style="font-size: 1.8rem; font-weight: 600; color: #e65100;">
+                        {{ $partners->filter(function($p) use ($minCustomers, $minAmount) {
+                            $uniqueCustomers = intval($p->unique_customers_count ?? 0);
+                            $totalAmount = floatval($p->total_transaction_amount ?? 0);
+                            return ($uniqueCustomers >= $minCustomers) && ($totalAmount >= $minAmount);
+                        })->count() }}
+                    </div>
+                    <small style="color: #f57c00; font-size: 0.75rem;">Current month only</small>
+                </div>
             </div>
 
             <!-- Partners Table -->
@@ -79,7 +90,9 @@
                                 <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Business Name</th>
                                 <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Phone</th>
                                 <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Status</th>
-                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Active</th>
+                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Account Active</th>
+                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Criteria Status</th>
+                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Last Transaction</th>
                                 <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Registered</th>
                                 <th style="padding: 0.75rem; text-align: center; font-weight: 600;">Actions</th>
                             </tr>
@@ -151,6 +164,31 @@
                                             <span style="background: #e74c3c; color: white; padding: 0.25rem 0.5rem; border-radius: 3px; font-size: 0.8rem;">
                                                 Inactive
                                             </span>
+                                        @endif
+                                    </td>
+                                    <td style="padding: 0.75rem;">
+                                        @php
+                                            $uniqueCustomers = intval($partner->unique_customers_count ?? 0);
+                                            $totalAmount = floatval($partner->total_transaction_amount ?? 0);
+                                            $meetsCriteria = ($uniqueCustomers >= $minCustomers) && ($totalAmount >= $minAmount);
+                                        @endphp
+                                        @if($meetsCriteria)
+                                            <span style="background: #27ae60; color: white; padding: 0.25rem 0.5rem; border-radius: 3px; font-size: 0.8rem;" title="Customers: {{ $uniqueCustomers }} (Min: {{ $minCustomers }}), Amount: Rs. {{ number_format($totalAmount, 2) }} (Min: Rs. {{ number_format($minAmount, 2) }})">
+                                                ✓ Active
+                                            </span>
+                                        @else
+                                            <span style="background: #e74c3c; color: white; padding: 0.25rem 0.5rem; border-radius: 3px; font-size: 0.8rem;" title="Customers: {{ $uniqueCustomers }} (Min: {{ $minCustomers }}), Amount: Rs. {{ number_format($totalAmount, 2) }} (Min: Rs. {{ number_format($minAmount, 2) }})">
+                                                ✗ Inactive
+                                            </span>
+                                        @endif
+                                    </td>
+                                    <td style="padding: 0.75rem;">
+                                        @if($partner->last_transaction_date)
+                                            <small style="color: #666;">
+                                                {{ \Carbon\Carbon::parse($partner->last_transaction_date)->format('M j, Y') }}
+                                            </small>
+                                        @else
+                                            <small style="color: #999; font-style: italic;">No transactions</small>
                                         @endif
                                     </td>
                                     <td style="padding: 0.75rem;">

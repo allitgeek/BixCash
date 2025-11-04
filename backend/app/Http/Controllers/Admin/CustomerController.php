@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Role;
 use App\Models\CustomerProfile;
 use App\Models\PartnerTransaction;
+use App\Models\SystemSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -20,10 +21,32 @@ class CustomerController extends Controller
      */
     public function index(Request $request)
     {
+        // Get criteria setting
+        $minSpending = floatval(SystemSetting::get('active_customer_min_spending', 0));
+
+        // Get current year and month for criteria calculation
+        $currentYear = now()->year;
+        $currentMonth = now()->month;
+
         $query = User::with(['role', 'customerProfile'])
             ->whereHas('role', function ($q) {
                 $q->where('name', 'customer');
             });
+
+        // Add transaction statistics (current month only)
+        $query->addSelect(['users.*'])
+            ->addSelect([
+                'total_spending' => PartnerTransaction::selectRaw('COALESCE(SUM(invoice_amount), 0)')
+                    ->whereColumn('customer_id', 'users.id')
+                    ->where('status', 'confirmed')
+                    ->whereYear('transaction_date', $currentYear)
+                    ->whereMonth('transaction_date', $currentMonth),
+                'last_transaction_date' => PartnerTransaction::selectRaw('MAX(transaction_date)')
+                    ->whereColumn('customer_id', 'users.id')
+                    ->where('status', 'confirmed')
+                    ->whereYear('transaction_date', $currentYear)
+                    ->whereMonth('transaction_date', $currentMonth)
+            ]);
 
         // Search functionality
         if ($request->has('search') && $request->search) {
@@ -56,7 +79,7 @@ class CustomerController extends Controller
 
         $customers = $query->paginate(20);
 
-        return view('admin.customers.index', compact('customers'));
+        return view('admin.customers.index', compact('customers', 'minSpending'));
     }
 
     /**

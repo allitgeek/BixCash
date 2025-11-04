@@ -98,6 +98,34 @@
                     </p>
                 </div>
 
+                {{-- Customer Threshold Levels --}}
+                <div class="mt-6 pt-4 border-t border-gray-200">
+                    <h4 class="text-sm font-semibold text-gray-900 mb-1">Customer Threshold Levels</h4>
+                    <p class="text-xs text-gray-600 mb-4">Set minimum number of customers required for each tier level</p>
+
+                    <div class="grid grid-cols-7 max-md:grid-cols-4 max-sm:grid-cols-2 gap-3">
+                        @for($i = 1; $i <= 7; $i++)
+                            <div class="space-y-2">
+                                <label class="block text-sm font-medium text-gray-700 text-center">
+                                    Level {{ $i }}
+                                </label>
+                                <input type="number"
+                                       name="customer_threshold_level_{{ $i }}"
+                                       value="{{ $customerThresholds[$i] ?? 0 }}"
+                                       min="0"
+                                       class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-center"
+                                       placeholder="{{ $i * 5 }}">
+                            </div>
+                        @endfor
+                    </div>
+
+                    <div class="mt-3 p-3 bg-purple-50 border border-purple-200 rounded-lg">
+                        <p class="text-xs text-purple-800">
+                            <strong>Info:</strong> These thresholds set the capacity for each FIFO queue level in profit sharing. Users who meet criteria enter Level 1. When a level fills up, the oldest user graduates to the next level. Level 7 = most senior users.
+                        </p>
+                    </div>
+                </div>
+
                 {{-- Save Button --}}
                 <div class="mt-4 pt-3 border-t border-gray-200 flex justify-end">
                     <button type="submit"

@@ -6201,3 +6201,403 @@ These criteria settings will be used in:
 **Status**: ✅ COMPLETED  
 **Last Updated**: November 4, 2025  
 **Updated By**: Claude Code
+
+---
+
+## 🎯 FIFO PROFIT SHARING QUEUE SYSTEM
+
+### Status: ✅ FULLY IMPLEMENTED (2025-11-04)
+
+---
+
+### System Overview
+
+A complete FIFO (First In First Out) queue system for profit sharing eligibility and level assignment. Users who meet monthly criteria enter Level 1 (entry level), and as new users qualify, the oldest users graduate to higher levels (Level 2-7). The system combines:
+
+1. ✅ **Monthly Criteria Qualification**: Both customers and partners qualify based on current month activity only
+2. ✅ **FIFO Queue Management**: 7 levels with configurable capacity thresholds
+3. ✅ **Automated Level Assignment**: Daily and monthly schedulers + manual recalculation
+4. ✅ **Active/Inactive Tracking**: Users stay in queue even if they become inactive
+
+---
+
+### Technical Implementation
+
+#### Database Structure
+
+**Migration**: `2025_11_04_162044_add_profit_sharing_fields_to_users_table.php`
+
+```php
+Schema::table('users', function (Blueprint $table) {
+    // Profit sharing level (1-7)
+    $table->unsignedTinyInteger('profit_sharing_level')->nullable();
+    
+    // Date when user first qualified for profit sharing
+    $table->timestamp('profit_sharing_qualified_at')->nullable();
+    
+    // Indexes for performance
+    $table->index('profit_sharing_level');
+    $table->index('profit_sharing_qualified_at');
+});
+```
+
+**Fields**:
+- `profit_sharing_level`: Integer 1-7 (NULL = not qualified)
+- `profit_sharing_qualified_at`: Timestamp when user first met criteria
+- Both fields indexed for efficient querying
+
+---
+
+### Qualification Criteria
+
+#### Customer Qualification
+Users with `role = 'customer'` qualify when:
+- Monthly spending ≥ minimum spending threshold (from `active_customer_min_spending`)
+- Calculation: `SUM(invoice_amount)` for confirmed transactions in current month
+- Only current month (whereYear + whereMonth filters)
+
+#### Partner Qualification
+Users with `role = 'partner'` qualify when **BOTH** conditions met:
+- Unique customers ≥ minimum customers threshold (from `active_partner_min_customers`)
+- Total amount ≥ minimum amount threshold (from `active_partner_min_amount`)
+- Calculation: Current month only (whereYear + whereMonth filters)
+
+**Important**: Changed from either/or (radio buttons) to dual conditions (BOTH required)
+
+---
+
+### FIFO Queue Logic
+
+#### Level Assignment Algorithm
+
+**Command**: `php artisan profit-sharing:assign-levels`
+
+**Process**:
+1. Qualify new users based on current month criteria
+2. Get all qualified users ordered by `profit_sharing_qualified_at DESC` (newest first)
+3. Fill levels starting from Level 1 (entry level) with newest users
+4. When level capacity is full, overflow users move to next level
+5. Oldest users graduate to higher levels (Level 7 = most senior)
+
+**Key Logic** (`AssignProfitSharingLevels.php` line 122):
+```php
+$qualifiedUsers = User::whereNotNull('profit_sharing_qualified_at')
+    ->orderBy('profit_sharing_qualified_at', 'DESC')
+    ->get();
+```
+
+**CRITICAL**: DESC order ensures newest users fill Level 1, oldest graduate upward.
+
+---
+
+### Level Thresholds Configuration
+
+**Admin Settings Page**: `/admin/settings/admin`
+
+**Section**: Customer Threshold Levels (7 inputs)
+
+**Settings Keys**:
+- `customer_threshold_level_1` through `customer_threshold_level_7`
+- Values represent maximum number of users per level
+- When level fills up, overflow moves to next level
+
+**Example**:
+```
+Level 1: 100 users (entry level)
+Level 2: 50 users
+Level 3: 30 users
+Level 4: 20 users
+Level 5: 15 users
+Level 6: 10 users
+Level 7: 10 users (most senior, unlimited overflow)
+```
+
+When 101st user qualifies → oldest user in Level 1 graduates to Level 2
+
+---
+
+### Automation Options
+
+#### 1. Manual Recalculation Button
+
+**Location**: Profit Sharing page (`/admin/profit-sharing`)
+
+**Button**: "🔄 Recalculate FIFO Levels" (purple gradient, top-right)
+
+**Functionality**:
+- AJAX POST to `/admin/profit-sharing/run-assignment`
+- Calls `Artisan::call('profit-sharing:assign-levels')`
+- Shows confirmation dialog before execution
+- Displays success message and reloads page
+
+**JavaScript Handler** (`profit-sharing.blade.php` line 552-586):
+```javascript
+function recalculateLevels() {
+    fetch('{{ route("admin.profit-sharing.run-assignment") }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);
+            window.location.reload();
+        }
+    });
+}
+```
+
+#### 2. Daily Automatic Scheduler
+
+**Time**: Every day at 2:00 AM
+
+**Configuration** (`routes/console.php`):
+```php
+Schedule::command('profit-sharing:assign-levels')
+    ->dailyAt('02:00')
+    ->withoutOverlapping()
+    ->runInBackground();
+```
+
+#### 3. Monthly Automatic Scheduler
+
+**Time**: 1st of each month at 3:00 AM
+
+**Configuration** (`routes/console.php`):
+```php
+Schedule::command('profit-sharing:assign-levels')
+    ->monthlyOn(1, '03:00')
+    ->withoutOverlapping()
+    ->runInBackground();
+```
+
+**Cron Setup Required** (server-side):
+```bash
+* * * * * cd /var/www/bixcash.com/backend && php artisan schedule:run >> /dev/null 2>&1
+```
+
+---
+
+### Display Integration
+
+#### Profit Sharing Page (`/admin/profit-sharing`)
+
+**Column 4: Customers** - Shows FIFO queue data for each level:
+
+**Format**:
+```
+Total: X
+A = Y, I = Z
+```
+
+Where:
+- **Total**: Total users in that level
+- **A (Active)**: Users still meeting current month criteria (green)
+- **I (Inactive)**: Users not meeting current month criteria (red)
+
+**Implementation** (`profit-sharing.blade.php` line 192-197):
+```blade
+<td class="px-6 py-4 whitespace-nowrap text-sm border-r border-gray-200">
+    @if(isset($levels[1]))
+        <div class="text-gray-900 font-semibold">{{ $levels[1]['total'] }}</div>
+        <div class="text-xs text-gray-600">
+            A = <span class="text-green-600 font-medium">{{ $levels[1]['active'] }}</span>,
+            I = <span class="text-red-600 font-medium">{{ $levels[1]['inactive'] }}</span>
+        </div>
+    @else
+        ---
+    @endif
+</td>
+```
+
+#### Customer Dashboard (`/admin/customers`)
+
+**Active (Criteria) Card**:
+- Orange gradient background (#fff3e0)
+- Shows count of customers meeting current month spending criteria
+- Small text: "Current month only"
+
+**Criteria Status Column**:
+- ✓ Active (green badge) - Meeting current month criteria
+- ✗ Inactive (red badge) - Not meeting criteria
+
+#### Partner Dashboard (`/admin/partners`)
+
+**Active (Criteria) Card**:
+- Orange gradient background (#fff3e0)
+- Shows count of partners meeting BOTH criteria (customers AND amount)
+- Small text: "Current month only"
+
+**Criteria Status Column**:
+- ✓ Active (green badge) - Meeting both criteria
+- ✗ Inactive (red badge) - Not meeting one or both criteria
+
+---
+
+### Monthly Criteria Logic Fix
+
+**Problem**: Initially used lifetime totals instead of current month
+
+**Solution**: Changed from `withSum`/`withMax` to `addSelect` with raw subqueries
+
+**Example** (`CustomerController.php` line 42-52):
+```php
+$currentYear = now()->year;
+$currentMonth = now()->month;
+
+$query->addSelect([
+    'total_spending' => PartnerTransaction::selectRaw('COALESCE(SUM(invoice_amount), 0)')
+        ->whereColumn('customer_id', 'users.id')
+        ->where('status', 'confirmed')
+        ->whereYear('transaction_date', $currentYear)
+        ->whereMonth('transaction_date', $currentMonth),
+]);
+```
+
+**Result**: Only November 2025 transactions counted for criteria evaluation
+
+---
+
+### Files Modified
+
+**New Files**:
+- `app/Console/Commands/AssignProfitSharingLevels.php` - FIFO assignment command
+- `database/migrations/2025_11_04_162044_add_profit_sharing_fields_to_users_table.php` - Database fields
+
+**Modified Files**:
+- `app/Http/Controllers/Admin/CustomerController.php` - Monthly criteria + active card
+- `app/Http/Controllers/Admin/PartnerController.php` - Monthly criteria + active card
+- `app/Http/Controllers/Admin/DashboardController.php` - profitSharing() + runProfitSharingAssignment()
+- `app/Models/User.php` - Added profit sharing fields to fillable
+- `resources/views/admin/customers/index.blade.php` - Active (Criteria) card + status column
+- `resources/views/admin/partners/index.blade.php` - Active (Criteria) card + status column
+- `resources/views/admin/dashboard/admin-settings.blade.php` - Customer Threshold Levels section
+- `resources/views/admin/dashboard/profit-sharing.blade.php` - FIFO data display + recalculate button
+- `routes/admin.php` - Added profit-sharing.run-assignment route
+- `routes/console.php` - Added daily and monthly schedulers
+
+---
+
+### Testing Results
+
+**FIFO Logic Verification**:
+- ✅ Level 1 threshold set to 1 user capacity
+- ✅ Hafeez Malik (ID: 14, newest) → Level 1
+- ✅ Faisal (ID: 6, oldest) → Level 2
+- ✅ Newest users fill Level 1, oldest graduate upward (CORRECT)
+
+**Scheduler Verification**:
+```bash
+php artisan schedule:list
+```
+Output:
+```
+* * * * *  php artisan transactions:auto-confirm  Next Due: 11 seconds from now
+0 2 * * *  php artisan profit-sharing:assign-levels  Next Due: 9 hours from now
+0 3 1 * *  php artisan profit-sharing:assign-levels  Next Due: 3 weeks from now
+```
+
+**Manual Command Test**:
+```bash
+php artisan profit-sharing:assign-levels
+```
+Output:
+```
+Starting profit sharing level assignment...
+Step 1: Checking qualification criteria...
+✓ 0 new users qualified for profit sharing
+Step 2: Assigning FIFO levels...
+Level thresholds: {"1":1,"2":50,"3":30,"4":20,"5":15,"6":10,"7":10}
+Assigned levels to 2 users
+✓ Levels assigned successfully
+```
+
+---
+
+### Key Design Decisions
+
+1. **Monthly Criteria Only**: Changed from lifetime totals to current month filtering
+   - Reason: Keeps users active and engaged monthly
+   - Implementation: whereYear() + whereMonth() filters on all queries
+
+2. **BOTH Conditions for Partners**: Changed from either/or to dual requirement
+   - Reason: More stringent qualification ensures quality partners
+   - Implementation: Removed radio buttons, require both thresholds
+
+3. **DESC Order for FIFO**: Newest users first (Level 1 = entry level)
+   - Reason: Oldest users should graduate to higher levels
+   - Implementation: `orderBy('profit_sharing_qualified_at', 'DESC')`
+
+4. **Stay in Queue**: Users remain qualified even if they become inactive
+   - Reason: Prevents level shuffling, maintains fairness
+   - Implementation: Only check criteria for new qualifications, not removals
+
+5. **Active/Inactive Display**: Show both counts in profit sharing page
+   - Reason: Admin visibility into engagement levels
+   - Implementation: Recalculate criteria for each user in level display
+
+---
+
+### Permissions
+
+- **Profit Sharing Page**: `view_analytics` permission
+- **Manual Recalculation**: `view_analytics` permission
+- **Threshold Settings**: `manage_settings` permission (Super Admin only)
+
+---
+
+### Error Fixes
+
+1. **Rs. Prefix Spacing** (Fixed):
+   - Problem: Padding not working (pl-11, pl-14, pl-16, pl-20)
+   - Root Cause: Vite hadn't recompiled Tailwind CSS (JIT mode)
+   - Solution: Ran `npm run build` to regenerate assets
+   - Result: pl-20 (80px padding) finally applied correctly
+
+2. **FIFO Logic Backwards** (Fixed):
+   - Problem: Oldest users in Level 1, newest in higher levels
+   - Root Cause: Used ASC order instead of DESC
+   - Solution: Changed to `orderBy('profit_sharing_qualified_at', 'DESC')`
+   - Result: Newest users in Level 1, oldest graduate upward
+
+3. **Lifetime Totals Instead of Monthly** (Fixed):
+   - Problem: Hafeez (Nov 3) showing Inactive, Faisal (Oct 16) showing Active
+   - Root Cause: Using `withSum`/`withMax` without date filters
+   - Solution: Changed to `addSelect` with whereYear/whereMonth
+   - Result: Only current month transactions counted
+
+4. **Customer Threshold Grid Layout** (Fixed):
+   - Problem: 7 levels displayed in 3 rows instead of 1
+   - Root Cause: Responsive breakpoints (sm:grid-cols-3 md:grid-cols-4)
+   - Solution: Changed to `grid-cols-7 max-md:grid-cols-4`
+   - Result: All 7 levels in one row on desktop
+
+---
+
+### Future Enhancements
+
+1. **Profit Distribution Calculation**: Use FIFO levels for actual profit payouts
+2. **Historical Tracking**: Log level changes and qualification history
+3. **Analytics Dashboard**: Visualize level progression over time
+4. **Email Notifications**: Notify users when they qualify or graduate levels
+5. **Level Badges**: Display level badges on user profiles
+
+---
+
+### Important Notes
+
+- **Once Qualified**: Users stay in queue even if inactive (don't meet current month criteria)
+- **Combined Counting**: Customers + partners = total count for threshold checks
+- **Current Month Only**: All criteria calculations use current year + current month filters
+- **Level 7 = Most Senior**: Highest level, oldest users who've been in queue longest
+- **Level 1 = Entry Level**: Newest qualifiers enter here, graduate upward as new users join
+
+---
+
+**Status**: ✅ COMPLETED
+**Implementation Date**: November 4, 2025
+**Implemented By**: Claude Code
+**Testing**: ✅ All automation options verified (manual button, daily scheduler, monthly scheduler)

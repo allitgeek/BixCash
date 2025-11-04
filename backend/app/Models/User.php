@@ -95,6 +95,16 @@ class User extends Authenticatable
         return $this->hasMany(Slide::class, 'created_by');
     }
 
+    public function partnerTransactions(): HasMany
+    {
+        return $this->hasMany(PartnerTransaction::class, 'customer_id');
+    }
+
+    public function partnerTransactionsAsPartner(): HasMany
+    {
+        return $this->hasMany(PartnerTransaction::class, 'partner_id');
+    }
+
     // Helper methods
     public function hasRole(string $roleName): bool
     {

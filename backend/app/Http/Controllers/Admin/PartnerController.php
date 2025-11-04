@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\PartnerProfile;
 use App\Models\PartnerTransaction;
 use App\Models\Role;
+use App\Models\SystemSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -106,9 +107,37 @@ class PartnerController extends Controller
      */
     public function index(Request $request)
     {
+        // Get criteria settings
+        $minCustomers = intval(SystemSetting::get('active_partner_min_customers', 0));
+        $minAmount = floatval(SystemSetting::get('active_partner_min_amount', 0));
+
+        // Get current year and month for criteria calculation
+        $currentYear = now()->year;
+        $currentMonth = now()->month;
+
         $query = User::whereHas('role', function($q) {
             $q->where('name', 'partner');
         })->with('partnerProfile');
+
+        // Add transaction statistics (current month only)
+        $query->addSelect(['users.*'])
+            ->addSelect([
+                'unique_customers_count' => PartnerTransaction::selectRaw('COUNT(DISTINCT customer_id)')
+                    ->whereColumn('partner_id', 'users.id')
+                    ->where('status', 'confirmed')
+                    ->whereYear('transaction_date', $currentYear)
+                    ->whereMonth('transaction_date', $currentMonth),
+                'total_transaction_amount' => PartnerTransaction::selectRaw('COALESCE(SUM(invoice_amount), 0)')
+                    ->whereColumn('partner_id', 'users.id')
+                    ->where('status', 'confirmed')
+                    ->whereYear('transaction_date', $currentYear)
+                    ->whereMonth('transaction_date', $currentMonth),
+                'last_transaction_date' => PartnerTransaction::selectRaw('MAX(transaction_date)')
+                    ->whereColumn('partner_id', 'users.id')
+                    ->where('status', 'confirmed')
+                    ->whereYear('transaction_date', $currentYear)
+                    ->whereMonth('transaction_date', $currentMonth)
+            ]);
 
         // Filter by status
         if ($request->has('status') && $request->status !== 'all') {
@@ -131,7 +160,7 @@ class PartnerController extends Controller
 
         $partners = $query->latest()->paginate(20);
 
-        return view('admin.partners.index', compact('partners'));
+        return view('admin.partners.index', compact('partners', 'minCustomers', 'minAmount'));
     }
 
     /**

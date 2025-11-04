@@ -13,3 +13,15 @@ Schedule::command('transactions:auto-confirm')
     ->everyMinute()
     ->withoutOverlapping()
     ->runInBackground();
+
+// Recalculate profit sharing levels daily at 2:00 AM
+Schedule::command('profit-sharing:assign-levels')
+    ->dailyAt('02:00')
+    ->withoutOverlapping()
+    ->runInBackground();
+
+// Recalculate profit sharing levels monthly on the 1st at 3:00 AM
+Schedule::command('profit-sharing:assign-levels')
+    ->monthlyOn(1, '03:00')
+    ->withoutOverlapping()
+    ->runInBackground();
