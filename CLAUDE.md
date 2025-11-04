@@ -5994,3 +5994,210 @@ The menu item highlights correctly when:
 **Status**: ✅ COMPLETED  
 **Last Updated**: November 4, 2025  
 **Updated By**: Claude Code
+
+---
+
+## Active Customer & Partner Criteria Settings
+
+**Date**: November 4, 2025  
+**Feature**: Active User Criteria Management System
+
+### Overview
+
+Implemented a comprehensive system for defining criteria that determine when customers and partners are considered "active" in the BixCash platform. These criteria are used for profit sharing distribution, dashboard statistics, and reporting.
+
+### Components Created/Modified
+
+1. **Database**:
+   - Migration: `2025_11_04_110548_create_system_settings_table.php`
+   - Table: `system_settings` (key-value pairs for system-wide settings)
+   - Model: `SystemSetting` (with helper methods for get/set operations)
+
+2. **View**: Updated `admin-settings.blade.php` with functional forms
+
+3. **Controller**: Added methods to `DashboardController`:
+   - `adminSettings()` - Load and display criteria settings
+   - `updateActiveCriteria()` - Save form submissions
+
+4. **Routes**: Added POST route for criteria updates
+
+### System Settings Table Structure
+
+```sql
+- id (primary key)
+- key (unique string) - Setting identifier
+- value (text) - Setting value
+- type (string) - Data type: text, number, boolean, json
+- group (string) - Setting group: general, criteria, notifications
+- description (text) - Human-readable description
+- timestamps
+```
+
+### Initial Seed Data (3 records)
+
+1. **active_customer_min_spending** (number, criteria)
+   - Minimum spending amount for customers to be considered active
+   - Default: 0
+
+2. **active_partner_criteria_type** (text, criteria)
+   - Type of criteria for active partners
+   - Values: 'customers' or 'amount'
+   - Default: 'customers'
+
+3. **active_partner_min_value** (number, criteria)
+   - Minimum value for active partner criteria
+   - Meaning depends on criteria_type
+   - Default: 0
+
+### Active Customer Criteria
+
+**Purpose**: Determines which customers are eligible for profit distribution
+
+**Interface**:
+- Single input field for minimum spending amount
+- Rs. currency formatting with commas (e.g., Rs. 30,000)
+- Real-time comma formatting as user types
+- Validation: Required, numeric (cleaned from formatted string)
+
+**Example Usage**:
+- Set to Rs. 30,000
+- Customers who have spent Rs. 30,000 or more are considered "active"
+- Active customers appear in Profit Sharing distribution
+- Active customers counted in dashboard statistics
+
+### Active Partner Criteria
+
+**Purpose**: Determines which partners are counted as "active" in the system
+
+**Interface**: Radio button group with two options:
+
+**Option 1: Minimum Number of Customers**
+- Partner must have served X customers
+- Input: Number field (e.g., 10)
+- Use case: Partner activity based on customer reach
+
+**Option 2: Minimum Transaction Amount**
+- Total spending by partner's customers must reach Rs. X
+- Input: Currency field with Rs. formatting (e.g., Rs. 50,000)
+- Use case: Partner activity based on transaction volume
+
+**Behavior**:
+- Only selected option's input field is enabled
+- Disabled input has gray background (disabled:bg-gray-100)
+- Alpine.js handles real-time toggling between options
+- Radio button selection controls which value is saved
+
+### Form Features
+
+**Currency Formatting**:
+- JavaScript function `formatCurrency()` formats inputs
+- Removes non-digit characters
+- Adds commas using `toLocaleString('en-US')`
+- Example: User types "30000" → displays "30,000"
+
+**Visual Feedback**:
+- Selected radio option: Purple border (border-purple-500) + light purple background (bg-purple-50)
+- Unselected: Gray border (border-gray-200)
+- Hover effects on both radio options
+- Disabled inputs: Gray background with cursor-not-allowed
+
+**Save Button**:
+- Blue-to-purple gradient background
+- Hover effects: Shadow elevation + slight upward movement
+- Checkmark icon + "Save Criteria Settings" text
+
+### Controller Logic
+
+**Loading Settings** (`adminSettings` method):
+```php
+$customerCriteria = SystemSetting::get('active_customer_min_spending', 0);
+$partnerCriteriaType = SystemSetting::get('active_partner_criteria_type', 'customers');
+$partnerCriteria = SystemSetting::get('active_partner_min_value', 0);
+```
+
+**Saving Settings** (`updateActiveCriteria` method):
+1. Validates form inputs
+2. Cleans currency strings (removes commas, converts to integers)
+3. Determines which partner criterion is active (customers or amount)
+4. Saves all 3 settings to database using `SystemSetting::set()`
+5. Redirects with success message
+
+**Validation Rules**:
+- `active_customer_min_spending`: required|string
+- `active_partner_criteria_type`: required|in:customers,amount
+- `active_partner_min_customers`: nullable|integer|min:0
+- `active_partner_min_amount`: nullable|string
+
+### SystemSetting Model Methods
+
+```php
+// Get a setting value
+SystemSetting::get('key', 'default_value')
+
+// Set a setting value
+SystemSetting::set('key', 'value', 'type', 'group', 'description')
+
+// Get all settings in a group
+SystemSetting::getGroup('criteria')
+```
+
+### Future Integration Points
+
+These criteria settings will be used in:
+
+1. **Profit Sharing Feature**:
+   - Filter customers by spending threshold
+   - Count only "active" customers for distribution
+   - Calculate per-customer profit shares
+
+2. **Dashboard Statistics**:
+   - "Active Customers" count (those meeting spending criteria)
+   - "Active Partners" count (those meeting selected criteria)
+
+3. **Reports & Analytics**:
+   - Filter data by active/inactive status
+   - Generate reports on active user engagement
+
+4. **Partner Management**:
+   - Display active/inactive status badges
+   - Sort/filter partners by activity criteria
+
+### Files Modified
+
+- NEW: `backend/database/migrations/2025_11_04_110548_create_system_settings_table.php`
+- NEW: `backend/app/Models/SystemSetting.php`
+- MODIFIED: `backend/resources/views/admin/dashboard/admin-settings.blade.php`
+- MODIFIED: `backend/app/Http/Controllers/Admin/DashboardController.php`
+- MODIFIED: `backend/routes/admin.php`
+- UPDATE: `CLAUDE.md` (this documentation)
+
+### Permissions
+
+- Protected by `manage_settings` permission (Super Admin only)
+- Route: `POST /admin/settings/admin/criteria`
+- Route name: `admin.settings.admin.criteria.update`
+
+### Design Details
+
+**Active Customer Card**:
+- Blue gradient icon (from-blue-500 to-blue-700)
+- Customer icon (user profile SVG)
+- Clean input with Rs. prefix
+
+**Active Partner Card**:
+- Purple gradient icon (from-purple-500 to-purple-700)
+- Partner icon (briefcase SVG)
+- Two expandable options with radio buttons
+- Conditional input visibility based on selection
+
+**Layout**:
+- Both cards: Full-width on mobile, side-by-side on desktop
+- Rounded corners (rounded-2xl)
+- Subtle shadows with hover elevation
+- Consistent padding and spacing
+
+---
+
+**Status**: ✅ COMPLETED  
+**Last Updated**: November 4, 2025  
+**Updated By**: Claude Code

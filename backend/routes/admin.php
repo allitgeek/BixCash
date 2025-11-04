@@ -135,6 +135,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('settings', [DashboardController::class, 'settings'])->name('settings');
             Route::get('settings/admin', [DashboardController::class, 'adminSettings'])->name('settings.admin');
 
+            // Active Criteria Management
+            Route::post('settings/admin/criteria', [DashboardController::class, 'updateActiveCriteria'])->name('settings.admin.criteria.update');
+
             // Social Media Links Management
             Route::post('social-media', [DashboardController::class, 'storeSocialMedia'])->name('social-media.store');
             Route::put('social-media/{socialMedia}', [DashboardController::class, 'updateSocialMedia'])->name('social-media.update');
