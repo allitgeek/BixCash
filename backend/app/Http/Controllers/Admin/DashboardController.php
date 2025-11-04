@@ -202,11 +202,21 @@ class DashboardController extends Controller
     public function runProfitSharingAssignment()
     {
         try {
+            // Check if command exists
+            $commands = \Artisan::all();
+            if (!isset($commands['profit-sharing:assign-levels'])) {
+                throw new \Exception('Command not registered. Please run: php artisan optimize:clear');
+            }
+
             // Run the assignment command
-            \Artisan::call('profit-sharing:assign-levels');
+            $exitCode = \Artisan::call('profit-sharing:assign-levels');
 
             // Get command output
             $output = \Artisan::output();
+
+            if ($exitCode !== 0) {
+                throw new \Exception('Command failed with exit code: ' . $exitCode);
+            }
 
             return response()->json([
                 'success' => true,
