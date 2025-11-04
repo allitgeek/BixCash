@@ -105,6 +105,11 @@ class User extends Authenticatable
         return $this->hasMany(PartnerTransaction::class, 'partner_id');
     }
 
+    public function wallet(): HasOne
+    {
+        return $this->hasOne(Wallet::class);
+    }
+
     // Helper methods
     public function hasRole(string $roleName): bool
     {

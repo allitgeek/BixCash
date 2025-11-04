@@ -11,12 +11,20 @@
                 <h2 class="text-2xl font-bold text-gray-900 mb-2">Profit Sharing Management</h2>
                 <p class="text-gray-600">Manage partner profit sharing, commissions, and payouts</p>
             </div>
-            <button
-                onclick="recalculateLevels()"
-                class="px-5 py-2.5 bg-gradient-to-r from-purple-600 to-purple-900 text-white text-sm font-semibold rounded-lg shadow-md hover:shadow-lg hover:from-purple-700 hover:to-purple-950 transition-all duration-200 hover:-translate-y-0.5"
-            >
-                🔄 Recalculate FIFO Levels
-            </button>
+            <div class="flex items-center space-x-3">
+                <a
+                    href="{{ route('admin.profit-sharing.history') }}"
+                    class="px-5 py-2.5 bg-gradient-to-r from-amber-600 to-amber-900 text-white text-sm font-semibold rounded-lg shadow-md hover:shadow-lg hover:from-amber-700 hover:to-amber-950 transition-all duration-200 hover:-translate-y-0.5"
+                >
+                    📜 Distribution History
+                </a>
+                <button
+                    onclick="recalculateLevels()"
+                    class="px-5 py-2.5 bg-gradient-to-r from-purple-600 to-purple-900 text-white text-sm font-semibold rounded-lg shadow-md hover:shadow-lg hover:from-purple-700 hover:to-purple-950 transition-all duration-200 hover:-translate-y-0.5"
+                >
+                    🔄 Recalculate FIFO Levels
+                </button>
+            </div>
         </div>
 
         {{-- Stats Overview Cards --}}
@@ -700,12 +708,155 @@
         console.log('Calculated profit distribution using percentages');
     });
 
-    // Disperse button click handler (placeholder)
+    // Disperse button click handler with modal confirmation
     document.getElementById('disperseBtn').addEventListener('click', function() {
         const amount = getNumericValue(document.getElementById('profit_amount'));
-        console.log('Disperse clicked with amount:', amount);
-        // TODO: Add disperse functionality
+        const month = document.getElementById('profit_month').value;
+
+        if (amount === 0) {
+            alert('Please calculate profit distribution first!');
+            return;
+        }
+
+        // Collect level data
+        const levelsData = [];
+        let totalActiveUsers = 0;
+
+        for (let i = 1; i <= 7; i++) {
+            const profitCell = document.getElementById(`profit_level_${i}`);
+            const amountCell = document.getElementById(`amount_customer_${i}`);
+            const percentageInput = document.getElementById(`percentage_${i}`);
+            const row = document.querySelector(`tr[data-level="${i}"]`);
+
+            const profit = parseFloat(profitCell.querySelector('.value-display').textContent.replace(/,/g, '')) || 0;
+            const perCustomer = parseFloat(amountCell.querySelector('.value-display').textContent.replace(/,/g, '')) || 0;
+            const percentage = parseFloat(percentageInput.value) || 0;
+            const customerCount = parseInt(row.querySelector('.text-green-600')?.textContent) || 0;
+
+            levelsData.push({ profit, per_customer: perCustomer, percentage });
+            totalActiveUsers += customerCount;
+        }
+
+        // Show confirmation modal
+        showDisperseModal(amount, month, levelsData, totalActiveUsers);
     });
+
+    function showDisperseModal(amount, month, levelsData, totalActiveUsers) {
+        // Create modal overlay
+        const modal = document.createElement('div');
+        modal.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50';
+        modal.innerHTML = `
+            <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+                <div class="p-6">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">⚠️ Confirm Profit Distribution</h3>
+                    <p class="text-gray-700 mb-4">You are about to disperse <strong>Rs. ${amount.toLocaleString()}</strong> for <strong>${month}</strong></p>
+
+                    <div class="bg-gray-50 rounded-lg p-4 mb-4 space-y-2">
+                        ${levelsData.map((level, idx) =>
+                            level.profit > 0 ? `<div class="flex justify-between text-sm">
+                                <span>✓ Level ${idx + 1}:</span>
+                                <span>Rs. ${level.profit.toLocaleString()} (Rs. ${level.per_customer.toLocaleString()}/user)</span>
+                            </div>` : ''
+                        ).join('')}
+                        <div class="border-t border-gray-300 mt-2 pt-2 flex justify-between font-semibold">
+                            <span>Total Recipients (active only):</span>
+                            <span>${totalActiveUsers} users</span>
+                        </div>
+                    </div>
+
+                    <p class="text-red-600 text-sm mb-4">⚠️ This action cannot be undone!</p>
+
+                    <div class="flex space-x-3">
+                        <button onclick="closeDisperseModal()" class="flex-1 px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400">Cancel</button>
+                        <button onclick="showFinalConfirm(${amount}, '${month}', ${JSON.stringify(levelsData).replace(/"/g, '&quot;')})" class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Continue</button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+        window.currentDisperseModal = modal;
+    }
+
+    window.closeDisperseModal = function() {
+        if (window.currentDisperseModal) {
+            window.currentDisperseModal.remove();
+        }
+        if (window.finalConfirmModal) {
+            window.finalConfirmModal.remove();
+        }
+    };
+
+    window.showFinalConfirm = function(amount, month, levelsData) {
+        closeDisperseModal();
+
+        const modal = document.createElement('div');
+        modal.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50';
+        modal.innerHTML = `
+            <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+                <div class="p-6">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">🔐 Final Confirmation Required</h3>
+                    <p class="text-gray-700 mb-4">This will credit Rs. ${amount.toLocaleString()} to active user wallets.</p>
+
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Type "DISPERSE" to confirm:</label>
+                    <input type="text" id="confirmText" class="w-full px-3 py-2 border border-gray-300 rounded-lg mb-4" autocomplete="off">
+
+                    <div class="flex space-x-3">
+                        <button onclick="closeDisperseModal()" class="flex-1 px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400">Cancel</button>
+                        <button onclick="executeDisperse(${amount}, '${month}', ${JSON.stringify(levelsData).replace(/"/g, '&quot;')})" class="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">Execute Disperse</button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+        window.finalConfirmModal = modal;
+
+        setTimeout(() => document.getElementById('confirmText')?.focus(), 100);
+    };
+
+    window.executeDisperse = function(amount, month, levelsData) {
+        const confirmText = document.getElementById('confirmText').value;
+
+        if (confirmText !== 'DISPERSE') {
+            alert('Please type "DISPERSE" to confirm');
+            return;
+        }
+
+        const button = event.target;
+        button.disabled = true;
+        button.textContent = 'Dispersing...';
+
+        fetch('{{ route("admin.profit-sharing.disperse") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({
+                distribution_month: month,
+                total_amount: amount,
+                levels: levelsData
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.message);
+                closeDisperseModal();
+                window.location.reload();
+            } else {
+                alert('Error: ' + data.message);
+                button.disabled = false;
+                button.textContent = 'Execute Disperse';
+            }
+        })
+        .catch(error => {
+            alert('Error dispersing: ' + error);
+            button.disabled = false;
+            button.textContent = 'Execute Disperse';
+        });
+    };
 
     /**
      * Enable inline editing for a cell

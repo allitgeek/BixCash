@@ -6698,3 +6698,170 @@ updateTotalRow()
 **Commit**: `10d4aad` - Fix profit sharing calculation logic and add inline editing
 **Lines Changed**: +333, -38
 **Testing**: ✅ Verified equal division, percentage distribution, and inline editing
+
+---
+
+## 2025-11-05 - Added Profit Sharing Distribution History Feature
+
+### Context
+
+User requested: "you need to create the history button on the profit sharing page so we can track down what happened on the disperse, you what i mean?"
+
+The profit sharing system had disperse functionality but no way to track past distributions. Admins needed visibility into:
+- When distributions happened
+- Who created them
+- How much was dispersed to each level
+- Which users received funds
+- Status of each distribution
+
+### Changes Made
+
+#### 1. Added History Button to Profit Sharing Page
+**File**: `backend/resources/views/admin/dashboard/profit-sharing.blade.php` (lines 9-28)
+- Added "📜 Distribution History" button next to "Recalculate FIFO Levels"
+- Styled with amber gradient (amber-600 to amber-900)
+- Links to new history route
+
+#### 2. Created History List Page
+**File**: `backend/resources/views/admin/dashboard/profit-sharing-history.blade.php` (new file, 225 lines)
+- **Summary Stats Cards**:
+  - Total distributions count
+  - Total amount dispersed (dispersed status only)
+  - Total recipients count
+- **Distributions Table**:
+  - Columns: Date, Month, Total Amount, Recipients, Status, Created By, Actions
+  - Shows distribution date/time, month in "F Y" format
+  - Status badges: ✓ Dispersed (green), ⏳ Pending (yellow), ✗ Cancelled (red)
+  - Admin name and email who created it
+  - Click row to view details
+- **Pagination**: 20 records per page
+- **Back Button**: Returns to profit sharing page
+
+#### 3. Created Distribution Detail Page
+**File**: `backend/resources/views/admin/dashboard/profit-sharing-history-detail.blade.php` (new file, 357 lines)
+- **Distribution Summary Card**:
+  - Total amount, status, total recipients, created date
+  - Created by admin info
+  - Dispersed date (if dispersed)
+- **Level Breakdown Table**:
+  - Shows all 7 levels with: Amount, Percentage, Per Customer, Recipients
+  - Purple gradient styling
+  - Highlights levels with data, dims empty levels
+  - Total row with sum calculations
+- **Recipients & Transactions Table**:
+  - Lists all users who received funds
+  - Shows: User name/email/phone, Type (Customer/Partner), Amount, Level, Date/Time
+  - Green gradient styling
+  - Extracts level from transaction description
+  - Pagination: 50 transactions per page
+- **Back Button**: Returns to history list
+
+#### 4. Added Controller Methods
+**File**: `backend/app/Http/Controllers/Admin/DashboardController.php` (lines 407-461)
+
+**profitSharingHistory()** method:
+```php
+// Fetches all distributions with pagination
+$distributions = ProfitSharingDistribution::with('createdByAdmin')
+    ->orderBy('created_at', 'desc')
+    ->paginate(20);
+
+// Calculate summary stats (dispersed only)
+$totalDispersed = ProfitSharingDistribution::where('status', 'dispersed')
+    ->sum('total_amount');
+$totalRecipients = ProfitSharingDistribution::where('status', 'dispersed')
+    ->sum('total_recipients');
+```
+
+**profitSharingHistoryDetail($distribution)** method:
+```php
+// Load relationships
+$distribution->load('createdByAdmin', 'walletTransactions.user');
+
+// Build level breakdown (1-7)
+$levelBreakdown[$i] = [
+    'amount' => $distribution->{"level_{$i}_amount"},
+    'per_customer' => $distribution->{"level_{$i}_per_customer"},
+    'percentage' => $distribution->{"level_{$i}_percentage"},
+    'recipients' => $distribution->{"level_{$i}_recipients"},
+];
+
+// Get wallet transactions with user profiles
+$transactions = $distribution->walletTransactions()
+    ->with(['user.customerProfile', 'user.partnerProfile'])
+    ->orderBy('created_at', 'desc')
+    ->paginate(50);
+```
+
+#### 5. Routes Already Existed
+**File**: `backend/routes/admin.php` (lines 82-83)
+- Routes were already added in previous session (Phase 2):
+  ```php
+  Route::get('profit-sharing/history', [DashboardController::class, 'profitSharingHistory'])->name('profit-sharing.history');
+  Route::get('profit-sharing/history/{distribution}', [DashboardController::class, 'profitSharingHistoryDetail'])->name('profit-sharing.history.detail');
+  ```
+
+### Database Relationships Used
+
+**ProfitSharingDistribution Model** (already had relationships):
+- `createdByAdmin()` → BelongsTo User (admin who created distribution)
+- `walletTransactions()` → HasMany WalletTransaction (all credits for this distribution)
+
+**WalletTransaction Model** (already had relationships):
+- `user()` → BelongsTo User (recipient)
+- `profitSharingDistribution()` → BelongsTo ProfitSharingDistribution
+
+### Key Features
+
+1. **Distribution Tracking**:
+   - View all past profit distributions chronologically
+   - Filter by status (dispersed, pending, cancelled)
+   - See which admin created each distribution
+
+2. **Detailed Breakdown**:
+   - Level-by-level breakdown with amounts and percentages
+   - See exactly how many recipients per level
+   - View individual transactions to each user
+
+3. **Transaction Audit**:
+   - Full list of recipients with names, emails, phones
+   - Shows user type (Customer/Partner)
+   - Transaction timestamps
+   - Amount received per user
+
+4. **Navigation**:
+   - History button on main profit sharing page
+   - Click rows to view details
+   - Back buttons for easy navigation
+
+5. **Visual Design**:
+   - Consistent gradient styling (amber for history, purple for levels, green for transactions)
+   - Status badges with colors (green=dispersed, yellow=pending, red=cancelled)
+   - Hover effects on tables
+   - Icons for empty states
+
+### Testing
+
+✅ Both pages load successfully (HTTP 200):
+- Main profit sharing page: https://bixcash.com/admin/profit-sharing
+- History page: https://bixcash.com/admin/profit-sharing/history
+- Detail page: https://bixcash.com/admin/profit-sharing/history/{id}
+
+### Files Modified/Created
+
+**Modified**:
+1. `backend/resources/views/admin/dashboard/profit-sharing.blade.php` (+14 lines)
+2. `backend/app/Http/Controllers/Admin/DashboardController.php` (+55 lines)
+
+**Created**:
+3. `backend/resources/views/admin/dashboard/profit-sharing-history.blade.php` (225 lines)
+4. `backend/resources/views/admin/dashboard/profit-sharing-history-detail.blade.php` (357 lines)
+
+**Total Changes**: +651 lines, -0 deletions
+
+---
+
+**Status**: ✅ COMPLETED
+**Routes**: Already added in Phase 2 (lines 82-83 in routes/admin.php)
+**Database**: No migrations needed (uses existing relationships)
+**Access Control**: Protected by admin.auth middleware

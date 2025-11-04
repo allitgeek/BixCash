@@ -78,6 +78,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('reports', [DashboardController::class, 'reports'])->name('reports');
             Route::get('profit-sharing', [DashboardController::class, 'profitSharing'])->name('profit-sharing');
             Route::post('profit-sharing/run-assignment', [DashboardController::class, 'runProfitSharingAssignment'])->name('profit-sharing.run-assignment');
+            Route::post('profit-sharing/disperse', [DashboardController::class, 'disperseProfitSharing'])->name('profit-sharing.disperse');
+            Route::get('profit-sharing/history', [DashboardController::class, 'profitSharingHistory'])->name('profit-sharing.history');
+            Route::get('profit-sharing/history/{distribution}', [DashboardController::class, 'profitSharingHistoryDetail'])->name('profit-sharing.history.detail');
         });
 
         // Customer Management

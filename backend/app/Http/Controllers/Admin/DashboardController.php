@@ -10,8 +10,11 @@ use App\Models\Slide;
 use App\Models\SocialMediaLink;
 use App\Models\PartnerTransaction;
 use App\Models\SystemSetting;
+use App\Models\ProfitSharingDistribution;
+use App\Models\Wallet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
@@ -235,6 +238,226 @@ class DashboardController extends Controller
                 'message' => 'Failed to run level assignment: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    /**
+     * Disperse profit sharing to qualified active users
+     */
+    public function disperseProfitSharing(Request $request)
+    {
+        try {
+            // Validate incoming data
+            $validated = $request->validate([
+                'distribution_month' => 'required|string',
+                'total_amount' => 'required|numeric|min:0',
+                'levels' => 'required|array|size:7',
+                'levels.*.profit' => 'required|numeric|min:0',
+                'levels.*.per_customer' => 'required|numeric|min:0',
+                'levels.*.percentage' => 'required|numeric|min:0',
+            ]);
+
+            // Check for duplicate distribution
+            $existing = ProfitSharingDistribution::where('distribution_month', $validated['distribution_month'])
+                ->where('status', 'dispersed')
+                ->first();
+
+            if ($existing) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'A distribution for this month has already been dispersed!'
+                ], 400);
+            }
+
+            DB::beginTransaction();
+
+            // Get criteria for checking active users
+            $currentYear = now()->year;
+            $currentMonth = now()->month;
+            $minSpending = floatval(SystemSetting::get('active_customer_min_spending', 0));
+            $minCustomers = intval(SystemSetting::get('active_partner_min_customers', 0));
+            $minAmount = floatval(SystemSetting::get('active_partner_min_amount', 0));
+
+            // Create distribution record
+            $distributionData = [
+                'distribution_month' => $validated['distribution_month'],
+                'total_amount' => $validated['total_amount'],
+                'status' => 'pending',
+                'created_by_admin_id' => Auth::id(),
+            ];
+
+            // Add level data
+            for ($i = 1; $i <= 7; $i++) {
+                $distributionData["level_{$i}_amount"] = $validated['levels'][$i - 1]['profit'];
+                $distributionData["level_{$i}_per_customer"] = $validated['levels'][$i - 1]['per_customer'];
+                $distributionData["level_{$i}_percentage"] = $validated['levels'][$i - 1]['percentage'];
+            }
+
+            $distribution = ProfitSharingDistribution::create($distributionData);
+
+            // Disperse to each level
+            $totalRecipients = 0;
+
+            for ($level = 1; $level <= 7; $level++) {
+                $levelAmount = $validated['levels'][$level - 1]['profit'];
+                $perCustomer = $validated['levels'][$level - 1]['per_customer'];
+
+                if ($levelAmount <= 0 || $perCustomer <= 0) {
+                    continue; // Skip this level if no profit allocated
+                }
+
+                // Get all users in this level
+                $usersInLevel = User::where('profit_sharing_level', $level)
+                    ->with('wallet')
+                    ->get();
+
+                $levelRecipients = 0;
+
+                foreach ($usersInLevel as $user) {
+                    // Check if user is ACTIVE (meets criteria)
+                    $isActive = false;
+
+                    if ($user->isCustomer()) {
+                        $totalSpending = PartnerTransaction::where('customer_id', $user->id)
+                            ->where('status', 'confirmed')
+                            ->whereYear('transaction_date', $currentYear)
+                            ->whereMonth('transaction_date', $currentMonth)
+                            ->sum('invoice_amount');
+
+                        $isActive = floatval($totalSpending) >= $minSpending;
+                    } elseif ($user->isPartner()) {
+                        $stats = PartnerTransaction::where('partner_id', $user->id)
+                            ->where('status', 'confirmed')
+                            ->whereYear('transaction_date', $currentYear)
+                            ->whereMonth('transaction_date', $currentMonth)
+                            ->selectRaw('COUNT(DISTINCT customer_id) as unique_customers, COALESCE(SUM(invoice_amount), 0) as total_amount')
+                            ->first();
+
+                        $uniqueCustomers = intval($stats->unique_customers ?? 0);
+                        $totalAmount = floatval($stats->total_amount ?? 0);
+                        $isActive = ($uniqueCustomers >= $minCustomers) && ($totalAmount >= $minAmount);
+                    }
+
+                    // Only disperse to ACTIVE users
+                    if (!$isActive) {
+                        continue;
+                    }
+
+                    // Ensure user has a wallet
+                    if (!$user->wallet) {
+                        Wallet::create([
+                            'user_id' => $user->id,
+                            'balance' => 0.00,
+                            'total_earned' => 0.00,
+                            'total_withdrawn' => 0.00,
+                        ]);
+                        $user->load('wallet');
+                    }
+
+                    // Credit the wallet
+                    $user->wallet->credit(
+                        $perCustomer,
+                        'profit_sharing',
+                        $distribution->id,
+                        "Profit sharing distribution for {$validated['distribution_month']} (Level {$level})"
+                    );
+
+                    $levelRecipients++;
+                    $totalRecipients++;
+                }
+
+                // Update distribution record with actual recipients for this level
+                $distribution->{"level_{$level}_recipients"} = $levelRecipients;
+            }
+
+            // Mark distribution as dispersed
+            $distribution->status = 'dispersed';
+            $distribution->total_recipients = $totalRecipients;
+            $distribution->dispersed_at = now();
+            $distribution->save();
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => "Successfully dispersed Rs. " . number_format($validated['total_amount']) . " to {$totalRecipients} active users!",
+                'recipients' => $totalRecipients,
+                'distribution_id' => $distribution->id
+            ]);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation error: ' . implode(', ', $e->errors())
+            ], 422);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Profit sharing disperse failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to disperse profit sharing: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Display profit sharing distribution history
+     */
+    public function profitSharingHistory()
+    {
+        // Get all distributions with admin user info, ordered by newest first
+        $distributions = ProfitSharingDistribution::with('createdByAdmin')
+            ->orderBy('created_at', 'desc')
+            ->paginate(20);
+
+        // Calculate summary stats for dispersed distributions only
+        $totalDispersed = ProfitSharingDistribution::where('status', 'dispersed')
+            ->sum('total_amount');
+
+        $totalRecipients = ProfitSharingDistribution::where('status', 'dispersed')
+            ->sum('total_recipients');
+
+        return view('admin.dashboard.profit-sharing-history', compact(
+            'distributions',
+            'totalDispersed',
+            'totalRecipients'
+        ));
+    }
+
+    /**
+     * Display detailed breakdown for a specific distribution
+     */
+    public function profitSharingHistoryDetail(ProfitSharingDistribution $distribution)
+    {
+        // Load related data
+        $distribution->load('createdByAdmin', 'walletTransactions.user');
+
+        // Calculate level breakdown
+        $levelBreakdown = [];
+        for ($i = 1; $i <= 7; $i++) {
+            $levelBreakdown[$i] = [
+                'amount' => $distribution->{"level_{$i}_amount"},
+                'per_customer' => $distribution->{"level_{$i}_per_customer"},
+                'percentage' => $distribution->{"level_{$i}_percentage"},
+                'recipients' => $distribution->{"level_{$i}_recipients"},
+            ];
+        }
+
+        // Get wallet transactions for this distribution
+        $transactions = $distribution->walletTransactions()
+            ->with(['user.customerProfile', 'user.partnerProfile'])
+            ->orderBy('created_at', 'desc')
+            ->paginate(50);
+
+        return view('admin.dashboard.profit-sharing-history-detail', compact(
+            'distribution',
+            'levelBreakdown',
+            'transactions'
+        ));
     }
 
     public function settings()
