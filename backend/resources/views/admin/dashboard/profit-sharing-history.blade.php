@@ -13,7 +13,7 @@
             </div>
             <a
                 href="{{ route('admin.profit-sharing') }}"
-                class="px-5 py-2.5 bg-gradient-to-r from-gray-600 to-gray-900 text-white text-sm font-semibold rounded-lg shadow-md hover:shadow-lg hover:from-gray-700 hover:to-gray-950 transition-all duration-200 hover:-translate-y-0.5"
+                class="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-900 text-white text-sm font-semibold rounded-lg shadow-md hover:shadow-lg hover:from-blue-700 hover:to-blue-950 transition-all duration-200 hover:-translate-y-0.5"
             >
                 ← Back to Profit Sharing
             </a>

@@ -28,7 +28,7 @@ class CustomerController extends Controller
         $currentYear = now()->year;
         $currentMonth = now()->month;
 
-        $query = User::with(['role', 'customerProfile'])
+        $query = User::with(['role', 'customerProfile', 'wallet'])
             ->whereHas('role', function ($q) {
                 $q->where('name', 'customer');
             });

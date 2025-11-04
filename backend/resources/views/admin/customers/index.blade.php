@@ -81,6 +81,7 @@
                                 <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Email</th>
                                 <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Account Status</th>
                                 <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Criteria Status</th>
+                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Wallet Balance</th>
                                 <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Last Transaction</th>
                                 <th style="padding: 0.75rem; text-align: left; font-weight: 600;">PIN</th>
                                 <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Registered</th>
@@ -156,6 +157,15 @@
                                             <span style="background: #e74c3c; color: white; padding: 0.25rem 0.5rem; border-radius: 3px; font-size: 0.8rem;" title="Total spending: Rs. {{ number_format($totalSpending, 2) }} (Min: Rs. {{ number_format($minSpending, 2) }})">
                                                 ✗ Inactive
                                             </span>
+                                        @endif
+                                    </td>
+                                    <td style="padding: 0.75rem;">
+                                        @if($customer->wallet)
+                                            <span style="color: #27ae60; font-weight: 600;">
+                                                Rs. {{ number_format($customer->wallet->balance, 2) }}
+                                            </span>
+                                        @else
+                                            <span style="color: #999;">Rs. 0.00</span>
                                         @endif
                                     </td>
                                     <td style="padding: 0.75rem;">

@@ -14,7 +14,7 @@
             <div class="flex items-center space-x-3">
                 <a
                     href="{{ route('admin.profit-sharing.history') }}"
-                    class="px-5 py-2.5 bg-gradient-to-r from-amber-600 to-amber-900 text-white text-sm font-semibold rounded-lg shadow-md hover:shadow-lg hover:from-amber-700 hover:to-amber-950 transition-all duration-200 hover:-translate-y-0.5"
+                    class="px-5 py-2.5 bg-gradient-to-r from-orange-600 to-orange-900 text-white text-sm font-semibold rounded-lg shadow-md hover:shadow-lg hover:from-orange-700 hover:to-orange-950 transition-all duration-200 hover:-translate-y-0.5"
                 >
                     📜 Distribution History
                 </a>

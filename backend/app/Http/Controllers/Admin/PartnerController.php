@@ -117,7 +117,7 @@ class PartnerController extends Controller
 
         $query = User::whereHas('role', function($q) {
             $q->where('name', 'partner');
-        })->with('partnerProfile');
+        })->with(['partnerProfile', 'wallet']);
 
         // Add transaction statistics (current month only)
         $query->addSelect(['users.*'])

@@ -6865,3 +6865,148 @@ $transactions = $distribution->walletTransactions()
 **Routes**: Already added in Phase 2 (lines 82-83 in routes/admin.php)
 **Database**: No migrations needed (uses existing relationships)
 **Access Control**: Protected by admin.auth middleware
+
+---
+
+## 2025-11-05 - Added Wallet Balance Column to Customer & Partner Management Pages
+
+### Context
+
+User requested: "here https://bixcash.com/admin/customers and https://bixcash.com/admin/partners we should create the Wallet column which should show their wallet amount."
+
+Both the Customers and Partners management pages needed to display wallet balance information to help admins track user wallet funds directly from the management interface.
+
+### Changes Made
+
+#### 1. Updated CustomerController to Eager Load Wallet
+**File**: `backend/app/Http/Controllers/Admin/CustomerController.php` (line 31)
+
+Changed query to include wallet relationship:
+```php
+// Before:
+$query = User::with(['role', 'customerProfile'])
+
+// After:
+$query = User::with(['role', 'customerProfile', 'wallet'])
+```
+
+This prevents N+1 query issues by loading wallet data in a single query.
+
+#### 2. Added Wallet Column to Customers Index Page
+**File**: `backend/resources/views/admin/customers/index.blade.php`
+
+**Table Header** (line 84):
+```html
+<th style="padding: 0.75rem; text-align: left; font-weight: 600;">Wallet Balance</th>
+```
+
+**Table Body** (lines 162-170):
+```html
+<td style="padding: 0.75rem;">
+    @if($customer->wallet)
+        <span style="color: #27ae60; font-weight: 600;">
+            Rs. {{ number_format($customer->wallet->balance, 2) }}
+        </span>
+    @else
+        <span style="color: #999;">Rs. 0.00</span>
+    @endif
+</td>
+```
+
+Column positioned after "Criteria Status" for logical flow.
+
+#### 3. Updated PartnerController to Eager Load Wallet
+**File**: `backend/app/Http/Controllers/Admin/PartnerController.php` (line 120)
+
+Changed query to include wallet relationship:
+```php
+// Before:
+})->with('partnerProfile');
+
+// After:
+})->with(['partnerProfile', 'wallet']);
+```
+
+#### 4. Added Wallet Column to Partners Index Page
+**File**: `backend/resources/views/admin/partners/index.blade.php`
+
+**Table Header** (line 95):
+```html
+<th style="padding: 0.75rem; text-align: left; font-weight: 600;">Wallet Balance</th>
+```
+
+**Table Body** (lines 186-194):
+```html
+<td style="padding: 0.75rem;">
+    @if($partner->wallet)
+        <span style="color: #27ae60; font-weight: 600;">
+            Rs. {{ number_format($partner->wallet->balance, 2) }}
+        </span>
+    @else
+        <span style="color: #999;">Rs. 0.00</span>
+    @endif
+</td>
+```
+
+### Features Implemented
+
+1. **Visual Design**:
+   - Wallet balance displayed in green color (#27ae60) for positive visibility
+   - Formatted with 2 decimal places and thousands separators (e.g., Rs. 1,234.56)
+   - Gray "Rs. 0.00" shown when wallet doesn't exist
+
+2. **Performance Optimization**:
+   - Used eager loading to prevent N+1 query problems
+   - Single database query loads all wallet data for paginated results
+
+3. **Data Handling**:
+   - Handles edge cases where wallet may not exist yet
+   - Shows Rs. 0.00 for users without wallet records
+   - Consistent formatting across both customer and partner pages
+
+4. **Column Positioning**:
+   - Placed after "Criteria Status" column
+   - Before "Last Transaction" column
+   - Provides logical flow in the table layout
+
+### Database Relationships
+
+Used existing wallet relationship from User model:
+- `User::wallet()` → BelongsTo Wallet
+- Wallet model already has `balance` attribute cast as decimal:2
+- No database migrations needed
+
+### Files Modified
+
+**Modified**:
+1. `backend/app/Http/Controllers/Admin/CustomerController.php` (line 31: +1 word in with() array)
+2. `backend/resources/views/admin/customers/index.blade.php` (+9 lines: header + body cell)
+3. `backend/app/Http/Controllers/Admin/PartnerController.php` (line 120: +1 word in with() array)
+4. `backend/resources/views/admin/partners/index.blade.php` (+9 lines: header + body cell)
+
+**Total Changes**: ~18 lines modified/added across 4 files
+
+### Testing
+
+✅ Pages load successfully:
+- Customer management: https://bixcash.com/admin/customers
+- Partner management: https://bixcash.com/admin/partners
+
+✅ Wallet balance displays correctly:
+- Shows formatted amounts for users with wallets
+- Shows "Rs. 0.00" for users without wallets
+- Green color (#27ae60) for better visibility
+
+### Related Systems
+
+This change integrates with:
+- **Wallet System**: Uses the unified wallet system created earlier
+- **Profit Sharing**: Wallet balances updated by profit distribution feature
+- **WalletObserver**: Ensures all new users automatically get wallets
+
+---
+
+**Status**: ✅ COMPLETED
+**Database**: No migrations needed (uses existing wallet relationship)
+**Performance**: Optimized with eager loading
+**UI**: Consistent design across both pages
