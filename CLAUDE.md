@@ -6216,7 +6216,7 @@ A complete FIFO (First In First Out) queue system for profit sharing eligibility
 
 1. ✅ **Monthly Criteria Qualification**: Both customers and partners qualify based on current month activity only
 2. ✅ **FIFO Queue Management**: 7 levels with configurable capacity thresholds
-3. ✅ **Automated Level Assignment**: Daily and monthly schedulers + manual recalculation
+3. ✅ **Automated Level Assignment**: Daily scheduler + manual recalculation button
 4. ✅ **Active/Inactive Tracking**: Users stay in queue even if they become inactive
 
 ---
@@ -6362,18 +6362,6 @@ Schedule::command('profit-sharing:assign-levels')
     ->runInBackground();
 ```
 
-#### 3. Monthly Automatic Scheduler
-
-**Time**: 1st of each month at 3:00 AM
-
-**Configuration** (`routes/console.php`):
-```php
-Schedule::command('profit-sharing:assign-levels')
-    ->monthlyOn(1, '03:00')
-    ->withoutOverlapping()
-    ->runInBackground();
-```
-
 **Cron Setup Required** (server-side):
 ```bash
 * * * * * cd /var/www/bixcash.com/backend && php artisan schedule:run >> /dev/null 2>&1
@@ -6477,7 +6465,7 @@ $query->addSelect([
 - `resources/views/admin/dashboard/admin-settings.blade.php` - Customer Threshold Levels section
 - `resources/views/admin/dashboard/profit-sharing.blade.php` - FIFO data display + recalculate button
 - `routes/admin.php` - Added profit-sharing.run-assignment route
-- `routes/console.php` - Added daily and monthly schedulers
+- `routes/console.php` - Added daily scheduler
 
 ---
 
@@ -6497,7 +6485,6 @@ Output:
 ```
 * * * * *  php artisan transactions:auto-confirm  Next Due: 11 seconds from now
 0 2 * * *  php artisan profit-sharing:assign-levels  Next Due: 9 hours from now
-0 3 1 * *  php artisan profit-sharing:assign-levels  Next Due: 3 weeks from now
 ```
 
 **Manual Command Test**:
@@ -6600,4 +6587,5 @@ Assigned levels to 2 users
 **Status**: ✅ COMPLETED
 **Implementation Date**: November 4, 2025
 **Implemented By**: Claude Code
-**Testing**: ✅ All automation options verified (manual button, daily scheduler, monthly scheduler)
+**Testing**: ✅ All automation options verified (manual button, daily scheduler)
+**Note**: Monthly scheduler removed as not needed - daily recalculation is sufficient
