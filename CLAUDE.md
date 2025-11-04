@@ -6589,3 +6589,112 @@ Assigned levels to 2 users
 **Implemented By**: Claude Code
 **Testing**: ✅ All automation options verified (manual button, daily scheduler)
 **Note**: Monthly scheduler removed as not needed - daily recalculation is sufficient
+
+---
+
+## Profit Sharing Calculation & Inline Editing (November 4, 2025)
+
+**File Modified**: `backend/resources/views/admin/dashboard/profit-sharing.blade.php`
+
+### Issues Fixed
+
+1. **Equal Division Fallback**
+   - **Problem**: When no percentages entered, showed 0 for all levels
+   - **Solution**: Added intelligent detection - if all percentages = 0, divide equally by 7
+   - **Example**: 70,000 with no percentages → each level gets 10,000 (70,000 ÷ 7)
+
+2. **Percentage-Based Distribution**
+   - **Formula**: `profitForLevel = totalProfit × (percentage ÷ 100)`
+   - **Validation**: Warns if percentages don't total 100% but allows to continue
+   - **Example**: 70,000 with 20% → level gets 14,000
+
+3. **Amount/Customer Calculation**
+   - **Formula**: `amountPerCustomer = profitForLevel ÷ customerCount`
+   - **Data Source**: Uses `data-customer-count` attributes from backend
+   - **Edge Case**: Shows "N/A (0 customers)" for levels with zero customers
+   - **Example**: Level has 10,000 profit and 5 customers → 2,000 per customer
+
+4. **Inline Editing System**
+   - **UI**: Pencil icons (✏️) appear after calculation
+   - **Interaction**: Click pencil → input field → Enter/blur to save
+   - **Formatting**: Auto-formats with commas (e.g., 10,000.50)
+   - **Auto-Recalc**: Editing Profit/Level recalculates Amount/Customer
+   - **Total Row**: Updates automatically when any value changes
+
+### JavaScript Functions Added
+
+```javascript
+// Convert display to editable input field
+enableEdit(level, type) 
+// level: 1-7, type: 'profit' or 'amount'
+
+// Save edited value and restore display
+saveEdit(level, type, value)
+
+// Recalculate Amount/Customer when Profit/Level edited
+recalculateAmountPerCustomer(level, profitForLevel)
+
+// Update total row by summing all levels
+updateTotalRow()
+```
+
+### HTML Structure Changes
+
+**Table Rows** (all 7 levels):
+```html
+<tr data-level="1" data-customer-count="{{ $levels[1]['total'] ?? 0 }}">
+```
+
+**Editable Cells** (Profit/Level and Amount/Customer):
+```html
+<td id="profit_level_1">
+    <div class="flex items-center space-x-2">
+        <span class="value-display">---</span>
+        <button class="edit-btn hidden" onclick="enableEdit(1, 'profit')">
+            <svg><!-- pencil icon --></svg>
+        </button>
+    </div>
+</td>
+```
+
+### Calculation Flow
+
+1. **User enters profit amount** (e.g., 70,000)
+2. **System checks percentages**:
+   - All = 0? → Use equal division (÷7)
+   - Some entered? → Use percentage-based
+   - Don't total 100%? → Show warning
+3. **For each level**:
+   - Calculate profit for level
+   - Get customer count from data attribute
+   - Calculate amount per customer (if customers > 0)
+   - Display with edit buttons
+4. **User can manually edit**:
+   - Click pencil icon
+   - Change value
+   - Press Enter/click away
+   - System recalculates dependent values
+
+### Key Features
+
+- **Smart Fallback**: Automatically switches between equal and percentage distribution
+- **Data-Driven**: Customer counts pulled from backend (no hardcoding)
+- **User Override**: All calculated values can be manually adjusted
+- **Cascade Updates**: Editing one value triggers related recalculations
+- **Zero-Divide Safety**: Handles edge cases (0 customers, 0 percentages)
+- **Visual Feedback**: Edit buttons hidden until values calculated
+
+### Testing Scenarios
+
+1. **No percentages, 70,000** → Each level: 10,000
+2. **20% for level 1, 70,000** → Level 1: 14,000, warning shown
+3. **Level has 0 customers** → Shows "N/A (0 customers)"
+4. **Edit profit value** → Amount/Customer recalculates automatically
+5. **Edit amount/customer** → Total row updates
+
+---
+
+**Status**: ✅ COMPLETED
+**Commit**: `10d4aad` - Fix profit sharing calculation logic and add inline editing
+**Lines Changed**: +333, -38
+**Testing**: ✅ Verified equal division, percentage distribution, and inline editing
