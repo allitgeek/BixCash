@@ -133,6 +133,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Settings (Super Admin only)
         Route::middleware(['role.permission:manage_settings'])->group(function () {
             Route::get('settings', [DashboardController::class, 'settings'])->name('settings');
+            Route::get('settings/admin', [DashboardController::class, 'adminSettings'])->name('settings.admin');
 
             // Social Media Links Management
             Route::post('social-media', [DashboardController::class, 'storeSocialMedia'])->name('social-media.store');

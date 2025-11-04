@@ -233,12 +233,16 @@
                             </button>
                             <div x-show="open" x-collapse class="ml-11 space-y-1">
                                 <a href="{{ route('admin.settings') }}"
-                                   class="block px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('admin.settings') && !request()->routeIs('admin.settings.email') ? 'bg-white/20 text-white' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
+                                   class="block px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('admin.settings') && !request()->routeIs('admin.settings.email') && !request()->routeIs('admin.settings.admin') ? 'bg-white/20 text-white' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
                                     General Settings
                                 </a>
                                 <a href="{{ route('admin.settings.email') }}"
                                    class="block px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('admin.settings.email') ? 'bg-white/20 text-white' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
                                     Email Settings
+                                </a>
+                                <a href="{{ route('admin.settings.admin') }}"
+                                   class="block px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('admin.settings.admin') ? 'bg-white/20 text-white' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
+                                    Admin Settings
                                 </a>
                             </div>
                         </div>
@@ -473,6 +477,11 @@
                                @click="mobileMenuOpen = false"
                                class="block px-3 py-1.5 text-[0.75rem] font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('admin.settings.email') ? 'bg-white/20 text-white' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
                                 Email Settings
+                            </a>
+                            <a href="{{ route('admin.settings.admin') }}"
+                               @click="mobileMenuOpen = false"
+                               class="block px-3 py-1.5 text-[0.75rem] font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('admin.settings.admin') ? 'bg-white/20 text-white' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
+                                Admin Settings
                             </a>
                         </div>
                     </div>

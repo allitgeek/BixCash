@@ -149,6 +149,12 @@ class DashboardController extends Controller
         return view('admin.dashboard.settings', compact('socialMediaLinks', 'firebaseConfig'));
     }
 
+    public function adminSettings()
+    {
+        // Placeholder for admin settings page
+        return view('admin.dashboard.admin-settings');
+    }
+
     /**
      * Store a new social media link
      */

@@ -5915,3 +5915,82 @@ Implemented a complete profit sharing management system in the admin panel for d
 **Status**: ✅ COMPLETED  
 **Last Updated**: November 4, 2025  
 **Updated By**: Claude Code
+
+---
+
+## Admin Settings Menu Item Implementation
+
+**Date**: November 4, 2025  
+**Feature**: Admin Settings Submenu Addition
+
+### Overview
+
+Added "Admin Settings" as a third submenu item under the Settings dropdown in the admin panel sidebar.
+
+### Components Created/Modified
+
+1. **Sidebar Menu (Desktop)**: Added "Admin Settings" link after "Email Settings"
+2. **Sidebar Menu (Mobile)**: Added "Admin Settings" link to mobile submenu
+3. **Route**: `admin.settings.admin` → `admin/settings/admin`
+4. **Controller**: `DashboardController::adminSettings()`
+5. **View**: `resources/views/admin/dashboard/admin-settings.blade.php`
+
+### Settings Dropdown Structure
+
+```
+Settings (dropdown with chevron icon)
+├── General Settings (admin.settings)
+├── Email Settings (admin.settings.email)
+└── Admin Settings (admin.settings.admin) ← NEW
+```
+
+### Admin Settings Page
+
+**Placeholder Design:**
+- Coming Soon notice with blue gradient background
+- 4 placeholder cards for future features:
+  - **User Management**: Control user permissions, roles, and access levels
+  - **System Configuration**: Manage system-wide settings
+  - **Security Settings**: Configure security policies and authentication
+  - **API & Integrations**: Manage third-party integrations and API configs
+
+### Files Modified
+
+- `backend/resources/views/layouts/admin.blade.php`: 
+  - Added desktop sidebar submenu item (line 243-246)
+  - Added mobile sidebar submenu item (line 481-485)
+- `backend/routes/admin.php`: Added `settings/admin` route (line 136)
+- `backend/app/Http/Controllers/Admin/DashboardController.php`: Added `adminSettings()` method (line 152-156)
+- `backend/resources/views/admin/dashboard/admin-settings.blade.php`: NEW FILE (placeholder page)
+
+### Route Details
+
+```php
+Route::get('settings/admin', [DashboardController::class, 'adminSettings'])
+    ->name('settings.admin')
+    ->middleware(['role.permission:manage_settings']);
+```
+
+### Active State Detection
+
+The menu item highlights correctly when:
+- Route matches `admin.settings.admin`
+- Uses same active styling as other menu items (bg-white/20 text-white)
+
+### Permissions
+
+- Protected by `manage_settings` permission (Super Admin only)
+- Same access level as General Settings and Email Settings
+
+### Design
+
+- Consistent with BixCash admin panel styling
+- White cards with colored icon backgrounds (purple, green, red, yellow)
+- Coming Soon badges on each placeholder card
+- Responsive grid layout (1 column mobile, 2 columns desktop)
+
+---
+
+**Status**: ✅ COMPLETED  
+**Last Updated**: November 4, 2025  
+**Updated By**: Claude Code
