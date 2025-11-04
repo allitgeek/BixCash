@@ -52,7 +52,7 @@
                                    id="active_customer_min_spending"
                                    name="active_customer_min_spending"
                                    value="{{ number_format($customerCriteria ?? 0, 0, '.', ',') }}"
-                                   class="pl-16 w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                                   class="pl-20 w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
                                    placeholder="30,000"
                                    oninput="formatCurrency(this)">
                         </div>
@@ -83,7 +83,7 @@
                             <input type="text"
                                    name="active_partner_min_amount"
                                    value="{{ number_format($partnerMinAmount ?? 0, 0, '.', ',') }}"
-                                   class="pl-16 w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                                   class="pl-20 w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
                                    placeholder="50,000"
                                    oninput="formatCurrency(this)">
                         </div>
