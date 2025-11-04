@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
-use App\Models\CustomerWallet;
+use App\Models\Wallet;
 use App\Models\WithdrawalRequest;
 use App\Models\PurchaseHistory;
 use App\Models\CustomerProfile;
@@ -21,7 +21,7 @@ class DashboardController extends Controller
         $user = Auth::user();
 
         // Get or create wallet
-        $wallet = CustomerWallet::firstOrCreate(
+        $wallet = Wallet::firstOrCreate(
             ['user_id' => $user->id],
             ['balance' => 0, 'total_earned' => 0, 'total_withdrawn' => 0]
         );
@@ -239,7 +239,7 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
 
-        $wallet = CustomerWallet::firstOrCreate(
+        $wallet = Wallet::firstOrCreate(
             ['user_id' => $user->id],
             ['balance' => 0, 'total_earned' => 0, 'total_withdrawn' => 0]
         );
@@ -258,7 +258,7 @@ class DashboardController extends Controller
         ]);
 
         $user = Auth::user();
-        $wallet = CustomerWallet::where('user_id', $user->id)->first();
+        $wallet = Wallet::where('user_id', $user->id)->first();
 
         // Check if user has sufficient balance
         if (!$wallet || $wallet->balance < $validated['amount']) {

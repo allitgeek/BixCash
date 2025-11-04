@@ -44,7 +44,7 @@
                     </div>
                 </div>
                 <h3 class="text-sm font-medium text-gray-500 mb-1">Total Dispersed</h3>
-                <p class="text-3xl font-bold text-gray-900">Rs. {{ number_format($totalDispersed, 2) }}</p>
+                <p class="text-3xl font-bold text-gray-900">Rs. {{ number_format($totalDispersed, 0) }}</p>
             </div>
 
             {{-- Total Recipients --}}
@@ -108,7 +108,7 @@
                                     {{ \Carbon\Carbon::parse($distribution->distribution_month . '-01')->format('F Y') }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900 border-r border-gray-200">
-                                    Rs. {{ number_format($distribution->total_amount, 2) }}
+                                    Rs. {{ number_format($distribution->total_amount, 0) }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
                                     <div class="font-semibold">{{ number_format($distribution->total_recipients) }} users</div>

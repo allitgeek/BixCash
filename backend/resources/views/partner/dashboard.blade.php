@@ -177,7 +177,7 @@
                     </div>
                     <p class="text-xs text-gray-700 font-semibold">Profit</p>
                 </div>
-                <h3 class="text-xl font-bold bg-gradient-to-r from-blue-600 to-blue-900 bg-clip-text text-transparent">Rs {{ number_format($stats['total_profit'], 0) }}</h3>
+                <h3 class="text-xl font-bold bg-gradient-to-r from-blue-600 to-blue-900 bg-clip-text text-transparent">Rs {{ number_format($stats['total_earned'], 0) }}</h3>
             </div>
 
             {{-- Transactions Card - Purple Theme --}}

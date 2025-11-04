@@ -77,7 +77,7 @@
                         </svg>
                         <p class="text-xs text-gray-600 font-semibold">Profit</p>
                     </div>
-                    <p class="text-sm sm:text-base font-bold text-green-600">Rs {{ number_format($stats['total_profit'], 0) }}</p>
+                    <p class="text-sm sm:text-base font-bold text-green-600">Rs {{ number_format($stats['total_earned'], 0) }}</p>
                 </div>
 
                 {{-- Account Status --}}

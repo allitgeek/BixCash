@@ -41,23 +41,17 @@
             </div>
 
             {{-- Stats Row: Responsive Grid --}}
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
+            <div class="grid grid-cols-2 gap-2 sm:gap-3">
                 {{-- Total Purchases --}}
                 <div class="bg-gradient-to-br from-purple-50/80 to-violet-50/50 rounded-lg border-l-4 border-purple-600 p-2 sm:p-3 shadow-sm">
-                    <p class="text-xs text-gray-600 font-semibold mb-0.5">Total</p>
+                    <p class="text-xs text-gray-600 font-semibold mb-0.5">Total Purchases</p>
                     <p class="text-lg sm:text-xl font-bold bg-gradient-to-r from-purple-600 to-violet-600 bg-clip-text text-transparent">{{ $purchases->total() }}</p>
                 </div>
 
                 {{-- Total Spent --}}
                 <div class="bg-gradient-to-br from-blue-50/80 to-indigo-50/50 rounded-lg border-l-4 border-blue-600 p-2 sm:p-3 shadow-sm">
-                    <p class="text-xs text-gray-600 font-semibold mb-0.5">Spent</p>
+                    <p class="text-xs text-gray-600 font-semibold mb-0.5">Total Spent</p>
                     <p class="text-sm sm:text-base font-bold text-[#76d37a]">Rs {{ number_format($totalSpent, 0) }}</p>
-                </div>
-
-                {{-- Total Cashback --}}
-                <div class="bg-gradient-to-br from-green-50/80 to-emerald-50/50 rounded-lg border-l-4 border-green-500 p-2 sm:p-3 shadow-sm col-span-2 sm:col-span-1">
-                    <p class="text-xs text-gray-600 font-semibold mb-0.5">Cashback</p>
-                    <p class="text-sm sm:text-base font-bold text-green-600">Rs {{ number_format($totalCashback, 0) }}</p>
                 </div>
             </div>
         </div>
@@ -114,10 +108,6 @@
                                 <span class="font-mono">Order #{{ $purchase->order_id }}</span>
                                 <span class="text-gray-400">•</span>
                                 <span>{{ $purchase->purchase_date->format('M d, Y h:i A') }}</span>
-                                @if($purchase->cashback_percentage > 0)
-                                <span class="text-gray-400">•</span>
-                                <span class="text-green-600 font-semibold">{{ number_format($purchase->cashback_percentage, 1) }}% cashback</span>
-                                @endif
                             </div>
                         </div>
 
@@ -126,11 +116,6 @@
                             <div class="text-lg font-bold text-gray-900">
                                 Rs {{ number_format($purchase->amount, 0) }}
                             </div>
-                            @if($purchase->cashback_amount > 0)
-                            <div class="text-xs text-green-600 font-semibold mt-0.5">
-                                +Rs {{ number_format($purchase->cashback_amount, 0) }}
-                            </div>
-                            @endif
                         </div>
                     </div>
                 </div>
@@ -142,7 +127,7 @@
                         </svg>
                     </div>
                     <p class="text-gray-400 text-sm">No purchases yet</p>
-                    <p class="text-gray-400 text-xs mt-1">Start shopping with our partner brands to earn cashback!</p>
+                    <p class="text-gray-400 text-xs mt-1">Start shopping with our partner brands and earn monthly profit sharing!</p>
                 </div>
                 @endforelse
             </div>

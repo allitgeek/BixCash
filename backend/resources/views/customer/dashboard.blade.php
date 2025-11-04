@@ -63,7 +63,7 @@
             {{-- Wallet Card - Green Gradient (BixCash Brand) --}}
             <div class="bg-gradient-to-br from-[#76d37a] to-[#93db4d] rounded-2xl p-6 shadow-xl shadow-green-900/20">
                 <div class="text-sm text-green-900 mb-2">Your Balance</div>
-                <div class="text-4xl font-bold text-white mb-4">Rs {{ number_format($wallet->balance, 2) }}</div>
+                <div class="text-4xl font-bold text-white mb-4">Rs {{ number_format($wallet->balance, 0) }}</div>
                 <div class="flex gap-3">
                     <a href="{{ route('customer.wallet') }}" class="flex-1 px-4 py-3 bg-white text-[#76d37a] font-semibold rounded-xl hover:-translate-y-1 hover:shadow-lg transition-all duration-200 text-center">
                         Withdraw
@@ -180,8 +180,8 @@
                                         <span class="font-medium text-gray-800">{{ $purchase->brand->name ?? 'Unknown' }}</span>
                                     </div>
                                 </td>
-                                <td class="py-4 font-medium text-gray-800">Rs {{ number_format($purchase->amount, 2) }}</td>
-                                <td class="py-4 font-semibold text-green-600">+Rs {{ number_format($purchase->cashback_amount, 2) }}</td>
+                                <td class="py-4 font-medium text-gray-800">Rs {{ number_format($purchase->amount, 0) }}</td>
+                                <td class="py-4 font-semibold text-green-600">+Rs {{ number_format($purchase->cashback_amount, 0) }}</td>
                                 <td class="py-4">
                                     <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold
                                         @if($purchase->status === 'completed') bg-green-100 text-green-700
@@ -226,7 +226,7 @@
                         <tbody class="text-sm">
                             @foreach($recentWithdrawals as $withdrawal)
                             <tr class="border-b border-gray-100 hover:bg-green-50/50 transition-colors">
-                                <td class="py-4 font-semibold text-gray-800 px-4 sm:px-0">Rs {{ number_format($withdrawal->amount, 2) }}</td>
+                                <td class="py-4 font-semibold text-gray-800 px-4 sm:px-0">Rs {{ number_format($withdrawal->amount, 0) }}</td>
                                 <td class="py-4 text-gray-600">{{ $withdrawal->created_at->format('M d, Y') }}</td>
                                 <td class="py-4">
                                     <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold

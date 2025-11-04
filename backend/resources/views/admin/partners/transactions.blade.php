@@ -39,10 +39,10 @@
                                         <small style="color: #666;">{{ $transaction->customer->phone ?? '' }}</small>
                                     </td>
                                     <td style="padding: 0.75rem; text-align: right;">
-                                        Rs. {{ number_format($transaction->invoice_amount, 2) }}
+                                        Rs. {{ number_format($transaction->invoice_amount, 0) }}
                                     </td>
                                     <td style="padding: 0.75rem; text-align: right;">
-                                        Rs. {{ number_format($transaction->partner_profit_share, 2) }}
+                                        Rs. {{ number_format($transaction->partner_profit_share, 0) }}
                                     </td>
                                     <td style="padding: 0.75rem; text-align: center;">
                                         @if($transaction->status === 'confirmed')

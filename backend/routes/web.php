@@ -105,6 +105,10 @@ Route::prefix('partner')->name('partner.')->middleware(['auth', 'partner'])->gro
     // Profit history
     Route::get('/profits', [PartnerDashboard::class, 'profitHistory'])->name('profits');
 
+    // Wallet
+    Route::get('/wallet', [PartnerDashboard::class, 'wallet'])->name('wallet');
+    Route::post('/wallet/withdraw', [PartnerDashboard::class, 'requestWithdrawal'])->name('wallet.withdraw');
+
     // Profile
     Route::get('/profile', [PartnerDashboard::class, 'profile'])->name('profile');
     Route::post('/profile', [PartnerDashboard::class, 'updateProfile'])->name('profile.update');

@@ -666,7 +666,7 @@
 
             // Format profit with commas
             const formattedProfit = profitForLevel.toLocaleString('en-US', {
-                maximumFractionDigits: 2,
+                maximumFractionDigits: 0,
                 minimumFractionDigits: 0
             });
 
@@ -693,7 +693,7 @@
             } else {
                 const amountPerCustomer = profitForLevel / customerCount;
                 const formattedAmount = amountPerCustomer.toLocaleString('en-US', {
-                    maximumFractionDigits: 2,
+                    maximumFractionDigits: 0,
                     minimumFractionDigits: 0
                 });
                 amountValueSpan.textContent = formattedAmount;
@@ -919,7 +919,7 @@
 
         // Format the value with commas
         const formattedValue = numericValue.toLocaleString('en-US', {
-            maximumFractionDigits: 2,
+            maximumFractionDigits: 0,
             minimumFractionDigits: 0
         });
 
@@ -962,7 +962,7 @@
         } else {
             const amountPerCustomer = profitForLevel / customerCount;
             const formattedAmount = amountPerCustomer.toLocaleString('en-US', {
-                maximumFractionDigits: 2,
+                maximumFractionDigits: 0,
                 minimumFractionDigits: 0
             });
             amountValueSpan.textContent = formattedAmount;
@@ -986,7 +986,7 @@
 
         // Format and update total
         const formattedTotal = total.toLocaleString('en-US', {
-            maximumFractionDigits: 2,
+            maximumFractionDigits: 0,
             minimumFractionDigits: 0
         });
         document.getElementById('profit_level_total').textContent = formattedTotal;

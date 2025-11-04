@@ -83,11 +83,11 @@
                 </div>
                 <div style="padding: 1rem; background: #e8f5e9; border-radius: 8px;">
                     <div style="font-size: 0.9rem; color: #388e3c;">Total Revenue</div>
-                    <div style="font-size: 1.8rem; font-weight: 600; color: #1b5e20;">Rs. {{ number_format($stats['total_revenue'], 2) }}</div>
+                    <div style="font-size: 1.8rem; font-weight: 600; color: #1b5e20;">Rs. {{ number_format($stats['total_revenue'], 0) }}</div>
                 </div>
                 <div style="padding: 1rem; background: #fff3e0; border-radius: 8px;">
                     <div style="font-size: 0.9rem; color: #f57c00;">Partner Profit</div>
-                    <div style="font-size: 1.8rem; font-weight: 600; color: #e65100;">Rs. {{ number_format($stats['total_profit'], 2) }}</div>
+                    <div style="font-size: 1.8rem; font-weight: 600; color: #e65100;">Rs. {{ number_format($stats['total_profit'], 0) }}</div>
                 </div>
                 <div style="padding: 1rem; background: #fce4ec; border-radius: 8px;">
                     <div style="font-size: 0.9rem; color: #c2185b;">Pending</div>
@@ -193,8 +193,8 @@
                                 <tr style="border-bottom: 1px solid #dee2e6;">
                                     <td style="padding: 0.75rem;">{{ $transaction->transaction_code }}</td>
                                     <td style="padding: 0.75rem;">{{ $transaction->customer->name ?? '-' }}</td>
-                                    <td style="padding: 0.75rem; text-align: right;">Rs. {{ number_format($transaction->invoice_amount, 2) }}</td>
-                                    <td style="padding: 0.75rem; text-align: right;">Rs. {{ number_format($transaction->partner_profit_share, 2) }}</td>
+                                    <td style="padding: 0.75rem; text-align: right;">Rs. {{ number_format($transaction->invoice_amount, 0) }}</td>
+                                    <td style="padding: 0.75rem; text-align: right;">Rs. {{ number_format($transaction->partner_profit_share, 0) }}</td>
                                     <td style="padding: 0.75rem; text-align: center;">
                                         @if($transaction->status === 'confirmed')
                                             <span class="badge-success">Confirmed</span>

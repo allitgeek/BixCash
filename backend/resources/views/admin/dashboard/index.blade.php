@@ -161,7 +161,7 @@
                         <li class="p-3 rounded-lg hover:bg-blue-50/50 transition-colors duration-150">
                             <div class="flex items-center justify-between mb-1">
                                 <p class="text-xs text-gray-500">{{ $transaction->customer->name ?? 'N/A' }}</p>
-                                <p class="text-sm font-bold text-green-600">Rs. {{ number_format($transaction->invoice_amount, 2) }}</p>
+                                <p class="text-sm font-bold text-green-600">Rs. {{ number_format($transaction->invoice_amount, 0) }}</p>
                             </div>
                             <p class="text-xs text-gray-400 truncate">→ {{ $transaction->partner->partnerProfile->business_name ?? 'N/A' }}</p>
                         </li>

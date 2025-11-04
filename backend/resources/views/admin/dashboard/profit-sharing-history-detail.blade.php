@@ -33,7 +33,7 @@
                     {{-- Total Amount --}}
                     <div>
                         <label class="text-sm font-medium text-gray-500 block mb-2">Total Amount</label>
-                        <p class="text-2xl font-bold text-gray-900">Rs. {{ number_format($distribution->total_amount, 2) }}</p>
+                        <p class="text-2xl font-bold text-gray-900">Rs. {{ number_format($distribution->total_amount, 0) }}</p>
                     </div>
 
                     {{-- Status --}}
@@ -132,13 +132,13 @@
                                     Level {{ $level }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900 border-r border-gray-200">
-                                    Rs. {{ number_format($data['amount'], 2) }}
+                                    Rs. {{ number_format($data['amount'], 0) }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
                                     {{ number_format($data['percentage'], 2) }}%
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
-                                    Rs. {{ number_format($data['per_customer'], 2) }}
+                                    Rs. {{ number_format($data['per_customer'], 0) }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                     {{ number_format($data['recipients']) }}
@@ -157,7 +157,7 @@
                                 Total:
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900 border-r border-gray-300">
-                                Rs. {{ number_format($distribution->total_amount, 2) }}
+                                Rs. {{ number_format($distribution->total_amount, 0) }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900 border-r border-gray-300">
                                 {{ number_format(collect($levelBreakdown)->sum('percentage'), 2) }}%
@@ -232,7 +232,7 @@
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-green-600 border-r border-gray-200">
-                                    + Rs. {{ number_format($transaction->amount, 2) }}
+                                    + Rs. {{ number_format($transaction->amount, 0) }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 border-r border-gray-200">
                                     @php

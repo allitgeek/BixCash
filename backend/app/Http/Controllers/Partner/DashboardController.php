@@ -22,15 +22,20 @@ class DashboardController extends Controller
         $partner = Auth::user();
         $partnerProfile = $partner->partnerProfile;
 
+        // Get or create wallet
+        $wallet = \App\Models\Wallet::firstOrCreate(
+            ['user_id' => $partner->id],
+            ['balance' => 0, 'total_earned' => 0, 'total_withdrawn' => 0]
+        );
+
         // Get statistics
         $stats = [
             'total_transactions' => PartnerTransaction::where('partner_id', $partner->id)->count(),
             'total_revenue' => PartnerTransaction::where('partner_id', $partner->id)
                 ->where('status', 'confirmed')
                 ->sum('invoice_amount'),
-            'total_profit' => PartnerTransaction::where('partner_id', $partner->id)
-                ->where('status', 'confirmed')
-                ->sum('partner_profit_share'),
+            'wallet_balance' => $wallet->balance,
+            'total_earned' => $wallet->total_earned,
             'pending_confirmations' => PartnerTransaction::where('partner_id', $partner->id)
                 ->where('status', 'pending_confirmation')
                 ->count(),
@@ -70,6 +75,7 @@ class DashboardController extends Controller
             'partner',
             'partnerProfile',
             'stats',
+            'wallet',
             'nextBatchDate',
             'recentTransactions',
             'greeting',
@@ -251,53 +257,101 @@ class DashboardController extends Controller
     }
 
     /**
-     * Profit history
+     * Profit history - Shows monthly profit sharing distributions received
      */
     public function profitHistory()
     {
         $partner = Auth::user();
         $partnerProfile = $partner->partnerProfile;
 
-        // Get completed batches where partner received profit
-        $profitBatches = ProfitBatch::where('status', 'completed')
-            ->whereHas('transactions', function($q) use ($partner) {
-                $q->where('partner_id', $partner->id);
-            })
-            ->with(['transactions' => function($q) use ($partner) {
-                $q->where('partner_id', $partner->id);
-            }])
-            ->orderBy('batch_period', 'desc')
+        // Get profit sharing distributions where partner received funds
+        $profitDistributions = \App\Models\WalletTransaction::where('user_id', $partner->id)
+            ->where('transaction_type', 'profit_sharing')
+            ->with('profitSharingDistribution')
+            ->orderBy('created_at', 'desc')
             ->paginate(12);
 
-        // Calculate total profit from all batches
-        $allBatches = ProfitBatch::where('status', 'completed')
-            ->whereHas('transactions', function($q) use ($partner) {
-                $q->where('partner_id', $partner->id);
-            })
-            ->with(['transactions' => function($q) use ($partner) {
-                $q->where('partner_id', $partner->id);
-            }])
-            ->get();
+        // Calculate total profit from all distributions
+        $totalProfit = \App\Models\WalletTransaction::where('user_id', $partner->id)
+            ->where('transaction_type', 'profit_sharing')
+            ->sum('amount');
 
-        $totalProfit = 0;
-        $totalTransactions = 0;
-        foreach ($allBatches as $batch) {
-            $totalProfit += $batch->transactions->sum('partner_profit_share');
-            $totalTransactions += $batch->transactions->count();
-        }
+        $totalDistributions = \App\Models\WalletTransaction::where('user_id', $partner->id)
+            ->where('transaction_type', 'profit_sharing')
+            ->count();
 
         // Get last payment info
-        $lastBatch = $allBatches->first();
-        $lastPaymentDate = $lastBatch ? $lastBatch->processed_at : null;
+        $lastPayment = \App\Models\WalletTransaction::where('user_id', $partner->id)
+            ->where('transaction_type', 'profit_sharing')
+            ->latest()
+            ->first();
 
         $stats = [
-            'total_batches' => $allBatches->count(),
+            'total_distributions' => $totalDistributions,
             'total_profit' => $totalProfit,
-            'total_transactions' => $totalTransactions,
-            'last_payment_date' => $lastPaymentDate,
+            'last_payment_date' => $lastPayment ? $lastPayment->created_at : null,
         ];
 
-        return view('partner.profit-history', compact('profitBatches', 'stats', 'partner', 'partnerProfile'));
+        return view('partner.profit-history', compact('profitDistributions', 'stats', 'partner', 'partnerProfile'));
+    }
+
+    /**
+     * Partner wallet page
+     */
+    public function wallet()
+    {
+        $partner = Auth::user();
+        $partnerProfile = $partner->partnerProfile;
+
+        // Get or create wallet
+        $wallet = \App\Models\Wallet::firstOrCreate(
+            ['user_id' => $partner->id],
+            ['balance' => 0, 'total_earned' => 0, 'total_withdrawn' => 0]
+        );
+
+        // Get withdrawal requests
+        $withdrawals = \App\Models\WithdrawalRequest::where('user_id', $partner->id)
+            ->latest()
+            ->paginate(10);
+
+        return view('partner.wallet', compact('wallet', 'withdrawals', 'partner', 'partnerProfile'));
+    }
+
+    /**
+     * Request withdrawal
+     */
+    public function requestWithdrawal(Request $request)
+    {
+        $validated = $request->validate([
+            'amount' => 'required|numeric|min:100',
+        ]);
+
+        $partner = Auth::user();
+        $wallet = \App\Models\Wallet::where('user_id', $partner->id)->first();
+
+        // Check if user has sufficient balance
+        if (!$wallet || $wallet->balance < $validated['amount']) {
+            return redirect()->back()->with('error', 'Insufficient balance!');
+        }
+
+        // Check if bank details exist
+        $profile = $partner->partnerProfile;
+        if (!$profile || !$profile->bank_name || !$profile->account_number) {
+            return redirect()->route('partner.profile')->with('error', 'Please add your bank details first in your profile!');
+        }
+
+        // Create withdrawal request
+        \App\Models\WithdrawalRequest::create([
+            'user_id' => $partner->id,
+            'amount' => $validated['amount'],
+            'bank_name' => $profile->bank_name,
+            'account_number' => $profile->account_number,
+            'account_title' => $profile->account_title ?? $profile->contact_person_name,
+            'iban' => $profile->iban,
+            'status' => 'pending',
+        ]);
+
+        return redirect()->back()->with('success', 'Withdrawal request submitted successfully!');
     }
 
     /**
@@ -308,14 +362,18 @@ class DashboardController extends Controller
         $partner = Auth::user();
         $partnerProfile = $partner->partnerProfile;
 
+        // Get wallet for earnings
+        $wallet = \App\Models\Wallet::firstOrCreate(
+            ['user_id' => $partner->id],
+            ['balance' => 0, 'total_earned' => 0, 'total_withdrawn' => 0]
+        );
+
         // Get quick stats for header
         $stats = [
             'total_orders' => PartnerTransaction::where('partner_id', $partner->id)
                 ->where('status', 'confirmed')
                 ->count(),
-            'total_profit' => PartnerTransaction::where('partner_id', $partner->id)
-                ->where('status', 'confirmed')
-                ->sum('partner_profit_share'),
+            'total_earned' => $wallet->total_earned,
             'member_since' => $partner->created_at,
         ];
 

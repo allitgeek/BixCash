@@ -174,11 +174,11 @@
                                             $meetsCriteria = ($uniqueCustomers >= $minCustomers) && ($totalAmount >= $minAmount);
                                         @endphp
                                         @if($meetsCriteria)
-                                            <span style="background: #27ae60; color: white; padding: 0.25rem 0.5rem; border-radius: 3px; font-size: 0.8rem;" title="Customers: {{ $uniqueCustomers }} (Min: {{ $minCustomers }}), Amount: Rs. {{ number_format($totalAmount, 2) }} (Min: Rs. {{ number_format($minAmount, 2) }})">
+                                            <span style="background: #27ae60; color: white; padding: 0.25rem 0.5rem; border-radius: 3px; font-size: 0.8rem;" title="Customers: {{ $uniqueCustomers }} (Min: {{ $minCustomers }}), Amount: Rs. {{ number_format($totalAmount, 0) }} (Min: Rs. {{ number_format($minAmount, 0) }})">
                                                 ✓ Active
                                             </span>
                                         @else
-                                            <span style="background: #e74c3c; color: white; padding: 0.25rem 0.5rem; border-radius: 3px; font-size: 0.8rem;" title="Customers: {{ $uniqueCustomers }} (Min: {{ $minCustomers }}), Amount: Rs. {{ number_format($totalAmount, 2) }} (Min: Rs. {{ number_format($minAmount, 2) }})">
+                                            <span style="background: #e74c3c; color: white; padding: 0.25rem 0.5rem; border-radius: 3px; font-size: 0.8rem;" title="Customers: {{ $uniqueCustomers }} (Min: {{ $minCustomers }}), Amount: Rs. {{ number_format($totalAmount, 0) }} (Min: Rs. {{ number_format($minAmount, 0) }})">
                                                 ✗ Inactive
                                             </span>
                                         @endif
@@ -186,10 +186,10 @@
                                     <td style="padding: 0.75rem;">
                                         @if($partner->wallet)
                                             <span style="color: #27ae60; font-weight: 600;">
-                                                Rs. {{ number_format($partner->wallet->balance, 2) }}
+                                                Rs. {{ number_format($partner->wallet->balance, 0) }}
                                             </span>
                                         @else
-                                            <span style="color: #999;">Rs. 0.00</span>
+                                            <span style="color: #999;">Rs. 0</span>
                                         @endif
                                     </td>
                                     <td style="padding: 0.75rem;">
