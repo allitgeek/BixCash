@@ -349,27 +349,127 @@
                 </div>
             </div>
 
+            {{-- Bank Details Card --}}
+            <div class="bg-white rounded-xl border border-gray-200/60 shadow-lg shadow-blue-900/5 overflow-hidden hover:border-orange-800/40 hover:shadow-xl hover:shadow-orange-900/10 transition-all duration-300 md:col-span-2">
+                <div class="px-5 py-4 border-b border-gray-200/60 bg-gradient-to-r from-orange-50/70 via-orange-900/5 to-transparent">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-600 to-amber-600 flex items-center justify-center shadow-sm">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-base font-bold bg-gradient-to-r from-gray-800 to-orange-900 bg-clip-text text-transparent">Bank Details</h3>
+                    </div>
+                </div>
+                <div class="p-5">
+                    <p class="text-sm text-gray-500 mb-4">Required for withdrawal requests</p>
+
+                    @if($partnerProfile && $partnerProfile->bank_name)
+                        {{-- Current Bank Details --}}
+                        <div class="bg-gray-50 rounded-xl p-4 mb-4">
+                            <div class="flex justify-between items-center mb-3">
+                                <h4 class="text-sm font-semibold text-gray-800">Current Bank Account</h4>
+                                <button type="button" onclick="toggleBankEdit()" class="px-3 py-1.5 bg-orange-600 text-white text-xs font-semibold rounded-lg hover:bg-orange-700 transition-colors">Change</button>
+                            </div>
+                            <div class="grid gap-2">
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-gray-500">Bank:</span>
+                                    <span class="font-semibold">{{ $partnerProfile->bank_name }}</span>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-gray-500">Account Title:</span>
+                                    <span class="font-semibold">{{ $partnerProfile->account_title }}</span>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-gray-500">Account Number:</span>
+                                    <span class="font-semibold">{{ maskAccountNumber($partnerProfile->account_number) }}</span>
+                                </div>
+                                @if($partnerProfile->iban)
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-gray-500">IBAN:</span>
+                                    <span class="font-semibold">{{ maskIban($partnerProfile->iban) }}</span>
+                                </div>
+                                @endif
+                            </div>
+                        </div>
+
+                        {{-- Edit Bank Form (Hidden) --}}
+                        <div id="bankEditForm" class="hidden">
+                    @else
+                        {{-- No Bank Details Yet --}}
+                        <div id="bankEditForm">
+                    @endif
+
+                            <div class="bg-orange-50 border-l-4 border-orange-500 p-4 rounded-lg mb-4">
+                                <p class="text-sm text-orange-900 font-semibold mb-1">⚠️ Security Notice:</p>
+                                <p class="text-sm text-orange-800">Changing bank details requires OTP verification and will lock withdrawals for 24 hours.</p>
+                            </div>
+
+                            <form method="POST" action="{{ route('partner.bank-details.request-otp') }}">
+                                @csrf
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-700 mb-2">Bank Name *</label>
+                                        <input type="text" name="bank_name" class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl text-sm focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 transition-all" required placeholder="e.g., HBL, UBL" value="{{ old('bank_name', $partnerProfile->bank_name ?? '') }}">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-700 mb-2">Account Title *</label>
+                                        <input type="text" name="account_title" class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl text-sm focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 transition-all" required placeholder="Account holder name" value="{{ old('account_title', $partnerProfile->account_title ?? '') }}">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-700 mb-2">Account Number *</label>
+                                        <input type="text" name="account_number" class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl text-sm focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 transition-all" required placeholder="Your account number" value="{{ old('account_number', $partnerProfile->account_number ?? '') }}">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-700 mb-2">IBAN (Optional)</label>
+                                        <input type="text" name="iban" class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl text-sm focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 transition-all" placeholder="PK36XXXX..." value="{{ old('iban', $partnerProfile->iban ?? '') }}">
+                                    </div>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button type="submit" class="flex-1 px-4 py-3 bg-gradient-to-r from-orange-600 to-orange-700 text-white font-semibold rounded-xl hover:from-orange-700 hover:to-orange-800 hover:-translate-y-0.5 transition-all duration-200 shadow-sm shadow-orange-500/30">
+                                        Request OTP
+                                    </button>
+                                    @if($partnerProfile && $partnerProfile->bank_name)
+                                    <button type="button" onclick="toggleBankEdit()" class="px-6 py-3 bg-gray-200 text-gray-800 font-semibold rounded-xl hover:bg-gray-300 transition-colors">
+                                        Cancel
+                                    </button>
+                                    @endif
+                                </div>
+                            </form>
+                        </div>
+                </div>
+            </div>
+
         </div>
 
     </div>
 
     {{-- Bottom Navigation --}}
     <nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl shadow-lg shadow-blue-900/10 border-t border-gray-200/60 z-50">
-        <div class="grid grid-cols-4 max-w-7xl mx-auto">
+        <div class="grid grid-cols-5 max-w-7xl mx-auto">
             {{-- Dashboard --}}
             <a href="{{ route('partner.dashboard') }}" class="flex flex-col items-center py-3 px-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all duration-200">
                 <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                 </svg>
-                <span class="text-xs font-medium">Dashboard</span>
+                <span class="text-xs font-medium">Home</span>
             </a>
 
-            {{-- History --}}
+            {{-- Transactions --}}
             <a href="{{ route('partner.transactions') }}" class="flex flex-col items-center py-3 px-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all duration-200">
                 <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
                 </svg>
-                <span class="text-xs font-medium">History</span>
+                <span class="text-xs font-medium">Transactions</span>
+            </a>
+
+            {{-- Wallet --}}
+            <a href="{{ route('partner.wallet') }}" class="flex flex-col items-center py-3 px-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all duration-200">
+                <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"></path>
+                    <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"></path>
+                </svg>
+                <span class="text-xs font-medium">Wallet</span>
             </a>
 
             {{-- Profits --}}
@@ -448,6 +548,28 @@
                 location.reload(); // Reset preview
             }
         }
+
+        // Toggle bank edit form
+        function toggleBankEdit() {
+            const form = document.getElementById('bankEditForm');
+            form.classList.toggle('hidden');
+        }
+    </script>
+
+    {{-- Firebase SDK (for OTP verification) --}}
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+
+    <script>
+        // Firebase Config
+        const firebaseConfig = {
+            apiKey: "{{ config('firebase.web.api_key') }}",
+            authDomain: "{{ config('firebase.web.auth_domain') }}",
+            projectId: "{{ config('firebase.web.project_id') }}",
+            storageBucket: "{{ config('firebase.web.storage_bucket') }}",
+            messagingSenderId: "{{ config('firebase.web.messaging_sender_id') }}",
+            appId: "{{ config('firebase.web.app_id') }}"
+        };
     </script>
 
 </body>

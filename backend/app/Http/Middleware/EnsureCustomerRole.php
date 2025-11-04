@@ -19,18 +19,29 @@ class EnsureCustomerRole
 
         // Check if user is authenticated
         if (!$user) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthenticated'
-            ], 401);
+            return redirect()->route('login');
         }
 
         // Check if user has customer role
         if (!$user->isCustomer()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Access denied. Customer role required.'
-            ], 403);
+            // Redirect partners to their dashboard
+            if ($user->isPartner()) {
+                $partnerProfile = $user->partnerProfile;
+
+                if ($partnerProfile && $partnerProfile->status === 'pending') {
+                    return redirect()->route('partner.pending-approval');
+                } elseif ($partnerProfile && $partnerProfile->status === 'approved') {
+                    return redirect()->route('partner.dashboard');
+                }
+            }
+
+            // Redirect admins to their dashboard
+            if ($user->isAdmin()) {
+                return redirect()->route('admin.dashboard');
+            }
+
+            // For any other role, deny access
+            abort(403, 'Access denied. Customer role required.');
         }
 
         return $next($request);

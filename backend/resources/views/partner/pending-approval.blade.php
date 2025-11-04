@@ -7,188 +7,60 @@
     <title>Application Under Review - BixCash</title>
     @vite(['resources/css/app.css'])
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        :root {
-            --primary: #93db4d;
-            --secondary: #021c47;
-            --text-dark: #1a202c;
-            --text-light: #718096;
-            --bg-light: #f7fafc;
-            --warning: #f59e0b;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background: linear-gradient(135deg, var(--secondary) 0%, #0a2f5f 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem 1rem;
-        }
-
-        .container {
-            max-width: 500px;
-            width: 100%;
-            background: white;
-            border-radius: 20px;
-            padding: 3rem 2.5rem;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            text-align: center;
-        }
-
-        .icon {
-            font-size: 4rem;
-            margin-bottom: 1.5rem;
-            animation: pulse 2s infinite;
-        }
-
         @keyframes pulse {
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.1); }
         }
-
-        h1 {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--text-dark);
-            margin-bottom: 1rem;
-        }
-
-        .subtitle {
-            color: var(--text-light);
-            font-size: 1rem;
-            line-height: 1.6;
-            margin-bottom: 2rem;
-        }
-
-        .info-card {
-            background: var(--bg-light);
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            text-align: left;
-        }
-
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.75rem 0;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .info-row:last-child {
-            border-bottom: none;
-        }
-
-        .info-label {
-            font-size: 0.875rem;
-            color: var(--text-light);
-            font-weight: 500;
-        }
-
-        .info-value {
-            font-size: 0.875rem;
-            color: var(--text-dark);
-            font-weight: 600;
-        }
-
-        .status-badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        .btn {
-            width: 100%;
-            padding: 1rem;
-            border: none;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: var(--primary);
-            color: white;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .btn:hover {
-            background: var(--primary);
-            opacity: 0.9;
-            transform: translateY(-2px);
-        }
-
-        .logout-form {
-            margin-top: 1rem;
-        }
-
-        .logout-btn {
-            background: transparent;
-            color: var(--text-light);
-            border: 2px solid var(--text-light);
-        }
-
-        .logout-btn:hover {
-            background: var(--text-light);
-            color: white;
-            opacity: 1;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 2rem 1.5rem;
-            }
-
-            h1 {
-                font-size: 1.5rem;
-            }
-
-            .icon {
-                font-size: 3rem;
-            }
+        .animate-custom-pulse {
+            animation: pulse 2s infinite;
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <div class="icon">⏳</div>
+<body class="bg-gradient-to-br from-gray-50 via-blue-50/20 to-gray-50 min-h-screen flex items-center justify-center p-4">
+    <div class="max-w-lg w-full bg-white rounded-xl border border-gray-200/60 shadow-lg shadow-blue-900/5 p-8 text-center">
+        {{-- Icon --}}
+        <div class="text-6xl mb-6 animate-custom-pulse">⏳</div>
 
-        <h1>Application Under Review</h1>
+        {{-- Title --}}
+        <h1 class="text-2xl font-bold text-gray-900 mb-3">Application Under Review</h1>
 
-        <p class="subtitle">
+        {{-- Subtitle --}}
+        <p class="text-gray-500 text-base leading-relaxed mb-8">
             Your partner application is being reviewed by our team.
             You'll receive an SMS once approved.
         </p>
 
-        <div class="info-card">
-            <div class="info-row">
-                <span class="info-label">Business Name</span>
-                <span class="info-value">{{ $partnerProfile->business_name }}</span>
+        {{-- Info Card --}}
+        <div class="bg-gray-50 rounded-xl p-4 mb-6 text-left space-y-3">
+            <div class="flex justify-between items-center py-2 border-b border-gray-200">
+                <span class="text-sm font-medium text-gray-500">Business Name</span>
+                <span class="text-sm font-semibold text-gray-900">{{ $partnerProfile->business_name }}</span>
             </div>
-            <div class="info-row">
-                <span class="info-label">Contact Person</span>
-                <span class="info-value">{{ $partnerProfile->contact_person_name }}</span>
+            <div class="flex justify-between items-center py-2 border-b border-gray-200">
+                <span class="text-sm font-medium text-gray-500">Contact Person</span>
+                <span class="text-sm font-semibold text-gray-900">{{ $partnerProfile->contact_person_name }}</span>
             </div>
-            <div class="info-row">
-                <span class="info-label">Submitted On</span>
-                <span class="info-value">{{ $partnerProfile->registration_date ? $partnerProfile->registration_date->format('M d, Y') : 'N/A' }}</span>
+            <div class="flex justify-between items-center py-2 border-b border-gray-200">
+                <span class="text-sm font-medium text-gray-500">Submitted On</span>
+                <span class="text-sm font-semibold text-gray-900">{{ $partnerProfile->registration_date ? $partnerProfile->registration_date->format('M d, Y') : 'N/A' }}</span>
             </div>
-            <div class="info-row">
-                <span class="info-label">Status</span>
-                <span class="status-badge">{{ ucfirst($partnerProfile->status) }}</span>
+            <div class="flex justify-between items-center py-2">
+                <span class="text-sm font-medium text-gray-500">Status</span>
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-orange-100 text-orange-700 border border-orange-200">
+                    {{ ucfirst($partnerProfile->status) }}
+                </span>
             </div>
         </div>
 
-        <form method="POST" action="{{ route('partner.logout') }}" class="logout-form">
+        {{-- Logout Button --}}
+        <form method="POST" action="{{ route('partner.logout') }}">
             @csrf
-            <button type="submit" class="btn logout-btn">Logout</button>
+            <button
+                type="submit"
+                class="w-full px-4 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-xl transition-colors duration-200"
+            >
+                Logout
+            </button>
         </form>
     </div>
 </body>

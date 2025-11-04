@@ -34,7 +34,15 @@ class PartnerProfile extends Model
         'rejection_notes',
         'is_verified',
         'verified_at',
-        'verified_by'
+        'verified_by',
+        'bank_name',
+        'account_number',
+        'account_title',
+        'iban',
+        'withdrawal_locked_until',
+        'bank_details_last_updated',
+        'bank_change_otp',
+        'bank_change_otp_expires_at'
     ];
 
     protected $casts = [
@@ -44,7 +52,10 @@ class PartnerProfile extends Model
         'approved_at' => 'datetime',
         'is_featured' => 'boolean',
         'is_verified' => 'boolean',
-        'verified_at' => 'datetime'
+        'verified_at' => 'datetime',
+        'withdrawal_locked_until' => 'datetime',
+        'bank_details_last_updated' => 'datetime',
+        'bank_change_otp_expires_at' => 'datetime'
     ];
 
     public function user(): BelongsTo

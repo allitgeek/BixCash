@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\PartnerTransaction;
 use App\Models\ProfitBatch;
 use App\Models\BatchScheduleConfig;
+use App\Models\PartnerProfile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -340,6 +341,15 @@ class DashboardController extends Controller
             return redirect()->route('partner.profile')->with('error', 'Please add your bank details first in your profile!');
         }
 
+        // Check if withdrawals are locked due to bank detail change
+        if ($profile->withdrawal_locked_until && $profile->withdrawal_locked_until > now()) {
+            $hoursRemaining = now()->diffInHours($profile->withdrawal_locked_until);
+            $minutesRemaining = now()->diffInMinutes($profile->withdrawal_locked_until) % 60;
+
+            return redirect()->back()->with('error',
+                "Withdrawals are locked for security after changing bank details. Please try again in {$hoursRemaining} hours and {$minutesRemaining} minutes.");
+        }
+
         // Create withdrawal request
         \App\Models\WithdrawalRequest::create([
             'user_id' => $partner->id,
@@ -461,6 +471,105 @@ class DashboardController extends Controller
 
         return redirect()->route('partner.profile')
             ->with('success', 'Profile updated successfully!');
+    }
+
+    /**
+     * Request OTP for bank details update
+     */
+    public function requestBankDetailsOtp(Request $request)
+    {
+        $validated = $request->validate([
+            'bank_name' => 'required|string|max:255',
+            'account_number' => 'required|string|max:50',
+            'account_title' => 'required|string|max:255',
+            'iban' => 'nullable|string|max:50',
+        ]);
+
+        // Store pending bank details in session for Firebase verification
+        session([
+            'pending_bank_data' => $validated,
+            'show_otp_modal' => true,
+        ]);
+
+        return redirect()->back();
+    }
+
+    /**
+     * Verify OTP and update bank details
+     */
+    public function verifyBankDetailsOtp(Request $request)
+    {
+        $request->validate([
+            'firebase_token' => 'required|string',
+        ]);
+
+        $user = Auth::user();
+
+        // Verify Firebase ID token
+        $firebaseService = app(\App\Services\FirebaseOtpService::class);
+        $verificationResult = $firebaseService->verifyFirebaseIdToken($request->firebase_token);
+
+        if (!$verificationResult['success']) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Phone verification failed. Please try again.'
+            ], 401);
+        }
+
+        // Verify the phone matches the logged-in user's phone
+        $firebasePhone = $verificationResult['data']['phone'];
+        if ($firebasePhone !== $user->phone) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Phone number mismatch. Please use your registered phone number.'
+            ], 403);
+        }
+
+        // Get pending bank data from session
+        $pendingBankData = session('pending_bank_data');
+        if (!$pendingBankData) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Session expired. Please try again.'
+            ], 400);
+        }
+
+        // Get or create profile
+        $profile = $user->partnerProfile;
+        if (!$profile) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Partner profile not found.'
+            ], 404);
+        }
+
+        // Update bank details
+        $profile->bank_name = $pendingBankData['bank_name'];
+        $profile->account_number = $pendingBankData['account_number'];
+        $profile->account_title = $pendingBankData['account_title'];
+        $profile->iban = $pendingBankData['iban'];
+        $profile->bank_details_last_updated = now();
+        $profile->withdrawal_locked_until = now()->addHours(24);
+        $profile->save();
+
+        // Clear session
+        session()->forget(['pending_bank_data', 'show_otp_modal']);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Bank details updated successfully! Withdrawals will be locked for 24 hours for security.'
+        ]);
+    }
+
+    /**
+     * Cancel bank details OTP verification
+     */
+    public function cancelBankDetailsOtp()
+    {
+        // Clear session
+        session()->forget(['pending_bank_data', 'show_otp_modal']);
+
+        return redirect()->route('partner.profile');
     }
 
     /**

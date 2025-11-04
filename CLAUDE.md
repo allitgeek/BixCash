@@ -7010,3 +7010,231 @@ This change integrates with:
 **Database**: No migrations needed (uses existing wallet relationship)
 **Performance**: Optimized with eager loading
 **UI**: Consistent design across both pages
+
+---
+
+## 2025-11-05: Partner Portal UI Enhancements & Role-Based Access Control
+
+### Summary
+Unified partner portal design with Tailwind CSS across all partner-facing pages and implemented strict role-based access control to prevent partners from accessing customer dashboard.
+
+### Changes Made
+
+#### 1. Partner Registration Page - Tailwind CSS Conversion
+**File**: `backend/resources/views/partner/register.blade.php`
+
+**Changes**:
+- Removed 189 lines of custom CSS
+- Converted to Tailwind utility classes
+- Updated color scheme from green to blue gradient matching portal branding
+- Responsive design with `sm:` breakpoints
+
+**Key Styling**:
+```html
+<!-- Background -->
+<body class="bg-gradient-to-br from-gray-50 via-blue-50/20 to-gray-50 min-h-screen">
+
+<!-- Title -->
+<h1 class="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-900 to-blue-700 bg-clip-text text-transparent">
+
+<!-- Form Inputs -->
+<input class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10">
+
+<!-- Submit Button -->
+<button class="w-full px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:-translate-y-0.5 transition-all shadow-md shadow-blue-500/30">
+```
+
+#### 2. Pending Approval Page - Tailwind CSS Conversion
+**File**: `backend/resources/views/partner/pending-approval.blade.php`
+
+**Changes**:
+- Removed 157 lines of custom CSS
+- Kept custom pulse animation for hourglass icon
+- Converted layout and info cards to Tailwind utilities
+- Orange badge for "pending" status (appropriate color coding)
+
+**Key Features**:
+```html
+<!-- Custom Animation Preserved -->
+<style>
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+    }
+    .animate-custom-pulse { animation: pulse 2s infinite; }
+</style>
+
+<!-- Status Badge -->
+<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-orange-100 text-orange-700 border border-orange-200">
+    {{ ucfirst($partnerProfile->status) }}
+</span>
+```
+
+#### 3. Transaction Modal - Keyboard Shortcuts & Mobile Improvements
+**File**: `backend/resources/views/partner/dashboard.blade.php`
+
+**Keyboard Shortcuts Added**:
+```javascript
+// Enter key in phone input → search customer
+document.getElementById('customerPhone')?.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        searchCustomer();
+    }
+});
+
+// Enter key in amount input → create transaction
+document.getElementById('invoiceAmount')?.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        createTransaction();
+    }
+});
+
+// Tab key focus trap within modal
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Tab' && !document.getElementById('transactionModal').classList.contains('hidden')) {
+        // Cycle focus within modal
+    }
+});
+```
+
+**Mobile Improvements**:
+- Modal width: `max-w-md sm:max-w-lg` (responsive)
+- All buttons: `min-h-[44px]` for better touch targets (Apple's recommended minimum)
+- Improved spacing and padding for mobile devices
+
+#### 4. Role-Based Access Control - Customer Routes Protection
+**File**: `backend/routes/web.php` (line 52)
+
+**Problem**: Partners could access customer dashboard because routes only checked authentication, not role.
+
+**Solution**: Added `customer.role` middleware to customer routes.
+
+**Change**:
+```php
+// Before:
+Route::prefix('customer')->name('customer.')->middleware('auth')->group(function () {
+
+// After:
+Route::prefix('customer')->name('customer.')->middleware(['auth', 'customer.role'])->group(function () {
+```
+
+#### 5. Enhanced Customer Role Middleware
+**File**: `backend/app/Http/Middleware/EnsureCustomerRole.php`
+
+**Changes**: Improved UX by redirecting users to appropriate dashboards instead of returning JSON errors.
+
+**Implementation**:
+```php
+public function handle(Request $request, Closure $next): Response
+{
+    $user = $request->user();
+
+    // Check if user is authenticated
+    if (!$user) {
+        return redirect()->route('login');
+    }
+
+    // Check if user has customer role
+    if (!$user->isCustomer()) {
+        // Redirect partners to their dashboard
+        if ($user->isPartner()) {
+            $partnerProfile = $user->partnerProfile;
+
+            if ($partnerProfile && $partnerProfile->status === 'pending') {
+                return redirect()->route('partner.pending-approval');
+            } elseif ($partnerProfile && $partnerProfile->status === 'approved') {
+                return redirect()->route('partner.dashboard');
+            }
+        }
+
+        // Redirect admins to their dashboard
+        if ($user->isAdmin()) {
+            return redirect()->route('admin.dashboard');
+        }
+
+        // For any other role, deny access
+        abort(403, 'Access denied. Customer role required.');
+    }
+
+    return $next($request);
+}
+```
+
+### Features Implemented
+
+1. **Design System Unification**:
+   - All partner-facing pages now use consistent blue gradient branding
+   - Removed 346 lines of custom CSS (189 + 157)
+   - Smaller bundle size and easier maintenance
+
+2. **Keyboard Accessibility**:
+   - Enter key shortcuts for quick transaction creation
+   - Tab key focus trap keeps navigation within modal
+   - ESC key closes modal (already existed)
+
+3. **Mobile Optimization**:
+   - Touch-friendly button sizes (44px minimum height)
+   - Responsive modal width for different screen sizes
+   - Better spacing and padding on mobile devices
+
+4. **Role-Based Security**:
+   - Partners cannot access customer dashboard (automatically redirected)
+   - Customers cannot access partner dashboard (automatically redirected)
+   - Admins redirected to admin dashboard if they try to access customer/partner areas
+   - Clear separation of concerns between user roles
+
+### User Experience Flow
+
+**Partner (Approved)**:
+- Tries to access `/customer/dashboard` → Redirected to `/partner/dashboard`
+
+**Partner (Pending)**:
+- Tries to access `/customer/dashboard` → Redirected to `/partner/pending-approval`
+
+**Customer**:
+- Can access `/customer/dashboard` normally ✅
+
+**Admin**:
+- Tries to access `/customer/dashboard` → Redirected to `/admin/dashboard`
+
+### Deployment Steps
+
+1. Cleared Laravel caches:
+```bash
+php artisan view:clear
+php artisan config:clear
+php artisan cache:clear
+php artisan route:clear
+```
+
+2. Rebuilt Vite assets with new Tailwind classes:
+```bash
+npm run build
+```
+
+### Technical Details
+
+**Tailwind Patterns Used**:
+- Gradients: `bg-gradient-to-r from-blue-900 to-blue-700`
+- Focus states: `focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10`
+- Responsive: `text-2xl sm:text-3xl`, `max-w-md sm:max-w-lg`
+- Hover effects: `hover:-translate-y-0.5 transition-all duration-200`
+- Shadows: `shadow-lg shadow-blue-900/5`, `shadow-md shadow-blue-500/30`
+
+**Middleware Registration** (already existed in `bootstrap/app.php`):
+```php
+$middleware->alias([
+    'customer.role' => \App\Http\Middleware\EnsureCustomerRole::class,
+    'partner' => \App\Http\Middleware\EnsurePartnerRole::class,
+]);
+```
+
+---
+
+**Status**: ✅ COMPLETED
+**UI**: Consistent Tailwind design across all partner pages
+**Accessibility**: Enhanced with keyboard shortcuts and mobile optimizations
+**Security**: Strict role-based access control implemented
+**Performance**: Reduced CSS bundle size by 346 lines

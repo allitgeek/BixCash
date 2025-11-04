@@ -49,7 +49,7 @@ Route::get('/auth-demo', function () {
 // Customer Dashboard Routes
 use App\Http\Controllers\Customer\DashboardController as CustomerDashboard;
 
-Route::prefix('customer')->name('customer.')->middleware('auth')->group(function () {
+Route::prefix('customer')->name('customer.')->middleware(['auth', 'customer.role'])->group(function () {
     Route::get('/dashboard', [CustomerDashboard::class, 'index'])->name('dashboard');
     Route::post('/complete-profile', [CustomerDashboard::class, 'completeProfile'])->name('complete-profile');
 
@@ -112,6 +112,9 @@ Route::prefix('partner')->name('partner.')->middleware(['auth', 'partner'])->gro
     // Profile
     Route::get('/profile', [PartnerDashboard::class, 'profile'])->name('profile');
     Route::post('/profile', [PartnerDashboard::class, 'updateProfile'])->name('profile.update');
+    Route::post('/profile/bank-details/request-otp', [PartnerDashboard::class, 'requestBankDetailsOtp'])->name('bank-details.request-otp');
+    Route::post('/profile/bank-details/verify-otp', [PartnerDashboard::class, 'verifyBankDetailsOtp'])->name('bank-details.verify-otp');
+    Route::get('/profile/bank-details/cancel-otp', [PartnerDashboard::class, 'cancelBankDetailsOtp'])->name('bank-details.cancel-otp');
     Route::delete('/profile/logo', [PartnerDashboard::class, 'removeLogo'])->name('profile.remove-logo');
 
     // Logout

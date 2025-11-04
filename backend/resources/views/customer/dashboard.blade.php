@@ -165,7 +165,7 @@
                             <tr class="border-b-2 border-gray-200">
                                 <th class="text-left text-xs text-gray-500 uppercase tracking-wide pb-3 px-4 sm:px-0">Brand</th>
                                 <th class="text-left text-xs text-gray-500 uppercase tracking-wide pb-3">Amount</th>
-                                <th class="text-left text-xs text-gray-500 uppercase tracking-wide pb-3">Cashback</th>
+                                <th class="text-left text-xs text-gray-500 uppercase tracking-wide pb-3">Date</th>
                                 <th class="text-left text-xs text-gray-500 uppercase tracking-wide pb-3">Status</th>
                             </tr>
                         </thead>
@@ -181,7 +181,7 @@
                                     </div>
                                 </td>
                                 <td class="py-4 font-medium text-gray-800">Rs {{ number_format($purchase->amount, 0) }}</td>
-                                <td class="py-4 font-semibold text-green-600">+Rs {{ number_format($purchase->cashback_amount, 0) }}</td>
+                                <td class="py-4 text-gray-600">{{ $purchase->purchase_date->format('M d') }}</td>
                                 <td class="py-4">
                                     <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold
                                         @if($purchase->status === 'completed') bg-green-100 text-green-700

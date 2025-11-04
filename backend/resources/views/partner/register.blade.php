@@ -6,205 +6,29 @@
     <meta name="theme-color" content="#021c47">
     <title>Partner Registration - BixCash</title>
     @vite(['resources/css/app.css'])
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        :root {
-            --primary: #93db4d;
-            --primary-dark: #7bc33a;
-            --secondary: #021c47;
-            --text-dark: #1a202c;
-            --text-light: #718096;
-            --border: #e2e8f0;
-            --bg-light: #f7fafc;
-            --success: #48bb78;
-            --danger: #f56565;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background: linear-gradient(135deg, var(--secondary) 0%, #0a2f5f 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem 1rem;
-        }
-
-        .container {
-            max-width: 600px;
-            width: 100%;
-            background: white;
-            border-radius: 20px;
-            padding: 2.5rem;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        }
-
-        .logo {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .logo h1 {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--secondary);
-        }
-
-        .logo p {
-            color: var(--text-light);
-            font-size: 0.95rem;
-            margin-top: 0.5rem;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-label {
-            display: block;
-            font-size: 0.875rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: var(--text-dark);
-        }
-
-        .form-label .required {
-            color: var(--danger);
-        }
-
-        .form-input, .form-select {
-            width: 100%;
-            padding: 0.875rem 1rem;
-            border: 2px solid var(--border);
-            border-radius: 12px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .form-input:focus, .form-select:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(147, 219, 77, 0.1);
-        }
-
-        .form-hint {
-            font-size: 0.75rem;
-            color: var(--text-light);
-            margin-top: 0.25rem;
-        }
-
-        .checkbox-group {
-            display: flex;
-            align-items: start;
-            gap: 0.75rem;
-        }
-
-        .checkbox-group input[type="checkbox"] {
-            margin-top: 0.25rem;
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
-        }
-
-        .checkbox-group label {
-            font-size: 0.875rem;
-            color: var(--text-dark);
-            line-height: 1.5;
-        }
-
-        .btn {
-            width: 100%;
-            padding: 1rem;
-            border: none;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(147, 219, 77, 0.3);
-        }
-
-        .btn-primary:disabled {
-            background: var(--border);
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .back-link {
-            text-align: center;
-            margin-top: 1.5rem;
-        }
-
-        .back-link a {
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .alert {
-            padding: 1rem 1.25rem;
-            border-radius: 12px;
-            margin-bottom: 1.5rem;
-            font-size: 0.875rem;
-        }
-
-        .alert-success {
-            background: #d1fae5;
-            color: #065f46;
-            border-left: 4px solid #10b981;
-        }
-
-        .alert-error {
-            background: #fee2e2;
-            color: #991b1b;
-            border-left: 4px solid #ef4444;
-        }
-
-        .error-list {
-            list-style: disc;
-            padding-left: 1.25rem;
-            margin-top: 0.5rem;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 1.5rem;
-            }
-
-            .logo h1 {
-                font-size: 1.5rem;
-            }
-        }
-    </style>
 </head>
-<body>
-    <div class="container">
-        <div class="logo">
-            <h1>🚀 Partner with BixCash</h1>
-            <p>Join our network and grow your business</p>
+<body class="bg-gradient-to-br from-gray-50 via-blue-50/20 to-gray-50 min-h-screen flex items-center justify-center p-4">
+    <div class="max-w-2xl w-full bg-white rounded-xl border border-gray-200/60 shadow-lg shadow-blue-900/5 p-6 sm:p-8">
+        {{-- Logo Section --}}
+        <div class="text-center mb-8">
+            <h1 class="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-900 to-blue-700 bg-clip-text text-transparent mb-2">
+                Partner with BixCash
+            </h1>
+            <p class="text-gray-500 text-sm sm:text-base">Join our network and grow your business</p>
         </div>
 
+        {{-- Success Message --}}
         @if(session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
+        <div class="mb-6 p-4 bg-green-50 border-l-4 border-green-500 rounded-lg">
+            <p class="text-sm font-medium text-green-800">{{ session('success') }}</p>
         </div>
         @endif
 
+        {{-- Error Messages --}}
         @if($errors->any())
-        <div class="alert alert-error">
-            <strong>Please fix the following errors:</strong>
-            <ul class="error-list">
+        <div class="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-lg">
+            <p class="text-sm font-semibold text-red-900 mb-2">Please fix the following errors:</p>
+            <ul class="list-disc list-inside text-sm text-red-800 space-y-1">
                 @foreach($errors->all() as $error)
                     <li>{{ $error }}</li>
                 @endforeach
@@ -212,40 +36,83 @@
         </div>
         @endif
 
-        <form method="POST" action="{{ route('partner.register.submit') }}" id="partnerRegisterForm">
+        {{-- Registration Form --}}
+        <form method="POST" action="{{ route('partner.register.submit') }}" id="partnerRegisterForm" class="space-y-5">
             @csrf
 
-            <div class="form-group">
-                <label class="form-label">Business Name <span class="required">*</span></label>
-                <input type="text" name="business_name" class="form-input" required
-                       value="{{ old('business_name') }}" placeholder="e.g., KFC Lahore">
+            {{-- Business Name --}}
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                    Business Name <span class="text-red-500">*</span>
+                </label>
+                <input
+                    type="text"
+                    name="business_name"
+                    class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl text-sm focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all"
+                    required
+                    value="{{ old('business_name') }}"
+                    placeholder="e.g., KFC Lahore"
+                >
             </div>
 
-            <div class="form-group">
-                <label class="form-label">Mobile Number <span class="required">*</span></label>
-                <div style="display: flex; gap: 0.5rem;">
-                    <div style="padding: 0.875rem 1rem; background: var(--bg-light); border: 2px solid var(--border); border-radius: 12px; font-weight: 600;">+92</div>
-                    <input type="text" name="phone" class="form-input" required maxlength="10" pattern="[0-9]{10}"
-                           value="{{ old('phone') }}" placeholder="3001234567">
+            {{-- Mobile Number --}}
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                    Mobile Number <span class="text-red-500">*</span>
+                </label>
+                <div class="flex gap-2">
+                    <div class="px-4 py-2.5 bg-gray-50 border-2 border-gray-200 rounded-xl font-semibold text-gray-700 flex items-center">+92</div>
+                    <input
+                        type="text"
+                        name="phone"
+                        class="flex-1 px-4 py-2.5 border-2 border-gray-200 rounded-xl text-sm focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all"
+                        required
+                        maxlength="10"
+                        pattern="[0-9]{10}"
+                        value="{{ old('phone') }}"
+                        placeholder="3001234567"
+                    >
                 </div>
-                <div class="form-hint">Enter 10-digit mobile number without +92</div>
+                <p class="mt-1.5 text-xs text-gray-500">Enter 10-digit mobile number without +92</p>
             </div>
 
-            <div class="form-group">
-                <label class="form-label">Contact Person Name <span class="required">*</span></label>
-                <input type="text" name="contact_person_name" class="form-input" required
-                       value="{{ old('contact_person_name') }}" placeholder="Full name">
+            {{-- Contact Person Name --}}
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                    Contact Person Name <span class="text-red-500">*</span>
+                </label>
+                <input
+                    type="text"
+                    name="contact_person_name"
+                    class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl text-sm focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all"
+                    required
+                    value="{{ old('contact_person_name') }}"
+                    placeholder="Full name"
+                >
             </div>
 
-            <div class="form-group">
-                <label class="form-label">Email (Optional)</label>
-                <input type="email" name="email" class="form-input"
-                       value="{{ old('email') }}" placeholder="your@email.com">
+            {{-- Email --}}
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Email (Optional)</label>
+                <input
+                    type="email"
+                    name="email"
+                    class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl text-sm focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all"
+                    value="{{ old('email') }}"
+                    placeholder="your@email.com"
+                >
             </div>
 
-            <div class="form-group">
-                <label class="form-label">Business Type <span class="required">*</span></label>
-                <select name="business_type" class="form-select" required>
+            {{-- Business Type --}}
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                    Business Type <span class="text-red-500">*</span>
+                </label>
+                <select
+                    name="business_type"
+                    class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl text-sm focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all bg-white"
+                    required
+                >
                     <option value="">Select business type</option>
                     <option value="Restaurant" {{ old('business_type') == 'Restaurant' ? 'selected' : '' }}>Restaurant</option>
                     <option value="Retail" {{ old('business_type') == 'Retail' ? 'selected' : '' }}>Retail Store</option>
@@ -260,34 +127,60 @@
                 </select>
             </div>
 
-            <div class="form-group">
-                <label class="form-label">Business Address (Optional)</label>
-                <input type="text" name="business_address" class="form-input"
-                       value="{{ old('business_address') }}" placeholder="Complete address">
+            {{-- Business Address --}}
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Business Address (Optional)</label>
+                <input
+                    type="text"
+                    name="business_address"
+                    class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl text-sm focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all"
+                    value="{{ old('business_address') }}"
+                    placeholder="Complete address"
+                >
             </div>
 
-            <div class="form-group">
-                <label class="form-label">City (Optional)</label>
-                <input type="text" name="city" class="form-input"
-                       value="{{ old('city') }}" placeholder="e.g., Lahore">
+            {{-- City --}}
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">City (Optional)</label>
+                <input
+                    type="text"
+                    name="city"
+                    class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl text-sm focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all"
+                    value="{{ old('city') }}"
+                    placeholder="e.g., Lahore"
+                >
             </div>
 
-            <div class="form-group">
-                <div class="checkbox-group">
-                    <input type="checkbox" name="agree_terms" id="agree_terms" required
-                           {{ old('agree_terms') ? 'checked' : '' }}>
-                    <label for="agree_terms">
-                        I agree to BixCash <a href="#" style="color: var(--primary);">Terms & Conditions</a>
-                        and confirm that all information provided is accurate.
-                    </label>
-                </div>
+            {{-- Terms & Conditions --}}
+            <div class="flex items-start gap-3">
+                <input
+                    type="checkbox"
+                    name="agree_terms"
+                    id="agree_terms"
+                    class="mt-1 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                    required
+                    {{ old('agree_terms') ? 'checked' : '' }}
+                >
+                <label for="agree_terms" class="text-sm text-gray-700 leading-relaxed">
+                    I agree to BixCash <a href="#" class="text-blue-600 hover:text-blue-700 font-semibold">Terms & Conditions</a>
+                    and confirm that all information provided is accurate.
+                </label>
             </div>
 
-            <button type="submit" class="btn btn-primary">Submit Application</button>
+            {{-- Submit Button --}}
+            <button
+                type="submit"
+                class="w-full px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-blue-800 hover:-translate-y-0.5 transition-all duration-200 shadow-md shadow-blue-500/30 hover:shadow-lg hover:shadow-blue-500/40"
+            >
+                Submit Application
+            </button>
         </form>
 
-        <div class="back-link">
-            <a href="/">← Back to Home</a>
+        {{-- Back Link --}}
+        <div class="text-center mt-6">
+            <a href="/" class="text-blue-600 hover:text-blue-700 font-semibold text-sm">
+                ← Back to Home
+            </a>
         </div>
     </div>
 
@@ -300,13 +193,14 @@
             });
         }
 
-        // Form submission
+        // Form submission - disable button
         const form = document.getElementById('partnerRegisterForm');
         if (form) {
             form.addEventListener('submit', function(e) {
                 const submitBtn = this.querySelector('button[type="submit"]');
                 submitBtn.textContent = 'Submitting...';
                 submitBtn.disabled = true;
+                submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
             });
         }
     </script>
