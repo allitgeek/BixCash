@@ -175,12 +175,19 @@
                     {{-- Table Body --}}
                     <tbody class="bg-white divide-y divide-gray-200">
                         {{-- Level 1 --}}
-                        <tr class="hover:bg-blue-50/50 transition-colors duration-150">
+                        <tr class="hover:bg-blue-50/50 transition-colors duration-150" data-level="1" data-customer-count="{{ $levels[1]['total'] ?? 0 }}">
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900 border-r border-gray-200">
                                 1
                             </td>
                             <td id="profit_level_1" class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
-                                ---
+                                <div class="flex items-center space-x-2">
+                                    <span class="value-display">---</span>
+                                    <button type="button" class="edit-btn hidden text-blue-600 hover:text-blue-800 transition-colors duration-150" onclick="enableEdit(1, 'profit')">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                        </svg>
+                                    </button>
+                                </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap border-r border-gray-200">
                                 <div class="flex items-center space-x-1">
@@ -196,8 +203,15 @@
                                     ---
                                 @endif
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
-                                ---
+                            <td id="amount_customer_1" class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
+                                <div class="flex items-center space-x-2">
+                                    <span class="value-display">---</span>
+                                    <button type="button" class="edit-btn hidden text-blue-600 hover:text-blue-800 transition-colors duration-150" onclick="enableEdit(1, 'amount')">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                        </svg>
+                                    </button>
+                                </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-center">
                                 <button type="button" class="text-blue-600 hover:text-blue-800 transition-colors duration-150">
@@ -210,12 +224,19 @@
                         </tr>
 
                         {{-- Level 2 --}}
-                        <tr class="bg-gray-50/50 hover:bg-blue-50/50 transition-colors duration-150">
+                        <tr class="bg-gray-50/50 hover:bg-blue-50/50 transition-colors duration-150" data-level="2" data-customer-count="{{ $levels[2]['total'] ?? 0 }}">
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900 border-r border-gray-200">
                                 2
                             </td>
                             <td id="profit_level_2" class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
-                                ---
+                                <div class="flex items-center space-x-2">
+                                    <span class="value-display">---</span>
+                                    <button type="button" class="edit-btn hidden text-blue-600 hover:text-blue-800 transition-colors duration-150" onclick="enableEdit(2, 'profit')">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                        </svg>
+                                    </button>
+                                </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap border-r border-gray-200">
                                 <div class="flex items-center space-x-1">
@@ -231,8 +252,15 @@
                                     ---
                                 @endif
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
-                                ---
+                            <td id="amount_customer_2" class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
+                                <div class="flex items-center space-x-2">
+                                    <span class="value-display">---</span>
+                                    <button type="button" class="edit-btn hidden text-blue-600 hover:text-blue-800 transition-colors duration-150" onclick="enableEdit(2, 'amount')">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                        </svg>
+                                    </button>
+                                </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-center">
                                 <button type="button" class="text-blue-600 hover:text-blue-800 transition-colors duration-150">
@@ -245,12 +273,19 @@
                         </tr>
 
                         {{-- Level 3 --}}
-                        <tr class="hover:bg-blue-50/50 transition-colors duration-150">
+                        <tr class="hover:bg-blue-50/50 transition-colors duration-150" data-level="3" data-customer-count="{{ $levels[3]['total'] ?? 0 }}">
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900 border-r border-gray-200">
                                 3
                             </td>
                             <td id="profit_level_3" class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
-                                ---
+                                <div class="flex items-center space-x-2">
+                                    <span class="value-display">---</span>
+                                    <button type="button" class="edit-btn hidden text-blue-600 hover:text-blue-800 transition-colors duration-150" onclick="enableEdit(3, 'profit')">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                        </svg>
+                                    </button>
+                                </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap border-r border-gray-200">
                                 <div class="flex items-center space-x-1">
@@ -266,8 +301,15 @@
                                     ---
                                 @endif
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
-                                ---
+                            <td id="amount_customer_3" class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
+                                <div class="flex items-center space-x-2">
+                                    <span class="value-display">---</span>
+                                    <button type="button" class="edit-btn hidden text-blue-600 hover:text-blue-800 transition-colors duration-150" onclick="enableEdit(3, 'amount')">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                        </svg>
+                                    </button>
+                                </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-center">
                                 <button type="button" class="text-blue-600 hover:text-blue-800 transition-colors duration-150">
@@ -280,12 +322,19 @@
                         </tr>
 
                         {{-- Level 4 --}}
-                        <tr class="bg-gray-50/50 hover:bg-blue-50/50 transition-colors duration-150">
+                        <tr class="bg-gray-50/50 hover:bg-blue-50/50 transition-colors duration-150" data-level="4" data-customer-count="{{ $levels[4]['total'] ?? 0 }}">
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900 border-r border-gray-200">
                                 4
                             </td>
                             <td id="profit_level_4" class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
-                                ---
+                                <div class="flex items-center space-x-2">
+                                    <span class="value-display">---</span>
+                                    <button type="button" class="edit-btn hidden text-blue-600 hover:text-blue-800 transition-colors duration-150" onclick="enableEdit(4, 'profit')">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                        </svg>
+                                    </button>
+                                </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap border-r border-gray-200">
                                 <div class="flex items-center space-x-1">
@@ -301,8 +350,15 @@
                                     ---
                                 @endif
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
-                                ---
+                            <td id="amount_customer_4" class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
+                                <div class="flex items-center space-x-2">
+                                    <span class="value-display">---</span>
+                                    <button type="button" class="edit-btn hidden text-blue-600 hover:text-blue-800 transition-colors duration-150" onclick="enableEdit(4, 'amount')">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                        </svg>
+                                    </button>
+                                </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-center">
                                 <button type="button" class="text-blue-600 hover:text-blue-800 transition-colors duration-150">
@@ -315,12 +371,19 @@
                         </tr>
 
                         {{-- Level 5 --}}
-                        <tr class="hover:bg-blue-50/50 transition-colors duration-150">
+                        <tr class="hover:bg-blue-50/50 transition-colors duration-150" data-level="5" data-customer-count="{{ $levels[5]['total'] ?? 0 }}">
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900 border-r border-gray-200">
                                 5
                             </td>
                             <td id="profit_level_5" class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
-                                ---
+                                <div class="flex items-center space-x-2">
+                                    <span class="value-display">---</span>
+                                    <button type="button" class="edit-btn hidden text-blue-600 hover:text-blue-800 transition-colors duration-150" onclick="enableEdit(5, 'profit')">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                        </svg>
+                                    </button>
+                                </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap border-r border-gray-200">
                                 <div class="flex items-center space-x-1">
@@ -336,8 +399,15 @@
                                     ---
                                 @endif
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
-                                ---
+                            <td id="amount_customer_5" class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
+                                <div class="flex items-center space-x-2">
+                                    <span class="value-display">---</span>
+                                    <button type="button" class="edit-btn hidden text-blue-600 hover:text-blue-800 transition-colors duration-150" onclick="enableEdit(5, 'amount')">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                        </svg>
+                                    </button>
+                                </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-center">
                                 <button type="button" class="text-blue-600 hover:text-blue-800 transition-colors duration-150">
@@ -350,12 +420,19 @@
                         </tr>
 
                         {{-- Level 6 --}}
-                        <tr class="bg-gray-50/50 hover:bg-blue-50/50 transition-colors duration-150">
+                        <tr class="bg-gray-50/50 hover:bg-blue-50/50 transition-colors duration-150" data-level="6" data-customer-count="{{ $levels[6]['total'] ?? 0 }}">
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900 border-r border-gray-200">
                                 6
                             </td>
                             <td id="profit_level_6" class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
-                                ---
+                                <div class="flex items-center space-x-2">
+                                    <span class="value-display">---</span>
+                                    <button type="button" class="edit-btn hidden text-blue-600 hover:text-blue-800 transition-colors duration-150" onclick="enableEdit(6, 'profit')">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                        </svg>
+                                    </button>
+                                </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap border-r border-gray-200">
                                 <div class="flex items-center space-x-1">
@@ -371,8 +448,15 @@
                                     ---
                                 @endif
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
-                                ---
+                            <td id="amount_customer_6" class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
+                                <div class="flex items-center space-x-2">
+                                    <span class="value-display">---</span>
+                                    <button type="button" class="edit-btn hidden text-blue-600 hover:text-blue-800 transition-colors duration-150" onclick="enableEdit(6, 'amount')">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                        </svg>
+                                    </button>
+                                </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-center">
                                 <button type="button" class="text-blue-600 hover:text-blue-800 transition-colors duration-150">
@@ -385,12 +469,19 @@
                         </tr>
 
                         {{-- Level 7 --}}
-                        <tr class="hover:bg-blue-50/50 transition-colors duration-150">
+                        <tr class="hover:bg-blue-50/50 transition-colors duration-150" data-level="7" data-customer-count="{{ $levels[7]['total'] ?? 0 }}">
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900 border-r border-gray-200">
                                 7
                             </td>
                             <td id="profit_level_7" class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
-                                ---
+                                <div class="flex items-center space-x-2">
+                                    <span class="value-display">---</span>
+                                    <button type="button" class="edit-btn hidden text-blue-600 hover:text-blue-800 transition-colors duration-150" onclick="enableEdit(7, 'profit')">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                        </svg>
+                                    </button>
+                                </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap border-r border-gray-200">
                                 <div class="flex items-center space-x-1">
@@ -406,8 +497,15 @@
                                     ---
                                 @endif
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
-                                ---
+                            <td id="amount_customer_7" class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
+                                <div class="flex items-center space-x-2">
+                                    <span class="value-display">---</span>
+                                    <button type="button" class="edit-btn hidden text-blue-600 hover:text-blue-800 transition-colors duration-150" onclick="enableEdit(7, 'amount')">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                        </svg>
+                                    </button>
+                                </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-center">
                                 <button type="button" class="text-blue-600 hover:text-blue-800 transition-colors duration-150">
@@ -519,24 +617,87 @@
             return;
         }
 
-        // Divide profit by 7 levels
-        const profitPerLevel = amount / 7;
-
-        // Format with commas, remove trailing zeros
-        const formattedProfit = profitPerLevel.toLocaleString('en-US', {
-            maximumFractionDigits: 2
-        });
-
-        // Update each level's Profit/Level column
+        // Collect all percentages
+        const percentages = [];
+        let percentageTotal = 0;
         for (let i = 1; i <= 7; i++) {
-            document.getElementById(`profit_level_${i}`).textContent = formattedProfit;
+            const percentage = parseFloat(document.getElementById(`percentage_${i}`).value) || 0;
+            percentages.push(percentage);
+            percentageTotal += percentage;
         }
 
-        // Update Total row with original amount
+        // Determine distribution method
+        let useEqualDistribution = false;
+
+        if (percentageTotal === 0) {
+            // All percentages are empty/zero - divide equally by 7
+            useEqualDistribution = true;
+        } else if (percentageTotal !== 100) {
+            // Percentages entered but don't total 100% - warn user
+            if (!confirm(`Warning: Percentages total ${percentageTotal}% (not 100%). Continue anyway?`)) {
+                return;
+            }
+        }
+
+        let calculatedTotal = 0;
+
+        // Calculate profit for each level
+        for (let i = 1; i <= 7; i++) {
+            let profitForLevel;
+
+            if (useEqualDistribution) {
+                // Equal distribution: divide by 7
+                profitForLevel = amount / 7;
+            } else {
+                // Percentage-based distribution
+                const percentage = percentages[i - 1];
+                profitForLevel = (amount * percentage) / 100;
+            }
+
+            calculatedTotal += profitForLevel;
+
+            // Format profit with commas
+            const formattedProfit = profitForLevel.toLocaleString('en-US', {
+                maximumFractionDigits: 2,
+                minimumFractionDigits: 0
+            });
+
+            // Update Profit/Level cell (target the .value-display span)
+            const profitCell = document.getElementById(`profit_level_${i}`);
+            const profitValueSpan = profitCell.querySelector('.value-display');
+            profitValueSpan.textContent = formattedProfit;
+
+            // Show the edit button for Profit/Level
+            const profitEditBtn = profitCell.querySelector('.edit-btn');
+            profitEditBtn.classList.remove('hidden');
+
+            // Calculate Amount/Customer
+            const row = document.querySelector(`tr[data-level="${i}"]`);
+            const customerCount = parseInt(row.getAttribute('data-customer-count')) || 0;
+
+            const amountCell = document.getElementById(`amount_customer_${i}`);
+            const amountValueSpan = amountCell.querySelector('.value-display');
+            const amountEditBtn = amountCell.querySelector('.edit-btn');
+
+            if (customerCount === 0) {
+                amountValueSpan.textContent = 'N/A (0 customers)';
+                amountEditBtn.classList.add('hidden'); // Hide edit button if no customers
+            } else {
+                const amountPerCustomer = profitForLevel / customerCount;
+                const formattedAmount = amountPerCustomer.toLocaleString('en-US', {
+                    maximumFractionDigits: 2,
+                    minimumFractionDigits: 0
+                });
+                amountValueSpan.textContent = formattedAmount;
+                amountEditBtn.classList.remove('hidden'); // Show edit button
+            }
+        }
+
+        // Update Total row with original amount (not calculated total, to avoid rounding issues)
         const formattedTotal = amount.toLocaleString('en-US');
         document.getElementById('profit_level_total').textContent = formattedTotal;
 
-        console.log('Calculated profit per level:', profitPerLevel);
+        console.log('Calculated profit distribution using percentages');
     });
 
     // Disperse button click handler (placeholder)
@@ -545,6 +706,140 @@
         console.log('Disperse clicked with amount:', amount);
         // TODO: Add disperse functionality
     });
+
+    /**
+     * Enable inline editing for a cell
+     * @param {number} level - The level number (1-7)
+     * @param {string} type - Either 'profit' or 'amount'
+     */
+    function enableEdit(level, type) {
+        const cellId = type === 'profit' ? `profit_level_${level}` : `amount_customer_${level}`;
+        const cell = document.getElementById(cellId);
+        const valueSpan = cell.querySelector('.value-display');
+        const editBtn = cell.querySelector('.edit-btn');
+
+        // Get current value (remove commas and non-numeric characters except decimal point)
+        const currentValue = valueSpan.textContent.replace(/,/g, '').replace(/[^0-9.]/g, '');
+
+        // Replace span with input field
+        const input = document.createElement('input');
+        input.type = 'number';
+        input.step = '0.01';
+        input.value = currentValue;
+        input.className = 'w-32 px-2 py-1 text-sm border border-blue-500 rounded focus:ring-2 focus:ring-blue-500';
+        input.dataset.level = level;
+        input.dataset.type = type;
+
+        // Save on blur
+        input.addEventListener('blur', function() {
+            saveEdit(level, type, this.value);
+        });
+
+        // Save on Enter key
+        input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                this.blur(); // Trigger blur event which saves
+            }
+        });
+
+        // Replace the value span with input
+        valueSpan.replaceWith(input);
+        input.focus();
+        input.select();
+
+        // Hide edit button while editing
+        editBtn.classList.add('hidden');
+    }
+
+    /**
+     * Save the edited value and restore display
+     * @param {number} level - The level number (1-7)
+     * @param {string} type - Either 'profit' or 'amount'
+     * @param {string} value - The new value
+     */
+    function saveEdit(level, type, value) {
+        const cellId = type === 'profit' ? `profit_level_${level}` : `amount_customer_${level}`;
+        const cell = document.getElementById(cellId);
+        const input = cell.querySelector('input');
+        const editBtn = cell.querySelector('.edit-btn');
+
+        // Parse and validate the value
+        const numericValue = parseFloat(value) || 0;
+
+        // Format the value with commas
+        const formattedValue = numericValue.toLocaleString('en-US', {
+            maximumFractionDigits: 2,
+            minimumFractionDigits: 0
+        });
+
+        // Create new value span
+        const valueSpan = document.createElement('span');
+        valueSpan.className = 'value-display';
+        valueSpan.textContent = formattedValue;
+
+        // Replace input with span
+        input.replaceWith(valueSpan);
+
+        // Show edit button again
+        editBtn.classList.remove('hidden');
+
+        // If editing Profit/Level, recalculate Amount/Customer for this level
+        if (type === 'profit') {
+            recalculateAmountPerCustomer(level, numericValue);
+        }
+
+        // Update total row
+        updateTotalRow();
+    }
+
+    /**
+     * Recalculate Amount/Customer when Profit/Level is manually edited
+     * @param {number} level - The level number (1-7)
+     * @param {number} profitForLevel - The new profit amount for this level
+     */
+    function recalculateAmountPerCustomer(level, profitForLevel) {
+        const row = document.querySelector(`tr[data-level="${level}"]`);
+        const customerCount = parseInt(row.getAttribute('data-customer-count')) || 0;
+
+        const amountCell = document.getElementById(`amount_customer_${level}`);
+        const amountValueSpan = amountCell.querySelector('.value-display');
+        const amountEditBtn = amountCell.querySelector('.edit-btn');
+
+        if (customerCount === 0) {
+            amountValueSpan.textContent = 'N/A (0 customers)';
+            amountEditBtn.classList.add('hidden');
+        } else {
+            const amountPerCustomer = profitForLevel / customerCount;
+            const formattedAmount = amountPerCustomer.toLocaleString('en-US', {
+                maximumFractionDigits: 2,
+                minimumFractionDigits: 0
+            });
+            amountValueSpan.textContent = formattedAmount;
+            amountEditBtn.classList.remove('hidden');
+        }
+    }
+
+    /**
+     * Update the total row by summing all Profit/Level values
+     */
+    function updateTotalRow() {
+        let total = 0;
+
+        // Sum all 7 profit levels
+        for (let i = 1; i <= 7; i++) {
+            const cell = document.getElementById(`profit_level_${i}`);
+            const valueSpan = cell.querySelector('.value-display');
+            const value = valueSpan.textContent.replace(/,/g, '').replace(/[^0-9.]/g, '');
+            total += parseFloat(value) || 0;
+        }
+
+        // Format and update total
+        const formattedTotal = total.toLocaleString('en-US', {
+            maximumFractionDigits: 2,
+            minimumFractionDigits: 0
+        });
+        document.getElementById('profit_level_total').textContent = formattedTotal;
+    }
 
     /**
      * Recalculate FIFO levels by running the assignment command
