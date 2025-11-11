@@ -10,40 +10,42 @@
 </head>
 <body class="bg-gray-50 min-h-screen pb-24" style="margin: 0; padding: 0;">
 
-    {{-- Header --}}
-    <header class="bg-gradient-to-br from-green-900 via-green-950 to-gray-900 text-white px-4 py-8 shadow-xl">
-        <div class="max-w-7xl mx-auto flex items-center gap-3">
-            <a href="{{ route('customer.dashboard') }}" class="text-white hover:text-green-200 transition-colors">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                </svg>
-            </a>
-            <h1 class="text-2xl font-bold">My Wallet</h1>
-        </div>
-    </header>
-
-    {{-- Wallet Balance Card --}}
-    <div class="max-w-7xl mx-auto px-4 -mt-6 relative z-10">
-        <div class="bg-gradient-to-br from-[#76d37a] to-[#93db4d] rounded-2xl p-6 shadow-xl shadow-green-900/20 text-white">
-            <div class="text-sm text-green-900 mb-2 text-center">Available Balance</div>
-            <div class="text-4xl font-bold text-center mb-6">Rs {{ number_format($wallet->balance, 2) }}</div>
-
-            <div class="flex gap-4 pt-6 border-t border-white/20">
-                <div class="flex-1 text-center">
-                    <div class="text-2xl font-bold mb-1">Rs {{ number_format($wallet->total_earned, 0) }}</div>
-                    <div class="text-xs text-green-900 uppercase tracking-wide">Total Earned</div>
+    {{-- Header - Integrated Balance Design (Like Dashboard) --}}
+    <header class="text-white px-4 py-4 shadow-lg" style="background: linear-gradient(to bottom right, rgba(0,0,0,0.15), rgba(0,0,0,0.25)), #76d37a;">
+        <div class="max-w-7xl mx-auto">
+            {{-- Row 1: Logo + Title + Balance --}}
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-3">
+                    {{-- BixCash Logo - Links to Main Website --}}
+                    <a href="https://bixcash.com" class="flex-shrink-0 hover:opacity-80 transition-opacity" target="_blank" rel="noopener noreferrer">
+                        <img src="/images/logos/logos-01.png" alt="BixCash Logo" class="h-10 w-auto brightness-0 invert">
+                    </a>
+                    <h1 class="text-base sm:text-lg font-bold whitespace-nowrap">My Wallet</h1>
                 </div>
-                <div class="w-px bg-white/20"></div>
-                <div class="flex-1 text-center">
-                    <div class="text-2xl font-bold mb-1">Rs {{ number_format($wallet->total_withdrawn, 0) }}</div>
-                    <div class="text-xs text-green-900 uppercase tracking-wide">Total Withdrawn</div>
+
+                {{-- Available Balance (Integrated in Header) --}}
+                <div class="text-right">
+                    <p class="text-white/80 text-xs mb-1">Available Balance</p>
+                    <p class="text-3xl font-bold">Rs {{ number_format($wallet->balance, 0) }}</p>
+                </div>
+            </div>
+
+            {{-- Row 2: Stats (Total Earned + Total Withdrawn) --}}
+            <div class="grid grid-cols-2 gap-3">
+                <div class="bg-white/10 backdrop-blur border border-white/20 text-white px-4 py-3 rounded-2xl text-center hover:bg-white/15 transition-all duration-200">
+                    <p class="text-2xl font-bold mb-1">Rs {{ number_format($wallet->total_earned, 0) }}</p>
+                    <p class="text-xs text-white/80 uppercase tracking-wide">Total Earned</p>
+                </div>
+                <div class="bg-white/10 backdrop-blur border border-white/20 text-white px-4 py-3 rounded-2xl text-center hover:bg-white/15 transition-all duration-200">
+                    <p class="text-2xl font-bold mb-1">Rs {{ number_format($wallet->total_withdrawn, 0) }}</p>
+                    <p class="text-xs text-white/80 uppercase tracking-wide">Total Withdrawn</p>
                 </div>
             </div>
         </div>
-    </div>
+    </header>
 
     {{-- Main Content --}}
-    <main class="max-w-7xl mx-auto px-4 mt-6">
+    <main class="max-w-7xl mx-auto px-4 pt-6 pb-20">
 
         @php
             $profile = Auth::user()->customerProfile;
@@ -52,7 +54,7 @@
 
         {{-- Lock Warning --}}
         @if($isLocked)
-        <div class="bg-gradient-to-r from-orange-50 to-yellow-50 rounded-xl border-2 border-orange-300 p-4 sm:p-5 mb-6 shadow-md">
+        <div class="bg-gradient-to-r from-orange-50 to-yellow-50 rounded-2xl border-2 border-orange-300 p-4 sm:p-5 mb-6 shadow-md">
             <div class="flex items-start gap-3">
                 <div class="w-10 h-10 rounded-lg bg-orange-500 flex items-center justify-center flex-shrink-0">
                     <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
@@ -72,8 +74,8 @@
         @endif
 
         {{-- Request Withdrawal Section --}}
-        <div class="bg-white rounded-xl border border-gray-200/60 shadow-lg shadow-green-900/5 overflow-hidden mb-6">
-            <div class="px-5 py-4 border-b border-gray-200/60 bg-gradient-to-r from-green-50/70 via-green-900/5 to-transparent">
+        <div class="bg-white rounded-2xl border border-gray-200/60 shadow-md overflow-hidden mb-6">
+            <div class="px-4 py-3 border-b border-gray-200/60 bg-gradient-to-r from-green-50/70 via-green-900/5 to-transparent">
                 <div class="flex items-center gap-2">
                     <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-[#76d37a] to-[#93db4d] flex items-center justify-center shadow-sm">
                         <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -84,15 +86,15 @@
                 </div>
             </div>
 
-            <div class="p-5">
+            <div class="p-4">
                 <form method="POST" action="{{ route('customer.wallet.withdraw') }}" id="withdrawalForm">
                     @csrf
                     <div class="mb-4">
                         <label class="block text-sm font-semibold text-gray-700 mb-2">Amount (Rs.) *</label>
-                        <input type="number" name="amount" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-base focus:outline-none focus:border-[#76d37a] focus:ring-4 focus:ring-green-500/10 transition-all" required min="100" step="0.01" placeholder="Minimum Rs. 100">
+                        <input type="number" name="amount" class="w-full px-4 py-3 border-2 border-gray-200 rounded-2xl text-base focus:outline-none focus:border-[#76d37a] focus:ring-4 focus:ring-green-500/10 transition-all" required min="100" step="0.01" placeholder="Minimum Rs. 100">
                         <p class="text-xs text-gray-500 mt-2">Minimum withdrawal amount is Rs. 100</p>
                     </div>
-                    <button type="submit" class="w-full px-4 py-3 bg-gradient-to-r from-[#76d37a] to-[#93db4d] text-white font-semibold rounded-xl hover:from-[#5cb85c] hover:to-[#76d37a] hover:-translate-y-0.5 transition-all duration-200 shadow-sm shadow-green-500/30 hover:shadow-md hover:shadow-green-500/40 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <button type="submit" class="w-full px-4 py-3 bg-gradient-to-r from-[#76d37a] to-[#93db4d] text-white font-semibold rounded-2xl hover:from-[#5cb85c] hover:to-[#76d37a] hover:-translate-y-0.5 transition-all duration-200 shadow-sm shadow-green-500/30 hover:shadow-md hover:shadow-green-500/40 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
                         <svg class="withdraw-spinner hidden animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -104,8 +106,8 @@
         </div>
 
         {{-- Withdrawal History --}}
-        <div class="bg-white rounded-xl border border-gray-200/60 shadow-lg shadow-green-900/5 overflow-hidden mb-6">
-            <div class="px-5 py-4 border-b border-gray-200/60 bg-gradient-to-r from-green-50/70 via-green-900/5 to-transparent">
+        <div class="bg-white rounded-2xl border border-gray-200/60 shadow-md overflow-hidden mb-6">
+            <div class="px-4 py-3 border-b border-gray-200/60 bg-gradient-to-r from-green-50/70 via-green-900/5 to-transparent">
                 <div class="flex items-center gap-2">
                     <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-[#76d37a] to-[#93db4d] flex items-center justify-center shadow-sm">
                         <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
@@ -117,7 +119,7 @@
                 </div>
             </div>
 
-            <div class="p-5">
+            <div class="p-4">
                 @if($withdrawals->count() > 0)
                     <div class="overflow-x-auto -mx-5 sm:mx-0">
                         <table class="w-full">
@@ -218,7 +220,7 @@
 
     {{-- Success Message --}}
     @if(session('success'))
-    <div id="successMessage" class="fixed top-5 right-5 bg-green-500 text-white px-6 py-4 rounded-xl shadow-2xl z-[2000] flex items-center gap-3 animate-slideIn">
+    <div id="successMessage" class="fixed top-5 right-5 bg-green-500 text-white px-6 py-4 rounded-2xl shadow-2xl z-[2000] flex items-center gap-3 animate-slideIn">
         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
         </svg>
@@ -228,7 +230,7 @@
 
     {{-- Error Message --}}
     @if(session('error'))
-    <div id="errorMessage" class="fixed top-5 right-5 bg-red-500 text-white px-6 py-4 rounded-xl shadow-2xl z-[2000] flex items-center gap-3 animate-slideIn">
+    <div id="errorMessage" class="fixed top-5 right-5 bg-red-500 text-white px-6 py-4 rounded-2xl shadow-2xl z-[2000] flex items-center gap-3 animate-slideIn">
         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
         </svg>

@@ -7,66 +7,52 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Purchase History - BixCash</title>
     @vite(['resources/css/app.css'])
-    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 </head>
-<body class="bg-gradient-to-br from-gray-50 via-blue-50/20 to-gray-50 min-h-screen pb-24" style="margin: 0; padding: 0;">
+<body class="bg-gray-50 min-h-screen pb-24" style="margin: 0; padding: 0;">
 
-    {{-- Enhanced Header with Glassmorphism --}}
-    <header class="bg-white/80 backdrop-blur-xl shadow-lg shadow-green-900/5 border-b border-gray-200/60 sticky top-0 z-40">
-        <div class="max-w-7xl mx-auto px-4 py-3">
-            {{-- Top Row: Logo + Title + Back Button --}}
-            <div class="flex items-center justify-between gap-3 mb-3">
-                <div class="flex items-center gap-3 flex-1 min-w-0">
-                    {{-- Logo --}}
-                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-[#76d37a] to-[#93db4d] flex items-center justify-center shadow-md flex-shrink-0">
-                        <svg class="w-6 h-6 sm:w-7 sm:h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                        </svg>
-                    </div>
-                    {{-- Title --}}
-                    <div class="flex-1 min-w-0">
-                        <h1 class="text-base sm:text-lg font-bold bg-gradient-to-r from-blue-900 to-blue-700 bg-clip-text text-transparent truncate">
-                            Purchase History
-                        </h1>
-                        <p class="text-xs text-gray-500 mt-0.5">{{ Auth::user()->name }}</p>
-                    </div>
+    {{-- Header - Integrated Stats Design (Like Dashboard) --}}
+    <header class="text-white px-4 py-4 shadow-lg" style="background: linear-gradient(to bottom right, rgba(0,0,0,0.15), rgba(0,0,0,0.25)), #76d37a;">
+        <div class="max-w-7xl mx-auto">
+            {{-- Row 1: Logo + Title + Back Button --}}
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-3">
+                    {{-- BixCash Logo - Links to Main Website --}}
+                    <a href="https://bixcash.com" class="flex-shrink-0 hover:opacity-80 transition-opacity" target="_blank" rel="noopener noreferrer">
+                        <img src="/images/logos/logos-01.png" alt="BixCash Logo" class="h-10 w-auto brightness-0 invert">
+                    </a>
+                    <h1 class="text-base sm:text-lg font-bold whitespace-nowrap">Purchase History</h1>
                 </div>
-                {{-- Back Button --}}
-                <a href="{{ route('customer.dashboard') }}" class="px-3 sm:px-4 py-2 rounded-full bg-gradient-to-r from-blue-600 to-blue-700 text-white text-xs font-semibold shadow-md shadow-blue-500/30 hover:shadow-lg hover:shadow-blue-500/40 hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-1.5 flex-shrink-0">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                <a href="{{ route('customer.dashboard') }}" class="text-white hover:opacity-80 transition-opacity">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                     </svg>
-                    <span class="hidden sm:inline">Back</span>
                 </a>
             </div>
 
-            {{-- Stats Row: Responsive Grid --}}
-            <div class="grid grid-cols-2 gap-2 sm:gap-3">
-                {{-- Total Purchases --}}
-                <div class="bg-gradient-to-br from-purple-50/80 to-violet-50/50 rounded-lg border-l-4 border-purple-600 p-2 sm:p-3 shadow-sm">
-                    <p class="text-xs text-gray-600 font-semibold mb-0.5">Total Purchases</p>
-                    <p class="text-lg sm:text-xl font-bold bg-gradient-to-r from-purple-600 to-violet-600 bg-clip-text text-transparent">{{ $purchases->total() }}</p>
+            {{-- Row 2: Stats (Total Purchases + Total Spent) --}}
+            <div class="grid grid-cols-2 gap-3">
+                <div class="bg-white/10 backdrop-blur border border-white/20 text-white px-4 py-3 rounded-2xl text-center hover:bg-white/15 transition-all duration-200">
+                    <p class="text-2xl font-bold mb-1">{{ $purchases->total() }}</p>
+                    <p class="text-xs text-white/80 uppercase tracking-wide">Total Purchases</p>
                 </div>
-
-                {{-- Total Spent --}}
-                <div class="bg-gradient-to-br from-blue-50/80 to-indigo-50/50 rounded-lg border-l-4 border-blue-600 p-2 sm:p-3 shadow-sm">
-                    <p class="text-xs text-gray-600 font-semibold mb-0.5">Total Spent</p>
-                    <p class="text-sm sm:text-base font-bold text-[#76d37a]">Rs {{ number_format($totalSpent, 0) }}</p>
+                <div class="bg-white/10 backdrop-blur border border-white/20 text-white px-4 py-3 rounded-2xl text-center hover:bg-white/15 transition-all duration-200">
+                    <p class="text-2xl font-bold mb-1">Rs {{ number_format($totalSpent, 0) }}</p>
+                    <p class="text-xs text-white/80 uppercase tracking-wide">Total Spent</p>
                 </div>
             </div>
         </div>
     </header>
 
     {{-- Main Content --}}
-    <div class="max-w-7xl mx-auto px-4 py-6">
+    <div class="max-w-7xl mx-auto px-4 pt-6 pb-20">
 
-        {{-- Purchase List Card with Navy Accents --}}
-        <div class="bg-white rounded-xl border border-gray-200/60 shadow-sm overflow-hidden hover:border-blue-800/40 hover:shadow-md hover:shadow-green-900/5 transition-all duration-200">
+        {{-- Purchase List Card --}}
+        <div class="bg-white rounded-2xl border border-gray-200/60 shadow-md overflow-hidden">
 
-            {{-- Card Header with Navy Gradient --}}
-            <div class="px-5 py-4 border-b border-gray-200/60 bg-gradient-to-r from-green-50/70 via-green-900/5 to-transparent">
+            {{-- Card Header --}}
+            <div class="px-4 py-3 border-b border-gray-200/60 bg-gradient-to-r from-green-50/70 via-green-900/5 to-transparent">
                 <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-[#76d37a] to-[#93db4d] flex items-center justify-center shadow-sm shadow-green-900/20">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-[#76d37a] to-[#93db4d] flex items-center justify-center shadow-sm">
                         <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                         </svg>
@@ -78,7 +64,7 @@
             {{-- Purchase Items --}}
             <div class="divide-y divide-gray-200/60">
                 @forelse($purchases as $purchase)
-                <div class="group p-4 hover:bg-green-50/50 transition-colors duration-150">
+                <div class="group p-3 hover:bg-green-50/50 transition-colors duration-150">
                     <div class="flex items-center justify-between gap-4">
                         {{-- Purchase Info --}}
                         <div class="flex-1 min-w-0">
