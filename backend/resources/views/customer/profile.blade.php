@@ -8,7 +8,7 @@
     <title>My Profile - BixCash</title>
     @vite(['resources/css/app.css', 'resources/js/profile.js'])
 </head>
-<body class="bg-gray-50 min-h-screen" style="margin: 0; padding: 0;">
+<body class="bg-gray-50 min-h-screen pb-24" style="margin: 0; padding: 0;">
 
     {{-- Header - Dashboard Style --}}
     <header class="text-white px-4 py-4 shadow-lg" style="background: linear-gradient(to bottom right, rgba(0,0,0,0.15), rgba(0,0,0,0.25)), #76d37a;">
@@ -29,7 +29,7 @@
     </header>
 
     {{-- Main Content --}}
-    <div class="max-w-5xl mx-auto px-4 pt-6 pb-40 space-y-5">
+    <div class="max-w-5xl mx-auto px-4 pt-6 pb-20 space-y-5">
 
         {{-- Profile Header Card - Compact Design --}}
         <div class="bg-white rounded-2xl border border-gray-200/60 shadow-md overflow-hidden">
@@ -151,7 +151,7 @@
         </div>
 
         {{-- Bank Details Card --}}
-        <div class="bg-white rounded-2xl border border-gray-200/60 shadow-lg shadow-green-900/5 overflow-hidden hover:border-orange-800/40 hover:shadow-xl hover:shadow-orange-900/10 transition-all duration-300">
+        <div class="bg-white rounded-2xl border border-gray-200/60 shadow-md overflow-hidden hover:border-green-800/40 hover:shadow-lg transition-all duration-300">
             <div class="px-4 py-3 border-b border-gray-200/60 bg-gradient-to-r from-orange-50/70 via-orange-900/5 to-transparent">
                 <div class="flex items-center gap-2">
                     <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-600 to-amber-600 flex items-center justify-center shadow-sm">
