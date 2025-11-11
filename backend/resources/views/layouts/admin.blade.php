@@ -177,6 +177,23 @@
                             @endif
                         </a>
 
+                        {{-- Withdrawals --}}
+                        <a href="{{ route('admin.withdrawals.index') }}"
+                           class="group flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.withdrawals*') ? 'bg-[#76d37a] text-[#021c47] shadow-lg shadow-green-500/30' : 'text-white/80 hover:bg-white/10 hover:text-white hover:translate-x-1' }}">
+                            <div class="flex items-center">
+                                <svg class="mr-3 h-5 w-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                                </svg>
+                                Withdrawals
+                            </div>
+                            @php
+                                $pendingWithdrawals = \App\Models\WithdrawalRequest::where('status', 'pending')->count();
+                            @endphp
+                            @if($pendingWithdrawals > 0)
+                                <span class="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-yellow-500 rounded-full min-w-[20px] shadow-lg shadow-yellow-500/50">{{ $pendingWithdrawals }}</span>
+                            @endif
+                        </a>
+
                         {{-- Project Context --}}
                         <a href="{{ route('admin.context') }}"
                            class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.context') ? 'bg-[#76d37a] text-[#021c47] shadow-lg shadow-green-500/30' : 'text-white/80 hover:bg-white/10 hover:text-white hover:translate-x-1' }}">
@@ -243,6 +260,10 @@
                                 <a href="{{ route('admin.settings.admin') }}"
                                    class="block px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('admin.settings.admin') ? 'bg-white/20 text-white' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
                                     Admin Settings
+                                </a>
+                                <a href="{{ route('admin.settings.withdrawals') }}"
+                                   class="block px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('admin.settings.withdrawals') ? 'bg-white/20 text-white' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
+                                    Withdrawal Settings
                                 </a>
                             </div>
                         </div>
@@ -409,6 +430,24 @@
                         @endif
                     </a>
 
+                    {{-- Withdrawals --}}
+                    <a href="{{ route('admin.withdrawals.index') }}"
+                       @click="mobileMenuOpen = false"
+                       class="group flex items-center justify-between px-3 py-2.5 text-[0.8125rem] font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('admin.withdrawals*') ? 'bg-[#76d37a] text-[#021c47] shadow-lg shadow-green-500/30' : 'text-white/80 hover:bg-white/10 hover:text-white' }}">
+                        <div class="flex items-center">
+                            <svg class="mr-2.5 h-4 w-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
+                            Withdrawals
+                        </div>
+                        @php
+                            $pendingWithdrawals = \App\Models\WithdrawalRequest::where('status', 'pending')->count();
+                        @endphp
+                        @if($pendingWithdrawals > 0)
+                            <span class="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-yellow-500 rounded-full min-w-[20px] shadow-lg shadow-yellow-500/50">{{ $pendingWithdrawals }}</span>
+                        @endif
+                    </a>
+
                     {{-- Project Context --}}
                     <a href="{{ route('admin.context') }}"
                        @click="mobileMenuOpen = false"
@@ -482,6 +521,11 @@
                                @click="mobileMenuOpen = false"
                                class="block px-3 py-1.5 text-[0.75rem] font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('admin.settings.admin') ? 'bg-white/20 text-white' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
                                 Admin Settings
+                            </a>
+                            <a href="{{ route('admin.settings.withdrawals') }}"
+                               @click="mobileMenuOpen = false"
+                               class="block px-3 py-1.5 text-[0.75rem] font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('admin.settings.withdrawals') ? 'bg-white/20 text-white' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
+                                Withdrawal Settings
                             </a>
                         </div>
                     </div>
