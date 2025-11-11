@@ -7,6 +7,243 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Dashboard - BixCash</title>
     @vite(['resources/css/app.css'])
+
+    {{-- Swiper CSS --}}
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+
+    <style>
+        /* Hide scrollbar for brands carousel */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Professional Brand Cards */
+        .brand-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(229, 231, 235, 0.6);
+            height: 180px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            will-change: transform;
+        }
+
+        .brand-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border-color: rgba(118, 211, 122, 0.3);
+        }
+
+        .brand-card img {
+            max-width: 100%;
+            max-height: 80px;
+            object-fit: contain;
+            filter: grayscale(20%);
+            transition: filter 0.3s ease;
+        }
+
+        .brand-card:hover img {
+            filter: grayscale(0%);
+        }
+
+        /* Brand Card Text Truncation */
+        .brand-card p {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-height: 3rem;
+        }
+
+        /* Brand Swiper Customization */
+        .brands-swiper {
+            padding: 1rem 3rem;
+            margin: -1rem -3rem;
+        }
+
+        .brands-swiper .swiper-slide {
+            height: auto;
+        }
+
+        @media (max-width: 640px) {
+            .brands-swiper {
+                padding: 1rem 2.5rem;
+                margin: -1rem -2.5rem;
+            }
+        }
+
+        /* Animated Gradient Background */
+        @keyframes gradient {
+            0%, 100% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        .animate-gradient {
+            background-size: 200% 200%;
+            animation: gradient 15s ease infinite;
+        }
+
+        /* Professional Promotion Cards */
+        .promotion-card {
+            background: white;
+            border-radius: 1.25rem;
+            overflow: hidden;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            border: 2px solid transparent;
+            will-change: transform;
+        }
+
+        .promotion-card:hover {
+            transform: translateY(-12px) scale(1.03);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .promotion-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(118, 211, 122, 0.1) 0%, rgba(147, 219, 77, 0.1) 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .promotion-card:hover::before {
+            opacity: 1;
+        }
+
+        .promotion-logo {
+            padding: 1.5rem;
+            background: linear-gradient(to bottom, #ffffff, #f9fafb);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            min-height: 120px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .promotion-logo::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, transparent 0%, rgba(118, 211, 122, 0.05) 100%);
+        }
+
+        .promotion-logo img {
+            max-width: 100%;
+            max-height: 80px;
+            object-fit: contain;
+            display: block;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .promotion-card:hover .promotion-logo img {
+            transform: scale(1.1);
+        }
+
+        .promotion-discount {
+            background: linear-gradient(135deg, #76d37a 0%, #93db4d 100%);
+            padding: 0.875rem 1rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .promotion-discount::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+            transform: rotate(45deg);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%) rotate(45deg);
+            }
+            100% {
+                transform: translateX(100%) rotate(45deg);
+            }
+        }
+
+        .discount-text {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 1;
+            display: block;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 640px) {
+            .promotion-logo {
+                min-height: 100px;
+                padding: 1rem;
+            }
+
+            .promotion-logo img {
+                max-height: 60px;
+            }
+
+            .discount-text {
+                font-size: 0.875rem;
+            }
+        }
+
+        /* Accessibility: Reduce motion for users who prefer it */
+        @media (prefers-reduced-motion: reduce) {
+            .brand-card,
+            .promotion-card,
+            .brand-card img,
+            .promotion-logo img {
+                transition: none;
+                animation: none;
+            }
+
+            .brand-card:hover,
+            .promotion-card:hover {
+                transform: none;
+            }
+
+            .brand-card:hover img,
+            .promotion-card:hover .promotion-logo img {
+                transform: none;
+            }
+
+            .animate-gradient,
+            .promotion-discount::before {
+                animation: none;
+            }
+        }
+    </style>
 </head>
 <body class="bg-gray-50 min-h-screen pb-24" style="margin: 0; padding: 0;">
 
@@ -46,59 +283,44 @@
     </div>
     @endif
 
-    {{-- Header with Wallet Card --}}
-    <header class="bg-gradient-to-br from-green-900 via-green-950 to-gray-900 text-white px-4 py-6 shadow-xl">
+    {{-- Minimalist Header - Brand Green with Dark Overlay --}}
+    <header class="text-white px-4 py-4 shadow-lg" style="background: linear-gradient(to bottom right, rgba(0,0,0,0.15), rgba(0,0,0,0.25)), #76d37a;">
         <div class="max-w-7xl mx-auto">
-            {{-- User Greeting --}}
-            <div class="flex items-center justify-between mb-6">
-                <div>
-                    <h1 class="text-2xl font-bold mb-1">Hello, {{ explode(' ', $user->name)[0] }}! 👋</h1>
-                    <p class="text-green-100 text-sm">Welcome back to your dashboard</p>
+            {{-- Single Row: Greeting + Balance --}}
+            <div class="flex items-center justify-between mb-4">
+                {{-- Left: BixCash Logo + Greeting --}}
+                <div class="flex items-center gap-3">
+                    {{-- BixCash Logo - Links to Main Website --}}
+                    <a href="https://bixcash.com" class="flex-shrink-0 hover:opacity-80 transition-opacity" target="_blank" rel="noopener noreferrer">
+                        <img src="/images/logos/logos-01.png" alt="BixCash Logo" class="h-10 w-auto brightness-0 invert">
+                    </a>
+                    <div>
+                        <h1 class="text-base sm:text-lg font-bold whitespace-nowrap">Hello, {{ explode(' ', $user->name)[0] }}! 👋</h1>
+                        <p class="text-white/80 text-xs">Shop & Earn Rewards</p>
+                    </div>
                 </div>
-                <div class="w-12 h-12 rounded-full bg-[#76d37a] flex items-center justify-center text-xl font-bold shadow-lg flex-shrink-0">
-                    {{ strtoupper(substr($user->name, 0, 1)) }}
+
+                {{-- Right: Balance Prominently --}}
+                <div class="text-right">
+                    <p class="text-white/80 text-xs mb-1">Your Balance</p>
+                    <p class="text-3xl font-bold">Rs {{ number_format($wallet->balance, 0) }}</p>
                 </div>
             </div>
 
-            {{-- Wallet Card - Green Gradient (BixCash Brand) --}}
-            <div class="bg-gradient-to-br from-[#76d37a] to-[#93db4d] rounded-2xl p-6 shadow-xl shadow-green-900/20">
-                <div class="text-sm text-green-900 mb-2">Your Balance</div>
-                <div class="text-4xl font-bold text-white mb-4">Rs {{ number_format($wallet->balance, 0) }}</div>
-                <div class="flex gap-3">
-                    <a href="{{ route('customer.wallet') }}" class="flex-1 px-4 py-3 bg-white text-[#76d37a] font-semibold rounded-xl hover:-translate-y-1 hover:shadow-lg transition-all duration-200 text-center">
-                        Withdraw
-                    </a>
-                    <a href="{{ route('customer.purchases') }}" class="flex-1 px-4 py-3 bg-transparent border-2 border-white text-white font-semibold rounded-xl hover:bg-white hover:text-[#76d37a] transition-all duration-200 text-center">
-                        History
-                    </a>
-                </div>
+            {{-- Quick Actions: 2 Buttons --}}
+            <div class="grid grid-cols-2 gap-3">
+                <a href="{{ route('customer.wallet') }}" class="bg-white text-green-700 px-4 py-3 rounded-xl font-semibold text-center hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200">
+                    💰 Withdraw
+                </a>
+                <a href="{{ route('customer.purchases') }}" class="bg-white/10 backdrop-blur border-2 border-white/30 text-white px-4 py-3 rounded-xl font-semibold text-center hover:bg-white/20 transition-all duration-200">
+                    📜 History
+                </a>
             </div>
         </div>
     </header>
 
     {{-- Main Content --}}
-    <main class="max-w-7xl mx-auto px-4 -mt-10 relative z-10">
-
-        {{-- Quick Stats --}}
-        <div class="grid grid-cols-3 gap-3 mb-6">
-            {{-- Total Earned - Green Theme --}}
-            <div class="bg-white rounded-xl p-3 sm:p-4 shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-200 border border-gray-200/60">
-                <div class="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wide mb-1">Total Earned</div>
-                <div class="text-lg sm:text-2xl font-bold text-gray-800">Rs {{ number_format($wallet->total_earned, 0) }}</div>
-            </div>
-
-            {{-- Withdrawn - Blue Theme --}}
-            <div class="bg-white rounded-xl p-3 sm:p-4 shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-200 border border-gray-200/60">
-                <div class="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wide mb-1">Withdrawn</div>
-                <div class="text-lg sm:text-2xl font-bold text-gray-800">Rs {{ number_format($wallet->total_withdrawn, 0) }}</div>
-            </div>
-
-            {{-- Purchases - Purple Theme --}}
-            <div class="bg-white rounded-xl p-3 sm:p-4 shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-200 border border-gray-200/60">
-                <div class="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wide mb-1">Purchases</div>
-                <div class="text-lg sm:text-2xl font-bold text-gray-800">{{ $recentPurchases->count() }}</div>
-            </div>
-        </div>
+    <main class="max-w-7xl mx-auto px-4 pt-6 pb-20">
 
         {{-- Pending Transactions --}}
         @if(isset($pendingTransactions) && $pendingTransactions->count() > 0)
@@ -151,105 +373,108 @@
         </div>
         @endif
 
-        {{-- Recent Purchases --}}
-        <div class="bg-white rounded-xl p-4 sm:p-6 mb-6 shadow-sm border border-gray-200/60">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-lg font-bold bg-gradient-to-r from-gray-800 to-green-900 bg-clip-text text-transparent">Recent Purchases</h2>
-                <a href="{{ route('customer.purchases') }}" class="text-sm text-[#76d37a] font-semibold hover:text-[#5cb85c] transition-colors">View All →</a>
-            </div>
+        {{-- Brands Section - Professional Design --}}
+        <div class="bg-white rounded-2xl p-6 sm:p-8 mb-6 shadow-xl border border-gray-100/60">
+            {{-- Content --}}
+            <div class="relative z-10">
+                <div class="mb-6">
+                    <h2 class="text-2xl sm:text-3xl font-bold mb-2">
+                        <span class="bg-gradient-to-r from-[#76d37a] to-[#93db4d] bg-clip-text text-transparent">Shop at</span>
+                        <span class="text-gray-800"> Our Partner Brands</span>
+                    </h2>
+                    <p class="text-sm sm:text-base text-gray-600">Earn profit share when you shop at these exclusive partner brands</p>
+                </div>
 
-            @if($recentPurchases->count() > 0)
-                <div class="overflow-x-auto -mx-4 sm:mx-0">
-                    <table class="w-full">
-                        <thead>
-                            <tr class="border-b-2 border-gray-200">
-                                <th class="text-left text-xs text-gray-500 uppercase tracking-wide pb-3 px-4 sm:px-0">Brand</th>
-                                <th class="text-left text-xs text-gray-500 uppercase tracking-wide pb-3">Amount</th>
-                                <th class="text-left text-xs text-gray-500 uppercase tracking-wide pb-3">Date</th>
-                                <th class="text-left text-xs text-gray-500 uppercase tracking-wide pb-3">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody class="text-sm">
-                            @foreach($recentPurchases as $purchase)
-                            <tr class="border-b border-gray-100 hover:bg-green-50/50 transition-colors">
-                                <td class="py-4 px-4 sm:px-0">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center font-semibold text-gray-600 flex-shrink-0">
-                                            {{ substr($purchase->brand->name ?? 'N', 0, 1) }}
+                {{-- Brand Carousel with Swiper --}}
+                <div id="brands-carousel" class="relative">
+                    <div class="swiper brands-swiper">
+                        <div class="swiper-wrapper">
+                            @if($brands && $brands->count() > 0)
+                                @foreach($brands as $brand)
+                                    <div class="swiper-slide">
+                                        <div class="brand-card">
+                                            @if($brand->logo_path)
+                                                <img src="{{ $brand->logo_path }}"
+                                                     alt="{{ $brand->name }}"
+                                                     loading="lazy"
+                                                     onerror="this.src='data:image/svg+xml,{{ rawurlencode('<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'100\' height=\'100\'><rect width=\'100\' height=\'100\' fill=\'#f3f4f6\'/><text x=\'50%\' y=\'50%\' dominant-baseline=\'middle\' text-anchor=\'middle\' font-family=\'Arial\' font-size=\'40\' fill=\'#6b7280\'>'. strtoupper(substr($brand->name, 0, 1)) .'</text></svg>') }}';">
+                                            @else
+                                                <div class="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center text-3xl font-bold text-gray-600">
+                                                    {{ strtoupper(substr($brand->name, 0, 1)) }}
+                                                </div>
+                                            @endif
+                                            <p class="text-sm font-semibold text-gray-800 text-center mt-3">{{ $brand->name }}</p>
+                                            @if($brand->category)
+                                                <p class="text-xs text-gray-500 text-center mt-1">{{ $brand->category->name }}</p>
+                                            @endif
                                         </div>
-                                        <span class="font-medium text-gray-800">{{ $purchase->brand->name ?? 'Unknown' }}</span>
                                     </div>
-                                </td>
-                                <td class="py-4 font-medium text-gray-800">Rs {{ number_format($purchase->amount, 0) }}</td>
-                                <td class="py-4 text-gray-600">{{ $purchase->purchase_date->format('M d') }}</td>
-                                <td class="py-4">
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold
-                                        @if($purchase->status === 'completed') bg-green-100 text-green-700
-                                        @elseif($purchase->status === 'pending') bg-yellow-100 text-yellow-700
-                                        @elseif($purchase->status === 'processing') bg-green-100 text-green-700
-                                        @else bg-red-100 text-red-700 @endif">
-                                        {{ ucfirst($purchase->status) }}
-                                    </span>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                                @endforeach
+                            @else
+                                <div class="swiper-slide w-full">
+                                    <div class="text-center py-8 text-gray-500">No brands available at the moment</div>
+                                </div>
+                            @endif
+                        </div>
+                        {{-- Navigation Arrows --}}
+                        <div class="swiper-button-next !w-12 !h-12 !bg-white !rounded-full !shadow-xl after:!text-[#76d37a] after:!text-xl after:!font-bold hover:!scale-110 !transition-all"></div>
+                        <div class="swiper-button-prev !w-12 !h-12 !bg-white !rounded-full !shadow-xl after:!text-[#76d37a] after:!text-xl after:!font-bold hover:!scale-110 !transition-all"></div>
+                    </div>
                 </div>
-            @else
-                <div class="text-center py-12">
-                    <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
-                    </svg>
-                    <p class="text-gray-500">No purchases yet</p>
-                </div>
-            @endif
+            </div>
         </div>
 
-        {{-- Recent Withdrawals --}}
-        <div class="bg-white rounded-xl p-4 sm:p-6 mb-6 shadow-sm border border-gray-200/60">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-lg font-bold bg-gradient-to-r from-gray-800 to-green-900 bg-clip-text text-transparent">Recent Withdrawals</h2>
-                <a href="{{ route('customer.wallet') }}" class="text-sm text-[#76d37a] font-semibold hover:text-[#5cb85c] transition-colors">View All →</a>
-            </div>
+        {{-- Promotions Section - Professional Design --}}
+        <div class="relative rounded-2xl mb-6 shadow-xl bg-white border border-gray-100/60">
+            {{-- Content --}}
+            <div class="relative z-10 p-6 sm:p-8">
+                <div class="text-center mb-8">
+                    <div class="inline-block mb-3">
+                        <span class="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-[#76d37a] to-[#93db4d] text-white text-sm font-semibold shadow-lg">
+                            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
+                                <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
+                            </svg>
+                            Limited Time Offers
+                        </span>
+                    </div>
+                    <h2 class="text-3xl sm:text-4xl font-bold text-gray-800 mb-3">
+                        Special Promotions
+                    </h2>
+                    <p class="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
+                        Enjoy up to <span class="text-2xl font-bold text-[#76d37a]">60% OFF</span> on your favorite brands nationwide, all year long
+                    </p>
+                </div>
 
-            @if($recentWithdrawals->count() > 0)
-                <div class="overflow-x-auto -mx-4 sm:mx-0">
-                    <table class="w-full">
-                        <thead>
-                            <tr class="border-b-2 border-gray-200">
-                                <th class="text-left text-xs text-gray-500 uppercase tracking-wide pb-3 px-4 sm:px-0">Amount</th>
-                                <th class="text-left text-xs text-gray-500 uppercase tracking-wide pb-3">Date</th>
-                                <th class="text-left text-xs text-gray-500 uppercase tracking-wide pb-3">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody class="text-sm">
-                            @foreach($recentWithdrawals as $withdrawal)
-                            <tr class="border-b border-gray-100 hover:bg-green-50/50 transition-colors">
-                                <td class="py-4 font-semibold text-gray-800 px-4 sm:px-0">Rs {{ number_format($withdrawal->amount, 0) }}</td>
-                                <td class="py-4 text-gray-600">{{ $withdrawal->created_at->format('M d, Y') }}</td>
-                                <td class="py-4">
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold
-                                        @if($withdrawal->status === 'completed') bg-green-100 text-green-700
-                                        @elseif($withdrawal->status === 'pending') bg-yellow-100 text-yellow-700
-                                        @elseif($withdrawal->status === 'processing') bg-green-100 text-green-700
-                                        @else bg-red-100 text-red-700 @endif">
-                                        {{ ucfirst($withdrawal->status) }}
-                                    </span>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                {{-- Promotions Grid --}}
+                <div id="promotions-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+                    @if($promotions && $promotions->count() > 0)
+                        @foreach($promotions as $promotion)
+                            <div class="promotion-card">
+                                <div class="promotion-logo">
+                                    <img src="{{ $promotion->logo_url ?? 'https://via.placeholder.com/300x200/ffffff/76d37a?text=' . urlencode($promotion->brand_name ?? 'Promotion') }}"
+                                         alt="{{ $promotion->brand_name ?? 'Promotion' }}"
+                                         loading="lazy"
+                                         onerror="this.src='https://via.placeholder.com/300x200/ffffff/76d37a?text={{ urlencode($promotion->brand_name ?? 'Promotion') }}';">
+                                </div>
+                                <div class="promotion-discount">
+                                    <span class="discount-text">{{ $promotion->discount_text }}</span>
+                                </div>
+                            </div>
+                        @endforeach
+                    @else
+                        <div class="col-span-full text-center py-8">
+                            <div class="bg-gray-50 rounded-xl p-6">
+                                <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M2 6a2 2 0 012-2h12a2 2 0 012 2v2a2 2 0 100 4v2a2 2 0 01-2 2H4a2 2 0 01-2-2v-2a2 2 0 100-4V6z" />
+                                </svg>
+                                <p class="text-gray-800 font-semibold text-lg mb-2">No Promotions Available</p>
+                                <p class="text-gray-600 text-sm">Check back regularly for exclusive deals and offers</p>
+                            </div>
+                        </div>
+                    @endif
                 </div>
-            @else
-                <div class="text-center py-12">
-                    <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    <p class="text-gray-500">No withdrawals yet</p>
-                </div>
-            @endif
+            </div>
         </div>
 
     </main>
@@ -558,6 +783,44 @@
                 }
             }
         });
+    </script>
+
+    {{-- Swiper JS - Load before initialization --}}
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+
+    <script>
+        // ===== BRANDS CAROUSEL INITIALIZATION =====
+
+        // Initialize Swiper carousel for brands (server-side rendered)
+        @if($brands && $brands->count() > 0)
+        const brandsSwiper = new Swiper('.brands-swiper', {
+            slidesPerView: 2,
+            spaceBetween: 16,
+            loop: true,
+            autoplay: {
+                delay: 3000,
+                disableOnInteraction: false,
+            },
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+            breakpoints: {
+                640: {
+                    slidesPerView: 3,
+                    spaceBetween: 20,
+                },
+                768: {
+                    slidesPerView: 4,
+                    spaceBetween: 24,
+                },
+                1024: {
+                    slidesPerView: 5,
+                    spaceBetween: 28,
+                },
+            },
+        });
+        @endif
     </script>
 
 </body>
