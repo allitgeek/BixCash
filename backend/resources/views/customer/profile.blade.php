@@ -20,9 +20,10 @@
                 </a>
                 <h1 class="text-base sm:text-lg font-bold whitespace-nowrap">My Profile</h1>
             </div>
-            <a href="{{ route('customer.dashboard') }}" class="text-white hover:opacity-80 transition-opacity">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+            {{-- Back to Dashboard Button --}}
+            <a href="{{ route('customer.dashboard') }}" class="w-10 h-10 rounded-full bg-white flex items-center justify-center hover:shadow-xl hover:scale-110 transition-all duration-200 shadow-md flex-shrink-0">
+                <svg class="w-5 h-5 text-[#76d37a]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                 </svg>
             </a>
         </div>
