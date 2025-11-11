@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\ContactController;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
@@ -23,6 +23,7 @@ Route::get('/login', function () {
             } else {
                 // Rejected or inactive
                 Auth::logout();
+
                 return redirect()->route('login')->withErrors(['phone' => 'Your partner account is not active.']);
             }
         } elseif ($user->isCustomer()) {
@@ -31,6 +32,7 @@ Route::get('/login', function () {
             return redirect()->route('admin.dashboard');
         }
     }
+
     return view('auth.login');
 })->name('login');
 
@@ -56,13 +58,24 @@ Route::prefix('customer')->name('customer.')->middleware(['auth', 'customer.role
     // Profile
     Route::get('/profile', [CustomerDashboard::class, 'profile'])->name('profile');
     Route::post('/profile', [CustomerDashboard::class, 'updateProfile'])->name('profile.update');
-    Route::post('/profile/bank-details/request-otp', [CustomerDashboard::class, 'requestBankDetailsOtp'])->name('bank-details.request-otp');
-    Route::post('/profile/bank-details/verify-otp', [CustomerDashboard::class, 'verifyBankDetailsOtp'])->name('bank-details.verify-otp');
-    Route::get('/profile/bank-details/cancel-otp', [CustomerDashboard::class, 'cancelBankDetailsOtp'])->name('bank-details.cancel-otp');
+
+    // Bank Details (Rate Limited)
+    Route::post('/profile/bank-details/request-otp', [CustomerDashboard::class, 'requestBankDetailsOtp'])
+        ->name('bank-details.request-otp')
+        ->middleware('throttle:3,60'); // 3 attempts per hour
+    Route::post('/profile/bank-details/verify-otp', [CustomerDashboard::class, 'verifyBankDetailsOtp'])
+        ->name('bank-details.verify-otp')
+        ->middleware('throttle:5,60'); // 5 verification attempts per hour
+    Route::post('/profile/bank-details/verify-tpin', [CustomerDashboard::class, 'verifyBankDetailsTpin'])
+        ->name('bank-details.verify-tpin')
+        ->middleware('throttle:5,60'); // 5 TPIN verification attempts per hour
+    Route::get('/profile/bank-details/cancel-otp', [CustomerDashboard::class, 'cancelBankDetailsOtp'])
+        ->name('bank-details.cancel-otp');
 
     // Wallet
     Route::get('/wallet', [CustomerDashboard::class, 'wallet'])->name('wallet');
     Route::post('/wallet/withdraw', [CustomerDashboard::class, 'requestWithdrawal'])->name('wallet.withdraw');
+    Route::post('/wallet/withdraw/{id}/cancel', [CustomerDashboard::class, 'cancelWithdrawal'])->name('wallet.cancel');
 
     // Purchase History
     Route::get('/purchases', [CustomerDashboard::class, 'purchaseHistory'])->name('purchases');

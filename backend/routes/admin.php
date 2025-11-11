@@ -13,6 +13,8 @@ use App\Http\Controllers\Admin\EmailSettingController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\PartnerController;
 use App\Http\Controllers\Admin\ContextController;
+use App\Http\Controllers\Admin\WithdrawalController;
+use App\Http\Controllers\Admin\WithdrawalSettingsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -132,6 +134,19 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('/email', [EmailSettingController::class, 'index'])->name('email');
             Route::put('/email', [EmailSettingController::class, 'update'])->name('email.update');
             Route::post('/email/test', [EmailSettingController::class, 'test'])->name('email.test');
+
+            // Withdrawal Settings
+            Route::get('/withdrawals', [WithdrawalSettingsController::class, 'index'])->name('withdrawals');
+            Route::post('/withdrawals', [WithdrawalSettingsController::class, 'update'])->name('withdrawals.update');
+        });
+
+        // Withdrawal Management (Super Admin & Admin)
+        Route::prefix('withdrawals')->name('withdrawals.')->group(function () {
+            Route::get('/', [WithdrawalController::class, 'index'])->name('index');
+            Route::get('/{id}', [WithdrawalController::class, 'show'])->name('show');
+            Route::post('/{id}/approve', [WithdrawalController::class, 'approve'])->name('approve');
+            Route::post('/{id}/reject', [WithdrawalController::class, 'reject'])->name('reject');
+            Route::post('/{id}/processing', [WithdrawalController::class, 'markProcessing'])->name('processing');
         });
 
         // Settings (Super Admin only)
