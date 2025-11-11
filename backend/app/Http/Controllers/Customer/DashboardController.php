@@ -594,6 +594,15 @@ class DashboardController extends Controller
             ->first()
             ->update(['reference_id' => $withdrawal->id]);
 
+        // Send email notification
+        try {
+            if ($user->email) {
+                \Mail::to($user->email)->send(new \App\Mail\WithdrawalRequestedMail($withdrawal));
+            }
+        } catch (\Exception $e) {
+            \Log::error('Failed to send withdrawal request email: ' . $e->getMessage());
+        }
+
         $message = 'Withdrawal request submitted successfully! Amount has been deducted from your wallet.';
 
         // Add fraud warning if flagged

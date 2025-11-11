@@ -78,15 +78,43 @@
     <div class="card">
         <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
             <h3 class="card-title">Withdrawal Requests ({{ $withdrawals->total() }})</h3>
-            <a href="{{ route('admin.settings.withdrawals') }}" style="background: #28a745; color: white; padding: 0.5rem 1rem; border-radius: 4px; text-decoration: none;">
-                ⚙️ Settings
-            </a>
+            <div style="display: flex; gap: 0.5rem;">
+                <a href="{{ route('admin.withdrawals.export', request()->query()) }}" style="background: #17a2b8; color: white; padding: 0.5rem 1rem; border-radius: 4px; text-decoration: none;">
+                    📥 Export CSV
+                </a>
+                <a href="{{ route('admin.settings.withdrawals') }}" style="background: #28a745; color: white; padding: 0.5rem 1rem; border-radius: 4px; text-decoration: none;">
+                    ⚙️ Settings
+                </a>
+            </div>
         </div>
         <div class="card-body" style="padding: 0;">
             @if($withdrawals->count() > 0)
+                <!-- Bulk Actions Bar (hidden by default) -->
+                <div id="bulkActionsBar" style="display: none; padding: 1rem; background: #f8f9fa; border-bottom: 2px solid #dee2e6;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <span id="selectedCount" style="font-weight: 600; color: #333;">0 selected</span>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button onclick="showBulkApproveModal()" style="background: #28a745; color: white; padding: 0.5rem 1rem; border: none; border-radius: 4px; cursor: pointer; font-weight: 500;">
+                                ✅ Bulk Approve
+                            </button>
+                            <button onclick="showBulkRejectModal()" style="background: #dc3545; color: white; padding: 0.5rem 1rem; border: none; border-radius: 4px; cursor: pointer; font-weight: 500;">
+                                ❌ Bulk Reject
+                            </button>
+                            <button onclick="clearSelection()" style="background: #6c757d; color: white; padding: 0.5rem 1rem; border: none; border-radius: 4px; cursor: pointer;">
+                                Clear
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 <table style="width: 100%; border-collapse: collapse;">
                     <thead style="background: #f8f9fa;">
                         <tr>
+                            <th style="padding: 1rem; text-align: center; border-bottom: 2px solid #dee2e6; width: 50px;">
+                                <input type="checkbox" id="selectAll" onclick="toggleAllCheckboxes(this)" style="width: 18px; height: 18px; cursor: pointer;">
+                            </th>
                             <th style="padding: 1rem; text-align: left; border-bottom: 2px solid #dee2e6;">ID</th>
                             <th style="padding: 1rem; text-align: left; border-bottom: 2px solid #dee2e6;">Customer</th>
                             <th style="padding: 1rem; text-align: right; border-bottom: 2px solid #dee2e6;">Amount</th>
@@ -99,6 +127,11 @@
                     <tbody>
                         @foreach($withdrawals as $withdrawal)
                             <tr style="border-bottom: 1px solid #dee2e6;">
+                                <td style="padding: 1rem; text-align: center;">
+                                    @if(in_array($withdrawal->status, ['pending', 'processing']))
+                                        <input type="checkbox" class="withdrawal-checkbox" value="{{ $withdrawal->id }}" onchange="updateSelection()" style="width: 18px; height: 18px; cursor: pointer;">
+                                    @endif
+                                </td>
                                 <td style="padding: 1rem;">
                                     <strong>#{{ $withdrawal->id }}</strong>
                                 </td>
@@ -157,4 +190,113 @@
             @endif
         </div>
     </div>
+
+    <!-- Bulk Approve Modal -->
+    <div id="bulkApproveModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 2rem; border-radius: 8px; max-width: 500px; width: 90%;">
+            <h3 style="margin-top: 0;">Bulk Approve Withdrawals</h3>
+            <form method="POST" action="{{ route('admin.withdrawals.bulk-approve') }}" onsubmit="return confirm('Approve selected withdrawals?');">
+                @csrf
+                <input type="hidden" name="withdrawal_ids" id="bulkApproveIds">
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Bank Reference Prefix *</label>
+                    <input type="text" name="bank_reference_prefix" required placeholder="e.g., BATCH-2024-001" style="width: 100%; padding: 0.5rem; border: 1px solid #dee2e6; border-radius: 4px;">
+                    <small style="color: #666;">Sequential numbers will be appended (e.g., BATCH-2024-001-0001, -0002, etc.)</small>
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Payment Date *</label>
+                    <input type="date" name="payment_date" required max="{{ date('Y-m-d') }}" style="width: 100%; padding: 0.5rem; border: 1px solid #dee2e6; border-radius: 4px;">
+                </div>
+                <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
+                    <button type="button" onclick="hideBulkApproveModal()" style="background: #6c757d; color: white; padding: 0.5rem 1rem; border: none; border-radius: 4px; cursor: pointer;">Cancel</button>
+                    <button type="submit" style="background: #28a745; color: white; padding: 0.5rem 1rem; border: none; border-radius: 4px; cursor: pointer; font-weight: 500;">✅ Approve All</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bulk Reject Modal -->
+    <div id="bulkRejectModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 2rem; border-radius: 8px; max-width: 500px; width: 90%;">
+            <h3 style="margin-top: 0;">Bulk Reject Withdrawals</h3>
+            <form method="POST" action="{{ route('admin.withdrawals.bulk-reject') }}" onsubmit="return confirm('Reject selected withdrawals? Amounts will be refunded.');">
+                @csrf
+                <input type="hidden" name="withdrawal_ids" id="bulkRejectIds">
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Rejection Reason *</label>
+                    <textarea name="rejection_reason" required rows="4" placeholder="Explain why these withdrawals are being rejected..." style="width: 100%; padding: 0.5rem; border: 1px solid #dee2e6; border-radius: 4px; resize: vertical;"></textarea>
+                    <small style="color: #666;">This reason will be shown to all selected customers</small>
+                </div>
+                <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
+                    <button type="button" onclick="hideBulkRejectModal()" style="background: #6c757d; color: white; padding: 0.5rem 1rem; border: none; border-radius: 4px; cursor: pointer;">Cancel</button>
+                    <button type="submit" style="background: #dc3545; color: white; padding: 0.5rem 1rem; border: none; border-radius: 4px; cursor: pointer; font-weight: 500;">❌ Reject All</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function toggleAllCheckboxes(source) {
+            const checkboxes = document.querySelectorAll('.withdrawal-checkbox');
+            checkboxes.forEach(cb => cb.checked = source.checked);
+            updateSelection();
+        }
+
+        function updateSelection() {
+            const checkboxes = document.querySelectorAll('.withdrawal-checkbox:checked');
+            const count = checkboxes.length;
+            const bulkBar = document.getElementById('bulkActionsBar');
+            const countSpan = document.getElementById('selectedCount');
+
+            countSpan.textContent = count + ' selected';
+            bulkBar.style.display = count > 0 ? 'block' : 'none';
+
+            // Update "Select All" checkbox state
+            const allCheckboxes = document.querySelectorAll('.withdrawal-checkbox');
+            const selectAll = document.getElementById('selectAll');
+            selectAll.checked = allCheckboxes.length > 0 && count === allCheckboxes.length;
+        }
+
+        function clearSelection() {
+            document.querySelectorAll('.withdrawal-checkbox').forEach(cb => cb.checked = false);
+            document.getElementById('selectAll').checked = false;
+            updateSelection();
+        }
+
+        function showBulkApproveModal() {
+            const selected = Array.from(document.querySelectorAll('.withdrawal-checkbox:checked')).map(cb => cb.value);
+            if (selected.length === 0) {
+                alert('Please select at least one withdrawal');
+                return;
+            }
+            document.getElementById('bulkApproveIds').value = JSON.stringify(selected);
+            document.getElementById('bulkApproveModal').style.display = 'flex';
+        }
+
+        function hideBulkApproveModal() {
+            document.getElementById('bulkApproveModal').style.display = 'none';
+        }
+
+        function showBulkRejectModal() {
+            const selected = Array.from(document.querySelectorAll('.withdrawal-checkbox:checked')).map(cb => cb.value);
+            if (selected.length === 0) {
+                alert('Please select at least one withdrawal');
+                return;
+            }
+            document.getElementById('bulkRejectIds').value = JSON.stringify(selected);
+            document.getElementById('bulkRejectModal').style.display = 'flex';
+        }
+
+        function hideBulkRejectModal() {
+            document.getElementById('bulkRejectModal').style.display = 'none';
+        }
+
+        // Close modals when clicking outside
+        document.getElementById('bulkApproveModal')?.addEventListener('click', function(e) {
+            if (e.target === this) hideBulkApproveModal();
+        });
+        document.getElementById('bulkRejectModal')?.addEventListener('click', function(e) {
+            if (e.target === this) hideBulkRejectModal();
+        });
+    </script>
 @endsection

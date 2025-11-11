@@ -143,6 +143,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Withdrawal Management (Super Admin & Admin)
         Route::prefix('withdrawals')->name('withdrawals.')->group(function () {
             Route::get('/', [WithdrawalController::class, 'index'])->name('index');
+            Route::get('/export', [WithdrawalController::class, 'export'])->name('export');
+            Route::post('/bulk-approve', [WithdrawalController::class, 'bulkApprove'])->name('bulk-approve');
+            Route::post('/bulk-reject', [WithdrawalController::class, 'bulkReject'])->name('bulk-reject');
             Route::get('/{id}', [WithdrawalController::class, 'show'])->name('show');
             Route::post('/{id}/approve', [WithdrawalController::class, 'approve'])->name('approve');
             Route::post('/{id}/reject', [WithdrawalController::class, 'reject'])->name('reject');
