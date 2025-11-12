@@ -646,7 +646,6 @@ class DashboardController extends Controller
             $wallet->credit(
                 $withdrawal->amount,
                 'withdrawal_cancelled',
-                'App\Models\WithdrawalRequest',
                 $withdrawal->id,
                 "Withdrawal request cancelled - Rs. " . number_format($withdrawal->amount, 2) . " refunded"
             );
