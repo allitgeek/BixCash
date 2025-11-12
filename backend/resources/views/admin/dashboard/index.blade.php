@@ -111,8 +111,8 @@
         </div>
     </div>
 
-    {{-- Recent Activity Cards - 3 Column Layout with Navy Accents --}}
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
+    {{-- Recent Activity Cards - 4 Column Layout with Navy Accents --}}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-6">
         {{-- Recent Customers Card --}}
         <div class="bg-white rounded-xl border border-gray-200/60 shadow-sm overflow-hidden hover:border-blue-800/40 hover:shadow-md hover:shadow-blue-900/5 transition-all duration-200">
             <div class="px-5 py-4 border-b border-gray-200/60 bg-gradient-to-r from-blue-50/70 via-blue-900/5 to-transparent">
@@ -201,6 +201,83 @@
                         </li>
                     @endforelse
                 </ul>
+            </div>
+        </div>
+
+        {{-- Recent Withdrawal Requests Card --}}
+        <div class="bg-white rounded-xl border border-gray-200/60 shadow-sm overflow-hidden hover:border-amber-500/40 hover:shadow-md transition-all duration-200">
+            <!-- Header -->
+            <div class="px-5 py-4 border-b border-gray-200/60 bg-gradient-to-r from-amber-50/70 via-blue-900/5 to-transparent">
+                <div class="flex items-center space-x-3">
+                    <div class="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-amber-500 to-orange-600 rounded-lg flex items-center justify-center shadow-md">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-semibold text-gray-900">Recent Withdrawals</h3>
+                        <p class="text-xs text-gray-500 mt-0.5">Latest 5 requests</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="p-4">
+                @if($recentWithdrawals->count() > 0)
+                    <div class="space-y-3">
+                        @foreach($recentWithdrawals as $withdrawal)
+                            <a href="{{ route('admin.withdrawals.show', $withdrawal->id) }}"
+                               class="flex items-start justify-between p-3 rounded-lg border border-gray-100 hover:border-amber-200 hover:bg-amber-50/30 transition-all duration-150 group">
+                                <div class="flex-1 min-w-0">
+                                    <!-- Customer Name -->
+                                    <div class="flex items-center space-x-2 mb-1">
+                                        <p class="text-sm font-medium text-gray-900 truncate group-hover:text-amber-700 transition-colors">
+                                            {{ $withdrawal->user->name }}
+                                        </p>
+                                        <!-- Status Badge -->
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium
+                                            @if($withdrawal->status === 'pending') bg-yellow-100 text-yellow-800
+                                            @elseif($withdrawal->status === 'processing') bg-blue-100 text-blue-800
+                                            @elseif($withdrawal->status === 'completed') bg-green-100 text-green-800
+                                            @elseif($withdrawal->status === 'rejected') bg-red-100 text-red-800
+                                            @else bg-gray-100 text-gray-800
+                                            @endif">
+                                            {{ ucfirst($withdrawal->status) }}
+                                        </span>
+                                    </div>
+                                    <!-- Amount and Date -->
+                                    <div class="flex items-center justify-between">
+                                        <p class="text-sm font-semibold text-amber-600">
+                                            Rs {{ number_format($withdrawal->amount, 0) }}
+                                        </p>
+                                        <p class="text-xs text-gray-500">
+                                            {{ $withdrawal->created_at->diffForHumans() }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </a>
+                        @endforeach
+                    </div>
+
+                    <!-- View All Link -->
+                    <div class="mt-4 pt-3 border-t border-gray-100">
+                        <a href="{{ route('admin.withdrawals.index') }}"
+                           class="flex items-center justify-center text-xs font-medium text-amber-600 hover:text-amber-700 transition-colors group">
+                            <span>View All Withdrawals</span>
+                            <svg class="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </a>
+                    </div>
+                @else
+                    <!-- Empty State -->
+                    <div class="text-center py-8">
+                        <svg class="mx-auto h-12 w-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                        <p class="mt-2 text-sm text-gray-500">No withdrawal requests yet</p>
+                    </div>
+                @endif
             </div>
         </div>
     </div>

@@ -12,6 +12,7 @@ use App\Models\PartnerTransaction;
 use App\Models\SystemSetting;
 use App\Models\ProfitSharingDistribution;
 use App\Models\Wallet;
+use App\Models\WithdrawalRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -67,6 +68,12 @@ class DashboardController extends Controller
             ->limit(5)
             ->get();
 
+        // Get recent withdrawal requests (last 5 with all statuses)
+        $recentWithdrawals = WithdrawalRequest::with('user')
+            ->latest()
+            ->limit(5)
+            ->get();
+
         // Get 7-day data for charts
         $last7Days = collect();
         for ($i = 6; $i >= 0; $i--) {
@@ -108,6 +115,7 @@ class DashboardController extends Controller
             'recentCustomers',
             'recentTransactions',
             'recentPartners',
+            'recentWithdrawals',
             'user',
             'chartLabels',
             'customerChartData',
