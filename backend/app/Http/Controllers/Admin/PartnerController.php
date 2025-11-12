@@ -8,6 +8,7 @@ use App\Models\PartnerProfile;
 use App\Models\PartnerTransaction;
 use App\Models\Role;
 use App\Models\SystemSetting;
+use App\Services\FirebaseOtpService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -37,6 +38,7 @@ class PartnerController extends Controller
             'city' => 'nullable|string|max:100',
             'auto_approve' => 'nullable|boolean',
             'logo' => 'nullable|image|mimes:jpeg,jpg,png|max:2048', // Max 2MB
+            'partner_pin' => 'nullable|string|regex:/^[0-9]{4}$/', // Optional 4-digit PIN
         ]);
 
         // Format phone number to E.164
@@ -70,6 +72,9 @@ class PartnerController extends Controller
             $logoPath = $request->file('logo')->store('partner-logos', 'public');
         }
 
+        // Check if phone was verified via OTP
+        $phoneVerified = session('partner_phone_verified') === $phone;
+
         // Create user account
         $user = User::create([
             'name' => $validated['contact_person_name'],
@@ -77,7 +82,16 @@ class PartnerController extends Controller
             'email' => $validated['email'] ?? null,
             'role_id' => $partnerRole->id,
             'is_active' => $isActive,
+            'phone_verified_at' => $phoneVerified ? now() : null,
         ]);
+
+        // Set PIN if provided
+        if ($request->filled('partner_pin')) {
+            $user->setPin($validated['partner_pin']);
+        }
+
+        // Clear verification session data
+        session()->forget(['partner_phone_verified', 'partner_phone_verified_at']);
 
         // Create partner profile
         $partnerProfile = PartnerProfile::create([
@@ -100,6 +114,89 @@ class PartnerController extends Controller
 
         return redirect()->route('admin.partners.show', $user->id)
             ->with('success', $message);
+    }
+
+    /**
+     * Send OTP for partner registration phone verification
+     */
+    public function sendRegistrationOtp(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'phone' => 'required|string|regex:/^[0-9]{10}$/',
+            ]);
+
+            // Format phone to E.164
+            $phone = '+92' . $validated['phone'];
+
+            // Send OTP using FirebaseOtpService
+            $otpService = app(FirebaseOtpService::class);
+            $result = $otpService->sendOtp($phone, 'partner_registration');
+
+            if ($result['success']) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'OTP sent successfully to ' . $phone,
+                    'phone' => $phone,
+                ]);
+            }
+
+            return response()->json([
+                'success' => false,
+                'message' => $result['message'] ?? 'Failed to send OTP',
+            ], 400);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Verify OTP for partner registration
+     */
+    public function verifyRegistrationOtp(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'phone' => 'required|string|regex:/^[0-9]{10}$/',
+                'otp' => 'required|string|size:6',
+            ]);
+
+            // Format phone to E.164
+            $phone = '+92' . $validated['phone'];
+
+            // Verify OTP using FirebaseOtpService
+            $otpService = app(FirebaseOtpService::class);
+            $result = $otpService->verifyOtp($phone, $validated['otp'], 'partner_registration');
+
+            if ($result['success']) {
+                // Store verification in session
+                session([
+                    'partner_phone_verified' => $phone,
+                    'partner_phone_verified_at' => now()->toDateTimeString(),
+                ]);
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Phone verified successfully!',
+                    'phone' => $phone,
+                ]);
+            }
+
+            return response()->json([
+                'success' => false,
+                'message' => $result['message'] ?? 'Invalid or expired OTP',
+            ], 400);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**

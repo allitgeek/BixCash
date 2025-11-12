@@ -100,6 +100,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('/', [PartnerController::class, 'index'])->name('index');
             Route::get('/create', [PartnerController::class, 'create'])->name('create');
             Route::post('/', [PartnerController::class, 'store'])->name('store');
+            Route::post('/send-registration-otp', [PartnerController::class, 'sendRegistrationOtp'])->name('send-registration-otp');
+            Route::post('/verify-registration-otp', [PartnerController::class, 'verifyRegistrationOtp'])->name('verify-registration-otp');
             Route::get('/pending', [PartnerController::class, 'pendingApplications'])->name('pending');
             Route::get('/{partner}', [PartnerController::class, 'show'])->name('show');
             Route::get('/{partner}/edit', [PartnerController::class, 'edit'])->name('edit');
