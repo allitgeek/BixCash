@@ -169,10 +169,14 @@ class WithdrawalController extends Controller
             $wallet->credit(
                 $withdrawal->amount,
                 'withdrawal_rejected',
-                'App\Models\WithdrawalRequest',
                 $withdrawal->id,
                 "Withdrawal rejected: {$validated['rejection_reason']}"
             );
+
+            // Fix the totals: This is a refund, not new earnings
+            $wallet->total_earned -= $withdrawal->amount;  // Remove from earned (was incorrectly added by credit())
+            $wallet->total_withdrawn -= $withdrawal->amount;  // Reverse the withdrawal that never happened
+            $wallet->save();
 
             // Update withdrawal request
             $withdrawal->update([

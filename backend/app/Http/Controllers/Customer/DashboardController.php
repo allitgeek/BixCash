@@ -650,6 +650,11 @@ class DashboardController extends Controller
                 "Withdrawal request cancelled - Rs. " . number_format($withdrawal->amount, 2) . " refunded"
             );
 
+            // Fix the totals: This is a refund, not new earnings
+            $wallet->total_earned -= $withdrawal->amount;  // Remove from earned (was incorrectly added by credit())
+            $wallet->total_withdrawn -= $withdrawal->amount;  // Reverse the withdrawal that never happened
+            $wallet->save();
+
             // Update withdrawal status
             $withdrawal->update(['status' => 'cancelled']);
 
