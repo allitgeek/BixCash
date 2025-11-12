@@ -598,7 +598,7 @@ class DashboardController extends Controller
 
         // Update the wallet transaction with the withdrawal reference ID
         $wallet->transactions()
-            ->where('type', 'withdrawal_pending')
+            ->where('transaction_type', 'withdrawal_pending')
             ->whereNull('reference_id')
             ->latest()
             ->first()
