@@ -576,8 +576,7 @@ class DashboardController extends Controller
             $wallet->debit(
                 $validated['amount'],
                 'withdrawal_pending',
-                'App\Models\WithdrawalRequest',
-                null, // Will update with withdrawal ID after creation
+                null, // referenceId - will be set after withdrawal request is created
                 "Withdrawal request for Rs. " . number_format($validated['amount'], 2)
             );
         } catch (\Exception $e) {
