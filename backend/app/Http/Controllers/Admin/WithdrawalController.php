@@ -119,10 +119,11 @@ class WithdrawalController extends Controller
 
             // Create wallet transaction for completed withdrawal
             $withdrawal->user->wallet->transactions()->create([
-                'type' => 'withdrawal_completed',
+                'user_id' => $withdrawal->user_id,
+                'transaction_type' => 'withdrawal_completed',
                 'amount' => -$withdrawal->amount,
+                'balance_before' => $withdrawal->user->wallet->balance,
                 'balance_after' => $withdrawal->user->wallet->balance,
-                'reference_type' => 'App\Models\WithdrawalRequest',
                 'reference_id' => $withdrawal->id,
                 'description' => "Withdrawal completed - Bank Ref: {$validated['bank_reference']}",
             ]);
