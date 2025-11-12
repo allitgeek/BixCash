@@ -183,7 +183,7 @@
                     {{-- Table Body --}}
                     <tbody class="bg-white divide-y divide-gray-200">
                         {{-- Level 1 --}}
-                        <tr class="hover:bg-blue-50/50 transition-colors duration-150" data-level="1" data-customer-count="{{ $levels[1]['total'] ?? 0 }}">
+                        <tr class="hover:bg-blue-50/50 transition-colors duration-150" data-level="1" data-customer-count="{{ $levels[1]['active'] ?? 0 }}">
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900 border-r border-gray-200">
                                 1
                             </td>
@@ -232,7 +232,7 @@
                         </tr>
 
                         {{-- Level 2 --}}
-                        <tr class="bg-gray-50/50 hover:bg-blue-50/50 transition-colors duration-150" data-level="2" data-customer-count="{{ $levels[2]['total'] ?? 0 }}">
+                        <tr class="bg-gray-50/50 hover:bg-blue-50/50 transition-colors duration-150" data-level="2" data-customer-count="{{ $levels[2]['active'] ?? 0 }}">
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900 border-r border-gray-200">
                                 2
                             </td>
@@ -281,7 +281,7 @@
                         </tr>
 
                         {{-- Level 3 --}}
-                        <tr class="hover:bg-blue-50/50 transition-colors duration-150" data-level="3" data-customer-count="{{ $levels[3]['total'] ?? 0 }}">
+                        <tr class="hover:bg-blue-50/50 transition-colors duration-150" data-level="3" data-customer-count="{{ $levels[3]['active'] ?? 0 }}">
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900 border-r border-gray-200">
                                 3
                             </td>
@@ -330,7 +330,7 @@
                         </tr>
 
                         {{-- Level 4 --}}
-                        <tr class="bg-gray-50/50 hover:bg-blue-50/50 transition-colors duration-150" data-level="4" data-customer-count="{{ $levels[4]['total'] ?? 0 }}">
+                        <tr class="bg-gray-50/50 hover:bg-blue-50/50 transition-colors duration-150" data-level="4" data-customer-count="{{ $levels[4]['active'] ?? 0 }}">
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900 border-r border-gray-200">
                                 4
                             </td>
@@ -379,7 +379,7 @@
                         </tr>
 
                         {{-- Level 5 --}}
-                        <tr class="hover:bg-blue-50/50 transition-colors duration-150" data-level="5" data-customer-count="{{ $levels[5]['total'] ?? 0 }}">
+                        <tr class="hover:bg-blue-50/50 transition-colors duration-150" data-level="5" data-customer-count="{{ $levels[5]['active'] ?? 0 }}">
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900 border-r border-gray-200">
                                 5
                             </td>
@@ -428,7 +428,7 @@
                         </tr>
 
                         {{-- Level 6 --}}
-                        <tr class="bg-gray-50/50 hover:bg-blue-50/50 transition-colors duration-150" data-level="6" data-customer-count="{{ $levels[6]['total'] ?? 0 }}">
+                        <tr class="bg-gray-50/50 hover:bg-blue-50/50 transition-colors duration-150" data-level="6" data-customer-count="{{ $levels[6]['active'] ?? 0 }}">
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900 border-r border-gray-200">
                                 6
                             </td>
@@ -477,7 +477,7 @@
                         </tr>
 
                         {{-- Level 7 --}}
-                        <tr class="hover:bg-blue-50/50 transition-colors duration-150" data-level="7" data-customer-count="{{ $levels[7]['total'] ?? 0 }}">
+                        <tr class="hover:bg-blue-50/50 transition-colors duration-150" data-level="7" data-customer-count="{{ $levels[7]['active'] ?? 0 }}">
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900 border-r border-gray-200">
                                 7
                             </td>
@@ -601,17 +601,20 @@
         const formattedPercentage = total % 1 === 0 ? total.toString() : total.toFixed(2).replace(/\.?0+$/, '');
         document.getElementById('percentage_total').textContent = formattedPercentage + '%';
 
-        // Optional: Add warning if total is not 100%
+        // Color coding based on validation status
         const totalCell = document.getElementById('percentage_total');
-        if (total !== 100 && total > 0) {
-            totalCell.classList.add('text-orange-600');
-            totalCell.classList.remove('text-gray-900');
-        } else if (total === 100) {
-            totalCell.classList.add('text-green-600');
-            totalCell.classList.remove('text-gray-900', 'text-orange-600');
-        } else {
+        if (total === 0) {
+            // No percentages entered - equal distribution mode
+            totalCell.classList.remove('text-red-600', 'text-green-600');
             totalCell.classList.add('text-gray-900');
-            totalCell.classList.remove('text-orange-600', 'text-green-600');
+        } else if (total === 100) {
+            // Valid - exactly 100%
+            totalCell.classList.remove('text-gray-900', 'text-red-600');
+            totalCell.classList.add('text-green-600');
+        } else {
+            // Invalid - not 100% (changed from orange to red for strict validation)
+            totalCell.classList.remove('text-gray-900', 'text-green-600');
+            totalCell.classList.add('text-red-600');
         }
     }
 
@@ -638,11 +641,32 @@
         let useEqualDistribution = false;
 
         if (percentageTotal === 0) {
-            // All percentages are empty/zero - divide equally by 7
+            // All percentages are empty/zero - use equal distribution
             useEqualDistribution = true;
         } else if (percentageTotal !== 100) {
-            // Percentages entered but don't total 100% - warn user
-            if (!confirm(`Warning: Percentages total ${percentageTotal}% (not 100%). Continue anyway?`)) {
+            // Percentages entered but don't total 100% - HARD BLOCK
+            const formattedTotal = percentageTotal % 1 === 0
+                ? percentageTotal.toString()
+                : percentageTotal.toFixed(2).replace(/\.?0+$/, '');
+
+            alert(`❌ Validation Error\n\nPercentages must total exactly 100%.\nCurrent total: ${formattedTotal}%\n\nPlease adjust the percentages before calculating.`);
+            return;
+        }
+
+        // Count levels with active users (for equal distribution)
+        let activeLevelCount = 0;
+        if (useEqualDistribution) {
+            for (let i = 1; i <= 7; i++) {
+                const row = document.querySelector(`tr[data-level="${i}"]`);
+                const customerCount = parseInt(row.getAttribute('data-customer-count')) || 0;
+                if (customerCount > 0) {
+                    activeLevelCount++;
+                }
+            }
+
+            // Warn if no active users in any level
+            if (activeLevelCount === 0) {
+                alert('Warning: No active users found in any level. Cannot distribute profit.');
                 return;
             }
         }
@@ -654,8 +678,17 @@
             let profitForLevel;
 
             if (useEqualDistribution) {
-                // Equal distribution: divide by 7
-                profitForLevel = amount / 7;
+                // Equal distribution: divide only among levels with active users
+                const row = document.querySelector(`tr[data-level="${i}"]`);
+                const customerCount = parseInt(row.getAttribute('data-customer-count')) || 0;
+
+                if (customerCount === 0) {
+                    // This level has no active users - allocate Rs 0
+                    profitForLevel = 0;
+                } else {
+                    // Divide profit among active levels only
+                    profitForLevel = amount / activeLevelCount;
+                }
             } else {
                 // Percentage-based distribution
                 const percentage = percentages[i - 1];
@@ -688,8 +721,8 @@
             const amountEditBtn = amountCell.querySelector('.edit-btn');
 
             if (customerCount === 0) {
-                amountValueSpan.textContent = 'N/A (0 customers)';
-                amountEditBtn.classList.add('hidden'); // Hide edit button if no customers
+                amountValueSpan.textContent = 'N/A (0 active users)';
+                amountEditBtn.classList.add('hidden'); // Hide edit button if no active users
             } else {
                 const amountPerCustomer = profitForLevel / customerCount;
                 const formattedAmount = amountPerCustomer.toLocaleString('en-US', {
@@ -957,7 +990,7 @@
         const amountEditBtn = amountCell.querySelector('.edit-btn');
 
         if (customerCount === 0) {
-            amountValueSpan.textContent = 'N/A (0 customers)';
+            amountValueSpan.textContent = 'N/A (0 active users)';
             amountEditBtn.classList.add('hidden');
         } else {
             const amountPerCustomer = profitForLevel / customerCount;
