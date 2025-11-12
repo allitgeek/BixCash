@@ -51,10 +51,38 @@
 
                         {{-- Info - Smaller Text --}}
                         <div class="flex-1">
-                            <h2 class="text-xl font-bold text-white mb-1">
+                            <h2 class="text-xl font-bold text-white mb-2">
                                 {{ $user->name }}
                             </h2>
-                            <p class="text-green-100 text-xs">Membership# {{ ltrim($user->phone, '+') }}</p>
+
+                            {{-- Refined Membership Badge --}}
+                            <div class="inline-flex items-center gap-3 bg-white/15 backdrop-blur-lg rounded-xl px-4 py-2.5 border border-white/25 shadow-lg hover:bg-white/20 transition-all duration-200">
+                                {{-- Premium Member Icon --}}
+                                <div class="flex items-center justify-center w-9 h-9 rounded-lg bg-gradient-to-br from-yellow-400/30 to-amber-500/30 backdrop-blur-sm border border-yellow-400/40">
+                                    <svg class="w-5 h-5 text-yellow-300" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                                    </svg>
+                                </div>
+
+                                {{-- Membership Info --}}
+                                <div class="flex flex-col">
+                                    <span class="text-white/70 text-[9px] uppercase tracking-[0.1em] font-semibold leading-none mb-1">Member ID</span>
+                                    <span class="text-white font-bold text-lg tracking-wide leading-none" id="membershipNumber" style="font-family: 'Courier New', Consolas, monospace;">
+                                        {{ preg_replace('/^\+?92/', '', $user->phone) }}
+                                    </span>
+                                </div>
+
+                                {{-- Copy Button --}}
+                                <button
+                                    type="button"
+                                    onclick="copyMembershipNumber()"
+                                    class="flex items-center justify-center w-8 h-8 rounded-lg bg-white/15 hover:bg-white/30 border border-white/20 hover:border-white/40 transition-all duration-200 group"
+                                    title="Copy to clipboard">
+                                    <svg class="w-4 h-4 text-white/80 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>

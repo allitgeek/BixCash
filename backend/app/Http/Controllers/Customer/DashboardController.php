@@ -118,6 +118,16 @@ class DashboardController extends Controller
         $user = Auth::user();
         $profile = CustomerProfile::where('user_id', $user->id)->first();
 
+        // Check if OTP modal session has expired
+        if (session('show_otp_modal') && session('otp_modal_expires_at')) {
+            $expiresAt = session('otp_modal_expires_at');
+            if (now()->timestamp > $expiresAt) {
+                // Session expired, clear it
+                session()->forget(['pending_bank_data', 'show_otp_modal', 'otp_modal_expires_at']);
+                Log::info('OTP modal session expired and cleared', ['user_id' => $user->id]);
+            }
+        }
+
         return view('customer.profile', compact('user', 'profile'));
     }
 
@@ -183,6 +193,7 @@ class DashboardController extends Controller
         session([
             'pending_bank_data' => $validated,
             'show_otp_modal' => true,
+            'otp_modal_expires_at' => now()->addMinutes(10)->timestamp, // Auto-expire after 10 minutes
         ]);
 
         Log::info('Bank details OTP requested', [
@@ -261,7 +272,7 @@ class DashboardController extends Controller
             DB::commit();
 
             // Clear session
-            session()->forget(['pending_bank_data', 'show_otp_modal']);
+            session()->forget(['pending_bank_data', 'show_otp_modal', 'otp_modal_expires_at']);
 
             Log::info('Bank details updated successfully', [
                 'user_id' => $user->id,
@@ -403,7 +414,7 @@ class DashboardController extends Controller
             DB::commit();
 
             // Clear session
-            session()->forget(['pending_bank_data', 'show_otp_modal']);
+            session()->forget(['pending_bank_data', 'show_otp_modal', 'otp_modal_expires_at']);
 
             Log::info('Bank details updated successfully via TPIN', [
                 'user_id' => $user->id,
@@ -435,7 +446,7 @@ class DashboardController extends Controller
     public function cancelBankDetailsOtp()
     {
         // Clear session
-        session()->forget(['pending_bank_data', 'show_otp_modal']);
+        session()->forget(['pending_bank_data', 'show_otp_modal', 'otp_modal_expires_at']);
 
         return redirect()->route('customer.profile');
     }
