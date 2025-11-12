@@ -28,7 +28,14 @@ class CustomerProfile extends Model
         'avatar',
         'is_verified',
         'verified_at',
-        'verified_by'
+        'verified_by',
+        'bank_name',
+        'account_number',
+        'account_title',
+        'iban',
+        'withdrawal_locked_until',
+        'bank_details_last_updated',
+        'profile_completed',
     ];
 
     protected $casts = [
@@ -40,7 +47,10 @@ class CustomerProfile extends Model
         'total_earnings' => 'decimal:2',
         'total_spent' => 'decimal:2',
         'is_verified' => 'boolean',
-        'verified_at' => 'datetime'
+        'verified_at' => 'datetime',
+        'withdrawal_locked_until' => 'datetime',
+        'bank_details_last_updated' => 'datetime',
+        'profile_completed' => 'boolean',
     ];
 
     public function user(): BelongsTo
@@ -63,8 +73,8 @@ class CustomerProfile extends Model
         parent::boot();
 
         static::creating(function ($customer) {
-            if (!$customer->referral_code) {
-                $customer->referral_code = 'BIX' . strtoupper(uniqid());
+            if (! $customer->referral_code) {
+                $customer->referral_code = 'BIX'.strtoupper(uniqid());
             }
         });
     }

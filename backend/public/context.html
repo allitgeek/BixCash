@@ -1,294 +1,94 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BixCash Project Documentation</title>
-    <meta name="description" content="Complete technical documentation for the BixCash Shop to Earn platform">
+    <title>BixCash Documentation</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
-
     <style>
-        /* Custom Animations */
-        @keyframes gradient-shift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
+        /* Clean, simple styling - no gradients */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-30px) rotate(5deg); }
-        }
-
-        @keyframes shimmer {
-            0% { background-position: -1000px 0; }
-            100% { background-position: 1000px 0; }
-        }
-
-        @keyframes particle-float {
-            0%, 100% { transform: translate(0, 0); opacity: 0; }
-            10%, 90% { opacity: 1; }
-            50% { transform: translate(100px, -100px); }
-        }
-
-        .animated-gradient {
-            background: linear-gradient(-45deg, #021c47, #1e3a8a, #7c3aed, #4f46e5, #06b6d4);
-            background-size: 400% 400%;
-            animation: gradient-shift 15s ease infinite;
-        }
-
-        .float-animation {
-            animation: float 6s ease-in-out infinite;
-        }
-
-        .shimmer {
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-            background-size: 1000px 100%;
-            animation: shimmer 3s infinite;
-        }
-
-        .particle {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 50%;
-            animation: particle-float 20s infinite;
-        }
-
-        .glass-dark {
-            background: rgba(2, 28, 71, 0.7);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(118, 211, 122, 0.3);
-        }
-
-        .reading-progress {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 0%;
-            height: 4px;
-            background: linear-gradient(90deg, #76d37a, #4ade80, #22c55e);
-            z-index: 9999;
-            transition: width 0.3s ease;
-            box-shadow: 0 0 20px rgba(118, 211, 122, 0.8);
-        }
-
-        .toc-link.active {
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6) !important;
-            color: white !important;
-            transform: translateX(5px);
-            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
-        }
-
-        .code-block-wrapper {
-            position: relative;
-            border-radius: 12px;
-            overflow: hidden;
-            border: 2px solid transparent;
-            background: linear-gradient(#1e293b, #1e293b) padding-box,
-                        linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899) border-box;
-        }
-
-        .copy-button {
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .code-block-wrapper:hover .copy-button {
-            opacity: 1;
-        }
-
-        /* Prose styling for markdown content */
+        /* Prose styling - clean and simple */
         .prose { max-width: none; }
-        .prose h1 { font-size: 3rem; font-weight: 900; background: linear-gradient(135deg, #2563eb, #7c3aed); -webkit-background-clip: text; -webkit-text-fill-color: transparent; border-bottom: 4px solid #e5e7eb; padding-bottom: 1rem; margin-bottom: 2rem; }
-        .prose h2 { font-size: 2rem; font-weight: 800; background: linear-gradient(135deg, #1e40af, #1e3a8a); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-top: 3rem; margin-bottom: 1.5rem; padding-bottom: 0.75rem; border-bottom: 2px solid #dbeafe; scroll-margin-top: 6rem; }
-        .prose h3 { font-size: 1.5rem; font-weight: 700; color: #1f2937; margin-top: 2rem; margin-bottom: 1rem; scroll-margin-top: 6rem; }
-        .prose p { color: #374151; line-height: 1.75; font-size: 1.125rem; margin-bottom: 1rem; }
-        .prose strong { color: #111827; font-weight: 700; background: #fef3c7; padding: 0 0.25rem; border-radius: 0.25rem; }
-        .prose code { color: #2563eb; background: linear-gradient(135deg, #eff6ff, #f5f3ff); padding: 0.25rem 0.5rem; border-radius: 0.5rem; font-size: 0.875rem; border: 1px solid #bfdbfe; }
-        .prose pre { background: linear-gradient(135deg, #1e293b, #0f172a) !important; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3) !important; border-radius: 0.75rem; }
-        .prose a { color: #2563eb; font-weight: 600; text-decoration: none; }
-        .prose a:hover { text-decoration: underline; color: #1e40af; }
-        .prose ul { list-style: none; padding-left: 0; }
-        .prose li { color: #374151; position: relative; padding-left: 1.75rem; margin-bottom: 0.5rem; }
-        .prose li:before { content: '→'; position: absolute; left: 0; color: #22c55e; font-weight: 700; }
-        .prose ol { padding-left: 1.5rem; }
-        .prose blockquote { border-left: 4px solid #3b82f6; background: linear-gradient(135deg, #eff6ff, #f5f3ff); font-style: italic; padding: 1rem 1.5rem; border-radius: 0 0.75rem 0.75rem 0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
-        .prose table { border-collapse: collapse; width: 100%; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); border-radius: 0.75rem; overflow: hidden; }
-        .prose th { background: linear-gradient(135deg, #2563eb, #7c3aed); color: white; font-weight: 700; padding: 1rem; text-align: left; }
-        .prose td { border: 1px solid #e5e7eb; padding: 1rem; transition: background 0.2s; }
-        .prose td:hover { background: #eff6ff; }
-        .prose img { border-radius: 0.75rem; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2); border: 4px solid white; }
+        .prose h1 { font-size: 2.5rem; font-weight: 800; color: #1e3a8a; margin-top: 0; margin-bottom: 2rem; padding-bottom: 0.5rem; border-bottom: 3px solid #e5e7eb; }
+        .prose h2 { font-size: 1.875rem; font-weight: 700; color: #1e40af; margin-top: 3rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid #e5e7eb; }
+        .prose h3 { font-size: 1.5rem; font-weight: 600; color: #1f2937; margin-top: 2rem; margin-bottom: 1rem; }
+        .prose h4 { font-size: 1.25rem; font-weight: 600; color: #374151; margin-top: 1.5rem; margin-bottom: 0.75rem; }
+        .prose p { color: #374151; line-height: 1.75; margin-bottom: 1rem; }
+        .prose strong { color: #111827; font-weight: 600; }
+        .prose code { color: #2563eb; background: #eff6ff; padding: 0.25rem 0.5rem; border-radius: 0.375rem; font-size: 0.875em; }
+        .prose pre { background: #1e293b; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; margin: 1.5rem 0; }
+        .prose pre code { color: #e2e8f0; background: transparent; padding: 0; }
+        .prose a { color: #2563eb; text-decoration: none; }
+        .prose a:hover { text-decoration: underline; }
+        .prose ul { list-style: disc; padding-left: 1.5rem; margin: 1rem 0; }
+        .prose ol { list-style: decimal; padding-left: 1.5rem; margin: 1rem 0; }
+        .prose li { color: #374151; margin-bottom: 0.5rem; }
+        .prose blockquote { border-left: 4px solid #3b82f6; background: #eff6ff; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 0.375rem; }
+        .prose table { border-collapse: collapse; width: 100%; margin: 1.5rem 0; }
+        .prose th { background: #f3f4f6; color: #111827; font-weight: 600; padding: 0.75rem; text-align: left; border: 1px solid #e5e7eb; }
+        .prose td { padding: 0.75rem; border: 1px solid #e5e7eb; }
+        .prose tr:hover { background: #f9fafb; }
+        .prose hr { border: 0; border-top: 1px solid #e5e7eb; margin: 2rem 0; }
 
-        /* Scrollbar */
-        ::-webkit-scrollbar { width: 10px; height: 10px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #76d37a, #22c55e); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, #4ade80, #16a34a); }
+        /* Sidebar */
+        .sidebar { position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+        .sidebar::-webkit-scrollbar { width: 6px; }
+        .sidebar::-webkit-scrollbar-track { background: #f3f4f6; }
+        .sidebar::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+        .sidebar::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+
+        /* Navigation links */
+        .nav-link { display: block; padding: 0.5rem 1rem; color: #4b5563; text-decoration: none; border-radius: 0.375rem; font-size: 0.875rem; transition: all 0.15s; }
+        .nav-link:hover { background: #f3f4f6; color: #1f2937; }
+        .nav-link.active { background: #dbeafe; color: #1e40af; font-weight: 500; }
+        .nav-section { font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #6b7280; padding: 0.5rem 1rem; margin-top: 1rem; }
     </style>
 </head>
-<body class="bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/20 min-h-screen">
+<body class="bg-gray-50">
 
-    <!-- Reading Progress Bar -->
-    <div id="reading-progress" class="reading-progress"></div>
-
-    <div class="container mx-auto px-4 py-8 max-w-[1600px]">
-        <!-- Animated Hero Header -->
-        <div class="animated-gradient rounded-3xl shadow-2xl mb-8 overflow-hidden relative" style="min-height: 320px;">
-            <!-- Particles -->
-            <div class="absolute w-full h-full overflow-hidden">
-                <div class="particle" style="width: 60px; height: 60px; left: 10%; animation-delay: 0s;"></div>
-                <div class="particle" style="width: 40px; height: 40px; left: 30%; animation-delay: 2s;"></div>
-                <div class="particle" style="width: 80px; height: 80px; left: 50%; animation-delay: 4s;"></div>
-                <div class="particle" style="width: 50px; height: 50px; left: 70%; animation-delay: 6s;"></div>
-                <div class="particle" style="width: 70px; height: 70px; left: 90%; animation-delay: 8s;"></div>
-            </div>
-
-            <!-- Shimmer -->
-            <div class="shimmer absolute inset-0 pointer-events-none"></div>
-
-            <div class="relative z-10 p-12">
-                <div class="flex items-center justify-between">
-                    <div class="flex-1">
-                        <div class="flex items-center gap-4 mb-6">
-                            <div class="w-20 h-20 bg-white/20 rounded-3xl flex items-center justify-center backdrop-blur-sm shadow-2xl">
-                                <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                                </svg>
-                            </div>
-                            <div>
-                                <h1 class="text-6xl font-black text-white tracking-tight drop-shadow-lg">BixCash</h1>
-                                <p class="text-2xl text-white/95 font-bold mt-1">Project Documentation</p>
-                            </div>
-                        </div>
-
-                        <p class="text-white/90 text-xl mb-8 max-w-3xl leading-relaxed">
-                            Complete technical documentation, architecture details, and development guide for the BixCash "Shop to Earn" platform.
-                        </p>
-
-                        <div class="flex flex-wrap gap-4">
-                            <div class="bg-white/20 backdrop-blur-sm px-6 py-3 rounded-full flex items-center gap-3 shadow-lg">
-                                <svg class="w-6 h-6 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                <span class="text-white font-bold text-lg">155 Sections</span>
-                            </div>
-                            <div class="bg-white/20 backdrop-blur-sm px-6 py-3 rounded-full flex items-center gap-3 shadow-lg">
-                                <svg class="w-6 h-6 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                <span class="text-white font-bold text-lg">November 01, 2025</span>
-                            </div>
-                            <div class="bg-white/20 backdrop-blur-sm px-6 py-3 rounded-full flex items-center gap-3 shadow-lg">
-                                <svg class="w-6 h-6 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                                </svg>
-                                <span class="text-white font-bold text-lg">Production Ready</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="hidden lg:block">
-                        <div class="float-animation">
-                            <svg class="w-56 h-56 text-white/20 drop-shadow-2xl" viewBox="0 0 200 200" fill="currentColor">
-                                <path d="M40,60 L40,160 L160,160 L160,60 Q150,50 140,60 L60,60 Q50,50 40,60 Z"/>
-                                <path d="M100,60 L100,160" stroke="currentColor" stroke-width="2" fill="none"/>
-                                <circle cx="70" cy="90" r="5"/>
-                                <circle cx="130" cy="90" r="5"/>
-                                <rect x="60" y="110" width="80" height="3" rx="1.5"/>
-                                <rect x="60" y="120" width="60" height="3" rx="1.5"/>
-                            </svg>
-                        </div>
-                    </div>
+    <!-- Header -->
+    <header class="bg-blue-900 text-white shadow-md">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold">BixCash Documentation</h1>
+                    <p class="text-blue-200 text-sm mt-1">Complete technical documentation and development guide</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-blue-200 text-xs">Last Updated</p>
+                    <p class="text-white text-sm font-semibold">November 5, 2025</p>
                 </div>
             </div>
         </div>
+    </header>
 
+    <div class="container mx-auto px-4 py-8">
         <div class="flex gap-8">
-            <!-- Sidebar TOC -->
-            <aside class="hidden xl:block w-96 flex-shrink-0">
-                <div class="sticky top-8 space-y-6">
-                    <!-- TOC Card -->
-                    <div class="glass-dark rounded-3xl overflow-hidden shadow-2xl">
-                        <div class="bg-gradient-to-r from-blue-600/40 to-purple-600/40 px-8 py-6 border-b border-white/10">
-                            <div class="flex items-center gap-4">
-                                <div class="w-12 h-12 bg-gradient-to-br from-green-400 to-blue-500 rounded-2xl flex items-center justify-center shadow-lg">
-                                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
-                                    </svg>
-                                </div>
-                                <h3 class="text-xl font-black text-white">Table of Contents</h3>
-                            </div>
-                        </div>
 
-                        <div class="p-6 max-h-[calc(100vh-400px)] overflow-y-auto">
-                            <nav class="space-y-2"><a href="#user-permission-system" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white  font-semibold" data-toc-link="user-permission-system"><span class="w-2 h-2 bg-green-400 rounded-full inline-block mr-2"></span>User Permission System</a><a href="#project-overview" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white  font-semibold" data-toc-link="project-overview"><span class="w-2 h-2 bg-green-400 rounded-full inline-block mr-2"></span>Project Overview</a><a href="#development-commands" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white  font-semibold" data-toc-link="development-commands"><span class="w-2 h-2 bg-green-400 rounded-full inline-block mr-2"></span>Development Commands</a><a href="#backend-laravel-api-in-backend-directory" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="backend-laravel-api-in-backend-directory">Backend (Laravel API in `/backend` directory)</a><a href="#frontend-blade-view" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="frontend-blade-view">Frontend (Blade View)</a><a href="#architecture" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white  font-semibold" data-toc-link="architecture"><span class="w-2 h-2 bg-green-400 rounded-full inline-block mr-2"></span>Architecture</a><a href="#database-schema" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="database-schema">Database Schema</a><a href="#core-content-entities" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="core-content-entities">Core Content Entities</a><a href="#admin-system-entities-phase-2" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="admin-system-entities-phase-2">Admin System Entities (Phase 2)</a><a href="#api-endpoints" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="api-endpoints">API Endpoints</a><a href="#models-and-controllers" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="models-and-controllers">Models and Controllers</a><a href="#frontend-backend-integration" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="frontend-backend-integration">Frontend-Backend Integration</a><a href="#database-configuration" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white  font-semibold" data-toc-link="database-configuration"><span class="w-2 h-2 bg-green-400 rounded-full inline-block mr-2"></span>Database Configuration</a><a href="#asset-management" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white  font-semibold" data-toc-link="asset-management"><span class="w-2 h-2 bg-green-400 rounded-full inline-block mr-2"></span>Asset Management</a><a href="#backend-assets" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="backend-assets">Backend Assets</a><a href="#image-assets" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="image-assets">Image Assets</a><a href="#development-workflow" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white  font-semibold" data-toc-link="development-workflow"><span class="w-2 h-2 bg-green-400 rounded-full inline-block mr-2"></span>Development Workflow</a><a href="#website-sections" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white  font-semibold" data-toc-link="website-sections"><span class="w-2 h-2 bg-green-400 rounded-full inline-block mr-2"></span>Website Sections</a><a href="#current-features" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white  font-semibold" data-toc-link="current-features"><span class="w-2 h-2 bg-green-400 rounded-full inline-block mr-2"></span>Current Features</a><a href="#navigation-icons-customer-dashboard" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="navigation-icons-customer-dashboard">Navigation Icons (Customer Dashboard)</a><a href="#promotions-system" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="promotions-system">Promotions System</a><a href="#admin-panel-system-phase-2" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white  font-semibold" data-toc-link="admin-panel-system-phase-2"><span class="w-2 h-2 bg-green-400 rounded-full inline-block mr-2"></span>Admin Panel System (Phase 2)</a><a href="#authentication-security" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="authentication-security">Authentication &amp; Security</a><a href="#demo-accounts" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="demo-accounts">Demo Accounts</a><a href="#permission-system" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="permission-system">Permission System</a><a href="#security-features" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="security-features">Security Features</a><a href="#admin-panel-system-phase-3---final" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white  font-semibold" data-toc-link="admin-panel-system-phase-3---final"><span class="w-2 h-2 bg-green-400 rounded-full inline-block mr-2"></span>Admin Panel System (Phase 3 - FINAL)</a><a href="#complete-admin-interface" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="complete-admin-interface">Complete Admin Interface</a><a href="#admin-panel-features" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="admin-panel-features">Admin Panel Features</a><a href="#content-management-crud-operations" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="content-management-crud-operations">Content Management (CRUD Operations)</a><a href="#database-integration" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="database-integration">Database Integration</a><a href="#technical-implementation" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="technical-implementation">Technical Implementation</a><a href="#file-upload-system-phase-7---fully-implemented" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="file-upload-system-phase-7---fully-implemented">File Upload System (Phase 7) - ✅ FULLY IMPLEMENTED</a><a href="#admin-panel-status-error-free-production-ready" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="admin-panel-status-error-free-production-ready">Admin Panel Status: ✅ ERROR-FREE &amp; PRODUCTION READY</a><a href="#frontend-design-system-phase-4" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white  font-semibold" data-toc-link="frontend-design-system-phase-4"><span class="w-2 h-2 bg-green-400 rounded-full inline-block mr-2"></span>Frontend Design System (Phase 4)</a><a href="#complete-dynamic-content-loading-fully-functional" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="complete-dynamic-content-loading-fully-functional">Complete Dynamic Content Loading ✅ FULLY FUNCTIONAL</a><a href="#major-design-fixes-completed" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="major-design-fixes-completed">Major Design Fixes Completed</a><a href="#enhanced-api-integration" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="enhanced-api-integration">Enhanced API Integration</a><a href="#user-experience-features" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="user-experience-features">User Experience Features</a><a href="#technical-architecture" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="technical-architecture">Technical Architecture</a><a href="#responsive-design" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="responsive-design">Responsive Design</a><a href="#testing-results" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="testing-results">Testing Results ✅</a><a href="#image-management" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white  font-semibold" data-toc-link="image-management"><span class="w-2 h-2 bg-green-400 rounded-full inline-block mr-2"></span>Image Management</a><a href="#adding-promotional-brand-images" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="adding-promotional-brand-images">Adding Promotional Brand Images</a><a href="#testing" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white  font-semibold" data-toc-link="testing"><span class="w-2 h-2 bg-green-400 rounded-full inline-block mr-2"></span>Testing</a><a href="#production-deployment---complete" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white  font-semibold" data-toc-link="production-deployment---complete"><span class="w-2 h-2 bg-green-400 rounded-full inline-block mr-2"></span>🚀 PRODUCTION DEPLOYMENT - COMPLETE</a><a href="#deployment-status-2025-10-11-1600-pkt" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="deployment-status-2025-10-11-1600-pkt">Deployment Status (2025-10-11 16:00 PKT)</a><a href="#production-urls" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white  font-semibold" data-toc-link="production-urls"><span class="w-2 h-2 bg-green-400 rounded-full inline-block mr-2"></span>Production URLs</a><a href="#all-endpoints-verified" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="all-endpoints-verified">All Endpoints Verified ✅</a><a href="#infrastructure-details" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white  font-semibold" data-toc-link="infrastructure-details"><span class="w-2 h-2 bg-green-400 rounded-full inline-block mr-2"></span>Infrastructure Details</a><a href="#server-configuration" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="server-configuration">Server Configuration</a><a href="#database" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="database">Database</a><a href="#ssltls-certificate" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="ssltls-certificate">SSL/TLS Certificate</a><a href="#queue-workers" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="queue-workers">Queue Workers</a><a href="#laravel-scheduler" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="laravel-scheduler">Laravel Scheduler</a><a href="#php-configuration-production-optimized" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="php-configuration-production-optimized">PHP Configuration (Production Optimized)</a><a href="#apache-virtual-hosts" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="apache-virtual-hosts">Apache Virtual Hosts</a><a href="#deployment-phases-completed" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white  font-semibold" data-toc-link="deployment-phases-completed"><span class="w-2 h-2 bg-green-400 rounded-full inline-block mr-2"></span>Deployment Phases Completed</a><a href="#phase-1-mysql-resolution" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="phase-1-mysql-resolution">Phase 1: MySQL Resolution ✅</a><a href="#phase-2-database-setup" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="phase-2-database-setup">Phase 2: Database Setup ✅</a><a href="#phase-3-apache-configuration" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="phase-3-apache-configuration">Phase 3: Apache Configuration ✅</a><a href="#phase-4-ssl-certificate-installation" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="phase-4-ssl-certificate-installation">Phase 4: SSL Certificate Installation ✅</a><a href="#phase-5-production-features" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="phase-5-production-features">Phase 5: Production Features ✅</a><a href="#critical-fixes-applied" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white  font-semibold" data-toc-link="critical-fixes-applied"><span class="w-2 h-2 bg-green-400 rounded-full inline-block mr-2"></span>Critical Fixes Applied</a><a href="#fix-1-hero-section-images" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="fix-1-hero-section-images">Fix 1: Hero Section Images ✅</a><a href="#fix-2-file-upload-size-limits" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="fix-2-file-upload-size-limits">Fix 2: File Upload Size Limits ✅</a><a href="#fix-3-client-side-file-validation" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="fix-3-client-side-file-validation">Fix 3: Client-Side File Validation ✅</a><a href="#git-commit-history" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white  font-semibold" data-toc-link="git-commit-history"><span class="w-2 h-2 bg-green-400 rounded-full inline-block mr-2"></span>Git Commit History</a><a href="#latest-commit-2025-10-11" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="latest-commit-2025-10-11">Latest Commit (2025-10-11)</a><a href="#production-verification-checklist" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white  font-semibold" data-toc-link="production-verification-checklist"><span class="w-2 h-2 bg-green-400 rounded-full inline-block mr-2"></span>Production Verification Checklist ✅</a><a href="#website-accessibility" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="website-accessibility">Website Accessibility</a><a href="#admin-panel" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="admin-panel">Admin Panel</a><a href="#api-endpoints" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="api-endpoints">API Endpoints</a><a href="#infrastructure-services" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="infrastructure-services">Infrastructure Services</a><a href="#performance-optimization" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="performance-optimization">Performance &amp; Optimization</a><a href="#next-phase-mobile-responsiveness-optimization" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white  font-semibold" data-toc-link="next-phase-mobile-responsiveness-optimization"><span class="w-2 h-2 bg-green-400 rounded-full inline-block mr-2"></span>Next Phase: Mobile Responsiveness Optimization</a><a href="#planned-improvements" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="planned-improvements">Planned Improvements</a><a href="#testing-targets" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="testing-targets">Testing Targets</a><a href="#success-criteria" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="success-criteria">Success Criteria</a><a href="#production-support-information" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white  font-semibold" data-toc-link="production-support-information"><span class="w-2 h-2 bg-green-400 rounded-full inline-block mr-2"></span>Production Support Information</a><a href="#log-files" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="log-files">Log Files</a><a href="#monitoring-commands" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="monitoring-commands">Monitoring Commands</a><a href="#restart-commands" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="restart-commands">Restart Commands</a><a href="#database-access" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="database-access">Database Access</a><a href="#mobile-responsiveness-optimization---phase-2" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white  font-semibold" data-toc-link="mobile-responsiveness-optimization---phase-2"><span class="w-2 h-2 bg-green-400 rounded-full inline-block mr-2"></span>📱 MOBILE RESPONSIVENESS OPTIMIZATION - PHASE 2</a><a href="#status-in-progress-2025-10-11" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="status-in-progress-2025-10-11">Status: ✅ IN PROGRESS (2025-10-11)</a><a href="#completed-mobile-optimizations" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="completed-mobile-optimizations">Completed Mobile Optimizations</a><a href="#hero-slider-optimization-options-for-future-reference" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="hero-slider-optimization-options-for-future-reference">🎯 HERO SLIDER OPTIMIZATION OPTIONS (For Future Reference)</a><a href="#recommendation" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="recommendation">📊 Recommendation</a><a href="#testing-checklist-for-hero-slider" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="testing-checklist-for-hero-slider">Testing Checklist for Hero Slider</a><a href="#mobile-responsive-features-summary" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="mobile-responsive-features-summary">Mobile Responsive Features Summary</a><a href="#customer-dashboard-mobile-optimization---complete" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white  font-semibold" data-toc-link="customer-dashboard-mobile-optimization---complete"><span class="w-2 h-2 bg-green-400 rounded-full inline-block mr-2"></span>📱 CUSTOMER DASHBOARD MOBILE OPTIMIZATION - COMPLETE</a><a href="#status-fully-optimized-2025-10-12" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="status-fully-optimized-2025-10-12">Status: ✅ FULLY OPTIMIZED (2025-10-12)</a><a href="#mobile-dashboard-layout-evolution" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="mobile-dashboard-layout-evolution">Mobile Dashboard Layout Evolution</a><a href="#css-implementation-details" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="css-implementation-details">CSS Implementation Details</a><a href="#navigation-icons-layout-final" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="navigation-icons-layout-final">Navigation Icons Layout (Final)</a><a href="#technical-benefits" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="technical-benefits">Technical Benefits</a><a href="#files-modified" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="files-modified">Files Modified</a><a href="#git-commit-history" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="git-commit-history">Git Commit History</a><a href="#testing-results" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="testing-results">Testing Results ✅</a><a href="#lessons-learned" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="lessons-learned">Lessons Learned</a><a href="#future-considerations" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="future-considerations">Future Considerations</a><a href="#mobile-dashboard-status-production-ready" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="mobile-dashboard-status-production-ready">Mobile Dashboard Status: ✅ PRODUCTION READY</a><a href="#promotions-contact-sections-mobile-optimization" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white  font-semibold" data-toc-link="promotions-contact-sections-mobile-optimization"><span class="w-2 h-2 bg-green-400 rounded-full inline-block mr-2"></span>📱 PROMOTIONS &amp; CONTACT SECTIONS MOBILE OPTIMIZATION</a><a href="#status-in-progress-2025-01-13" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="status-in-progress-2025-01-13">Status: 🔄 IN PROGRESS (2025-01-13)</a><a href="#promotions-section---2-column-grid-fix" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="promotions-section---2-column-grid-fix">Promotions Section - 2-Column Grid Fix ✅</a><a href="#contact-section---text-alignment-issue" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="contact-section---text-alignment-issue">Contact Section - Text Alignment Issue ⚠️</a><a href="#files-modified" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="files-modified">Files Modified</a><a href="#summary-of-session-work" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="summary-of-session-work">Summary of Session Work</a><a href="#desktop-design-fix---hero-section-image-display" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white  font-semibold" data-toc-link="desktop-design-fix---hero-section-image-display"><span class="w-2 h-2 bg-green-400 rounded-full inline-block mr-2"></span>🖥️ DESKTOP DESIGN FIX - HERO SECTION IMAGE DISPLAY</a><a href="#status-completed-2025-10-14" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="status-completed-2025-10-14">Status: ✅ COMPLETED (2025-10-14)</a><a href="#issue-hero-section-images-cuttingstretching-on-desktop" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="issue-hero-section-images-cuttingstretching-on-desktop">Issue: Hero Section Images Cutting/Stretching on Desktop</a><a href="#root-cause-analysis" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="root-cause-analysis">Root Cause Analysis</a><a href="#solution-applied" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="solution-applied">Solution Applied</a><a href="#technical-implementation" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="technical-implementation">Technical Implementation</a><a href="#why-this-fix-works" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="why-this-fix-works">Why This Fix Works</a><a href="#files-modified" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="files-modified">Files Modified</a><a href="#testing-results" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="testing-results">Testing Results</a><a href="#commit-information" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="commit-information">Commit Information</a><a href="#lessons-learned" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="lessons-learned">Lessons Learned</a><a href="#future-considerations" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="future-considerations">Future Considerations</a><a href="#contact-form-system---complete-email-integration" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white  font-semibold" data-toc-link="contact-form-system---complete-email-integration"><span class="w-2 h-2 bg-green-400 rounded-full inline-block mr-2"></span>📧 CONTACT FORM SYSTEM - COMPLETE EMAIL INTEGRATION</a><a href="#status-fully-implemented-2025-10-14" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="status-fully-implemented-2025-10-14">Status: ✅ FULLY IMPLEMENTED (2025-10-14)</a><a href="#system-overview" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="system-overview">System Overview</a><a href="#features-implemented" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="features-implemented">Features Implemented</a><a href="#backend-implementation" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="backend-implementation">Backend Implementation</a><a href="#admin-panel-integration" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="admin-panel-integration">Admin Panel Integration</a><a href="#routes-configuration" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="routes-configuration">Routes Configuration</a><a href="#database-seeding" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="database-seeding">Database Seeding</a><a href="#security-features" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="security-features">Security Features</a><a href="#testing-verification" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="testing-verification">Testing &amp; Verification</a><a href="#admin-panel-access" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="admin-panel-access">Admin Panel Access</a><a href="#configuration-guide" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="configuration-guide">Configuration Guide</a><a href="#troubleshooting" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="troubleshooting">Troubleshooting</a><a href="#performance-optimization" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="performance-optimization">Performance Optimization</a><a href="#files-structure" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="files-structure">Files Structure</a><a href="#usage-examples" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="usage-examples">Usage Examples</a><a href="#production-status" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="production-status">Production Status</a><a href="#deployment-information" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="deployment-information">Deployment Information</a><a href="#next-steps" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="next-steps">Next Steps</a><a href="#support-maintenance" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="support-maintenance">Support &amp; Maintenance</a><a href="#partner-logo-upload-profile-management-system" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white  font-semibold" data-toc-link="partner-logo-upload-profile-management-system"><span class="w-2 h-2 bg-green-400 rounded-full inline-block mr-2"></span>Partner Logo Upload &amp; Profile Management System</a><a href="#implementation-overview" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="implementation-overview">Implementation Overview</a><a href="#feature-summary" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="feature-summary">Feature Summary</a><a href="#1-partner-logo-standardization-october-22-2025" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="1-partner-logo-standardization-october-22-2025">1. Partner Logo Standardization (October 22, 2025)</a><a href="#2-admin-panel-logo-upload-october-22-2025" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="2-admin-panel-logo-upload-october-22-2025">2. Admin Panel Logo Upload (October 22, 2025)</a><a href="#3-logo-background-remove-functionality-october-22-2025" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="3-logo-background-remove-functionality-october-22-2025">3. Logo Background &amp; Remove Functionality (October 22, 2025)</a><a href="#4-remove-logo-button-redesign-october-22-2025" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="4-remove-logo-button-redesign-october-22-2025">4. Remove Logo Button Redesign (October 22, 2025)</a><a href="#5-partner-profile-upload-fix-admin-edit-functionality-october-22-2025" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="5-partner-profile-upload-fix-admin-edit-functionality-october-22-2025">5. Partner Profile Upload Fix &amp; Admin Edit Functionality (October 22, 2025)</a><a href="#files-modified-summary" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="files-modified-summary">Files Modified Summary</a><a href="#testing-validation" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="testing-validation">Testing &amp; Validation</a><a href="#security-considerations" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="security-considerations">Security Considerations</a><a href="#user-experience-improvements" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="user-experience-improvements">User Experience Improvements</a><a href="#production-status" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="production-status">Production Status</a><a href="#future-enhancements" class="toc-link block py-3 px-4 text-sm rounded-xl transition-all duration-300 hover:bg-white/10 text-white ml-4 " data-toc-link="future-enhancements">Future Enhancements</a></nav>
-                        </div>
-
-                        <!-- Reading Progress -->
-                        <div class="px-8 py-6 border-t border-white/10 bg-white/5">
-                            <div class="flex items-center justify-between mb-3">
-                                <span class="text-sm text-gray-200 font-bold">Reading Progress</span>
-                                <span id="progress-percentage" class="text-sm text-green-400 font-black">0%</span>
-                            </div>
-                            <div class="w-full bg-white/10 rounded-full h-3">
-                                <div id="progress-bar" class="bg-gradient-to-r from-green-400 to-blue-500 h-3 rounded-full transition-all duration-300 shadow-lg" style="width: 0%"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Quick Actions -->
-                    <div class="glass-dark rounded-3xl p-6 shadow-2xl">
-                        <h4 class="text-white font-bold mb-4 text-lg">Quick Actions</h4>
-                        <div class="space-y-3">
-                            <button onclick="window.print()" class="w-full flex items-center gap-3 px-5 py-3 bg-white/10 hover:bg-white/20 rounded-xl transition-all text-white font-semibold">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-                                </svg>
-                                Print Document
-                            </button>
-                            <button onclick="increaseFontSize()" class="w-full flex items-center gap-3 px-5 py-3 bg-white/10 hover:bg-white/20 rounded-xl transition-all text-white font-semibold">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
-                                </svg>
-                                Increase Text
-                            </button>
-                            <button onclick="decreaseFontSize()" class="w-full flex items-center gap-3 px-5 py-3 bg-white/10 hover:bg-white/20 rounded-xl transition-all text-white font-semibold">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM13 10H7" />
-                                </svg>
-                                Decrease Text
-                            </button>
-                        </div>
+            <!-- Sidebar -->
+            <aside class="w-64 flex-shrink-0">
+                <div class="sidebar bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                    <div class="space-y-1">
+                        <a href="#top" class="nav-link active">Overview</a>
+                        <a href="#project-overview" class="nav-link">Project Overview</a>
+                        <a href="#development-commands" class="nav-link">Development Commands</a>
+                        <a href="#architecture" class="nav-link">Architecture</a>
+                        <a href="#admin-panel" class="nav-link">Admin Panel</a>
+                        <a href="#frontend-design" class="nav-link">Frontend Design</a>
+                        <a href="#deployment" class="nav-link">Deployment</a>
+                        <a href="#mobile-optimization" class="nav-link">Mobile Optimization</a>
                     </div>
                 </div>
             </aside>
 
             <!-- Main Content -->
-            <div class="flex-1 min-w-0 space-y-8">
-                <!-- Search Bar -->
-                <div class="glass-dark rounded-3xl p-8 shadow-2xl">
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-5 flex items-center pointer-events-none">
-                            <svg class="w-7 h-7 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                            </svg>
-                        </div>
-                        <input type="text" id="doc-search" placeholder="Search documentation..."
-                               class="w-full px-16 py-5 bg-white/10 border-2 border-white/20 rounded-2xl text-white text-xl placeholder-gray-300 focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-400/30 transition-all">
-                        <div class="absolute inset-y-0 right-5 flex items-center">
-                            <kbd class="px-4 py-2 bg-white/10 rounded-lg text-sm text-gray-200 font-mono font-bold">Ctrl+K</kbd>
-                        </div>
-                    </div>
-                    <div id="search-results" class="mt-5 flex items-center gap-3 hidden">
-                        <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <p class="text-white font-bold text-lg" id="search-count"></p>
-                    </div>
-                </div>
-
-                <!-- Documentation Content -->
-                <div class="bg-gradient-to-br from-white to-gray-50 rounded-3xl shadow-2xl overflow-hidden border-2 border-gray-200">
+            <main class="flex-1 min-w-0">
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8 lg:p-12">
                     <div id="markdown-content" class="prose p-12 lg:p-16"><h1>CLAUDE.md</h1>
 <p>This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.</p>
 <h2>User Permission System</h2>
@@ -3740,182 +3540,16 @@ Route::put('/admin/partners/{id}', [PartnerController::class, 'update'])
 <strong>Status</strong>: ✅ PRODUCTION READY &amp; FULLY DOCUMENTED</p>
 </div>
                 </div>
-            </div>
+            </main>
+
         </div>
     </div>
 
-    <!-- Back to Top Button -->
-    <button id="back-to-top" onclick="scrollToTop()"
-            class="fixed bottom-10 right-10 w-16 h-16 bg-gradient-to-br from-blue-600 to-purple-600 text-white rounded-full shadow-2xl hover:shadow-blue-500/50 flex items-center justify-center transition-all hover:scale-110 hidden">
-        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
-        </svg>
-    </button>
-
+    <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-php.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
 
-    <script>
-        let fontSize = 18;
-
-        // Update reading progress
-        window.addEventListener('scroll', () => {
-            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const scrolled = (winScroll / height) * 100;
-
-            document.getElementById('reading-progress').style.width = scrolled + '%';
-            document.getElementById('progress-bar').style.width = scrolled + '%';
-            document.getElementById('progress-percentage').textContent = Math.round(scrolled) + '%';
-
-            // Show back to top button
-            document.getElementById('back-to-top').classList.toggle('hidden', scrolled < 10);
-
-            // Update active TOC
-            updateActiveTOC();
-        });
-
-        // Add IDs to headings
-        document.querySelectorAll('#markdown-content h2, #markdown-content h3').forEach(heading => {
-            const text = heading.textContent.trim();
-            const slug = text.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').trim();
-            heading.id = slug;
-
-            // Add anchor link
-            const anchor = document.createElement('a');
-            anchor.href = '#' + slug;
-            anchor.className = 'ml-2 text-green-500 opacity-0 hover:opacity-100 transition-opacity';
-            anchor.innerHTML = '🔗';
-            heading.appendChild(anchor);
-        });
-
-        // Add copy buttons to code blocks
-        document.querySelectorAll('pre code').forEach((block) => {
-            const wrapper = document.createElement('div');
-            wrapper.className = 'code-block-wrapper relative';
-
-            const copyBtn = document.createElement('button');
-            copyBtn.className = 'copy-button absolute top-3 right-3 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-lg transition-all flex items-center gap-2 shadow-lg';
-            copyBtn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg> Copy';
-
-            copyBtn.addEventListener('click', () => {
-                navigator.clipboard.writeText(block.textContent);
-                copyBtn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Copied!';
-                setTimeout(() => {
-                    copyBtn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg> Copy';
-                }, 2000);
-            });
-
-            block.parentNode.parentNode.insertBefore(wrapper, block.parentNode);
-            wrapper.appendChild(block.parentNode);
-            wrapper.appendChild(copyBtn);
-        });
-
-        // Search functionality
-        document.getElementById('doc-search').addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase();
-            const content = document.getElementById('markdown-content');
-            const resultsDiv = document.getElementById('search-results');
-            const countSpan = document.getElementById('search-count');
-
-            // Remove previous highlights
-            content.querySelectorAll('mark').forEach(el => {
-                el.outerHTML = el.textContent;
-            });
-
-            if (query.length < 3) {
-                resultsDiv.classList.add('hidden');
-                return;
-            }
-
-            // Count matches
-            const text = content.innerText;
-            const regex = new RegExp(query, 'gi');
-            const matchCount = (text.match(regex) || []).length;
-
-            resultsDiv.classList.remove('hidden');
-            countSpan.textContent = `Found ${matchCount} match${matchCount !== 1 ? 'es' : ''}`;
-
-            // Highlight matches
-            const walker = document.createTreeWalker(content, NodeFilter.SHOW_TEXT);
-            const nodesToReplace = [];
-
-            while (walker.nextNode()) {
-                const node = walker.currentNode;
-                if (node.nodeValue.toLowerCase().includes(query)) {
-                    nodesToReplace.push(node);
-                }
-            }
-
-            nodesToReplace.forEach(node => {
-                const span = document.createElement('span');
-                span.innerHTML = node.nodeValue.replace(regex, '<mark class="bg-yellow-300 px-1 rounded font-bold">$&</mark>');
-                node.parentNode.replaceChild(span, node);
-            });
-        });
-
-        // Update active TOC
-        function updateActiveTOC() {
-            const headings = document.querySelectorAll('#markdown-content h2, #markdown-content h3');
-            const tocLinks = document.querySelectorAll('.toc-link');
-
-            let current = '';
-            headings.forEach(heading => {
-                const rect = heading.getBoundingClientRect();
-                if (rect.top <= 100) {
-                    current = heading.id;
-                }
-            });
-
-            tocLinks.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('data-toc-link') === current) {
-                    link.classList.add('active');
-                }
-            });
-        }
-
-        // Scroll to top
-        function scrollToTop() {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        // Font size controls
-        function increaseFontSize() {
-            if (fontSize < 24) {
-                fontSize += 2;
-                document.getElementById('markdown-content').style.fontSize = fontSize + 'px';
-            }
-        }
-
-        function decreaseFontSize() {
-            if (fontSize > 12) {
-                fontSize -= 2;
-                document.getElementById('markdown-content').style.fontSize = fontSize + 'px';
-            }
-        }
-
-        // Keyboard shortcut
-        document.addEventListener('keydown', (e) => {
-            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-                e.preventDefault();
-                document.getElementById('doc-search').focus();
-            }
-        });
-
-        // Smooth scroll for TOC links
-        document.querySelectorAll('.toc-link').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const target = document.querySelector(link.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            });
-        });
-    </script>
 </body>
 </html>

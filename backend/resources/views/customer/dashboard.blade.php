@@ -258,21 +258,21 @@
                 @csrf
                 <div class="mb-5">
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Full Name *</label>
-                    <input type="text" name="name" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-base focus:outline-none focus:border-[#76d37a] focus:ring-4 focus:ring-green-500/10 transition-all" required placeholder="Enter your full name">
+                    <input type="text" name="name" class="w-full px-4 py-3 border-2 border-gray-200 rounded-2xl text-base focus:outline-none focus:border-[#76d37a] focus:ring-4 focus:ring-green-500/10 transition-all" required placeholder="Enter your full name">
                 </div>
 
                 <div class="mb-5">
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Email (Optional)</label>
-                    <input type="email" name="email" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-base focus:outline-none focus:border-[#76d37a] focus:ring-4 focus:ring-green-500/10 transition-all" placeholder="your@email.com">
+                    <input type="email" name="email" class="w-full px-4 py-3 border-2 border-gray-200 rounded-2xl text-base focus:outline-none focus:border-[#76d37a] focus:ring-4 focus:ring-green-500/10 transition-all" placeholder="your@email.com">
                     <p class="text-xs text-gray-500 mt-1">We'll use this for important updates</p>
                 </div>
 
                 <div class="mb-6">
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Date of Birth (Optional)</label>
-                    <input type="date" name="date_of_birth" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-base focus:outline-none focus:border-[#76d37a] focus:ring-4 focus:ring-green-500/10 transition-all" max="{{ date('Y-m-d') }}">
+                    <input type="date" name="date_of_birth" class="w-full px-4 py-3 border-2 border-gray-200 rounded-2xl text-base focus:outline-none focus:border-[#76d37a] focus:ring-4 focus:ring-green-500/10 transition-all" max="{{ date('Y-m-d') }}">
                 </div>
 
-                <button type="submit" class="w-full px-4 py-3 bg-gradient-to-r from-[#76d37a] to-[#93db4d] text-white font-semibold rounded-xl hover:from-[#5cb85c] hover:to-[#76d37a] hover:-translate-y-0.5 transition-all duration-200 shadow-sm shadow-green-500/30 hover:shadow-md hover:shadow-green-500/40">
+                <button type="submit" class="w-full px-4 py-3 bg-gradient-to-r from-[#76d37a] to-[#93db4d] text-white font-semibold rounded-2xl hover:from-[#5cb85c] hover:to-[#76d37a] hover:-translate-y-0.5 transition-all duration-200 shadow-sm shadow-green-500/30 hover:shadow-md hover:shadow-green-500/40">
                     Complete Profile
                 </button>
             </form>
@@ -309,10 +309,10 @@
 
             {{-- Quick Actions: 2 Buttons --}}
             <div class="grid grid-cols-2 gap-3">
-                <a href="{{ route('customer.wallet') }}" class="bg-white text-green-700 px-4 py-3 rounded-xl font-semibold text-center hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200">
+                <a href="{{ route('customer.wallet') }}" class="bg-white text-green-700 px-4 py-3 rounded-2xl font-semibold text-center hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200">
                     💰 Withdraw
                 </a>
-                <a href="{{ route('customer.purchases') }}" class="bg-white/10 backdrop-blur border-2 border-white/30 text-white px-4 py-3 rounded-xl font-semibold text-center hover:bg-white/20 transition-all duration-200">
+                <a href="{{ route('customer.purchases') }}" class="bg-white/10 backdrop-blur border-2 border-white/30 text-white px-4 py-3 rounded-2xl font-semibold text-center hover:bg-white/20 transition-all duration-200">
                     📜 History
                 </a>
             </div>
@@ -324,7 +324,7 @@
 
         {{-- Pending Transactions --}}
         @if(isset($pendingTransactions) && $pendingTransactions->count() > 0)
-        <div class="bg-gradient-to-r from-orange-50 to-yellow-50 rounded-xl border-2 border-orange-300 p-4 sm:p-6 mb-6 shadow-lg animate-pulse">
+        <div class="bg-gradient-to-r from-orange-50 to-yellow-50 rounded-2xl border-2 border-orange-300 p-4 sm:p-6 mb-6 shadow-lg animate-pulse">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-lg font-bold text-orange-900 flex items-center gap-2">
                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -336,28 +336,28 @@
             </div>
 
             @foreach($pendingTransactions as $transaction)
-            <div class="transaction-confirm-card bg-white rounded-xl p-4 mb-3 last:mb-0 shadow-md" data-transaction-id="{{ $transaction->id }}" data-deadline="{{ $transaction->confirmation_deadline->timestamp }}">
+            <div class="transaction-confirm-card bg-white rounded-2xl p-4 mb-3 last:mb-0 shadow-md" data-transaction-id="{{ $transaction->id }}" data-deadline="{{ $transaction->confirmation_deadline->timestamp }}">
                 <div class="flex justify-between items-start mb-4">
                     <div>
                         <div class="text-xl font-bold text-gray-800 mb-1">Rs {{ number_format($transaction->invoice_amount, 0) }}</div>
                         <div class="text-sm text-gray-600">at {{ $transaction->partner->partnerProfile->business_name ?? 'Unknown Partner' }}</div>
                         <div class="text-xs text-gray-500 mt-1">Code: {{ $transaction->transaction_code }}</div>
                     </div>
-                    <div class="countdown-timer text-center bg-red-500 text-white px-3 py-2 rounded-xl min-w-[80px]">
+                    <div class="countdown-timer text-center bg-red-500 text-white px-3 py-2 rounded-2xl min-w-[80px]">
                         <div class="text-2xl font-bold timer-display">60</div>
                         <div class="text-[10px] uppercase tracking-wide">seconds</div>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-3">
-                    <button onclick="confirmTransaction({{ $transaction->id }})" class="btn-confirm bg-green-500 text-white px-4 py-3 rounded-xl font-semibold hover:bg-green-600 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <button onclick="confirmTransaction({{ $transaction->id }})" class="btn-confirm bg-green-500 text-white px-4 py-3 rounded-2xl font-semibold hover:bg-green-600 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
                         <svg class="confirm-spinner hidden animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
                         <span class="confirm-text">✓ Confirm</span>
                     </button>
-                    <button onclick="showRejectModal({{ $transaction->id }})" class="btn-reject bg-red-500 text-white px-4 py-3 rounded-xl font-semibold hover:bg-red-600 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <button onclick="showRejectModal({{ $transaction->id }})" class="btn-reject bg-red-500 text-white px-4 py-3 rounded-2xl font-semibold hover:bg-red-600 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
                         <span>✗ Reject</span>
                     </button>
                 </div>
@@ -464,7 +464,7 @@
                         @endforeach
                     @else
                         <div class="col-span-full text-center py-8">
-                            <div class="bg-gray-50 rounded-xl p-6">
+                            <div class="bg-gray-50 rounded-2xl p-6">
                                 <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="currentColor" viewBox="0 0 20 20">
                                     <path d="M2 6a2 2 0 012-2h12a2 2 0 012 2v2a2 2 0 100 4v2a2 2 0 01-2 2H4a2 2 0 01-2-2v-2a2 2 0 100-4V6z" />
                                 </svg>
@@ -530,7 +530,7 @@
 
     {{-- Success Message --}}
     @if(session('success'))
-    <div id="successMessage" class="fixed top-5 right-5 bg-green-500 text-white px-6 py-4 rounded-xl shadow-2xl z-[2000] flex items-center gap-3 animate-slideIn">
+    <div id="successMessage" class="fixed top-5 right-5 bg-green-500 text-white px-6 py-4 rounded-2xl shadow-2xl z-[2000] flex items-center gap-3 animate-slideIn">
         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
         </svg>
@@ -544,13 +544,13 @@
             <h3 id="rejectModalTitle" class="text-2xl font-bold text-gray-800 mb-2">Reject Transaction</h3>
             <p class="text-gray-500 mb-6">Please provide a reason for rejecting this transaction:</p>
 
-            <textarea id="rejectReason" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-base min-h-[120px] resize-y focus:outline-none focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all" placeholder="Enter reason..."></textarea>
+            <textarea id="rejectReason" class="w-full px-4 py-3 border-2 border-gray-200 rounded-2xl text-base min-h-[120px] resize-y focus:outline-none focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all" placeholder="Enter reason..."></textarea>
 
             <div class="grid grid-cols-2 gap-3 mt-6">
-                <button onclick="closeRejectModal()" class="px-4 py-3 bg-gray-200 text-gray-800 font-semibold rounded-xl hover:bg-gray-300 transition-colors">
+                <button onclick="closeRejectModal()" class="px-4 py-3 bg-gray-200 text-gray-800 font-semibold rounded-2xl hover:bg-gray-300 transition-colors">
                     Cancel
                 </button>
-                <button onclick="submitRejection()" class="px-4 py-3 bg-red-500 text-white font-semibold rounded-xl hover:bg-red-600 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed" id="rejectSubmitBtn">
+                <button onclick="submitRejection()" class="px-4 py-3 bg-red-500 text-white font-semibold rounded-2xl hover:bg-red-600 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed" id="rejectSubmitBtn">
                     <svg class="reject-spinner hidden animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>

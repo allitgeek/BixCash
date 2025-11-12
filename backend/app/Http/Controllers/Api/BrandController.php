@@ -55,7 +55,7 @@ class BrandController extends Controller
                 'data' => $brands,
                 'count' => $brands->count(),
                 'featured_count' => $brands->where('is_featured', true)->count()
-            ]);
+            ])->header('Cache-Control', 'public, max-age=600'); // Cache for 10 minutes
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,

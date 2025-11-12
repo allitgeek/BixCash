@@ -11,11 +11,14 @@ class PurchaseHistory extends Model
     protected $fillable = [
         'user_id',
         'brand_id',
+        'partner_transaction_id',
         'order_id',
         'amount',
         'cashback_amount',
         'cashback_percentage',
         'status',
+        'confirmed_by_customer',
+        'confirmation_method',
         'description',
         'purchase_date',
     ];
@@ -35,5 +38,10 @@ class PurchaseHistory extends Model
     public function brand()
     {
         return $this->belongsTo(Brand::class);
+    }
+
+    public function partnerTransaction()
+    {
+        return $this->belongsTo(PartnerTransaction::class, 'partner_transaction_id');
     }
 }

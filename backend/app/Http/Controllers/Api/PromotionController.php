@@ -32,7 +32,7 @@ class PromotionController extends Controller
             return response()->json([
                 'success' => true,
                 'data' => $promotions
-            ]);
+            ])->header('Cache-Control', 'public, max-age=600'); // Cache for 10 minutes
 
         } catch (\Exception $e) {
             return response()->json([

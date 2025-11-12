@@ -670,7 +670,7 @@ class DashboardController extends Controller
         $user = Auth::user();
 
         $purchases = PurchaseHistory::where('user_id', $user->id)
-            ->with('brand')
+            ->with(['brand', 'partnerTransaction.partner.partnerProfile'])
             ->latest('purchase_date')
             ->paginate(15);
 
