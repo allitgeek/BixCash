@@ -94,7 +94,7 @@
                         </button>
 
                         {{-- Notification Dropdown --}}
-                        <div x-show="open" @click.away="open = false" x-transition class="absolute right-0 mt-2 w-[calc(100vw-2rem)] sm:w-80 bg-white rounded-xl shadow-2xl border border-gray-200 py-2 z-50">
+                        <div x-show="open" @click.away="open = false" x-transition class="fixed sm:absolute left-4 right-4 sm:left-auto sm:right-0 top-16 sm:top-auto mt-0 sm:mt-2 w-auto sm:w-80 bg-white rounded-xl shadow-2xl border border-gray-200 py-2 z-50">
                             <div class="px-4 py-2 border-b border-gray-200">
                                 <p class="text-sm font-bold text-gray-800">Pending Confirmations</p>
                             </div>
@@ -123,7 +123,7 @@
                         </button>
 
                         {{-- Profile Menu --}}
-                        <div x-show="open" @click.away="open = false" x-transition class="absolute right-0 mt-2 w-[calc(100vw-2rem)] sm:w-52 bg-white rounded-xl shadow-2xl border border-gray-200 py-2 z-50">
+                        <div x-show="open" @click.away="open = false" x-transition class="fixed sm:absolute left-4 right-4 sm:left-auto sm:right-0 top-16 sm:top-auto mt-0 sm:mt-2 w-auto sm:w-52 bg-white rounded-xl shadow-2xl border border-gray-200 py-2 z-50">
                             <a href="{{ route('partner.profile') }}" class="flex items-center gap-3 px-4 py-2.5 hover:bg-blue-50 transition-colors">
                                 <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -370,20 +370,20 @@
 
     {{-- Glassmorphism Bottom Navigation --}}
     <nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl shadow-lg shadow-blue-900/10 border-t border-gray-200/60 z-50">
-        <div class="grid grid-cols-5 max-w-7xl mx-auto">
-            <a href="{{ route('partner.dashboard') }}" class="flex flex-col items-center py-3 px-2 text-white bg-gradient-to-r from-blue-600 to-blue-900 border-t-2 border-blue-500 transition-all duration-200">
+        <div class="grid grid-cols-4 max-w-lg mx-auto place-items-center">
+            <a href="{{ route('partner.dashboard') }}" class="flex flex-col items-center justify-center py-3 px-3 sm:px-4 text-white bg-gradient-to-r from-blue-600 to-blue-900 border-t-2 border-blue-500 transition-all duration-200">
                 <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                 </svg>
                 <span class="text-xs font-bold">Home</span>
             </a>
-            <a href="{{ route('partner.transactions') }}" class="flex flex-col items-center py-3 px-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all duration-200">
+            <a href="{{ route('partner.transactions') }}" class="flex flex-col items-center justify-center py-3 px-3 sm:px-4 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all duration-200">
                 <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
                 </svg>
                 <span class="text-xs font-medium">Transactions</span>
             </a>
-            <a href="{{ route('partner.wallet') }}" class="flex flex-col items-center py-3 px-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all duration-200">
+            <a href="{{ route('partner.wallet') }}" class="flex flex-col items-center justify-center py-3 px-3 sm:px-4 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all duration-200">
                 <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"></path>
                     <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"></path>
@@ -397,7 +397,7 @@
                 </svg>
                 <span class="text-xs font-medium">Profits</span>
             </a> --}}
-            <a href="{{ route('partner.profile') }}" class="flex flex-col items-center py-3 px-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all duration-200">
+            <a href="{{ route('partner.profile') }}" class="flex flex-col items-center justify-center py-3 px-3 sm:px-4 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all duration-200">
                 <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>

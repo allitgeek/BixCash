@@ -161,9 +161,9 @@
 
     {{-- Bottom Navigation --}}
     <nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl shadow-lg shadow-blue-900/10 border-t border-gray-200/60 z-50">
-        <div class="grid grid-cols-5 max-w-7xl mx-auto">
+        <div class="grid grid-cols-4 max-w-lg mx-auto place-items-center">
             {{-- Dashboard --}}
-            <a href="{{ route('partner.dashboard') }}" class="flex flex-col items-center py-3 px-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all duration-200">
+            <a href="{{ route('partner.dashboard') }}" class="flex flex-col items-center justify-center py-3 px-3 sm:px-4 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all duration-200">
                 <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                 </svg>
@@ -171,7 +171,7 @@
             </a>
 
             {{-- Transactions (Active) --}}
-            <a href="{{ route('partner.transactions') }}" class="flex flex-col items-center py-3 px-2 text-white bg-gradient-to-r from-blue-600 to-blue-900 border-t-2 border-blue-500 transition-all duration-200">
+            <a href="{{ route('partner.transactions') }}" class="flex flex-col items-center justify-center py-3 px-3 sm:px-4 text-white bg-gradient-to-r from-blue-600 to-blue-900 border-t-2 border-blue-500 transition-all duration-200">
                 <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
                 </svg>
@@ -179,7 +179,7 @@
             </a>
 
             {{-- Wallet --}}
-            <a href="{{ route('partner.wallet') }}" class="flex flex-col items-center py-3 px-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all duration-200">
+            <a href="{{ route('partner.wallet') }}" class="flex flex-col items-center justify-center py-3 px-3 sm:px-4 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all duration-200">
                 <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"></path>
                     <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"></path>
@@ -196,7 +196,7 @@
             </a> --}}
 
             {{-- Profile --}}
-            <a href="{{ route('partner.profile') }}" class="flex flex-col items-center py-3 px-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all duration-200">
+            <a href="{{ route('partner.profile') }}" class="flex flex-col items-center justify-center py-3 px-3 sm:px-4 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all duration-200">
                 <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
