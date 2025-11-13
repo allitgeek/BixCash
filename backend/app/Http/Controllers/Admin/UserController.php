@@ -46,16 +46,22 @@ class UserController extends Controller
 
         $users = $query->orderBy('created_at', 'desc')->paginate(15);
 
-        // Only show admin roles in the filter dropdown
-        $roles = Role::whereIn('name', ['super_admin', 'admin', 'moderator'])->get();
+        // Show all admin roles (exclude customer and partner - they have separate registration)
+        $roles = Role::whereNotIn('name', ['customer', 'partner'])
+                     ->where('is_active', true)
+                     ->orderBy('display_name')
+                     ->get();
 
         return view('admin.users.index', compact('users', 'roles'));
     }
 
     public function create()
     {
-        // Only allow creating admin users (not customers or partners)
-        $roles = Role::whereIn('name', ['super_admin', 'admin', 'moderator'])->get();
+        // Show all admin roles (exclude customer and partner - they have separate registration)
+        $roles = Role::whereNotIn('name', ['customer', 'partner'])
+                     ->where('is_active', true)
+                     ->orderBy('display_name')
+                     ->get();
         return view('admin.users.create', compact('roles'));
     }
 
@@ -86,8 +92,11 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
-        // Only allow editing admin users (not customers or partners)
-        $roles = Role::whereIn('name', ['super_admin', 'admin', 'moderator'])->get();
+        // Show all admin roles (exclude customer and partner - they have separate registration)
+        $roles = Role::whereNotIn('name', ['customer', 'partner'])
+                     ->where('is_active', true)
+                     ->orderBy('display_name')
+                     ->get();
         return view('admin.users.edit', compact('user', 'roles'));
     }
 
