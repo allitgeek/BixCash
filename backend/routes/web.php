@@ -115,8 +115,8 @@ Route::prefix('partner')->name('partner.')->middleware(['auth', 'partner'])->gro
     // Transaction history
     Route::get('/transactions', [PartnerDashboard::class, 'transactionHistory'])->name('transactions');
 
-    // Profit history
-    Route::get('/profits', [PartnerDashboard::class, 'profitHistory'])->name('profits');
+    // Profit history - DISABLED
+    // Route::get('/profits', [PartnerDashboard::class, 'profitHistory'])->name('profits');
 
     // Wallet
     Route::get('/wallet', [PartnerDashboard::class, 'wallet'])->name('wallet');
@@ -125,9 +125,19 @@ Route::prefix('partner')->name('partner.')->middleware(['auth', 'partner'])->gro
     // Profile
     Route::get('/profile', [PartnerDashboard::class, 'profile'])->name('profile');
     Route::post('/profile', [PartnerDashboard::class, 'updateProfile'])->name('profile.update');
-    Route::post('/profile/bank-details/request-otp', [PartnerDashboard::class, 'requestBankDetailsOtp'])->name('bank-details.request-otp');
-    Route::post('/profile/bank-details/verify-otp', [PartnerDashboard::class, 'verifyBankDetailsOtp'])->name('bank-details.verify-otp');
+
+    // Bank Details (Rate Limited)
+    Route::post('/profile/bank-details/request-otp', [PartnerDashboard::class, 'requestBankDetailsOtp'])
+        ->name('bank-details.request-otp')
+        ->middleware('throttle:3,60'); // 3 attempts per hour
+    Route::post('/profile/bank-details/verify-otp', [PartnerDashboard::class, 'verifyBankDetailsOtp'])
+        ->name('bank-details.verify-otp')
+        ->middleware('throttle:5,60'); // 5 verification attempts per hour
+    Route::post('/profile/bank-details/verify-tpin', [PartnerDashboard::class, 'verifyBankDetailsTpin'])
+        ->name('bank-details.verify-tpin')
+        ->middleware('throttle:5,60'); // 5 TPIN verification attempts per hour
     Route::get('/profile/bank-details/cancel-otp', [PartnerDashboard::class, 'cancelBankDetailsOtp'])->name('bank-details.cancel-otp');
+
     Route::delete('/profile/logo', [PartnerDashboard::class, 'removeLogo'])->name('profile.remove-logo');
 
     // Logout

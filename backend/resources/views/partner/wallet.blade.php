@@ -60,9 +60,70 @@
                     </svg>
                 </div>
                 <div class="flex-1">
-                    <p class="text-sm font-semibold text-orange-900 mb-2">  Bank Details Required</p>
+                    <p class="text-sm font-semibold text-orange-900 mb-2">ï¿½ Bank Details Required</p>
                     <p class="text-sm text-orange-800 leading-relaxed">
                         Please add your bank details in your <a href="{{ route('partner.profile') }}" class="underline font-semibold">profile</a> before requesting withdrawals.
+                    </p>
+                </div>
+            </div>
+        </div>
+        @endif
+
+        {{-- Withdrawal Limits Info (if bank details exist) --}}
+        @if($hasBankDetails && isset($settings))
+        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border-2 border-blue-300 p-4 sm:p-5 mb-6 shadow-md">
+            <div class="flex items-start gap-3">
+                <div class="w-10 h-10 rounded-lg bg-blue-500 flex items-center justify-center flex-shrink-0">
+                    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <p class="text-sm font-semibold text-blue-900 mb-2">Withdrawal Limits</p>
+                    <div class="grid grid-cols-2 gap-3 text-sm">
+                        <div>
+                            <span class="text-blue-700 font-medium">Min Amount:</span>
+                            <span class="text-blue-900 font-bold">Rs {{ number_format($settings->min_amount, 0) }}</span>
+                        </div>
+                        <div>
+                            <span class="text-blue-700 font-medium">Max per Request:</span>
+                            <span class="text-blue-900 font-bold">Rs {{ number_format($settings->max_per_withdrawal, 0) }}</span>
+                        </div>
+                        <div>
+                            <span class="text-blue-700 font-medium">Daily Remaining:</span>
+                            <span class="text-blue-900 font-bold">Rs {{ number_format($dailyRemaining, 0) }}</span>
+                        </div>
+                        <div>
+                            <span class="text-blue-700 font-medium">Monthly Remaining:</span>
+                            <span class="text-blue-900 font-bold">Rs {{ number_format($monthlyRemaining, 0) }}</span>
+                        </div>
+                    </div>
+                    @if($settings->processing_message)
+                    <p class="text-xs text-blue-700 mt-3 leading-relaxed">
+                        <svg class="w-3 h-3 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                        </svg>
+                        {{ $settings->processing_message }}
+                    </p>
+                    @endif
+                </div>
+            </div>
+        </div>
+        @endif
+
+        {{-- Withdrawals Disabled Warning --}}
+        @if(isset($settings) && !$settings->enabled)
+        <div class="bg-gradient-to-r from-red-50 to-orange-50 rounded-xl border-2 border-red-300 p-4 sm:p-5 mb-6 shadow-md">
+            <div class="flex items-start gap-3">
+                <div class="w-10 h-10 rounded-lg bg-red-500 flex items-center justify-center flex-shrink-0">
+                    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <p class="text-sm font-semibold text-red-900 mb-2">Withdrawals Temporarily Disabled</p>
+                    <p class="text-sm text-red-800 leading-relaxed">
+                        Withdrawal requests are currently disabled. Please check back later.
                     </p>
                 </div>
             </div>
@@ -87,10 +148,10 @@
                     @csrf
                     <div class="mb-4">
                         <label class="block text-sm font-semibold text-gray-700 mb-2">Amount (Rs.) *</label>
-                        <input type="number" name="amount" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-base focus:outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-500/10 transition-all" required min="100" step="1" placeholder="Minimum Rs. 100" @if(!$hasBankDetails) disabled @endif>
-                        <p class="text-xs text-gray-500 mt-2">Minimum withdrawal amount is Rs. 100</p>
+                        <input type="number" name="amount" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-base focus:outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-500/10 transition-all" required min="{{ $settings->min_amount ?? 100 }}" max="{{ $settings->max_per_withdrawal ?? 50000 }}" step="1" placeholder="Min Rs. {{ number_format($settings->min_amount ?? 100, 0) }}" @if(!$hasBankDetails || (isset($settings) && !$settings->enabled)) disabled @endif>
+                        <p class="text-xs text-gray-500 mt-2">Minimum withdrawal amount is Rs. {{ number_format($settings->min_amount ?? 100, 0) }}</p>
                     </div>
-                    <button type="submit" class="w-full px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-700 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-purple-800 hover:-translate-y-0.5 transition-all duration-200 shadow-sm shadow-blue-500/30 hover:shadow-md hover:shadow-blue-500/40 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed" @if(!$hasBankDetails) disabled @endif>
+                    <button type="submit" class="w-full px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-700 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-purple-800 hover:-translate-y-0.5 transition-all duration-200 shadow-sm shadow-blue-500/30 hover:shadow-md hover:shadow-blue-500/40 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed" @if(!$hasBankDetails || (isset($settings) && !$settings->enabled)) disabled @endif>
                         <svg class="withdraw-spinner hidden animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -193,14 +254,14 @@
                 <span class="text-xs font-bold">Wallet</span>
             </a>
 
-            {{-- Profits --}}
-            <a href="{{ route('partner.profits') }}" class="flex flex-col items-center py-3 px-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all duration-200">
+            {{-- Profits - HIDDEN --}}
+            {{-- <a href="{{ route('partner.profits') }}" class="flex flex-col items-center py-3 px-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all duration-200">
                 <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"></path>
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd"></path>
                 </svg>
                 <span class="text-xs font-medium">Profits</span>
-            </a>
+            </a> --}}
 
             {{-- Profile --}}
             <a href="{{ route('partner.profile') }}" class="flex flex-col items-center py-3 px-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all duration-200">

@@ -209,7 +209,7 @@ class PartnerTransaction extends Model
             'amount' => $this->invoice_amount,
             'cashback_amount' => 0.00, // Will be calculated in batch
             'cashback_percentage' => 0.00,
-            'status' => 'pending', // Pending batch processing
+            'status' => 'confirmed', // Transaction is already confirmed
             'description' => 'Purchase at ' . ($this->partner->partnerProfile->business_name ?? 'Partner Store'),
             'purchase_date' => $this->transaction_date,
             'confirmed_by_customer' => $confirmationMethod === 'manual',

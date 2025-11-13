@@ -92,9 +92,12 @@ class WithdrawalController extends Controller
             'admin_notes' => 'nullable|string|max:1000',
         ]);
 
-        $withdrawal = WithdrawalRequest::where('status', 'pending')
-            ->orWhere('status', 'processing')
-            ->findOrFail($id);
+        $withdrawal = WithdrawalRequest::whereIn('status', ['pending', 'processing'])
+            ->find($id);
+
+        if (!$withdrawal) {
+            return back()->with('error', 'Withdrawal request not found or already processed.');
+        }
 
         DB::beginTransaction();
         try {
@@ -117,16 +120,9 @@ class WithdrawalController extends Controller
                 'processed_at' => now(),
             ]);
 
-            // Create wallet transaction for completed withdrawal
-            $withdrawal->user->wallet->transactions()->create([
-                'user_id' => $withdrawal->user_id,
-                'transaction_type' => 'withdrawal_completed',
-                'amount' => -$withdrawal->amount,
-                'balance_before' => $withdrawal->user->wallet->balance,
-                'balance_after' => $withdrawal->user->wallet->balance,
-                'reference_id' => $withdrawal->id,
-                'description' => "Withdrawal completed - Bank Ref: {$validated['bank_reference']}",
-            ]);
+            // NOTE: No need to create withdrawal_completed transaction
+            // The withdrawal_pending transaction created when request was made already recorded the debit
+            // This prevents duplicate transaction records and confusion in statistics
 
             DB::commit();
 
@@ -159,9 +155,12 @@ class WithdrawalController extends Controller
             'admin_notes' => 'nullable|string|max:1000',
         ]);
 
-        $withdrawal = WithdrawalRequest::where('status', 'pending')
-            ->orWhere('status', 'processing')
-            ->findOrFail($id);
+        $withdrawal = WithdrawalRequest::whereIn('status', ['pending', 'processing'])
+            ->find($id);
+
+        if (!$withdrawal) {
+            return back()->with('error', 'Withdrawal request not found or already processed.');
+        }
 
         DB::beginTransaction();
         try {

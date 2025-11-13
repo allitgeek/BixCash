@@ -402,10 +402,10 @@
 
                             <div class="bg-orange-50 border-l-4 border-orange-500 p-4 rounded-lg mb-4">
                                 <p class="text-sm text-orange-900 font-semibold mb-1">⚠️ Security Notice:</p>
-                                <p class="text-sm text-orange-800">Changing bank details requires OTP verification and will lock withdrawals for 24 hours.</p>
+                                <p class="text-sm text-orange-800">Changing bank details requires verification and will lock withdrawals for 24 hours.</p>
                             </div>
 
-                            <form method="POST" action="{{ route('partner.bank-details.request-otp') }}">
+                            <form method="POST" action="{{ route('partner.bank-details.request-otp') }}" id="bankDetailsForm">
                                 @csrf
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                     <div>
@@ -425,9 +425,47 @@
                                         <input type="text" name="iban" class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl text-sm focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 transition-all" placeholder="PK36XXXX..." value="{{ old('iban', $partnerProfile->iban ?? '') }}">
                                     </div>
                                 </div>
+
+                                {{-- Authentication Method Selector --}}
+                                <div class="mb-6 p-4 bg-gray-50 rounded-2xl border-2 border-gray-200">
+                                    <label class="block text-sm font-semibold text-gray-800 mb-3">Choose Verification Method:</label>
+                                    <div class="space-y-3">
+                                        {{-- OTP Option --}}
+                                        <label class="flex items-start cursor-pointer group">
+                                            <input type="radio" name="auth_method" value="otp"
+                                                   @if(!Auth::user()->pin_hash) checked @endif
+                                                   onchange="switchAuthMethod('otp')"
+                                                   class="mt-1 w-5 h-5 text-orange-600 focus:ring-orange-500 focus:ring-2">
+                                            <div class="ml-3">
+                                                <span class="block font-semibold text-gray-800 group-hover:text-orange-600 transition-colors">OTP via SMS</span>
+                                                <p class="text-xs text-gray-500 mt-0.5">Receive a 6-digit code on your registered phone number</p>
+                                            </div>
+                                        </label>
+
+                                        {{-- TPIN Option --}}
+                                        <label class="flex items-start cursor-pointer group">
+                                            <input type="radio" name="auth_method" value="tpin"
+                                                   @if(Auth::user()->pin_hash) checked @endif
+                                                   @if(!Auth::user()->pin_hash) disabled @endif
+                                                   onchange="switchAuthMethod('tpin')"
+                                                   class="mt-1 w-5 h-5 text-orange-600 focus:ring-orange-500 focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                                            <div class="ml-3">
+                                                <span class="block font-semibold text-gray-800 group-hover:text-orange-600 transition-colors @if(!Auth::user()->pin_hash) opacity-50 @endif">4-Digit TPIN</span>
+                                                <p class="text-xs text-gray-500 mt-0.5">
+                                                    @if(Auth::user()->pin_hash)
+                                                        Use your Transaction PIN for faster verification
+                                                    @else
+                                                        TPIN not set up. <a href="{{ route('partner.profile') }}" class="underline text-orange-600 hover:text-orange-700">Set up TPIN first</a>
+                                                    @endif
+                                                </p>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+
                                 <div class="flex gap-2">
-                                    <button type="submit" class="flex-1 px-4 py-3 bg-gradient-to-r from-orange-600 to-orange-700 text-white font-semibold rounded-xl hover:from-orange-700 hover:to-orange-800 hover:-translate-y-0.5 transition-all duration-200 shadow-sm shadow-orange-500/30">
-                                        Request OTP
+                                    <button type="submit" id="submitBankDetailsBtn" class="flex-1 px-4 py-3 bg-gradient-to-r from-orange-600 to-orange-700 text-white font-semibold rounded-xl hover:from-orange-700 hover:to-orange-800 hover:-translate-y-0.5 transition-all duration-200 shadow-sm shadow-orange-500/30">
+                                        <span id="submitBtnText">@if(Auth::user()->pin_hash) Proceed with TPIN @else Request OTP @endif</span>
                                     </button>
                                     @if($partnerProfile && $partnerProfile->bank_name)
                                     <button type="button" onclick="toggleBankEdit()" class="px-6 py-3 bg-gray-200 text-gray-800 font-semibold rounded-xl hover:bg-gray-300 transition-colors">
@@ -442,6 +480,126 @@
 
         </div>
 
+    </div>
+
+    {{-- TPIN Verification Modal --}}
+    <div id="tpinModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[1000] flex items-center justify-center hidden">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4 relative">
+            {{-- Header --}}
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-gradient-to-br from-orange-600 to-orange-700 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-2">Enter Your TPIN</h3>
+                <p class="text-gray-600">Enter your 4-digit Transaction PIN to update bank details</p>
+            </div>
+
+            {{-- TPIN Input Boxes --}}
+            <div class="flex justify-center gap-3 mb-2">
+                <input type="password" id="tpin1" maxlength="1" inputmode="numeric"
+                       class="w-14 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-2xl focus:border-orange-500 focus:ring-4 focus:ring-orange-500/20 outline-none transition-all"
+                       oninput="moveTpinFocus(this, 'tpin2')"
+                       onkeydown="handleTpinBackspace(event, this, null)">
+                <input type="password" id="tpin2" maxlength="1" inputmode="numeric"
+                       class="w-14 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-2xl focus:border-orange-500 focus:ring-4 focus:ring-orange-500/20 outline-none transition-all"
+                       oninput="moveTpinFocus(this, 'tpin3')"
+                       onkeydown="handleTpinBackspace(event, this, 'tpin1')">
+                <input type="password" id="tpin3" maxlength="1" inputmode="numeric"
+                       class="w-14 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-2xl focus:border-orange-500 focus:ring-4 focus:ring-orange-500/20 outline-none transition-all"
+                       oninput="moveTpinFocus(this, 'tpin4')"
+                       onkeydown="handleTpinBackspace(event, this, 'tpin2')">
+                <input type="password" id="tpin4" maxlength="1" inputmode="numeric"
+                       class="w-14 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-2xl focus:border-orange-500 focus:ring-4 focus:ring-orange-500/20 outline-none transition-all"
+                       oninput="moveTpinFocus(this, null)"
+                       onkeydown="handleTpinBackspace(event, this, 'tpin3')">
+            </div>
+
+            {{-- Error Message --}}
+            <div id="tpinError" class="hidden mb-4 p-3 bg-red-50 border border-red-200 rounded-2xl">
+                <p class="text-sm text-red-800 text-center font-medium">
+                    <span id="tpinErrorText">Invalid PIN. Please try again.</span>
+                </p>
+            </div>
+
+            {{-- Lockout Message --}}
+            <div id="tpinLockout" class="hidden mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-2xl">
+                <p class="text-sm text-yellow-900 text-center font-medium">
+                    <span id="tpinLockoutText">Too many failed attempts. Account locked for 15 minutes.</span>
+                </p>
+            </div>
+
+            {{-- Buttons --}}
+            <div class="flex gap-3 mt-6">
+                <button type="button" onclick="closeTpinModal()" class="flex-1 px-4 py-3 bg-gray-200 text-gray-800 font-semibold rounded-2xl hover:bg-gray-300 transition-colors">
+                    Cancel
+                </button>
+                <button type="button" onclick="verifyTpin()" id="verifyTpinBtn" disabled class="flex-1 px-4 py-3 bg-gradient-to-r from-orange-600 to-orange-700 text-white font-semibold rounded-2xl hover:from-orange-700 hover:to-orange-800 transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                    Verify PIN
+                </button>
+            </div>
+
+            {{-- Forgot TPIN Link --}}
+            <p class="text-center mt-4">
+                <a href="#" class="text-sm text-orange-600 hover:text-orange-700 underline">Forgot TPIN?</a>
+            </p>
+        </div>
+    </div>
+
+    {{-- OTP Verification Modal --}}
+    <div id="otpModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[1000] flex items-center justify-center {{ session('show_otp_modal') ? '' : 'hidden' }}">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4 relative">
+            {{-- Header --}}
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-gradient-to-br from-orange-600 to-orange-700 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                    </svg>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-2">Verify Your Phone</h3>
+                <p class="text-gray-600">We've sent a code to <span class="font-semibold">{{ Auth::user()->phone }}</span></p>
+            </div>
+
+            {{-- OTP Input --}}
+            <div class="mb-4">
+                <input type="text" id="otpCode" maxlength="6" inputmode="numeric" autocomplete="one-time-code"
+                       class="w-full px-4 py-3 text-center text-2xl tracking-widest font-bold border-2 border-gray-300 rounded-2xl focus:border-orange-500 focus:ring-4 focus:ring-orange-500/20 outline-none transition-all"
+                       placeholder="------"
+                       oninput="this.value = this.value.replace(/[^0-9]/g, ''); if(this.value.length === 6) { document.getElementById('verifyBtn').disabled = false; }"
+                       onkeydown="if(event.key === 'Enter' && this.value.length === 6) { verifyOtp(); }">
+            </div>
+
+            {{-- Timer & Resend --}}
+            <div class="flex items-center justify-between mb-6 text-sm">
+                <span id="otpTimer" class="text-gray-600">
+                    Code expires in <span id="timerValue" class="font-semibold text-orange-600">2:00</span>
+                </span>
+                <button type="button" id="resendBtn" onclick="resendOtp()" disabled class="text-orange-600 font-semibold hover:text-orange-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                    Resend Code
+                </button>
+            </div>
+
+            {{-- Error Message --}}
+            <div id="otpError" class="hidden mb-4 p-3 bg-red-50 border border-red-200 rounded-2xl">
+                <p class="text-sm text-red-800 text-center font-medium">
+                    <span id="otpErrorText">Invalid code. Please try again.</span>
+                </p>
+            </div>
+
+            {{-- Buttons --}}
+            <div class="flex gap-3">
+                <button type="button" onclick="closeOtpModal()" class="flex-1 px-4 py-3 bg-gray-200 text-gray-800 font-semibold rounded-2xl hover:bg-gray-300 transition-colors">
+                    Cancel
+                </button>
+                <button type="button" onclick="verifyOtp()" id="verifyBtn" disabled class="flex-1 px-4 py-3 bg-gradient-to-r from-orange-600 to-orange-700 text-white font-semibold rounded-2xl hover:from-orange-700 hover:to-orange-800 transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                    Verify Code
+                </button>
+            </div>
+
+            {{-- reCAPTCHA Container (invisible) --}}
+            <div id="recaptcha-container"></div>
+        </div>
     </div>
 
     {{-- Bottom Navigation --}}
@@ -472,13 +630,13 @@
                 <span class="text-xs font-medium">Wallet</span>
             </a>
 
-            {{-- Profits --}}
-            <a href="{{ route('partner.profits') }}" class="flex flex-col items-center py-3 px-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all duration-200">
+            {{-- Profits - HIDDEN --}}
+            {{-- <a href="{{ route('partner.profits') }}" class="flex flex-col items-center py-3 px-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all duration-200">
                 <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <span class="text-xs font-medium">Profits</span>
-            </a>
+            </a> --}}
 
             {{-- Profile (Active) --}}
             <a href="{{ route('partner.profile') }}" class="flex flex-col items-center py-3 px-2 text-white bg-gradient-to-r from-blue-600 to-blue-900 border-t-2 border-blue-500 transition-all duration-200">
@@ -554,6 +712,226 @@
             const form = document.getElementById('bankEditForm');
             form.classList.toggle('hidden');
         }
+
+        // ============================================
+        // BANK DETAILS VERIFICATION SYSTEM
+        // ============================================
+
+        // Configuration Variables
+        window.SHOW_OTP_MODAL = @json(session('show_otp_modal') ?? false);
+        window.USER_PHONE = "{{ Auth::user()->phone }}";
+        window.REQUEST_OTP_URL = "{{ route('partner.bank-details.request-otp') }}";
+        window.VERIFY_OTP_URL = "{{ route('partner.bank-details.verify-otp') }}";
+        window.VERIFY_TPIN_URL = "{{ route('partner.bank-details.verify-tpin') }}";
+        window.CANCEL_OTP_URL = "{{ route('partner.bank-details.cancel-otp') }}";
+        window.DEFAULT_AUTH_METHOD = @if(Auth::user()->pin_hash) 'tpin' @else 'otp' @endif;
+
+        // State Variables
+        let selectedAuthMethod = window.DEFAULT_AUTH_METHOD;
+        let confirmationResult = null;
+        let otpTimerInterval = null;
+
+        // CSRF Token
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}';
+
+        // ============================================
+        // AUTHENTICATION METHOD SWITCHING
+        // ============================================
+
+        function switchAuthMethod(method) {
+            selectedAuthMethod = method;
+            const submitBtnText = document.getElementById('submitBtnText');
+
+            if (method === 'otp') {
+                submitBtnText.textContent = 'Request OTP';
+            } else if (method === 'tpin') {
+                submitBtnText.textContent = 'Proceed with TPIN';
+            }
+        }
+
+        // ============================================
+        // TPIN MODAL FUNCTIONS
+        // ============================================
+
+        function showTpinModal() {
+            document.getElementById('tpinModal').classList.remove('hidden');
+            clearTpinInputs();
+            hideTpinError();
+            hideTpinLockout();
+            document.getElementById('tpin1').focus();
+        }
+
+        function closeTpinModal() {
+            document.getElementById('tpinModal').classList.add('hidden');
+            clearTpinInputs();
+            hideTpinError();
+            hideTpinLockout();
+        }
+
+        function clearTpinInputs() {
+            for (let i = 1; i <= 4; i++) {
+                document.getElementById('tpin' + i).value = '';
+            }
+            document.getElementById('verifyTpinBtn').disabled = true;
+        }
+
+        function getTpinValue() {
+            let pin = '';
+            for (let i = 1; i <= 4; i++) {
+                pin += document.getElementById('tpin' + i).value;
+            }
+            return pin;
+        }
+
+        function moveTpinFocus(currentInput, nextInputId) {
+            // Only allow numeric input
+            currentInput.value = currentInput.value.replace(/[^0-9]/g, '');
+
+            if (currentInput.value.length === 1 && nextInputId) {
+                document.getElementById(nextInputId).focus();
+            } else if (!nextInputId && getTpinValue().length === 4) {
+                // All 4 digits entered, enable verify button
+                document.getElementById('verifyTpinBtn').disabled = false;
+            }
+        }
+
+        function handleTpinBackspace(event, currentInput, prevInputId) {
+            if (event.key === 'Backspace' && currentInput.value === '' && prevInputId) {
+                event.preventDefault();
+                const prevInput = document.getElementById(prevInputId);
+                prevInput.focus();
+                prevInput.value = '';
+                document.getElementById('verifyTpinBtn').disabled = true;
+            } else if (event.key === 'Enter' && getTpinValue().length === 4) {
+                event.preventDefault();
+                verifyTpin();
+            }
+        }
+
+        function showTpinError(message) {
+            const errorDiv = document.getElementById('tpinError');
+            const errorText = document.getElementById('tpinErrorText');
+            errorText.textContent = message;
+            errorDiv.classList.remove('hidden');
+            hideTpinLockout();
+        }
+
+        function hideTpinError() {
+            document.getElementById('tpinError').classList.add('hidden');
+        }
+
+        function showTpinLockout(message, minutesRemaining) {
+            const lockoutDiv = document.getElementById('tpinLockout');
+            const lockoutText = document.getElementById('tpinLockoutText');
+
+            if (minutesRemaining) {
+                lockoutText.textContent = `Too many failed attempts. Account locked for ${minutesRemaining} minutes.`;
+            } else {
+                lockoutText.textContent = message;
+            }
+
+            lockoutDiv.classList.remove('hidden');
+            hideTpinError();
+            document.getElementById('verifyTpinBtn').disabled = true;
+        }
+
+        function hideTpinLockout() {
+            document.getElementById('tpinLockout').classList.add('hidden');
+        }
+
+        async function verifyTpin() {
+            const pin = getTpinValue();
+
+            if (pin.length !== 4) {
+                showTpinError('Please enter all 4 digits');
+                return;
+            }
+
+            const verifyBtn = document.getElementById('verifyTpinBtn');
+            verifyBtn.disabled = true;
+            verifyBtn.textContent = 'Verifying...';
+
+            try {
+                const response = await fetch(window.VERIFY_TPIN_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: JSON.stringify({ pin: pin })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('✓ ' + data.message);
+                    window.location.reload();
+                } else if (data.locked) {
+                    showTpinLockout(data.message, data.minutes_remaining);
+                    verifyBtn.textContent = 'Verify PIN';
+                } else {
+                    showTpinError(data.message);
+                    clearTpinInputs();
+                    verifyBtn.textContent = 'Verify PIN';
+                    document.getElementById('tpin1').focus();
+                }
+            } catch (error) {
+                console.error('TPIN verification error:', error);
+                showTpinError('Network error. Please try again.');
+                verifyBtn.disabled = false;
+                verifyBtn.textContent = 'Verify PIN';
+            }
+        }
+
+        // ============================================
+        // FORM SUBMISSION HANDLING
+        // ============================================
+
+        const bankDetailsForm = document.getElementById('bankDetailsForm');
+        if (bankDetailsForm) {
+            bankDetailsForm.addEventListener('submit', async function(e) {
+                if (selectedAuthMethod === 'tpin') {
+                    e.preventDefault();
+
+                    // Validate form
+                    if (!bankDetailsForm.checkValidity()) {
+                        bankDetailsForm.reportValidity();
+                        return;
+                    }
+
+                    // Submit to backend via AJAX to store in session
+                    const formData = new FormData(bankDetailsForm);
+
+                    try {
+                        const response = await fetch(window.REQUEST_OTP_URL, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            }
+                        });
+
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+
+                        const result = await response.json();
+
+                        if (result.success) {
+                            // Data stored in session, show TPIN modal
+                            showTpinModal();
+                        } else {
+                            alert('Error: ' + (result.message || 'Failed to process request'));
+                        }
+                    } catch (error) {
+                        console.error('Form submission error:', error);
+                        alert('Network error. Please try again. Error: ' + error.message);
+                    }
+                }
+                // If OTP selected, allow normal form submission (will redirect and show OTP modal)
+            });
+        }
     </script>
 
     {{-- Firebase SDK (for OTP verification) --}}
@@ -570,6 +948,205 @@
             messagingSenderId: "{{ config('firebase.web.messaging_sender_id') }}",
             appId: "{{ config('firebase.web.app_id') }}"
         };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        // ============================================
+        // OTP MODAL FUNCTIONS
+        // ============================================
+
+        // Auto-show OTP modal if session flag is set
+        if (window.SHOW_OTP_MODAL) {
+            document.addEventListener('DOMContentLoaded', function() {
+                showOtpModal();
+            });
+        }
+
+        function showOtpModal() {
+            const modal = document.getElementById('otpModal');
+            modal.classList.remove('hidden');
+            document.getElementById('otpCode').value = '';
+            document.getElementById('verifyBtn').disabled = true;
+            hideOtpError();
+
+            // Initialize Firebase and send OTP
+            initializeRecaptchaAndSendOtp(window.USER_PHONE);
+        }
+
+        function closeOtpModal() {
+            if (window.recaptchaVerifier) {
+                window.recaptchaVerifier.clear();
+                window.recaptchaVerifier = null;
+            }
+
+            if (otpTimerInterval) {
+                clearInterval(otpTimerInterval);
+                otpTimerInterval = null;
+            }
+
+            // Redirect to cancel URL to clear session
+            window.location.href = window.CANCEL_OTP_URL;
+        }
+
+        function initializeRecaptchaAndSendOtp(phoneNumber) {
+            // Setup reCAPTCHA verifier (invisible)
+            window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+                'size': 'invisible',
+                'callback': function(response) {
+                    console.log('reCAPTCHA solved');
+                },
+                'error-callback': function(error) {
+                    console.error('reCAPTCHA error:', error);
+                    showOtpError('reCAPTCHA verification failed. Please try again.');
+                }
+            });
+
+            // Send OTP
+            auth.signInWithPhoneNumber(phoneNumber, window.recaptchaVerifier)
+                .then(function(result) {
+                    confirmationResult = result;
+                    console.log('OTP sent successfully');
+                    startOtpTimer();
+                })
+                .catch(function(error) {
+                    console.error('Error sending OTP:', error);
+                    let errorMessage = 'Failed to send OTP. ';
+
+                    if (error.code === 'auth/invalid-phone-number') {
+                        errorMessage += 'Invalid phone number.';
+                    } else if (error.code === 'auth/too-many-requests') {
+                        errorMessage += 'Too many requests. Please try again later.';
+                    } else {
+                        errorMessage += error.message;
+                    }
+
+                    showOtpError(errorMessage);
+
+                    if (window.recaptchaVerifier) {
+                        window.recaptchaVerifier.clear();
+                    }
+                });
+        }
+
+        function startOtpTimer() {
+            let timeLeft = 120; // 2 minutes
+            const timerValue = document.getElementById('timerValue');
+            const resendBtn = document.getElementById('resendBtn');
+
+            otpTimerInterval = setInterval(function() {
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                timerValue.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+                timeLeft--;
+
+                if (timeLeft < 0) {
+                    clearInterval(otpTimerInterval);
+                    timerValue.textContent = '0:00';
+                    resendBtn.disabled = false;
+                }
+            }, 1000);
+        }
+
+        async function verifyOtp() {
+            const otpCode = document.getElementById('otpCode').value.trim();
+
+            if (otpCode.length !== 6) {
+                showOtpError('Please enter the 6-digit code');
+                return;
+            }
+
+            const verifyBtn = document.getElementById('verifyBtn');
+            verifyBtn.disabled = true;
+            verifyBtn.textContent = 'Verifying...';
+
+            try {
+                // Verify OTP with Firebase
+                const result = await confirmationResult.confirm(otpCode);
+                console.log('Firebase verification successful:', result);
+
+                // Get Firebase ID token
+                const idToken = await result.user.getIdToken();
+
+                // Send to backend for verification and bank details update
+                const response = await fetch(window.VERIFY_OTP_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: JSON.stringify({
+                        firebase_token: idToken
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('✓ ' + data.message);
+                    window.location.reload();
+                } else {
+                    showOtpError(data.message || 'Verification failed');
+                    verifyBtn.disabled = false;
+                    verifyBtn.textContent = 'Verify Code';
+                }
+
+            } catch (error) {
+                console.error('OTP verification error:', error);
+
+                let errorMessage = 'Invalid code. Please try again.';
+
+                if (error.code === 'auth/invalid-verification-code') {
+                    errorMessage = 'Invalid verification code';
+                } else if (error.code === 'auth/code-expired') {
+                    errorMessage = 'Code expired. Please request a new one.';
+                } else if (error.message) {
+                    errorMessage = error.message;
+                }
+
+                showOtpError(errorMessage);
+                verifyBtn.disabled = false;
+                verifyBtn.textContent = 'Verify Code';
+            }
+        }
+
+        function resendOtp() {
+            const resendBtn = document.getElementById('resendBtn');
+            resendBtn.disabled = true;
+
+            // Clear previous reCAPTCHA
+            if (window.recaptchaVerifier) {
+                window.recaptchaVerifier.clear();
+                window.recaptchaVerifier = null;
+            }
+
+            // Reset timer
+            if (otpTimerInterval) {
+                clearInterval(otpTimerInterval);
+                otpTimerInterval = null;
+            }
+
+            // Clear OTP input
+            document.getElementById('otpCode').value = '';
+            document.getElementById('verifyBtn').disabled = true;
+            hideOtpError();
+
+            // Send new OTP
+            initializeRecaptchaAndSendOtp(window.USER_PHONE);
+        }
+
+        function showOtpError(message) {
+            const errorDiv = document.getElementById('otpError');
+            const errorText = document.getElementById('otpErrorText');
+            errorText.textContent = message;
+            errorDiv.classList.remove('hidden');
+        }
+
+        function hideOtpError() {
+            document.getElementById('otpError').classList.add('hidden');
+        }
     </script>
 
 </body>

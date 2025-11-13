@@ -640,10 +640,26 @@
 
                     // Auto-remove if expired
                     if (secondsRemaining === 0) {
+                        // Silent auto-confirmation - no popups, no alerts
+                        const transactionId = card.dataset.transactionId;
+
+                        // Send confirmation request (don't wait for response)
+                        fetch(`/customer/confirm-transaction/${transactionId}`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}'
+                            }
+                        }).catch(() => {
+                            // Silent failure - backend cron job will handle it as failsafe
+                        });
+
+                        // Immediately start card removal animation
                         setTimeout(() => {
                             card.style.animation = 'fadeOut 0.5s ease';
                             setTimeout(() => {
                                 card.remove();
+                                // Only reload when all transaction cards are gone
                                 if (document.querySelectorAll('.transaction-confirm-card').length === 0) {
                                     location.reload();
                                 }
