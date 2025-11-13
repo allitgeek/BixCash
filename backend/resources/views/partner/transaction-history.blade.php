@@ -9,10 +9,10 @@
     @vite(['resources/css/app.css'])
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 </head>
-<body class="bg-gradient-to-br from-gray-50 via-blue-50/20 to-gray-50 min-h-screen pb-24" style="margin: 0; padding: 0;">
+<body class="bg-neutral-50 min-h-screen pb-32 pt-0 px-0" style="margin: 0;">
 
-    {{-- Enhanced Header with Glassmorphism --}}
-    <header class="bg-white/80 backdrop-blur-xl shadow-lg shadow-blue-900/5 border-b border-gray-200/60 sticky top-0 z-40">
+    {{-- Clean Header --}}
+    <header class="bg-white border-b border-neutral-200 sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 py-3">
             {{-- Top Row: Logo + Title + Back Button --}}
             <div class="flex items-center justify-between gap-3 mb-3">
@@ -44,30 +44,30 @@
                 </a>
             </div>
 
-            {{-- Stats Row: Responsive Grid --}}
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+            {{-- Stats Row: Clean Minimal Cards --}}
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {{-- Total Transactions --}}
-                <div class="bg-gradient-to-br from-purple-50/80 to-violet-50/50 rounded-lg border-l-4 border-purple-600 p-2 sm:p-3 shadow-sm">
-                    <p class="text-xs text-gray-600 font-semibold mb-0.5">Total</p>
-                    <p class="text-lg sm:text-xl font-bold bg-gradient-to-r from-purple-600 to-violet-600 bg-clip-text text-transparent">{{ $stats['total_transactions'] }}</p>
+                <div class="bg-white border border-neutral-200 rounded-lg p-3 hover:border-neutral-300 hover:shadow-sm transition-all duration-200">
+                    <p class="text-xs text-neutral-500 font-medium mb-1">Total</p>
+                    <p class="text-xl font-semibold text-neutral-900">{{ $stats['total_transactions'] }}</p>
                 </div>
 
                 {{-- Total Amount --}}
-                <div class="bg-gradient-to-br from-green-50/80 to-emerald-50/50 rounded-lg border-l-4 border-green-500 p-2 sm:p-3 shadow-sm">
-                    <p class="text-xs text-gray-600 font-semibold mb-0.5">Amount</p>
-                    <p class="text-sm sm:text-base font-bold text-green-600">Rs {{ number_format($stats['total_amount'], 0) }}</p>
+                <div class="bg-white border border-neutral-200 rounded-lg p-3 hover:border-emerald-300 hover:shadow-sm transition-all duration-200">
+                    <p class="text-xs text-neutral-500 font-medium mb-1">Amount</p>
+                    <p class="text-base font-semibold text-neutral-900">Rs {{ number_format($stats['total_amount'], 0) }}</p>
                 </div>
 
                 {{-- Confirmed --}}
-                <div class="bg-gradient-to-br from-blue-50/80 to-indigo-50/50 rounded-lg border-l-4 border-blue-600 p-2 sm:p-3 shadow-sm">
-                    <p class="text-xs text-gray-600 font-semibold mb-0.5">Confirmed</p>
-                    <p class="text-lg sm:text-xl font-bold text-blue-600">{{ $stats['confirmed_count'] }}</p>
+                <div class="bg-white border border-neutral-200 rounded-lg p-3 hover:border-blue-300 hover:shadow-sm transition-all duration-200">
+                    <p class="text-xs text-neutral-500 font-medium mb-1">Confirmed</p>
+                    <p class="text-xl font-semibold text-neutral-900">{{ $stats['confirmed_count'] }}</p>
                 </div>
 
                 {{-- Pending --}}
-                <div class="bg-gradient-to-br from-orange-50/80 to-amber-50/50 rounded-lg border-l-4 border-orange-600 p-2 sm:p-3 shadow-sm">
-                    <p class="text-xs text-gray-600 font-semibold mb-0.5">Pending</p>
-                    <p class="text-lg sm:text-xl font-bold text-orange-600">{{ $stats['pending_count'] }}</p>
+                <div class="bg-white border border-neutral-200 rounded-lg p-3 hover:border-amber-300 hover:shadow-sm transition-all duration-200">
+                    <p class="text-xs text-neutral-500 font-medium mb-1">Pending</p>
+                    <p class="text-xl font-semibold text-neutral-900">{{ $stats['pending_count'] }}</p>
                 </div>
             </div>
         </div>
@@ -101,7 +101,7 @@
                             <div class="flex items-center gap-2 mb-1">
                                 <h4 class="text-sm font-semibold text-gray-900 truncate">{{ $transaction->customer->name }}</h4>
                                 @if($transaction->status === 'confirmed')
-                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-gradient-to-r from-green-50 to-emerald-50 text-green-700 border border-green-200/60 shadow-sm shadow-green-900/5">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-gradient-to-r bg-green-50 text-green-700 border border-green-200/60 shadow-sm shadow-green-900/5">
                                     <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                                     </svg>
@@ -115,7 +115,7 @@
                                     Pending
                                 </span>
                                 @else
-                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-gradient-to-r from-gray-50 to-slate-50 text-gray-700 border border-gray-200/60 shadow-sm">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-gradient-to-r bg-gray-50 text-gray-700 border border-gray-200/60 shadow-sm">
                                     {{ ucfirst(str_replace('_', ' ', $transaction->status)) }}
                                 </span>
                                 @endif

@@ -3,41 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#1e3a8a">
+    <meta name="theme-color" content="#021c47">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Wallet - BixCash Partner</title>
     @vite(['resources/css/app.css'])
 </head>
-<body class="bg-gray-50 min-h-screen pb-24" style="margin: 0; padding: 0;">
+<body class="bg-neutral-50 min-h-screen pb-32 pt-0 px-0" style="margin: 0;">
 
     {{-- Header --}}
-    <header class="bg-gradient-to-br from-blue-900 via-blue-950 to-gray-900 text-white px-4 py-8 shadow-xl">
-        <div class="max-w-7xl mx-auto flex items-center gap-3">
-            <a href="{{ route('partner.dashboard') }}" class="text-white hover:text-blue-200 transition-colors">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                </svg>
-            </a>
-            <h1 class="text-2xl font-bold">My Wallet</h1>
+    <header class="bg-white border-b border-neutral-200 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <a href="{{ route('partner.dashboard') }}" class="text-neutral-500 hover:text-neutral-900 transition-colors duration-200">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                </a>
+                <h1 class="text-xl font-semibold text-neutral-900">My Wallet</h1>
+            </div>
         </div>
     </header>
 
-    {{-- Wallet Balance Card --}}
-    <div class="max-w-7xl mx-auto px-4 -mt-6 relative z-10">
-        <div class="bg-gradient-to-br from-blue-600 to-purple-700 rounded-2xl p-6 shadow-xl shadow-blue-900/20 text-white">
-            <div class="text-sm text-blue-100 mb-2 text-center">Available Balance</div>
-            <div class="text-4xl font-bold text-center mb-6">Rs {{ number_format($wallet->balance, 0) }}</div>
+    {{-- Wallet Stats Cards - Clean & Minimal --}}
+    <div class="max-w-7xl mx-auto px-4 mt-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            {{-- Available Balance --}}
+            <div class="bg-white border border-neutral-200 rounded-xl p-6 hover:border-blue-300 hover:shadow-sm transition-all duration-200">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
+                        <svg class="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"></path>
+                            <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                </div>
+                <p class="text-xs font-medium text-neutral-500 uppercase tracking-wide mb-1">Available Balance</p>
+                <p class="text-2xl sm:text-3xl font-semibold text-neutral-900">Rs {{ number_format($wallet->balance, 0) }}</p>
+            </div>
 
-            <div class="flex gap-4 pt-6 border-t border-white/20">
-                <div class="flex-1 text-center">
-                    <div class="text-2xl font-bold mb-1">Rs {{ number_format($wallet->total_earned, 0) }}</div>
-                    <div class="text-xs text-blue-100 uppercase tracking-wide">Total Earned</div>
+            {{-- Total Earned --}}
+            <div class="bg-white border border-neutral-200 rounded-xl p-6 hover:border-emerald-300 hover:shadow-sm transition-all duration-200">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center">
+                        <svg class="w-4 h-4 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    <span class="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">
+                        Total
+                    </span>
                 </div>
-                <div class="w-px bg-white/20"></div>
-                <div class="flex-1 text-center">
-                    <div class="text-2xl font-bold mb-1">Rs {{ number_format($wallet->total_withdrawn, 0) }}</div>
-                    <div class="text-xs text-blue-100 uppercase tracking-wide">Total Withdrawn</div>
+                <p class="text-xs font-medium text-neutral-500 uppercase tracking-wide mb-1">Total Earned</p>
+                <p class="text-2xl sm:text-3xl font-semibold text-neutral-900">Rs {{ number_format($wallet->total_earned, 0) }}</p>
+            </div>
+
+            {{-- Total Withdrawn --}}
+            <div class="bg-white border border-neutral-200 rounded-xl p-6 hover:border-orange-300 hover:shadow-sm transition-all duration-200">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center">
+                        <svg class="w-4 h-4 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    <span class="text-xs font-medium text-orange-600 bg-orange-50 px-2 py-0.5 rounded">
+                        Paid
+                    </span>
                 </div>
+                <p class="text-xs font-medium text-neutral-500 uppercase tracking-wide mb-1">Total Withdrawn</p>
+                <p class="text-2xl sm:text-3xl font-semibold text-neutral-900">Rs {{ number_format($wallet->total_withdrawn, 0) }}</p>
             </div>
         </div>
     </div>
@@ -52,15 +86,15 @@
 
         {{-- Bank Details Warning --}}
         @if(!$hasBankDetails)
-        <div class="bg-gradient-to-r from-orange-50 to-yellow-50 rounded-xl border-2 border-orange-300 p-4 sm:p-5 mb-6 shadow-md">
+        <div class="bg-orange-50/80 rounded-xl border-l-4 border-orange-600 p-4 sm:p-5 mb-6 shadow-sm">
             <div class="flex items-start gap-3">
-                <div class="w-10 h-10 rounded-lg bg-orange-500 flex items-center justify-center flex-shrink-0">
+                <div class="w-10 h-10 rounded-lg bg-orange-600 flex items-center justify-center flex-shrink-0">
                     <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
                     </svg>
                 </div>
                 <div class="flex-1">
-                    <p class="text-sm font-semibold text-orange-900 mb-2">� Bank Details Required</p>
+                    <p class="text-sm font-semibold text-orange-900 mb-2">Bank Details Required</p>
                     <p class="text-sm text-orange-800 leading-relaxed">
                         Please add your bank details in your <a href="{{ route('partner.profile') }}" class="underline font-semibold">profile</a> before requesting withdrawals.
                     </p>
@@ -71,9 +105,9 @@
 
         {{-- Withdrawal Limits Info (if bank details exist) --}}
         @if($hasBankDetails && isset($settings))
-        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border-2 border-blue-300 p-4 sm:p-5 mb-6 shadow-md">
+        <div class="bg-blue-50/80 rounded-xl border-l-4 border-blue-600 p-4 sm:p-5 mb-6 shadow-sm">
             <div class="flex items-start gap-3">
-                <div class="w-10 h-10 rounded-lg bg-blue-500 flex items-center justify-center flex-shrink-0">
+                <div class="w-10 h-10 rounded-lg bg-blue-600 flex items-center justify-center flex-shrink-0">
                     <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
                     </svg>
@@ -113,9 +147,9 @@
 
         {{-- Withdrawals Disabled Warning --}}
         @if(isset($settings) && !$settings->enabled)
-        <div class="bg-gradient-to-r from-red-50 to-orange-50 rounded-xl border-2 border-red-300 p-4 sm:p-5 mb-6 shadow-md">
+        <div class="bg-red-50/80 rounded-xl border-l-4 border-red-600 p-4 sm:p-5 mb-6 shadow-sm">
             <div class="flex items-start gap-3">
-                <div class="w-10 h-10 rounded-lg bg-red-500 flex items-center justify-center flex-shrink-0">
+                <div class="w-10 h-10 rounded-lg bg-red-600 flex items-center justify-center flex-shrink-0">
                     <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
                     </svg>
@@ -134,7 +168,7 @@
         <div class="bg-white rounded-xl border border-gray-200/60 shadow-lg shadow-blue-900/5 overflow-hidden mb-6">
             <div class="px-5 py-4 border-b border-gray-200/60 bg-gradient-to-r from-blue-50/70 via-blue-900/5 to-transparent">
                 <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-purple-700 flex items-center justify-center shadow-sm">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-blue-900 flex items-center justify-center shadow-sm">
                         <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
                         </svg>
@@ -151,7 +185,7 @@
                         <input type="number" name="amount" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-base focus:outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-500/10 transition-all" required min="{{ $settings->min_amount ?? 100 }}" max="{{ $settings->max_per_withdrawal ?? 50000 }}" step="1" placeholder="Min Rs. {{ number_format($settings->min_amount ?? 100, 0) }}" @if(!$hasBankDetails || (isset($settings) && !$settings->enabled)) disabled @endif>
                         <p class="text-xs text-gray-500 mt-2">Minimum withdrawal amount is Rs. {{ number_format($settings->min_amount ?? 100, 0) }}</p>
                     </div>
-                    <button type="submit" class="w-full px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-700 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-purple-800 hover:-translate-y-0.5 transition-all duration-200 shadow-sm shadow-blue-500/30 hover:shadow-md hover:shadow-blue-500/40 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed" @if(!$hasBankDetails || (isset($settings) && !$settings->enabled)) disabled @endif>
+                    <button type="submit" class="w-full px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-blue-800 hover:-translate-y-0.5 transition-all duration-200 shadow-sm shadow-blue-500/30 hover:shadow-md hover:shadow-blue-500/40 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed" @if(!$hasBankDetails || (isset($settings) && !$settings->enabled)) disabled @endif>
                         <svg class="withdraw-spinner hidden animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -166,7 +200,7 @@
         <div class="bg-white rounded-xl border border-gray-200/60 shadow-lg shadow-blue-900/5 overflow-hidden mb-6">
             <div class="px-5 py-4 border-b border-gray-200/60 bg-gradient-to-r from-blue-50/70 via-blue-900/5 to-transparent">
                 <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-purple-700 flex items-center justify-center shadow-sm">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-blue-900 flex items-center justify-center shadow-sm">
                         <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
                             <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"></path>
@@ -246,7 +280,7 @@
             </a>
 
             {{-- Wallet (Active) --}}
-            <a href="{{ route('partner.wallet') }}" class="flex flex-col items-center py-3 px-2 text-white bg-gradient-to-r from-blue-600 to-purple-700 border-t-2 border-blue-600 transition-all duration-200">
+            <a href="{{ route('partner.wallet') }}" class="flex flex-col items-center py-3 px-2 text-white bg-gradient-to-r from-blue-600 to-blue-700 border-t-2 border-blue-600 transition-all duration-200">
                 <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"></path>
                     <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"></path>

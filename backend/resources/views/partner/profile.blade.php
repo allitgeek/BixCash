@@ -9,10 +9,10 @@
     @vite(['resources/css/app.css'])
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 </head>
-<body class="bg-gradient-to-br from-gray-50 via-blue-50/20 to-gray-50 min-h-screen pb-24" style="margin: 0; padding: 0;">
+<body class="bg-neutral-50 min-h-screen pb-32 pt-0 px-0" style="margin: 0;">
 
-    {{-- Enhanced Profile Header with Glassmorphism --}}
-    <header class="bg-white/80 backdrop-blur-xl shadow-lg shadow-blue-900/5 border-b border-gray-200/60 sticky top-0 z-40">
+    {{-- Clean Profile Header --}}
+    <header class="bg-white border-b border-neutral-200 sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 py-3">
             {{-- Top Row: Avatar + User Info + Actions --}}
             <div class="flex items-center justify-between gap-3 mb-3">
@@ -56,39 +56,45 @@
                 </div>
             </div>
 
-            {{-- Quick Stats Row: Responsive Grid --}}
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
+            {{-- Quick Stats Row: Clean Minimal Cards --}}
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {{-- Total Orders --}}
-                <div class="bg-gradient-to-br from-blue-50/80 to-indigo-50/50 rounded-lg border-l-4 border-blue-600 p-2 sm:p-3 shadow-sm">
-                    <div class="flex items-center gap-2 mb-0.5">
-                        <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                        </svg>
-                        <p class="text-xs text-gray-600 font-semibold">Orders</p>
+                <div class="bg-white border border-neutral-200 rounded-lg p-3 hover:border-blue-300 hover:shadow-sm transition-all duration-200">
+                    <div class="flex items-center gap-2 mb-1">
+                        <div class="w-6 h-6 rounded bg-blue-50 flex items-center justify-center">
+                            <svg class="w-3.5 h-3.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                            </svg>
+                        </div>
+                        <p class="text-xs text-neutral-500 font-medium">Orders</p>
                     </div>
-                    <p class="text-lg sm:text-xl font-bold text-blue-600">{{ $stats['total_orders'] }}</p>
+                    <p class="text-xl font-semibold text-neutral-900">{{ $stats['total_orders'] }}</p>
                 </div>
 
                 {{-- Total Profit --}}
-                <div class="bg-gradient-to-br from-green-50/80 to-emerald-50/50 rounded-lg border-l-4 border-green-500 p-2 sm:p-3 shadow-sm">
-                    <div class="flex items-center gap-2 mb-0.5">
-                        <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <p class="text-xs text-gray-600 font-semibold">Profit</p>
+                <div class="bg-white border border-neutral-200 rounded-lg p-3 hover:border-emerald-300 hover:shadow-sm transition-all duration-200">
+                    <div class="flex items-center gap-2 mb-1">
+                        <div class="w-6 h-6 rounded bg-emerald-50 flex items-center justify-center">
+                            <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <p class="text-xs text-neutral-500 font-medium">Profit</p>
                     </div>
-                    <p class="text-sm sm:text-base font-bold text-green-600">Rs {{ number_format($stats['total_earned'], 0) }}</p>
+                    <p class="text-base font-semibold text-neutral-900">Rs {{ number_format($stats['total_earned'], 0) }}</p>
                 </div>
 
                 {{-- Account Status --}}
-                <div class="bg-gradient-to-br from-purple-50/80 to-violet-50/50 rounded-lg border-l-4 border-purple-600 p-2 sm:p-3 shadow-sm col-span-2 sm:col-span-1">
-                    <div class="flex items-center gap-2 mb-0.5">
-                        <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <p class="text-xs text-gray-600 font-semibold">Status</p>
+                <div class="bg-white border border-neutral-200 rounded-lg p-3 hover:border-neutral-300 hover:shadow-sm transition-all duration-200 col-span-2 sm:col-span-1">
+                    <div class="flex items-center gap-2 mb-1">
+                        <div class="w-6 h-6 rounded bg-neutral-100 flex items-center justify-center">
+                            <svg class="w-3.5 h-3.5 text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <p class="text-xs text-neutral-500 font-medium">Status</p>
                     </div>
-                    <p class="text-lg sm:text-xl font-bold bg-gradient-to-r from-purple-600 to-violet-600 bg-clip-text text-transparent capitalize">{{ $partnerProfile->status }}</p>
+                    <p class="text-xl font-semibold text-neutral-900 capitalize">{{ $partnerProfile->status }}</p>
                 </div>
             </div>
         </div>
@@ -245,8 +251,8 @@
                         </div>
                     </div>
                     <div class="flex items-start gap-3">
-                        <div class="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center flex-shrink-0">
-                            <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="w-10 h-10 rounded-lg bg-gray-50 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                             </svg>
                         </div>
@@ -273,7 +279,7 @@
             <div class="bg-white rounded-xl border border-gray-200/60 shadow-lg shadow-blue-900/5 overflow-hidden hover:border-green-800/40 hover:shadow-xl hover:shadow-green-900/10 transition-all duration-300">
                 <div class="px-5 py-4 border-b border-gray-200/60 bg-gradient-to-r from-green-50/70 via-green-900/5 to-transparent">
                     <div class="flex items-center gap-2">
-                        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-green-600 to-emerald-600 flex items-center justify-center shadow-sm">
+                        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-green-600 to-green-700 flex items-center justify-center shadow-sm">
                             <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                             </svg>
@@ -294,8 +300,8 @@
                         </div>
                     </div>
                     <div class="flex items-start gap-3">
-                        <div class="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center flex-shrink-0">
-                            <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="w-10 h-10 rounded-lg bg-gray-50 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
                             </svg>
                         </div>
@@ -311,7 +317,7 @@
             <div class="bg-white rounded-xl border border-gray-200/60 shadow-lg shadow-blue-900/5 overflow-hidden hover:border-orange-800/40 hover:shadow-xl hover:shadow-orange-900/10 transition-all duration-300 md:col-span-2">
                 <div class="px-5 py-4 border-b border-gray-200/60 bg-gradient-to-r from-orange-50/70 via-orange-900/5 to-transparent">
                     <div class="flex items-center gap-2">
-                        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-600 to-amber-600 flex items-center justify-center shadow-sm">
+                        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-600 to-orange-700 flex items-center justify-center shadow-sm">
                             <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -353,7 +359,7 @@
             <div class="bg-white rounded-xl border border-gray-200/60 shadow-lg shadow-blue-900/5 overflow-hidden hover:border-orange-800/40 hover:shadow-xl hover:shadow-orange-900/10 transition-all duration-300 md:col-span-2">
                 <div class="px-5 py-4 border-b border-gray-200/60 bg-gradient-to-r from-orange-50/70 via-orange-900/5 to-transparent">
                     <div class="flex items-center gap-2">
-                        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-600 to-amber-600 flex items-center justify-center shadow-sm">
+                        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-600 to-orange-700 flex items-center justify-center shadow-sm">
                             <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                             </svg>

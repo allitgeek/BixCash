@@ -7,18 +7,24 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Partner Dashboard - BixCash</title>
     @vite(['resources/css/app.css'])
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Display:wght@700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <style>
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* Premium Typography */
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
         }
-        .animate-fadeIn {
-            animation: fadeIn 0.3s ease-out;
+
+        /* Fast, lightweight transitions */
+        * {
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-gray-50 via-blue-50/20 to-gray-50 min-h-screen pb-20" style="margin: 0; padding: 0;">
+<body class="relative bg-neutral-50 min-h-screen pb-32 pt-0 px-0 antialiased" style="margin: 0;">
 
     {{-- Enhanced Modern Header with Glassmorphism --}}
     <header class="bg-white/80 backdrop-blur-xl shadow-lg shadow-blue-900/5 border-b border-gray-200/60 sticky top-0 z-40">
@@ -59,7 +65,7 @@
                 {{-- Right: Stats + Actions --}}
                 <div class="flex items-center gap-1.5 sm:gap-2">
                     {{-- Today's Revenue Pill --}}
-                    <div class="hidden md:flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-full shadow-sm">
+                    <div class="hidden md:flex items-center gap-1.5 px-3 py-1.5 bg-green-50 border border-green-200 rounded-full shadow-sm">
                         <svg class="w-3.5 h-3.5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
@@ -68,7 +74,7 @@
 
                     {{-- Pending Badge (only if > 0) --}}
                     @if($stats['pending_confirmations'] > 0)
-                    <div class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-orange-50 to-yellow-50 border border-orange-200 rounded-full shadow-sm animate-pulse">
+                    <div class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 border border-orange-200 rounded-full shadow-sm animate-pulse">
                         <svg class="w-3.5 h-3.5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
@@ -88,14 +94,14 @@
                         </button>
 
                         {{-- Notification Dropdown --}}
-                        <div x-show="open" @click.away="open = false" x-transition class="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-2xl border border-gray-200 py-2 z-50">
+                        <div x-show="open" @click.away="open = false" x-transition class="absolute right-0 mt-2 w-[calc(100vw-2rem)] sm:w-80 bg-white rounded-xl shadow-2xl border border-gray-200 py-2 z-50">
                             <div class="px-4 py-2 border-b border-gray-200">
                                 <p class="text-sm font-bold text-gray-800">Pending Confirmations</p>
                             </div>
                             @if($pendingTransactions->count() > 0)
                                 @foreach($pendingTransactions as $transaction)
-                                <div class="px-4 py-2.5 hover:bg-gray-50 transition-colors">
-                                    <p class="text-sm font-semibold text-gray-800">{{ $transaction->customer->name }}</p>
+                                <div class="px-4 py-2.5 hover:bg-gray-50 transition-colors overflow-hidden">
+                                    <p class="text-sm font-semibold text-gray-800 truncate">{{ $transaction->customer->name }}</p>
                                     <p class="text-xs text-gray-500">Rs {{ number_format($transaction->invoice_amount, 0) }} • {{ $transaction->transaction_code }}</p>
                                 </div>
                                 @endforeach
@@ -117,7 +123,7 @@
                         </button>
 
                         {{-- Profile Menu --}}
-                        <div x-show="open" @click.away="open = false" x-transition class="absolute right-0 mt-2 w-52 bg-white rounded-xl shadow-2xl border border-gray-200 py-2 z-50">
+                        <div x-show="open" @click.away="open = false" x-transition class="absolute right-0 mt-2 w-[calc(100vw-2rem)] sm:w-52 bg-white rounded-xl shadow-2xl border border-gray-200 py-2 z-50">
                             <a href="{{ route('partner.profile') }}" class="flex items-center gap-3 px-4 py-2.5 hover:bg-blue-50 transition-colors">
                                 <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -150,76 +156,144 @@
         </div>
     </header>
 
-    <div class="max-w-7xl mx-auto px-4 py-6 space-y-6">
+    <div class="max-w-7xl mx-auto px-6 py-8 sm:px-8 sm:py-12 space-y-10 sm:space-y-12">
 
-        {{-- Compact Stats in Single Row (Responsive: 2 cols mobile, 4 desktop) --}}
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {{-- Total Revenue Card - Green Theme --}}
-            <div class="bg-gradient-to-br from-green-50/80 to-emerald-50/50 rounded-xl border-l-4 border-green-500 p-2 sm:p-3 shadow-lg shadow-green-900/10 hover:shadow-xl hover:-translate-y-1 hover:shadow-green-900/20 transition-all duration-300">
-                <div class="flex items-center gap-2 mb-1.5">
-                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center text-white shadow-md">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        {{-- Clean Stats Grid - Lightweight & Refined --}}
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
+
+            {{-- Revenue Card - Clean & Minimal --}}
+            <div class="bg-white border border-neutral-200 rounded-xl p-6 hover:border-blue-300 hover:shadow-sm transition-all duration-200">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
+                        <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                     </div>
-                    <p class="text-xs text-gray-700 font-semibold">Revenue</p>
+                    <span class="text-xs font-medium text-green-600 bg-green-50 px-2 py-0.5 rounded">
+                        +12%
+                    </span>
                 </div>
-                <h3 class="text-xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">Rs {{ number_format($stats['total_revenue'], 0) }}</h3>
+
+                <p class="text-xs font-medium text-neutral-500 uppercase tracking-wide mb-1">
+                    Total Revenue
+                </p>
+
+                <p class="text-3xl font-semibold text-neutral-900 mb-3">
+                    Rs {{ number_format($stats['total_revenue'], 0) }}
+                </p>
+
+                {{-- Mini sparkline --}}
+                <div class="flex items-end gap-0.5 h-8">
+                    <div class="w-full bg-blue-100 rounded-sm" style="height: 50%"></div>
+                    <div class="w-full bg-blue-100 rounded-sm" style="height: 65%"></div>
+                    <div class="w-full bg-blue-100 rounded-sm" style="height: 45%"></div>
+                    <div class="w-full bg-blue-100 rounded-sm" style="height: 70%"></div>
+                    <div class="w-full bg-blue-200 rounded-sm" style="height: 100%"></div>
+                    <div class="w-full bg-blue-200 rounded-sm" style="height: 85%"></div>
+                    <div class="w-full bg-blue-200 rounded-sm" style="height: 95%"></div>
+                </div>
             </div>
 
-            {{-- Your Profit Card - Navy/Blue Theme --}}
-            <div class="bg-gradient-to-br from-blue-50/80 to-indigo-50/50 rounded-xl border-l-4 border-blue-600 p-2 sm:p-3 shadow-lg shadow-blue-900/10 hover:shadow-xl hover:-translate-y-1 hover:shadow-blue-900/20 transition-all duration-300">
-                <div class="flex items-center gap-2 mb-1.5">
-                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-blue-900 flex items-center justify-center text-white shadow-md">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            {{-- Profit Card --}}
+            <div class="bg-white border border-neutral-200 rounded-xl p-6 hover:border-purple-300 hover:shadow-sm transition-all duration-200">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center">
+                        <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
                         </svg>
                     </div>
-                    <p class="text-xs text-gray-700 font-semibold">Profit</p>
+                    <span class="text-xs font-medium text-purple-600 bg-purple-50 px-2 py-0.5 rounded">
+                        Earned
+                    </span>
                 </div>
-                <h3 class="text-xl font-bold bg-gradient-to-r from-blue-600 to-blue-900 bg-clip-text text-transparent">Rs {{ number_format($stats['total_earned'], 0) }}</h3>
+
+                <p class="text-xs font-medium text-neutral-500 uppercase tracking-wide mb-1">
+                    Your Profit
+                </p>
+
+                <p class="text-3xl font-semibold text-neutral-900 mb-3">
+                    Rs {{ number_format($stats['total_earned'], 0) }}
+                </p>
+
+                {{-- Simple progress bar --}}
+                <div class="h-1.5 bg-neutral-100 rounded-full overflow-hidden">
+                    <div class="h-full bg-gradient-to-r from-purple-400 to-purple-600 rounded-full" style="width: 67%"></div>
+                </div>
             </div>
 
-            {{-- Transactions Card - Purple Theme --}}
-            <div class="bg-gradient-to-br from-purple-50/80 to-violet-50/50 rounded-xl border-l-4 border-purple-600 p-2 sm:p-3 shadow-lg shadow-purple-900/10 hover:shadow-xl hover:-translate-y-1 hover:shadow-purple-900/20 transition-all duration-300">
-                <div class="flex items-center gap-2 mb-1.5">
-                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-600 to-violet-600 flex items-center justify-center text-white shadow-md">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            {{-- Orders Card --}}
+            <div class="bg-white border border-neutral-200 rounded-xl p-6 hover:border-emerald-300 hover:shadow-sm transition-all duration-200">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center">
+                        <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                         </svg>
                     </div>
-                    <p class="text-xs text-gray-700 font-semibold">Orders</p>
+                    <span class="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">
+                        Today
+                    </span>
                 </div>
-                <h3 class="text-xl font-bold bg-gradient-to-r from-purple-600 to-violet-600 bg-clip-text text-transparent">{{ $stats['total_transactions'] }}</h3>
+
+                <p class="text-xs font-medium text-neutral-500 uppercase tracking-wide mb-1">
+                    Total Orders
+                </p>
+
+                <p class="text-3xl font-semibold text-neutral-900 mb-3">
+                    {{ $stats['total_transactions'] }}
+                </p>
+
+                {{-- Simple dot indicator --}}
+                <div class="flex items-center gap-1.5">
+                    <div class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div>
+                    <span class="text-xs text-neutral-500">Active transactions</span>
+                </div>
             </div>
 
-            {{-- Pending Card - Orange Theme with Pulse Animation --}}
-            <div class="bg-gradient-to-br from-orange-50/80 to-amber-50/50 rounded-xl border-l-4 border-orange-600 p-2 sm:p-3 shadow-lg shadow-orange-900/10 hover:shadow-xl hover:-translate-y-1 hover:shadow-orange-900/20 transition-all duration-300 @if($stats['pending_confirmations'] > 0) animate-pulse @endif">
-                <div class="flex items-center gap-2 mb-1.5">
-                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-600 to-amber-600 flex items-center justify-center text-white shadow-md relative">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            {{-- Pending Confirmations Card --}}
+            <div class="bg-white border border-neutral-200 rounded-xl p-6 hover:border-amber-300 hover:shadow-sm transition-all duration-200 @if($stats['pending_confirmations'] > 0) ring-2 ring-amber-400/20 @endif">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
+                        <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        @if($stats['pending_confirmations'] > 0)
-                        <span class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 border-2 border-white rounded-full animate-ping"></span>
-                        <span class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 border-2 border-white rounded-full"></span>
-                        @endif
                     </div>
-                    <p class="text-xs text-gray-700 font-semibold">Pending</p>
+                    @if($stats['pending_confirmations'] > 0)
+                    <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                    </span>
+                    @endif
                 </div>
-                <h3 class="text-xl font-bold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">{{ $stats['pending_confirmations'] }}</h3>
+
+                <p class="text-xs font-medium text-neutral-500 uppercase tracking-wide mb-1">
+                    Pending
+                </p>
+
+                <p class="text-3xl font-semibold text-neutral-900 mb-3">
+                    {{ $stats['pending_confirmations'] }}
+                </p>
+
+                {{-- Status text --}}
+                <div class="flex items-center gap-1.5">
+                    @if($stats['pending_confirmations'] > 0)
+                    <span class="text-xs text-amber-600 font-medium">Requires attention</span>
+                    @else
+                    <span class="text-xs text-neutral-400">All clear</span>
+                    @endif
+                </div>
             </div>
+
         </div>
 
         {{-- Next Profit Distribution --}}
         @if($nextBatchDate)
         <div class="space-y-4">
-            <div class="flex items-center justify-center gap-3 text-sm bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 border border-blue-200 rounded-xl py-3 px-5 shadow-sm">
+            <div class="flex items-center justify-center gap-3 text-sm bg-blue-50 border border-blue-200 rounded-xl py-3 px-5 shadow-sm">
                 <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
                 <span class="text-gray-700 font-medium">Next Profit Distribution:</span>
-                <span class="font-bold bg-gradient-to-r from-blue-700 to-purple-700 bg-clip-text text-transparent">{{ $nextBatchDate->format('M d, Y') }}</span>
+                <span class="font-bold bg-gradient-to-r from-blue-700 to-blue-900 bg-clip-text text-transparent">{{ $nextBatchDate->format('M d, Y') }}</span>
             </div>
         </div>
         @endif
@@ -239,19 +313,19 @@
 
             <div class="divide-y divide-gray-200/60">
                 @forelse($recentTransactions as $transaction)
-                <div class="p-4 hover:bg-gradient-to-r hover:from-blue-50/50 hover:to-purple-50/30 transition-all duration-200 flex items-center justify-between animate-fadeIn">
+                <div class="p-4 hover:bg-blue-50/50 transition-all duration-200 flex items-center justify-between animate-fadeIn">
                     <div class="flex-1 min-w-0">
                         <h4 class="text-sm font-semibold text-gray-900 truncate">{{ $transaction->customer->name }}</h4>
                         <p class="text-xs text-gray-500 mt-0.5">{{ $transaction->transaction_code }} • {{ $transaction->created_at->format('M d, h:i A') }}</p>
                         @if($transaction->status === 'confirmed')
-                        <span class="inline-flex items-center mt-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-green-50 to-emerald-50 text-green-700 border border-green-200/60 shadow-sm shadow-green-900/5">
+                        <span class="inline-flex items-center mt-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-green-50 text-green-700 border border-green-200/60 shadow-sm shadow-green-900/5">
                             <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                             </svg>
                             Confirmed
                         </span>
                         @elseif($transaction->status === 'pending_confirmation')
-                        <span class="inline-flex items-center mt-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-yellow-50 to-orange-50 text-orange-700 border border-orange-200/60 shadow-sm shadow-orange-900/5">
+                        <span class="inline-flex items-center mt-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-orange-50 text-orange-700 border border-orange-200/60 shadow-sm shadow-orange-900/5">
                             <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
                             </svg>
@@ -269,7 +343,7 @@
                 </div>
                 @empty
                 <div class="text-center py-12 px-4">
-                    <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center animate-bounce">
+                    <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center animate-bounce">
                         <svg class="w-10 h-10 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
@@ -287,7 +361,7 @@
             </div>
 
             @if($recentTransactions->count() > 0)
-            <a href="{{ route('partner.transactions') }}" class="block w-full text-center py-3 bg-gradient-to-r from-blue-50/50 to-purple-50/30 hover:from-blue-100/50 hover:to-purple-100/40 text-blue-700 font-bold text-sm border-t border-gray-200/60 transition-all duration-200">
+            <a href="{{ route('partner.transactions') }}" class="block w-full text-center py-3 bg-blue-50/50 hover:bg-blue-100/50 text-blue-700 font-bold text-sm border-t border-gray-200/60 transition-all duration-200">
                 View All Transactions →
             </a>
             @endif
