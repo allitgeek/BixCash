@@ -91,6 +91,15 @@
                             Users
                         </a>
 
+                        {{-- Roles & Permissions --}}
+                        <a href="{{ route('admin.roles.index') }}"
+                           class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.roles.*') || request()->routeIs('admin.permissions.*') ? 'bg-[#76d37a] text-[#021c47] shadow-lg shadow-green-500/30' : 'text-white/80 hover:bg-white/10 hover:text-white hover:translate-x-1' }}">
+                            <svg class="mr-3 h-5 w-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                            </svg>
+                            Roles & Permissions
+                        </a>
+
                         {{-- Customers --}}
                         <a href="{{ route('admin.customers.index') }}"
                            class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.customers.*') ? 'bg-[#76d37a] text-[#021c47] shadow-lg shadow-green-500/30' : 'text-white/80 hover:bg-white/10 hover:text-white hover:translate-x-1' }}">
@@ -335,6 +344,16 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                         </svg>
                         Users
+                    </a>
+
+                    {{-- Roles & Permissions --}}
+                    <a href="{{ route('admin.roles.index') }}"
+                       @click="mobileMenuOpen = false"
+                       class="group flex items-center px-3 py-2.5 text-[0.8125rem] font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('admin.roles.*') || request()->routeIs('admin.permissions.*') ? 'bg-[#76d37a] text-[#021c47] shadow-lg shadow-green-500/30' : 'text-white/80 hover:bg-white/10 hover:text-white' }}">
+                        <svg class="mr-2.5 h-4 w-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                        </svg>
+                        Roles & Permissions
                     </a>
 
                     {{-- Customers --}}

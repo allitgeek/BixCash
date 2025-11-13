@@ -98,6 +98,10 @@
                                         <span style="background: #28a745; color: #fff; padding: 0.25rem 0.5rem; border-radius: 8px; font-size: 0.75rem;">✅</span>
                                     @elseif($history->status === 'rejected')
                                         <span style="background: #dc3545; color: #fff; padding: 0.25rem 0.5rem; border-radius: 8px; font-size: 0.75rem;">❌</span>
+                                    @elseif($history->status === 'cancelled')
+                                        <span style="background: #6c757d; color: #fff; padding: 0.25rem 0.5rem; border-radius: 8px; font-size: 0.75rem;">🚫</span>
+                                    @elseif($history->status === 'processing')
+                                        <span style="background: #17a2b8; color: #fff; padding: 0.25rem 0.5rem; border-radius: 8px; font-size: 0.75rem;">🔄</span>
                                     @else
                                         <span style="background: #ffc107; color: #000; padding: 0.25rem 0.5rem; border-radius: 8px; font-size: 0.75rem;">⏳</span>
                                     @endif
@@ -252,10 +256,17 @@
                         </tr>
                         @if($withdrawal->proof_of_payment)
                         <tr>
-                            <td colspan="2" style="padding: 0.5rem 0;">
-                                <a href="{{ Storage::url($withdrawal->proof_of_payment) }}" target="_blank" style="color: #007bff; text-decoration: none;">
+                            <td colspan="2" style="padding: 0.75rem 0;">
+                                <a href="{{ asset('storage/' . $withdrawal->proof_of_payment) }}" target="_blank"
+                                   style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                                          color: white; padding: 0.5rem 1rem; border-radius: 8px; text-decoration: none;
+                                          font-weight: 500; box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
+                                          transition: all 0.2s ease;">
                                     📎 View Proof of Payment
                                 </a>
+                                <div style="margin-top: 0.5rem; font-size: 0.75rem; color: #666;">
+                                    <strong>File:</strong> {{ basename($withdrawal->proof_of_payment) }}
+                                </div>
                             </td>
                         </tr>
                         @endif

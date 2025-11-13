@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -110,6 +111,20 @@ class User extends Authenticatable
         return $this->hasOne(Wallet::class);
     }
 
+    public function customPermissions(): BelongsToMany
+    {
+        return $this->belongsToMany(Permission::class, 'user_permissions')
+            ->withPivot(['granted_by', 'expires_at', 'notes'])
+            ->withTimestamps()
+            ->wherePivot('expires_at', '>', now())
+            ->orWherePivotNull('expires_at');
+    }
+
+    public function activityLogs(): HasMany
+    {
+        return $this->hasMany(ActivityLog::class);
+    }
+
     // Helper methods
     public function hasRole(string $roleName): bool
     {
@@ -122,12 +137,95 @@ class User extends Authenticatable
             return false;
         }
 
-        // Check admin profile for permission overrides
+        // Check for direct custom permissions first
+        if ($this->hasDirectPermission($permission)) {
+            return true;
+        }
+
+        // Check admin profile for permission overrides (legacy support)
         if ($this->adminProfile && $this->adminProfile->hasPermission($permission)) {
             return true;
         }
 
+        // Check role permissions
         return $this->role->hasPermission($permission);
+    }
+
+    /**
+     * Check if user has a direct permission (not from role)
+     */
+    public function hasDirectPermission(string $permissionName): bool
+    {
+        try {
+            return $this->customPermissions()
+                ->where('permissions.name', $permissionName)
+                ->where('permissions.is_active', true)
+                ->exists();
+        } catch (\Exception $e) {
+            // Table doesn't exist yet (migrations not run)
+            return false;
+        }
+    }
+
+    /**
+     * Get all permissions for this user (role + custom)
+     */
+    public function getAllPermissions(): array
+    {
+        $rolePermissions = $this->role ? $this->role->permissions : [];
+
+        try {
+            $customPermissions = $this->customPermissions()
+                ->where('permissions.is_active', true)
+                ->pluck('permissions.name')
+                ->toArray();
+        } catch (\Exception $e) {
+            // Table doesn't exist yet (migrations not run)
+            $customPermissions = [];
+        }
+
+        return array_unique(array_merge($rolePermissions, $customPermissions));
+    }
+
+    /**
+     * Grant a permission to this user
+     */
+    public function grantPermission(int $permissionId, ?int $grantedBy = null, ?string $expiresAt = null, ?string $notes = null): void
+    {
+        $this->customPermissions()->syncWithoutDetaching([
+            $permissionId => [
+                'granted_by' => $grantedBy ?? auth()->id(),
+                'expires_at' => $expiresAt,
+                'notes' => $notes,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
+        ]);
+    }
+
+    /**
+     * Revoke a permission from this user
+     */
+    public function revokePermission(int $permissionId): void
+    {
+        $this->customPermissions()->detach($permissionId);
+    }
+
+    /**
+     * Sync user's custom permissions
+     */
+    public function syncCustomPermissions(array $permissionIds, ?int $grantedBy = null): void
+    {
+        $syncData = [];
+        foreach ($permissionIds as $permissionId) {
+            $syncData[$permissionId] = [
+                'granted_by' => $grantedBy ?? auth()->id(),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
+
+        $this->customPermissions()->sync($syncData);
     }
 
     public function isAdmin(): bool

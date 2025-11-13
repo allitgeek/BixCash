@@ -15,6 +15,8 @@ use App\Http\Controllers\Admin\PartnerController;
 use App\Http\Controllers\Admin\ContextController;
 use App\Http\Controllers\Admin\WithdrawalController;
 use App\Http\Controllers\Admin\WithdrawalSettingsController;
+use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\PermissionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -152,6 +154,44 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::post('/{id}/approve', [WithdrawalController::class, 'approve'])->name('approve');
             Route::post('/{id}/reject', [WithdrawalController::class, 'reject'])->name('reject');
             Route::post('/{id}/processing', [WithdrawalController::class, 'markProcessing'])->name('processing');
+        });
+
+        // Roles & Permissions Management (Super Admin & Manager only)
+        Route::middleware(['role.permission:roles.view'])->group(function () {
+            Route::get('roles', [RoleController::class, 'index'])->name('roles.index');
+            Route::get('roles-search', [RoleController::class, 'search'])->name('roles.search');
+            Route::get('roles/{role}', [RoleController::class, 'show'])->name('roles.show');
+
+            // Creating and editing roles (requires create/edit permissions)
+            Route::middleware(['role.permission:roles.create'])->group(function () {
+                Route::get('roles/create', [RoleController::class, 'create'])->name('roles.create');
+                Route::post('roles', [RoleController::class, 'store'])->name('roles.store');
+                Route::post('roles/{role}/duplicate', [RoleController::class, 'duplicate'])->name('roles.duplicate');
+            });
+
+            Route::middleware(['role.permission:roles.edit'])->group(function () {
+                Route::get('roles/{role}/edit', [RoleController::class, 'edit'])->name('roles.edit');
+                Route::put('roles/{role}', [RoleController::class, 'update'])->name('roles.update');
+                Route::patch('roles/{role}/toggle-status', [RoleController::class, 'toggleStatus'])->name('roles.toggle-status');
+            });
+
+            Route::middleware(['role.permission:roles.delete'])->group(function () {
+                Route::delete('roles/{role}', [RoleController::class, 'destroy'])->name('roles.destroy');
+            });
+        });
+
+        // Permissions Management (Super Admin only - view permissions and assign to users)
+        Route::middleware(['role.permission:roles.view'])->group(function () {
+            Route::get('permissions', [PermissionController::class, 'index'])->name('permissions.index');
+            Route::get('permissions/{permission}', [PermissionController::class, 'show'])->name('permissions.show');
+
+            // User permission management (assign custom permissions to individual users)
+            Route::middleware(['role.permission:users.manage_permissions'])->group(function () {
+                Route::get('users/{user}/permissions', [PermissionController::class, 'getUserPermissions'])->name('users.permissions.get');
+                Route::post('users/{user}/permissions/sync', [PermissionController::class, 'syncUserPermissions'])->name('users.permissions.sync');
+                Route::post('permissions/grant-to-user', [PermissionController::class, 'grantToUser'])->name('permissions.grant-to-user');
+                Route::post('permissions/revoke-from-user', [PermissionController::class, 'revokeFromUser'])->name('permissions.revoke-from-user');
+            });
         });
 
         // Settings (Super Admin only)
