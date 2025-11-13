@@ -88,6 +88,7 @@
                             <tr style="background: #f8f9fa; border-bottom: 2px solid #dee2e6;">
                                 <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Partner</th>
                                 <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Business Name</th>
+                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Commission</th>
                                 <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Phone</th>
                                 <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Status</th>
                                 <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Account Active</th>
@@ -106,6 +107,15 @@
                                     </td>
                                     <td style="padding: 0.75rem;">
                                         {{ $partner->partnerProfile->business_name ?? '-' }}
+                                    </td>
+                                    <td style="padding: 0.75rem;">
+                                        @if($partner->partnerProfile && $partner->partnerProfile->commission_rate > 0)
+                                            <span style="color: #2d3748; font-weight: 500;">
+                                                {{ number_format($partner->partnerProfile->commission_rate, 2) }}%
+                                            </span>
+                                        @else
+                                            <span style="color: #a0aec0; font-size: 0.875rem;">0%</span>
+                                        @endif
                                     </td>
                                     <td style="padding: 0.75rem;">
                                         <div>

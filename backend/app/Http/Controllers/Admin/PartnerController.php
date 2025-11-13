@@ -39,6 +39,7 @@ class PartnerController extends Controller
             'auto_approve' => 'nullable|boolean',
             'logo' => 'nullable|image|mimes:jpeg,jpg,png|max:2048', // Max 2MB
             'partner_pin' => 'nullable|string|regex:/^[0-9]{4}$/', // Optional 4-digit PIN
+            'commission_rate' => 'nullable|numeric|min:0|max:100',
         ]);
 
         // Format phone number to E.164
@@ -106,6 +107,7 @@ class PartnerController extends Controller
             'status' => $status,
             'registration_date' => now(),
             'approved_at' => $autoApprove ? now() : null,
+            'commission_rate' => $validated['commission_rate'] ?? 0.00,
         ]);
 
         $message = $autoApprove
@@ -343,6 +345,7 @@ class PartnerController extends Controller
             'business_type' => 'required|string|max:100',
             'business_address' => 'nullable|string|max:500',
             'business_city' => 'nullable|string|max:100',
+            'commission_rate' => 'nullable|numeric|min:0|max:100',
         ]);
 
         // Update user
@@ -359,6 +362,7 @@ class PartnerController extends Controller
             'business_type' => $validated['business_type'],
             'business_address' => $validated['business_address'] ?? null,
             'business_city' => $validated['business_city'] ?? null,
+            'commission_rate' => $validated['commission_rate'] ?? $partnerProfile->commission_rate,
         ]);
 
         return redirect()->route('admin.partners.show', $partner)

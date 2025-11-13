@@ -110,6 +110,16 @@
                                value="{{ old('city') }}" placeholder="e.g., Lahore">
                     </div>
 
+                    <!-- Commission Rate -->
+                    <div class="form-group">
+                        <label for="commission_rate" style="display: block; font-weight: 600; margin-bottom: 0.5rem;">
+                            Commission Rate (%) <small style="color: #718096; font-weight: 400;">(Optional)</small>
+                        </label>
+                        <input type="number" id="commission_rate" name="commission_rate" class="form-control"
+                               value="{{ old('commission_rate', 0) }}" placeholder="0.00" min="0" max="100" step="0.01">
+                        <small style="color: #718096; font-size: 0.75rem;">Percentage the partner pays BixCash (0-100%)</small>
+                    </div>
+
                     <!-- Logo -->
                     <div class="form-group">
                         <label for="logo" style="display: block; font-weight: 600; margin-bottom: 0.5rem;">
