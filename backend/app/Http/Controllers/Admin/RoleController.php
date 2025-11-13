@@ -160,9 +160,9 @@ class RoleController extends Controller
      */
     public function edit(Role $role)
     {
-        if ($role->is_system) {
+        if ($role->name === 'super_admin') {
             return redirect()->route('admin.roles.show', $role)
-                ->with('warning', 'System roles cannot be edited. You can only view their details.');
+                ->with('warning', 'Super Administrator role cannot be edited. You can only view its details.');
         }
 
         $permissionGroups = $this->permissionService->getAllGroupedPermissions();
@@ -174,8 +174,8 @@ class RoleController extends Controller
      */
     public function update(Request $request, Role $role)
     {
-        if ($role->is_system) {
-            return back()->with('error', 'System roles cannot be modified.');
+        if ($role->name === 'super_admin') {
+            return back()->with('error', 'Super Administrator role cannot be modified.');
         }
 
         $validated = $request->validate([

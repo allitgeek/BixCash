@@ -41,7 +41,7 @@ class Role extends Model
      */
     public function isEditable(): bool
     {
-        return !$this->is_system;
+        return $this->name !== 'super_admin';
     }
 
     /**

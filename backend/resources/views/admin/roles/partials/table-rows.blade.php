@@ -30,10 +30,10 @@
     </td>
     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
         <a href="{{ route('admin.roles.show', $role) }}" class="text-blue-600 hover:text-blue-900 mr-3">View</a>
-        @if(!$role->is_system && auth()->user()->hasPermission('roles.edit'))
+        @if($role->name !== 'super_admin' && auth()->user()->hasPermission('roles.edit'))
             <a href="{{ route('admin.roles.edit', $role) }}" class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</a>
         @endif
-        @if(!$role->is_system && auth()->user()->hasPermission('roles.delete'))
+        @if($role->name !== 'super_admin' && auth()->user()->hasPermission('roles.delete'))
             <form action="{{ route('admin.roles.destroy', $role) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this role?')">
                 @csrf
                 @method('DELETE')
