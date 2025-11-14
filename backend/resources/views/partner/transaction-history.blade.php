@@ -161,7 +161,7 @@
 
     {{-- Bottom Navigation --}}
     <nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl shadow-lg shadow-blue-900/10 border-t border-gray-200/60 z-50">
-        <div class="grid grid-cols-4 max-w-lg mx-auto place-items-center">
+        <div class="grid grid-cols-5 max-w-lg mx-auto place-items-center">
             {{-- Dashboard --}}
             <a href="{{ route('partner.dashboard') }}" class="flex flex-col items-center justify-center py-3 px-3 sm:px-4 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all duration-200">
                 <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
