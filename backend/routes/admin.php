@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\PartnerController;
 use App\Http\Controllers\Admin\ContextController;
 use App\Http\Controllers\Admin\WithdrawalController;
 use App\Http\Controllers\Admin\WithdrawalSettingsController;
+use App\Http\Controllers\Admin\CommissionController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\PermissionController;
 
@@ -154,6 +155,30 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::post('/{id}/approve', [WithdrawalController::class, 'approve'])->name('approve');
             Route::post('/{id}/reject', [WithdrawalController::class, 'reject'])->name('reject');
             Route::post('/{id}/processing', [WithdrawalController::class, 'markProcessing'])->name('processing');
+        });
+
+        // Commission Management (Admin & Manager)
+        Route::prefix('commissions')->name('commissions.')->group(function () {
+            // Dashboard
+            Route::get('/', [CommissionController::class, 'index'])->name('index');
+
+            // Batches
+            Route::get('/batches', [CommissionController::class, 'batchIndex'])->name('batches.index');
+            Route::get('/batches/{id}', [CommissionController::class, 'batchShow'])->name('batches.show');
+            Route::post('/calculate', [CommissionController::class, 'triggerCalculation'])->name('calculate');
+
+            // Partners
+            Route::get('/partners', [CommissionController::class, 'partnerIndex'])->name('partners.index');
+            Route::get('/partners/{partnerId}', [CommissionController::class, 'partnerShow'])->name('partners.show');
+
+            // Settlements
+            Route::get('/settlements/history', [CommissionController::class, 'settlementHistory'])->name('settlements.history');
+            Route::get('/settlements/create/{ledgerId}', [CommissionController::class, 'settlementCreate'])->name('settlements.create');
+            Route::post('/settlements/{ledgerId}', [CommissionController::class, 'settlementStore'])->name('settlements.store');
+            Route::post('/settlements/bulk-settle', [CommissionController::class, 'bulkSettle'])->name('settlements.bulk-settle');
+
+            // Invoice
+            Route::get('/invoice/{ledgerId}', [CommissionController::class, 'downloadInvoice'])->name('invoice.download');
         });
 
         // Roles & Permissions Management (Super Admin & Manager only)

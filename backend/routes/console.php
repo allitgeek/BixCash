@@ -19,3 +19,9 @@ Schedule::command('profit-sharing:assign-levels')
     ->dailyAt('02:00')
     ->withoutOverlapping()
     ->runInBackground();
+
+// Calculate monthly partner commissions on 1st of each month at 2:00 AM
+Schedule::command('commission:calculate-monthly')
+    ->monthlyOn(1, '02:00')
+    ->withoutOverlapping()
+    ->runInBackground();

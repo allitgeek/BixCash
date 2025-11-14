@@ -125,6 +125,21 @@ class User extends Authenticatable
         return $this->hasMany(ActivityLog::class);
     }
 
+    public function commissionLedgers(): HasMany
+    {
+        return $this->hasMany(CommissionLedger::class, 'partner_id');
+    }
+
+    public function commissionSettlements(): HasMany
+    {
+        return $this->hasMany(CommissionSettlement::class, 'partner_id');
+    }
+
+    public function commissionTransactions(): HasMany
+    {
+        return $this->hasMany(CommissionTransaction::class, 'partner_id');
+    }
+
     // Helper methods
     public function hasRole(string $roleName): bool
     {

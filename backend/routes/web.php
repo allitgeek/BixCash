@@ -102,6 +102,7 @@ Route::get('/partner/pending-approval', [PartnerAuth::class, 'pendingApproval'])
 
 // Partner Portal (Authenticated + Approved Partners Only)
 use App\Http\Controllers\Partner\DashboardController as PartnerDashboard;
+use App\Http\Controllers\Partner\CommissionController as PartnerCommission;
 
 Route::prefix('partner')->name('partner.')->middleware(['auth', 'partner'])->group(function () {
     // Dashboard
@@ -139,6 +140,11 @@ Route::prefix('partner')->name('partner.')->middleware(['auth', 'partner'])->gro
     Route::get('/profile/bank-details/cancel-otp', [PartnerDashboard::class, 'cancelBankDetailsOtp'])->name('bank-details.cancel-otp');
 
     Route::delete('/profile/logo', [PartnerDashboard::class, 'removeLogo'])->name('profile.remove-logo');
+
+    // Commissions
+    Route::get('/commissions', [PartnerCommission::class, 'index'])->name('commissions');
+    Route::get('/commissions/{ledgerId}', [PartnerCommission::class, 'show'])->name('commissions.show');
+    Route::get('/commissions/{ledgerId}/invoice', [PartnerCommission::class, 'downloadInvoice'])->name('commissions.invoice');
 
     // Logout
     Route::post('/logout', [PartnerDashboard::class, 'logout'])->name('logout');
