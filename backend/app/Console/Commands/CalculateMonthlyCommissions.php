@@ -231,7 +231,9 @@ class CalculateMonthlyCommissions extends Command
             \Cache::forget('commission_top_outstanding');
 
             // Notify all admins about batch completion
-            $admins = User::where('user_type', 'admin')->get();
+            $admins = User::whereHas('role', function($q) {
+                $q->whereIn('name', ['admin', 'super_admin', 'moderator']);
+            })->get();
             foreach ($admins as $admin) {
                 $admin->notify(new MonthlyCommissionCalculated($batch));
             }
