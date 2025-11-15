@@ -763,7 +763,6 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    alert('✓ Transaction rejected');
                     closeRejectModal();
                     location.reload();
                 } else {
