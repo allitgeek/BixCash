@@ -48,8 +48,8 @@
         <div class="info-section">
             <div class="info-box">
                 <h3>Partner Information</h3>
-                <p><strong>{{ $ledger->partner->name }}</strong></p>
-                <p>{{ $ledger->partner->partnerProfile->business_name ?? 'N/A' }}</p>
+                <p><strong>{{ $ledger->partner->partnerProfile->business_name ?? $ledger->partner->name }}</strong></p>
+                <p>{{ $ledger->partner->name }}</p>
                 <p>{{ $ledger->partner->phone }}</p>
                 <p>{{ $ledger->partner->email }}</p>
             </div>

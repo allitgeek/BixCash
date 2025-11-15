@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', $partner->name . ' - Commissions')
+@section('title', ($partner->partnerProfile->business_name ?? $partner->name) . ' - Commissions')
 @section('page-title', 'Partner Commission Details')
 
 @section('content')
@@ -9,9 +9,9 @@
         <div class="card-body">
             <div style="display: flex; justify-content: space-between; align-items: start;">
                 <div>
-                    <h3 style="margin: 0 0 0.5rem 0;">{{ $partner->name }}</h3>
+                    <h3 style="margin: 0 0 0.5rem 0;">{{ $partner->partnerProfile->business_name ?? $partner->name }}</h3>
                     <p style="margin: 0; color: #6c757d;">
-                        {{ $partner->partnerProfile->business_name ?? 'N/A' }} |
+                        {{ $partner->name }} |
                         {{ $partner->phone }} |
                         Commission Rate: <strong>{{ number_format($partner->partnerProfile->commission_rate ?? 0, 2) }}%</strong>
                     </p>
@@ -20,8 +20,8 @@
                     <a href="{{ route('admin.commissions.export.partner', $partner->id) }}"
                        class="btn btn-success"
                        style="display: flex; align-items: center; gap: 0.5rem;"
-                       title="Export complete commission history for {{ $partner->name }}"
-                       onclick="return confirm('Export complete commission report for {{ $partner->name }} to Excel?\n\nThis includes all ledgers, transactions, and settlement history.');">
+                       title="Export complete commission history for {{ $partner->partnerProfile->business_name ?? $partner->name }}"
+                       onclick="return confirm('Export complete commission report for {{ $partner->partnerProfile->business_name ?? $partner->name }} to Excel?\n\nThis includes all ledgers, transactions, and settlement history.');">
                         📊 Export Report
                     </a>
                     <a href="{{ route('admin.partners.show', $partner->id) }}" class="btn btn-outline-secondary">

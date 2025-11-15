@@ -120,8 +120,8 @@
                                     @endif
                                 </td>
                                 <td style="padding: 0.75rem;">
-                                    <strong>{{ $settlement->partner->name }}</strong><br>
-                                    <small style="color: #6c757d;">{{ $settlement->partner->partnerProfile->business_name ?? 'N/A' }}</small>
+                                    <strong>{{ $settlement->partner->partnerProfile->business_name ?? $settlement->partner->name }}</strong><br>
+                                    <small style="color: #6c757d;">{{ $settlement->partner->name }}</small>
                                 </td>
                                 <td style="padding: 0.75rem;">
                                     {{ $settlement->ledger->formatted_period }}

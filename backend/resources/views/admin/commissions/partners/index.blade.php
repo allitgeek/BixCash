@@ -74,10 +74,10 @@
                             @endphp
                             <tr>
                                 <td style="padding: 0.75rem;">
-                                    <strong>{{ $partner->name }}</strong><br>
-                                    <small style="color: #6c757d;">{{ $partner->phone }}</small>
+                                    <strong>{{ $profile->business_name ?? $partner->name }}</strong><br>
+                                    <small style="color: #6c757d;">{{ $partner->name }}</small>
                                 </td>
-                                <td style="padding: 0.75rem;">{{ $profile->business_name ?? 'N/A' }}</td>
+                                <td style="padding: 0.75rem;">{{ $partner->phone }}</td>
                                 <td style="padding: 0.75rem;">
                                     <span class="badge bg-info">{{ number_format($profile->commission_rate ?? 0, 2) }}%</span>
                                 </td>

@@ -154,11 +154,11 @@
                             @endphp
                             <tr>
                                 <td style="padding: 0.75rem;">
-                                    <strong>{{ $partner->name }}</strong><br>
-                                    <small style="color: #6c757d;">{{ $partner->phone }}</small>
+                                    <strong>{{ $profile->business_name ?? $partner->name }}</strong><br>
+                                    <small style="color: #6c757d;">{{ $partner->name }}</small>
                                 </td>
                                 <td style="padding: 0.75rem;">
-                                    {{ $profile->business_name ?? 'N/A' }}
+                                    {{ $partner->phone }}
                                 </td>
                                 <td style="padding: 0.75rem;">
                                     <strong style="color: #f5576c;">Rs {{ number_format($item->total_outstanding, 2) }}</strong>
@@ -232,7 +232,7 @@
                                     <small style="color: #6c757d;">{{ $settlement->processed_at->format('h:i A') }}</small>
                                 </td>
                                 <td style="padding: 0.75rem;">
-                                    <strong>{{ $settlement->partner->name }}</strong>
+                                    <strong>{{ $settlement->partner->partnerProfile->business_name ?? $settlement->partner->name }}</strong>
                                 </td>
                                 <td style="padding: 0.75rem;">
                                     {{ $settlement->ledger->formatted_period }}

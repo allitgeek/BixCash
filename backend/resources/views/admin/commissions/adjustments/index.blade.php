@@ -86,8 +86,8 @@
                                 </td>
                                 <td style="padding: 0.75rem;">
                                     <a href="{{ route('admin.commissions.partners.show', $adjustment->partner_id) }}" class="text-decoration-none">
-                                        <strong>{{ $adjustment->partner->name }}</strong><br>
-                                        <small style="color: #6c757d;">{{ $adjustment->partner->partnerProfile->business_name ?? 'N/A' }}</small>
+                                        <strong>{{ $adjustment->partner->partnerProfile->business_name ?? $adjustment->partner->name }}</strong><br>
+                                        <small style="color: #6c757d;">{{ $adjustment->partner->name }}</small>
                                     </a>
                                 </td>
                                 <td style="padding: 0.75rem;">

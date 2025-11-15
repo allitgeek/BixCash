@@ -92,11 +92,11 @@
                             @endphp
                             <tr>
                                 <td style="padding: 0.75rem;">
-                                    <strong>{{ $partner->name }}</strong><br>
-                                    <small style="color: #6c757d;">{{ $partner->phone }}</small>
+                                    <strong>{{ $profile->business_name ?? $partner->name }}</strong><br>
+                                    <small style="color: #6c757d;">{{ $partner->name }}</small>
                                 </td>
                                 <td style="padding: 0.75rem;">
-                                    {{ $profile->business_name ?? 'N/A' }}
+                                    {{ $partner->phone }}
                                 </td>
                                 <td style="padding: 0.75rem;">
                                     <span class="badge bg-info">{{ number_format($ledger->commission_rate_used, 2) }}%</span>

@@ -6,7 +6,7 @@
 @section('content')
     <div class="card">
         <div class="card-header" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 1.5rem;">
-            <h4 style="margin: 0;">✏️ Adjustment for {{ $ledger->partner->name }}</h4>
+            <h4 style="margin: 0;">✏️ Adjustment for {{ $ledger->partner->partnerProfile->business_name ?? $ledger->partner->name }}</h4>
             <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">Period: {{ $ledger->formatted_period }}</p>
         </div>
         <div class="card-body">

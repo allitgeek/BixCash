@@ -92,8 +92,8 @@
                             <!-- Details -->
                             <div class="card-body" style="padding: 1rem;">
                                 <div style="margin-bottom: 0.75rem;">
-                                    <strong>{{ $settlement->partner->name }}</strong><br>
-                                    <small style="color: #6c757d;">{{ $settlement->partner->partnerProfile->business_name ?? 'N/A' }}</small>
+                                    <strong>{{ $settlement->partner->partnerProfile->business_name ?? $settlement->partner->name }}</strong><br>
+                                    <small style="color: #6c757d;">{{ $settlement->partner->name }}</small>
                                 </div>
 
                                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; font-size: 0.875rem; margin-bottom: 0.75rem;">
