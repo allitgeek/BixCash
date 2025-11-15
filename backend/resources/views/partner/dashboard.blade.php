@@ -22,13 +22,133 @@
         * {
             transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
         }
+
+        /* Smooth Page Entrance Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .page-content {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        /* Fade In Animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Stagger animation for stat cards */
+        .stat-card {
+            animation: fadeInUp 0.6s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+        /* Commission widget animation */
+        .commission-widget {
+            animation: fadeInUp 0.5s ease-out 0.2s forwards;
+            opacity: 1;  /* Visible by default - prevents flash */
+        }
+
+        .commission-sub-card {
+            opacity: 1;  /* Always visible - no animation needed since parent widget already animates */
+        }
+
+        /* Transaction row stagger */
+        .transaction-row {
+            animation: fadeIn 0.5s ease-out both;
+        }
+
+        .transaction-row:nth-child(1) { animation-delay: 0.1s; }
+        .transaction-row:nth-child(2) { animation-delay: 0.2s; }
+        .transaction-row:nth-child(3) { animation-delay: 0.3s; }
+        .transaction-row:nth-child(4) { animation-delay: 0.4s; }
+        .transaction-row:nth-child(5) { animation-delay: 0.5s; }
+
+        /* Profit distribution pulse */
+        @keyframes subtlePulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.95; transform: scale(1.01); }
+        }
+
+        .profit-pulse {
+            animation: subtlePulse 3s ease-in-out infinite;
+        }
+
+        /* Modal scale-in animation */
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .modal-content {
+            animation: scaleIn 0.3s ease-out;
+        }
+
+        /* Dropdown slide-in */
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .dropdown-menu {
+            animation: slideDown 0.2s ease-out;
+        }
+
+        /* Mobile-specific fixes for commission cards */
+        @media (max-width: 768px) {
+            .commission-sub-card {
+                opacity: 1 !important;
+                animation: none !important;
+                display: block !important;
+                visibility: visible !important;
+            }
+
+            .commission-number {
+                opacity: 1 !important;
+                visibility: visible !important;
+            }
+
+            .commission-widget {
+                opacity: 1 !important;
+                visibility: visible !important;
+            }
+        }
     </style>
 </head>
 <body class="relative bg-neutral-50 min-h-screen pb-32 pt-0 px-0 antialiased" style="margin: 0;">
 
     {{-- Enhanced Modern Header with Glassmorphism --}}
     <header class="bg-white/80 backdrop-blur-xl shadow-lg shadow-blue-900/5 border-b border-gray-200/60 sticky top-0 z-40">
-        <div class="max-w-7xl mx-auto px-4 py-3">
+        <div class="max-w-7xl mx-auto px-4 py-2 sm:py-3">
             <div class="flex items-center justify-between gap-3">
                 {{-- Left: Logo + Business Info --}}
                 <div class="flex items-center gap-3 flex-1 min-w-0">
@@ -65,7 +185,7 @@
                 {{-- Right: Stats + Actions --}}
                 <div class="flex items-center gap-1.5 sm:gap-2">
                     {{-- Today's Revenue Pill --}}
-                    <div class="hidden md:flex items-center gap-1.5 px-3 py-1.5 bg-green-50 border border-green-200 rounded-full shadow-sm">
+                    <div class="hidden md:flex items-center gap-1.5 px-3 py-1.5 bg-green-50 border border-green-200 rounded-full shadow-sm hover:shadow-md hover:scale-[1.05] transition-[transform,shadow] duration-200" style="animation: subtlePulse 4s ease-in-out infinite;">
                         <svg class="w-3.5 h-3.5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
@@ -94,7 +214,7 @@
                         </button>
 
                         {{-- Notification Dropdown --}}
-                        <div x-show="open" @click.away="open = false" x-transition class="fixed sm:absolute left-4 right-4 sm:left-auto sm:right-0 top-16 sm:top-auto mt-0 sm:mt-2 w-auto sm:w-80 bg-white rounded-xl shadow-2xl border border-gray-200 py-2 z-50">
+                        <div x-show="open" @click.away="open = false" x-transition class="dropdown-menu fixed sm:absolute left-4 right-4 sm:left-auto sm:right-0 top-16 sm:top-auto mt-0 sm:mt-2 w-auto sm:w-80 bg-white rounded-xl shadow-2xl border border-gray-200 py-2 z-50">
                             <div class="px-4 py-2 border-b border-gray-200">
                                 <p class="text-sm font-bold text-gray-800">Pending Confirmations</p>
                             </div>
@@ -123,7 +243,7 @@
                         </button>
 
                         {{-- Profile Menu --}}
-                        <div x-show="open" @click.away="open = false" x-transition class="fixed sm:absolute left-4 right-4 sm:left-auto sm:right-0 top-16 sm:top-auto mt-0 sm:mt-2 w-auto sm:w-52 bg-white rounded-xl shadow-2xl border border-gray-200 py-2 z-50">
+                        <div x-show="open" @click.away="open = false" x-transition class="dropdown-menu fixed sm:absolute left-4 right-4 sm:left-auto sm:right-0 top-16 sm:top-auto mt-0 sm:mt-2 w-auto sm:w-52 bg-white rounded-xl shadow-2xl border border-gray-200 py-2 z-50">
                             <a href="{{ route('partner.profile') }}" class="flex items-center gap-3 px-4 py-2.5 hover:bg-blue-50 transition-colors">
                                 <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -144,7 +264,7 @@
                     </div>
 
                     {{-- New Transaction Button --}}
-                    <button onclick="openTransactionModal()" class="px-3 sm:px-4 py-2 rounded-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white text-sm font-semibold shadow-md shadow-green-500/30 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-2 whitespace-nowrap">
+                    <button onclick="openTransactionModal()" class="px-3 sm:px-4 py-2 rounded-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white text-sm font-semibold shadow-md shadow-green-500/30 hover:shadow-lg hover:scale-[1.02] transition-[transform,shadow,background-image] duration-200 flex items-center gap-2 whitespace-nowrap">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                         </svg>
@@ -156,13 +276,13 @@
         </div>
     </header>
 
-    <div class="max-w-7xl mx-auto px-6 py-8 sm:px-8 sm:py-12 space-y-10 sm:space-y-12">
+    <div class="max-w-7xl mx-auto px-6 py-8 sm:px-8 sm:py-12 space-y-6 sm:space-y-8 page-content">
 
         {{-- Clean Stats Grid - Lightweight & Refined --}}
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
 
             {{-- Revenue Card - Clean & Minimal --}}
-            <div class="bg-white border border-neutral-200 rounded-xl p-6 hover:border-blue-300 hover:shadow-sm transition-all duration-200">
+            <div class="stat-card bg-white/90 backdrop-blur-sm border border-neutral-200 rounded-xl p-4 sm:p-6 hover:border-blue-300 hover:shadow-md hover:scale-[1.02] transition-[transform,shadow,border-color] duration-200">
                 <div class="flex items-center justify-between mb-4">
                     <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
                         <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -175,11 +295,11 @@
                 </div>
 
                 <p class="text-xs font-medium text-neutral-500 uppercase tracking-wide mb-1">
-                    Total Revenue
+                    Total Sales
                 </p>
 
                 <p class="text-3xl font-semibold text-neutral-900 mb-3">
-                    Rs {{ number_format($stats['total_revenue'], 0) }}
+                    Rs <span class="stat-number" data-count="{{ $stats['total_revenue'] }}">0</span>
                 </p>
 
                 {{-- Mini sparkline --}}
@@ -195,7 +315,7 @@
             </div>
 
             {{-- Profit Card --}}
-            <div class="bg-white border border-neutral-200 rounded-xl p-6 hover:border-purple-300 hover:shadow-sm transition-all duration-200">
+            <div class="stat-card bg-white/90 backdrop-blur-sm border border-neutral-200 rounded-xl p-4 sm:p-6 hover:border-purple-300 hover:shadow-md hover:scale-[1.02] transition-[transform,shadow,border-color] duration-200">
                 <div class="flex items-center justify-between mb-4">
                     <div class="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center">
                         <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -212,7 +332,7 @@
                 </p>
 
                 <p class="text-3xl font-semibold text-neutral-900 mb-3">
-                    Rs {{ number_format($stats['total_earned'], 0) }}
+                    Rs <span class="stat-number" data-count="{{ $stats['total_earned'] }}">0</span>
                 </p>
 
                 {{-- Simple progress bar --}}
@@ -222,7 +342,7 @@
             </div>
 
             {{-- Orders Card --}}
-            <div class="bg-white border border-neutral-200 rounded-xl p-6 hover:border-emerald-300 hover:shadow-sm transition-all duration-200">
+            <div class="stat-card bg-white/90 backdrop-blur-sm border border-neutral-200 rounded-xl p-4 sm:p-6 hover:border-emerald-300 hover:shadow-md hover:scale-[1.02] transition-[transform,shadow,border-color] duration-200">
                 <div class="flex items-center justify-between mb-4">
                     <div class="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center">
                         <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -239,7 +359,7 @@
                 </p>
 
                 <p class="text-3xl font-semibold text-neutral-900 mb-3">
-                    {{ $stats['total_transactions'] }}
+                    <span class="stat-number" data-count="{{ $stats['total_transactions'] }}">0</span>
                 </p>
 
                 {{-- Simple dot indicator --}}
@@ -250,7 +370,7 @@
             </div>
 
             {{-- Pending Confirmations Card --}}
-            <div class="bg-white border border-neutral-200 rounded-xl p-6 hover:border-amber-300 hover:shadow-sm transition-all duration-200 @if($stats['pending_confirmations'] > 0) ring-2 ring-amber-400/20 @endif">
+            <div class="stat-card bg-white/90 backdrop-blur-sm border border-neutral-200 rounded-xl p-4 sm:p-6 hover:border-amber-300 hover:shadow-md hover:scale-[1.02] transition-[transform,shadow,border-color] duration-200 @if($stats['pending_confirmations'] > 0) ring-2 ring-amber-400/20 @endif">
                 <div class="flex items-center justify-between mb-4">
                     <div class="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
                         <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -270,7 +390,7 @@
                 </p>
 
                 <p class="text-3xl font-semibold text-neutral-900 mb-3">
-                    {{ $stats['pending_confirmations'] }}
+                    <span class="stat-number" data-count="{{ $stats['pending_confirmations'] }}">0</span>
                 </p>
 
                 {{-- Status text --}}
@@ -287,82 +407,82 @@
 
         {{-- Commission Widget --}}
         @if($commissionSummary['commission_rate'] > 0)
-        <div class="mt-4">
-            <div class="bg-gradient-to-br from-purple-50 to-blue-50 border @if($commissionSummary['total_outstanding'] > 0) border-purple-300 ring-2 ring-purple-200 @else border-purple-200 @endif rounded-xl p-6 hover:shadow-md transition-all duration-200">
-                <div class="flex items-start justify-between mb-4">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center shadow-lg">
-                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="mt-4 commission-widget">
+            <div class="bg-white/90 backdrop-blur-sm border @if($commissionSummary['total_outstanding'] > 0) border-purple-300 ring-2 ring-purple-200 @else border-purple-200 @endif rounded-xl p-4 sm:p-6 hover:shadow-lg hover:scale-[1.01] transition-[transform,shadow,border-color] duration-300">
+                <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center shadow-lg flex-shrink-0">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                         </div>
-                        <div>
-                            <h3 class="text-sm font-semibold text-purple-900">Commission Owed to BixCash</h3>
-                            <p class="text-xs text-purple-600">{{ number_format($commissionSummary['commission_rate'], 2) }}% on confirmed transactions</p>
+                        <div class="flex-1 min-w-0">
+                            <h3 class="text-xs sm:text-sm font-semibold text-purple-900">Commission Owed to BixCash</h3>
+                            <p class="text-[11px] sm:text-xs text-purple-600">{{ number_format($commissionSummary['commission_rate'], 2) }}% on confirmed transactions</p>
                         </div>
                     </div>
-                    <a href="{{ route('partner.commissions') }}" class="text-xs font-medium text-purple-700 hover:text-purple-900 bg-white px-3 py-1.5 rounded-lg border border-purple-200 hover:border-purple-300 transition-colors">
+                    <a href="{{ route('partner.commissions') }}" class="self-start sm:self-auto text-xs font-medium text-purple-700 hover:text-purple-900 bg-white px-3 py-1.5 rounded-lg border border-purple-200 hover:border-purple-300 hover:scale-[1.05] transition-[transform,colors,border-color] duration-200 whitespace-nowrap">
                         View Details →
                     </a>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                     {{-- Outstanding Amount --}}
-                    <div class="bg-white rounded-lg p-4 border border-purple-100">
-                        <p class="text-xs font-medium text-neutral-500 uppercase tracking-wide mb-1">
+                    <div class="commission-sub-card bg-white/90 backdrop-blur-sm rounded-lg p-3 sm:p-4 border border-purple-100 hover:border-purple-300 hover:shadow-md hover:scale-[1.02] transition-[transform,shadow,border-color] duration-200">
+                        <p class="text-[10px] sm:text-xs font-medium text-neutral-500 uppercase tracking-wide mb-1">
                             Outstanding
                         </p>
-                        <p class="text-2xl font-bold @if($commissionSummary['total_outstanding'] > 0) text-red-600 @else text-green-600 @endif mb-2">
-                            Rs {{ number_format($commissionSummary['total_outstanding'], 2) }}
+                        <p class="text-xl sm:text-2xl font-bold @if($commissionSummary['total_outstanding'] > 0) text-red-600 @else text-green-600 @endif mb-2">
+                            Rs <span class="commission-number" data-count="{{ $commissionSummary['total_outstanding'] }}">0</span>
                         </p>
                         @if($commissionSummary['total_outstanding'] > 0)
                         <div class="flex items-center gap-1.5">
                             <div class="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></div>
-                            <span class="text-xs text-red-600 font-medium">{{ $commissionSummary['pending_ledgers_count'] }} pending period(s)</span>
+                            <span class="text-[11px] sm:text-xs text-red-600 font-medium">{{ $commissionSummary['pending_ledgers_count'] }} pending period(s)</span>
                         </div>
                         @else
                         <div class="flex items-center gap-1.5">
                             <div class="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
-                            <span class="text-xs text-green-600 font-medium">All settled</span>
+                            <span class="text-[11px] sm:text-xs text-green-600 font-medium">All settled</span>
                         </div>
                         @endif
                     </div>
 
                     {{-- Last Settlement --}}
-                    <div class="bg-white rounded-lg p-4 border border-purple-100">
-                        <p class="text-xs font-medium text-neutral-500 uppercase tracking-wide mb-1">
+                    <div class="commission-sub-card bg-white/90 backdrop-blur-sm rounded-lg p-3 sm:p-4 border border-purple-100 hover:border-purple-300 hover:shadow-md hover:scale-[1.02] transition-[transform,shadow,border-color] duration-200">
+                        <p class="text-[10px] sm:text-xs font-medium text-neutral-500 uppercase tracking-wide mb-1">
                             Last Settlement
                         </p>
                         @if($commissionSummary['last_settlement_at'])
-                        <p class="text-lg font-semibold text-neutral-900 mb-2">
+                        <p class="text-base sm:text-lg font-semibold text-neutral-900 mb-2">
                             {{ \Carbon\Carbon::parse($commissionSummary['last_settlement_at'])->format('M d, Y') }}
                         </p>
-                        <span class="text-xs text-neutral-600">{{ \Carbon\Carbon::parse($commissionSummary['last_settlement_at'])->diffForHumans() }}</span>
+                        <span class="text-[11px] sm:text-xs text-neutral-600">{{ \Carbon\Carbon::parse($commissionSummary['last_settlement_at'])->diffForHumans() }}</span>
                         @else
-                        <p class="text-lg font-semibold text-neutral-500 mb-2">-</p>
-                        <span class="text-xs text-neutral-500">No settlements yet</span>
+                        <p class="text-base sm:text-lg font-semibold text-neutral-500 mb-2">-</p>
+                        <span class="text-[11px] sm:text-xs text-neutral-500">No settlements yet</span>
                         @endif
                     </div>
 
                     {{-- Quick Info --}}
-                    <div class="bg-white rounded-lg p-4 border border-purple-100">
-                        <p class="text-xs font-medium text-neutral-500 uppercase tracking-wide mb-1">
+                    <div class="commission-sub-card bg-white/90 backdrop-blur-sm rounded-lg p-3 sm:p-4 border border-purple-100 hover:border-purple-300 hover:shadow-md hover:scale-[1.02] transition-[transform,shadow,border-color] duration-200">
+                        <p class="text-[10px] sm:text-xs font-medium text-neutral-500 uppercase tracking-wide mb-1">
                             Commission Info
                         </p>
-                        <p class="text-lg font-semibold text-purple-700 mb-2">
-                            {{ number_format($commissionSummary['commission_rate'], 2) }}%
+                        <p class="text-base sm:text-lg font-semibold text-purple-700 mb-2">
+                            <span class="commission-number" data-count="{{ $commissionSummary['commission_rate'] }}">0</span>%
                         </p>
-                        <span class="text-xs text-neutral-600">Tracked separately from wallet</span>
+                        <span class="text-[11px] sm:text-xs text-neutral-600">Tracked separately from wallet</span>
                     </div>
                 </div>
 
                 @if($commissionSummary['total_outstanding'] > 0)
-                <div class="mt-4 bg-amber-50 border border-amber-200 rounded-lg p-3">
-                    <div class="flex items-start gap-2">
-                        <svg class="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <div class="mt-3 sm:mt-4 bg-amber-50 border border-amber-200 rounded-lg p-2.5 sm:p-3">
+                    <div class="flex items-start gap-1.5 sm:gap-2">
+                        <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
                         </svg>
-                        <p class="text-xs text-amber-800">
+                        <p class="text-[11px] sm:text-xs text-amber-800 leading-tight sm:leading-normal">
                             <strong>Note:</strong> Commission is tracked separately from your wallet balance. You can still withdraw wallet funds even with outstanding commission.
                         </p>
                     </div>
@@ -375,7 +495,7 @@
         {{-- Next Profit Distribution --}}
         @if($nextBatchDate)
         <div class="space-y-4">
-            <div class="flex items-center justify-center gap-3 text-sm bg-blue-50 border border-blue-200 rounded-xl py-3 px-5 shadow-sm">
+            <div class="profit-pulse flex items-center justify-center gap-3 text-sm bg-blue-50/90 backdrop-blur-sm border border-blue-200 rounded-xl py-3 px-5 shadow-md hover:shadow-lg hover:scale-[1.02] transition-[transform,shadow] duration-300" style="animation: fadeInUp 0.6s ease-out 0.9s both, subtlePulse 3s ease-in-out 1.5s infinite;">
                 <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
@@ -386,7 +506,7 @@
         @endif
 
         {{-- Recent Transactions Card --}}
-        <div class="bg-white rounded-xl border border-gray-200/60 shadow-lg shadow-blue-900/5 overflow-hidden hover:border-blue-800/40 hover:shadow-xl hover:shadow-blue-900/10 transition-all duration-300">
+        <div class="bg-white rounded-xl border border-gray-200/60 shadow-lg shadow-blue-900/5 overflow-hidden hover:border-blue-800/40 hover:shadow-xl hover:scale-[1.01] transition-[transform,shadow,border-color] duration-300">
             <div class="px-5 py-4 border-b border-gray-200/60 bg-gradient-to-r from-blue-50/70 via-blue-900/5 to-transparent">
                 <div class="flex items-center gap-2">
                     <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-600 to-blue-900 flex items-center justify-center shadow-sm shadow-blue-900/20">
@@ -400,7 +520,7 @@
 
             <div class="divide-y divide-gray-200/60">
                 @forelse($recentTransactions as $transaction)
-                <div class="p-4 hover:bg-blue-50/50 transition-all duration-200 flex items-center justify-between animate-fadeIn">
+                <div class="transaction-row p-4 hover:bg-blue-50/50 transition-all duration-200 flex items-center justify-between">
                     <div class="flex-1 min-w-0">
                         <h4 class="text-sm font-semibold text-gray-900 truncate">{{ $transaction->customer->name }}</h4>
                         <p class="text-xs text-gray-500 mt-0.5">{{ $transaction->transaction_code }} • {{ $transaction->created_at->format('M d, h:i A') }}</p>
@@ -430,14 +550,14 @@
                 </div>
                 @empty
                 <div class="text-center py-12 px-4">
-                    <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center animate-bounce">
+                    <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center" style="animation: fadeInUp 0.6s ease-out 0.3s both;">
                         <svg class="w-10 h-10 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
                     </div>
                     <h4 class="text-gray-900 font-bold text-base mb-2">Ready to Get Started?</h4>
                     <p class="text-gray-500 text-sm mb-4">Create your first transaction using the button above</p>
-                    <button onclick="openTransactionModal()" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white text-sm font-semibold shadow-lg shadow-green-500/30 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200">
+                    <button onclick="openTransactionModal()" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white text-sm font-semibold shadow-lg shadow-green-500/30 hover:shadow-xl hover:scale-[1.02] transition-[transform,shadow,background-image] duration-200">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                         </svg>
@@ -448,7 +568,7 @@
             </div>
 
             @if($recentTransactions->count() > 0)
-            <a href="{{ route('partner.transactions') }}" class="block w-full text-center py-3 bg-blue-50/50 hover:bg-blue-100/50 text-blue-700 font-bold text-sm border-t border-gray-200/60 transition-all duration-200">
+            <a href="{{ route('partner.transactions') }}" class="block w-full text-center py-3 bg-blue-50/50 hover:bg-blue-100/50 text-blue-700 font-bold text-sm border-t border-gray-200/60 hover:scale-[1.02] transition-[transform,background-color] duration-200">
                 View All Transactions →
             </a>
             @endif
@@ -458,32 +578,32 @@
     {{-- Glassmorphism Bottom Navigation --}}
     <nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl shadow-lg shadow-blue-900/10 border-t border-gray-200/60 z-50">
         <div class="grid grid-cols-5 max-w-7xl mx-auto">
-            <a href="{{ route('partner.dashboard') }}" class="flex flex-col items-center justify-center py-3 px-2 text-white bg-gradient-to-r from-blue-600 to-blue-900 border-t-2 border-blue-500 transition-all duration-200">
+            <a href="{{ route('partner.dashboard') }}" class="flex flex-col items-center justify-center py-2 px-2 text-white bg-gradient-to-r from-blue-600 to-blue-900 border-t-2 border-blue-500 transition-all duration-200 active:scale-95">
                 <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                 </svg>
                 <span class="text-xs font-bold">Home</span>
             </a>
-            <a href="{{ route('partner.transactions') }}" class="flex flex-col items-center justify-center py-3 px-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all duration-200">
+            <a href="{{ route('partner.transactions') }}" class="flex flex-col items-center justify-center py-2 px-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 hover:scale-[1.05] transition-[transform,colors,background-color] duration-200 active:scale-95">
                 <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
                 </svg>
                 <span class="text-xs font-medium">Transactions</span>
             </a>
-            <a href="{{ route('partner.wallet') }}" class="flex flex-col items-center justify-center py-3 px-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all duration-200">
+            <a href="{{ route('partner.wallet') }}" class="flex flex-col items-center justify-center py-2 px-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 hover:scale-[1.05] transition-[transform,colors,background-color] duration-200 active:scale-95">
                 <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"></path>
                     <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"></path>
                 </svg>
                 <span class="text-xs font-medium">Wallet</span>
             </a>
-            <a href="{{ route('partner.commissions') }}" class="flex flex-col items-center justify-center py-3 px-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all duration-200">
+            <a href="{{ route('partner.commissions') }}" class="flex flex-col items-center justify-center py-2 px-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 hover:scale-[1.05] transition-[transform,colors,background-color] duration-200 active:scale-95">
                 <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <span class="text-xs font-medium">Commissions</span>
             </a>
-            <a href="{{ route('partner.profile') }}" class="flex flex-col items-center justify-center py-3 px-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all duration-200">
+            <a href="{{ route('partner.profile') }}" class="flex flex-col items-center justify-center py-2 px-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 hover:scale-[1.05] transition-[transform,colors,background-color] duration-200 active:scale-95">
                 <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
@@ -494,7 +614,7 @@
 
     {{-- Transaction Modal with Accessibility --}}
     <div id="transactionModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-md sm:max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+        <div class="modal-content bg-white rounded-2xl max-w-md sm:max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl">
             <div class="px-6 py-5 border-b border-gray-200 flex items-center justify-between bg-gradient-to-r from-blue-50/70 to-transparent">
                 <h3 id="modalTitle" class="text-xl font-bold bg-gradient-to-r from-blue-900 to-blue-700 bg-clip-text text-transparent">New Transaction</h3>
                 <button onclick="closeTransactionModal()" aria-label="Close modal" class="text-gray-400 hover:text-gray-600 transition-colors">
@@ -516,7 +636,7 @@
                             <input type="text" id="customerPhone" class="flex-1 px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all" placeholder="3001234567" maxlength="10" pattern="[0-9]{10}">
                         </div>
                     </div>
-                    <button id="searchBtn" onclick="searchCustomer()" class="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-xl py-3 min-h-[44px] font-semibold shadow-lg shadow-green-500/30 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2">
+                    <button id="searchBtn" onclick="searchCustomer()" class="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-xl py-3 min-h-[44px] font-semibold shadow-lg shadow-green-500/30 hover:shadow-xl hover:scale-[1.02] transition-[transform,shadow,background-image] duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100 flex items-center justify-center gap-2">
                         <svg id="searchSpinner" class="hidden animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -532,14 +652,14 @@
                         <label class="block text-sm font-semibold text-gray-700 mb-2">Invoice Amount (Rs)</label>
                         <input type="number" id="invoiceAmount" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all" placeholder="0" min="1" step="0.01">
                     </div>
-                    <button id="createBtn" onclick="createTransaction()" class="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-xl py-3 min-h-[44px] font-semibold shadow-lg shadow-green-500/30 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2">
+                    <button id="createBtn" onclick="createTransaction()" class="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-xl py-3 min-h-[44px] font-semibold shadow-lg shadow-green-500/30 hover:shadow-xl hover:scale-[1.02] transition-[transform,shadow,background-image] duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100 flex items-center justify-center gap-2">
                         <svg id="createSpinner" class="hidden animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
                         <span id="createBtnText">Create Transaction</span>
                     </button>
-                    <button onclick="backToStep1()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl py-3 min-h-[44px] font-semibold transition-colors duration-200">
+                    <button onclick="backToStep1()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl py-3 min-h-[44px] font-semibold hover:scale-[1.02] transition-[transform,background-color] duration-200">
                         Back
                     </button>
                 </div>
@@ -549,7 +669,7 @@
                     <div class="text-6xl mb-4">✅</div>
                     <h3 class="text-2xl font-bold text-green-600">Transaction Created!</h3>
                     <div id="transactionSuccessInfo" class="bg-green-50 border border-green-200 rounded-xl p-4 text-left"></div>
-                    <button onclick="closeTransactionModal(); location.reload();" class="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-xl py-3 min-h-[44px] font-semibold shadow-lg shadow-green-500/30 hover:shadow-xl transition-all duration-200">
+                    <button onclick="closeTransactionModal(); location.reload();" class="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-xl py-3 min-h-[44px] font-semibold shadow-lg shadow-green-500/30 hover:shadow-xl hover:scale-[1.02] transition-[transform,shadow,background-image] duration-200">
                         Done
                     </button>
                 </div>
@@ -777,6 +897,59 @@
                 }
             }
         });
+
+        // Count-up animation for stats
+        function animateCount(element, target, duration = 1000) {
+            const start = 0;
+            const increment = target / (duration / 16); // 60fps
+            let current = start;
+
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    element.textContent = Math.floor(target).toLocaleString();
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current).toLocaleString();
+                }
+            }, 16);
+        }
+
+        // Animate all stat numbers on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const statNumbers = document.querySelectorAll('.stat-number');
+            statNumbers.forEach((element, index) => {
+                const target = parseInt(element.getAttribute('data-count'));
+                // Stagger the start of each animation
+                setTimeout(() => {
+                    animateCount(element, target, 1200);
+                }, index * 100);
+            });
+
+            // Display commission numbers immediately (no animation to avoid mobile race condition)
+            const commissionNumbers = document.querySelectorAll('.commission-number');
+            commissionNumbers.forEach((element) => {
+                const target = parseFloat(element.getAttribute('data-count'));
+                element.textContent = target.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            });
+        });
+
+        // Count-up with decimal support for commission numbers
+        function animateCountWithDecimals(element, target, duration = 1000) {
+            const start = 0;
+            const increment = target / (duration / 16); // 60fps
+            let current = start;
+
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    element.textContent = target.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                    clearInterval(timer);
+                } else {
+                    element.textContent = current.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                }
+            }, 16);
+        }
     </script>
 </body>
 </html>
