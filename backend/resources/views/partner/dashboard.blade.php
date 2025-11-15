@@ -723,17 +723,18 @@
             this.value = this.value.replace(/[^0-9]/g, '').substring(0, 10);
         });
 
-        // Enable paste for customer phone
+        // Enable paste for customer phone - properly extract clipboard data
         document.getElementById('customerPhone')?.addEventListener('paste', function(e) {
-            e.stopPropagation();
-            setTimeout(() => {
-                this.value = this.value.replace(/[^0-9]/g, '').substring(0, 10);
-            }, 0);
+            e.preventDefault();  // Prevent default paste behavior
+            let paste = (e.clipboardData || window.clipboardData).getData('text');
+            this.value = paste.replace(/[^0-9]/g, '').substring(0, 10);
         });
 
-        // Enable paste for invoice amount
+        // Enable paste for invoice amount - properly extract clipboard data
         document.getElementById('invoiceAmount')?.addEventListener('paste', function(e) {
-            e.stopPropagation();
+            e.preventDefault();  // Prevent default paste behavior
+            let paste = (e.clipboardData || window.clipboardData).getData('text');
+            this.value = paste.replace(/[^0-9.]/g, '');  // Allow digits and decimal point
         });
 
         // Enter key to search customer in step 1
