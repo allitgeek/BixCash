@@ -678,8 +678,6 @@
 
         // Confirm transaction with loading state
         async function confirmTransaction(transactionId) {
-            if (!confirm('Confirm this purchase?')) return;
-
             const btn = event.target.closest('.btn-confirm');
             const spinner = btn.querySelector('.confirm-spinner');
             const text = btn.querySelector('.confirm-text');
@@ -700,7 +698,6 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    alert('✓ Transaction confirmed successfully!');
                     location.reload();
                 } else {
                     alert('Error: ' + data.message);
