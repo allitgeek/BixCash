@@ -18,7 +18,7 @@
                 <h1 class="text-xl sm:text-2xl font-bold">💰 BixCash</h1>
                 <p class="text-xs sm:text-sm text-blue-100">@yield('page-title', 'Partner Portal')</p>
             </div>
-            <form method="POST" action="{{ route('logout') }}">
+            <form method="POST" action="{{ route('partner.logout') }}">
                 @csrf
                 <button type="submit" class="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg transition-all duration-200 text-sm font-medium">
                     Logout
