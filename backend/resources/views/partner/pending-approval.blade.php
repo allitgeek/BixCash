@@ -42,7 +42,7 @@
             </div>
             <div class="flex justify-between items-center py-2 border-b border-gray-200">
                 <span class="text-sm font-medium text-gray-500">Submitted On</span>
-                <span class="text-sm font-semibold text-gray-900">{{ $partnerProfile->registration_date ? $partnerProfile->registration_date->format('M d, Y') : 'N/A' }}</span>
+                <span class="text-sm font-semibold text-gray-900">{{ $partnerProfile->registration_date ? \Carbon\Carbon::parse($partnerProfile->registration_date)->format('M d, Y') : 'N/A' }}</span>
             </div>
             <div class="flex justify-between items-center py-2">
                 <span class="text-sm font-medium text-gray-500">Status</span>
