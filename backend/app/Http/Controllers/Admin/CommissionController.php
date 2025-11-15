@@ -312,6 +312,23 @@ class CommissionController extends Controller
             ])->withInput();
         }
 
+        // Validate wallet deduction requirements
+        if ($request->payment_method === 'wallet_deduction') {
+            $wallet = $ledger->partner->wallet;
+
+            if (!$wallet) {
+                return redirect()->back()->withErrors([
+                    'payment_method' => 'Partner does not have a wallet account. Please use another payment method.'
+                ])->withInput();
+            }
+
+            if ($wallet->balance < $request->amount_settled) {
+                return redirect()->back()->withErrors([
+                    'payment_method' => 'Insufficient wallet balance. Available: Rs ' . number_format($wallet->balance, 2) . ', Required: Rs ' . number_format($request->amount_settled, 2)
+                ])->withInput();
+            }
+        }
+
         try {
             DB::beginTransaction();
 
@@ -333,6 +350,32 @@ class CommissionController extends Controller
                 'processed_by' => auth()->id(),
                 'processed_at' => now(),
             ]);
+
+            // Process wallet deduction if applicable
+            if ($request->payment_method === 'wallet_deduction') {
+                try {
+                    $wallet = $ledger->partner->wallet;
+                    $balanceBefore = $wallet->balance;
+
+                    $wallet->debit(
+                        $request->amount_settled,
+                        'commission_settlement',
+                        $settlement->id,
+                        "Commission settlement for {$ledger->formatted_period}"
+                    );
+
+                    Log::info("Wallet deducted for commission settlement", [
+                        'settlement_id' => $settlement->id,
+                        'partner_id' => $ledger->partner_id,
+                        'wallet_id' => $wallet->id,
+                        'amount' => $request->amount_settled,
+                        'balance_before' => $balanceBefore,
+                        'balance_after' => $wallet->fresh()->balance,
+                    ]);
+                } catch (\Exception $e) {
+                    throw new \Exception("Wallet deduction failed: " . $e->getMessage());
+                }
+            }
 
             // Update ledger
             $ledger->recordSettlement($request->amount_settled, []);
@@ -364,6 +407,8 @@ class CommissionController extends Controller
                 'ledger_id' => $ledger->id,
                 'partner_id' => $ledger->partner_id,
                 'amount' => $request->amount_settled,
+                'payment_method' => $request->payment_method,
+                'wallet_deducted' => $request->payment_method === 'wallet_deduction',
                 'processed_by' => auth()->id(),
             ]);
 
@@ -845,6 +890,44 @@ class CommissionController extends Controller
             // Reverse the settlement (create negative adjustment)
             $reverseAmount = -$settlement->amount_settled;
             $settlement->ledger->recordSettlement($reverseAmount, []);
+
+            // Refund wallet if original settlement was wallet deduction
+            if ($settlement->payment_method === 'wallet_deduction') {
+                try {
+                    $wallet = $settlement->ledger->partner->wallet;
+                    if ($wallet) {
+                        $balanceBefore = $wallet->balance;
+
+                        $wallet->credit(
+                            $settlement->amount_settled,
+                            'commission_settlement_refund',
+                            $settlement->id,
+                            "Refund: voided commission settlement for {$settlement->ledger->formatted_period}"
+                        );
+
+                        Log::info("Wallet refunded for voided settlement", [
+                            'settlement_id' => $settlement->id,
+                            'partner_id' => $settlement->partner_id,
+                            'wallet_id' => $wallet->id,
+                            'amount' => $settlement->amount_settled,
+                            'balance_before' => $balanceBefore,
+                            'balance_after' => $wallet->fresh()->balance,
+                        ]);
+                    } else {
+                        Log::warning("Cannot refund wallet for voided settlement - partner has no wallet", [
+                            'settlement_id' => $settlement->id,
+                            'partner_id' => $settlement->partner_id,
+                        ]);
+                    }
+                } catch (\Exception $e) {
+                    Log::error("Wallet refund failed during settlement void", [
+                        'settlement_id' => $settlement->id,
+                        'error' => $e->getMessage(),
+                    ]);
+                    // Don't fail the entire void operation if wallet refund fails
+                    // The ledger reversal is more critical
+                }
+            }
 
             // Update transaction settlement status if needed
             if ($settlement->ledger->status !== 'settled') {
