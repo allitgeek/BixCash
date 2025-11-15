@@ -103,6 +103,21 @@ class PermissionSeeder extends Seeder
             ['group' => 'profit_sharing', 'name' => 'profit_sharing.distribute', 'display_name' => 'Distribute Profit', 'description' => 'Distribute profit to users'],
             ['group' => 'profit_sharing', 'name' => 'profit_sharing.view_history', 'display_name' => 'View Distribution History', 'description' => 'View profit distribution history'],
 
+            // Commission Management
+            ['group' => 'commissions', 'name' => 'commissions.view', 'display_name' => 'View Commissions', 'description' => 'View commission dashboard and overview'],
+            ['group' => 'commissions', 'name' => 'commissions.view_batches', 'display_name' => 'View Batches', 'description' => 'View commission calculation batches'],
+            ['group' => 'commissions', 'name' => 'commissions.calculate', 'display_name' => 'Calculate Commissions', 'description' => 'Trigger manual commission calculations'],
+            ['group' => 'commissions', 'name' => 'commissions.view_partners', 'display_name' => 'View Partner Commissions', 'description' => 'View commission details for partners'],
+            ['group' => 'commissions', 'name' => 'commissions.view_settlements', 'display_name' => 'View Settlements', 'description' => 'View commission settlement history'],
+            ['group' => 'commissions', 'name' => 'commissions.process_settlement', 'display_name' => 'Process Settlements', 'description' => 'Process commission payments to partners'],
+            ['group' => 'commissions', 'name' => 'commissions.void_settlement', 'display_name' => 'Void Settlements', 'description' => 'Void settlements within 24 hours'],
+            ['group' => 'commissions', 'name' => 'commissions.create_adjustment', 'display_name' => 'Create Adjustments', 'description' => 'Create commission adjustments (refunds, corrections, penalties)'],
+            ['group' => 'commissions', 'name' => 'commissions.view_adjustments', 'display_name' => 'View Adjustments', 'description' => 'View commission adjustment history'],
+            ['group' => 'commissions', 'name' => 'commissions.bulk_settle', 'display_name' => 'Bulk Settlement', 'description' => 'Process bulk settlements for multiple partners'],
+            ['group' => 'commissions', 'name' => 'commissions.send_notifications', 'display_name' => 'Send Notifications', 'description' => 'Send batch email notifications to partners'],
+            ['group' => 'commissions', 'name' => 'commissions.export', 'display_name' => 'Export Data', 'description' => 'Export commission data to Excel'],
+            ['group' => 'commissions', 'name' => 'commissions.view_proof', 'display_name' => 'View Payment Proof', 'description' => 'View proof of payment gallery and documents'],
+
             // Content Management
             ['group' => 'content', 'name' => 'content.view', 'display_name' => 'View Content', 'description' => 'View slides and promotions'],
             ['group' => 'content', 'name' => 'content.create', 'display_name' => 'Create Content', 'description' => 'Create slides and promotions'],

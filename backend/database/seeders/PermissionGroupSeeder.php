@@ -86,11 +86,19 @@ class PermissionGroupSeeder extends Seeder
                 'is_active' => true,
             ],
             [
+                'name' => 'commissions',
+                'display_name' => 'Commission Management',
+                'icon' => '💰',
+                'description' => 'Manage partner commissions and settlements',
+                'sort_order' => 10,
+                'is_active' => true,
+            ],
+            [
                 'name' => 'content',
                 'display_name' => 'Content Management',
                 'icon' => '📝',
                 'description' => 'Manage slides, promotions, and content',
-                'sort_order' => 10,
+                'sort_order' => 11,
                 'is_active' => true,
             ],
             [
@@ -98,7 +106,7 @@ class PermissionGroupSeeder extends Seeder
                 'display_name' => 'Category Management',
                 'icon' => '📂',
                 'description' => 'Manage product categories',
-                'sort_order' => 11,
+                'sort_order' => 12,
                 'is_active' => true,
             ],
             [
@@ -106,7 +114,7 @@ class PermissionGroupSeeder extends Seeder
                 'display_name' => 'Reports & Analytics',
                 'icon' => '📈',
                 'description' => 'Generate and export reports',
-                'sort_order' => 12,
+                'sort_order' => 13,
                 'is_active' => true,
             ],
             [
@@ -114,7 +122,7 @@ class PermissionGroupSeeder extends Seeder
                 'display_name' => 'System Settings',
                 'icon' => '⚙️',
                 'description' => 'Configure system settings',
-                'sort_order' => 13,
+                'sort_order' => 14,
                 'is_active' => true,
             ],
             [
@@ -122,7 +130,7 @@ class PermissionGroupSeeder extends Seeder
                 'display_name' => 'System Maintenance',
                 'icon' => '🔧',
                 'description' => 'System backups and maintenance tasks',
-                'sort_order' => 14,
+                'sort_order' => 15,
                 'is_active' => true,
             ],
         ];

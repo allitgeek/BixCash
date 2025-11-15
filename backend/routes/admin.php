@@ -157,42 +157,44 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::post('/{id}/processing', [WithdrawalController::class, 'markProcessing'])->name('processing');
         });
 
-        // Commission Management (Admin & Manager)
-        Route::prefix('commissions')->name('commissions.')->group(function () {
-            // Dashboard
+        // Commission Management (requires commissions.view permission)
+        Route::middleware(['role.permission:commissions.view'])->prefix('commissions')->name('commissions.')->group(function () {
+            // Dashboard (read-only)
             Route::get('/', [CommissionController::class, 'index'])->name('index');
 
-            // Batches
-            Route::get('/batches', [CommissionController::class, 'batchIndex'])->name('batches.index');
-            Route::get('/batches/{id}', [CommissionController::class, 'batchShow'])->name('batches.show');
-            Route::post('/batches/{id}/notify-all', [CommissionController::class, 'notifyAllPartners'])->name('batches.notify-all');
-            Route::post('/calculate', [CommissionController::class, 'triggerCalculation'])->name('calculate');
+            // Batches (read-only + calculation)
+            Route::get('/batches', [CommissionController::class, 'batchIndex'])->middleware('role.permission:commissions.view_batches')->name('batches.index');
+            Route::get('/batches/{id}', [CommissionController::class, 'batchShow'])->middleware('role.permission:commissions.view_batches')->name('batches.show');
+            Route::post('/batches/{id}/notify-all', [CommissionController::class, 'notifyAllPartners'])->middleware('role.permission:commissions.send_notifications')->name('batches.notify-all');
+            Route::post('/calculate', [CommissionController::class, 'triggerCalculation'])->middleware('role.permission:commissions.calculate')->name('calculate');
 
-            // Partners
-            Route::get('/partners', [CommissionController::class, 'partnerIndex'])->name('partners.index');
-            Route::get('/partners/{partnerId}', [CommissionController::class, 'partnerShow'])->name('partners.show');
+            // Partners (read-only)
+            Route::get('/partners', [CommissionController::class, 'partnerIndex'])->middleware('role.permission:commissions.view_partners')->name('partners.index');
+            Route::get('/partners/{partnerId}', [CommissionController::class, 'partnerShow'])->middleware('role.permission:commissions.view_partners')->name('partners.show');
 
-            // Settlements
-            Route::get('/settlements/history', [CommissionController::class, 'settlementHistory'])->name('settlements.history');
-            Route::get('/settlements/proof-gallery', [CommissionController::class, 'proofGallery'])->name('settlements.proof-gallery');
-            Route::get('/settlements/create/{ledgerId}', [CommissionController::class, 'settlementCreate'])->name('settlements.create');
-            Route::post('/settlements/{ledgerId}', [CommissionController::class, 'settlementStore'])->name('settlements.store');
-            Route::post('/settlements/bulk-settle', [CommissionController::class, 'bulkSettle'])->name('settlements.bulk-settle');
-            Route::post('/settlements/{id}/void', [CommissionController::class, 'voidSettlement'])->name('settlements.void');
+            // Settlements (view + process)
+            Route::get('/settlements/history', [CommissionController::class, 'settlementHistory'])->middleware('role.permission:commissions.view_settlements')->name('settlements.history');
+            Route::get('/settlements/proof-gallery', [CommissionController::class, 'proofGallery'])->middleware('role.permission:commissions.view_proof')->name('settlements.proof-gallery');
+            Route::get('/settlements/create/{ledgerId}', [CommissionController::class, 'settlementCreate'])->middleware('role.permission:commissions.process_settlement')->name('settlements.create');
+            Route::post('/settlements/{ledgerId}', [CommissionController::class, 'settlementStore'])->middleware('role.permission:commissions.process_settlement')->name('settlements.store');
+            Route::post('/settlements/bulk-settle', [CommissionController::class, 'bulkSettle'])->middleware('role.permission:commissions.bulk_settle')->name('settlements.bulk-settle');
+            Route::post('/settlements/{id}/void', [CommissionController::class, 'voidSettlement'])->middleware('role.permission:commissions.void_settlement')->name('settlements.void');
 
-            // Adjustments
-            Route::get('/adjustments', [CommissionController::class, 'adjustmentIndex'])->name('adjustments.index');
-            Route::get('/adjustments/create/{ledgerId}', [CommissionController::class, 'adjustmentCreate'])->name('adjustments.create');
-            Route::post('/adjustments/{ledgerId}', [CommissionController::class, 'adjustmentStore'])->name('adjustments.store');
+            // Adjustments (view + create)
+            Route::get('/adjustments', [CommissionController::class, 'adjustmentIndex'])->middleware('role.permission:commissions.view_adjustments')->name('adjustments.index');
+            Route::get('/adjustments/create/{ledgerId}', [CommissionController::class, 'adjustmentCreate'])->middleware('role.permission:commissions.create_adjustment')->name('adjustments.create');
+            Route::post('/adjustments/{ledgerId}', [CommissionController::class, 'adjustmentStore'])->middleware('role.permission:commissions.create_adjustment')->name('adjustments.store');
 
-            // Invoice
+            // Invoice (read-only, uses view permission)
             Route::get('/invoice/{ledgerId}', [CommissionController::class, 'downloadInvoice'])->name('invoice.download');
 
-            // Exports
-            Route::get('/export/batches', [CommissionController::class, 'exportBatches'])->name('export.batches');
-            Route::get('/export/ledgers', [CommissionController::class, 'exportLedgers'])->name('export.ledgers');
-            Route::get('/export/settlements', [CommissionController::class, 'exportSettlements'])->name('export.settlements');
-            Route::get('/export/partner/{partnerId}', [CommissionController::class, 'exportPartnerReport'])->name('export.partner');
+            // Exports (all require export permission)
+            Route::middleware(['role.permission:commissions.export'])->group(function () {
+                Route::get('/export/batches', [CommissionController::class, 'exportBatches'])->name('export.batches');
+                Route::get('/export/ledgers', [CommissionController::class, 'exportLedgers'])->name('export.ledgers');
+                Route::get('/export/settlements', [CommissionController::class, 'exportSettlements'])->name('export.settlements');
+                Route::get('/export/partner/{partnerId}', [CommissionController::class, 'exportPartnerReport'])->name('export.partner');
+            });
         });
 
         // Roles & Permissions Management (Super Admin & Manager only)

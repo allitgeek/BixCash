@@ -34,6 +34,7 @@ class RoleSeeder extends Seeder
                     'transactions.view', 'transactions.view_details', 'transactions.refund', 'transactions.export',
                     'withdrawals.view', 'withdrawals.approve', 'withdrawals.reject', 'withdrawals.view_details',
                     'profit_sharing.view', 'profit_sharing.calculate', 'profit_sharing.distribute', 'profit_sharing.view_history',
+                    'commissions.view', 'commissions.view_batches', 'commissions.calculate', 'commissions.view_partners', 'commissions.view_settlements', 'commissions.process_settlement', 'commissions.void_settlement', 'commissions.create_adjustment', 'commissions.view_adjustments', 'commissions.bulk_settle', 'commissions.send_notifications', 'commissions.export', 'commissions.view_proof',
                     'content.view', 'content.create', 'content.edit', 'content.delete', 'content.toggle_status',
                     'categories.view', 'categories.create', 'categories.edit', 'categories.delete', 'categories.toggle_status',
                     'reports.view', 'reports.generate', 'reports.export', 'reports.view_analytics',
@@ -59,6 +60,7 @@ class RoleSeeder extends Seeder
                     'brands.view', 'brands.create', 'brands.edit', 'brands.toggle_status',
                     'transactions.view', 'transactions.view_details', 'transactions.export',
                     'withdrawals.view', 'withdrawals.view_details',
+                    'commissions.view', 'commissions.view_batches', 'commissions.calculate', 'commissions.view_partners', 'commissions.view_settlements', 'commissions.process_settlement', 'commissions.create_adjustment', 'commissions.view_adjustments', 'commissions.send_notifications', 'commissions.export', 'commissions.view_proof',
                     'content.view', 'content.create', 'content.edit', 'content.toggle_status',
                     'categories.view', 'categories.create', 'categories.edit', 'categories.toggle_status',
                     'reports.view', 'reports.generate', 'reports.export', 'reports.view_analytics',
@@ -77,6 +79,7 @@ class RoleSeeder extends Seeder
                     // New action-level permissions
                     'dashboard.view',
                     'customers.view', 'customers.view_profile',
+                    'commissions.view', 'commissions.view_batches', 'commissions.view_partners', 'commissions.view_settlements', 'commissions.view_adjustments', 'commissions.view_proof',
                     'content.view', 'content.create', 'content.edit',
                     'reports.view',
                 ],
