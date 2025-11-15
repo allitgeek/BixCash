@@ -111,8 +111,8 @@
         </div>
     </div>
 
-    {{-- Recent Activity Cards - 4 Column Layout with Navy Accents --}}
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-6">
+    {{-- Recent Activity Cards - 5 Column Layout with Navy Accents --}}
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-5 mb-6">
         {{-- Recent Customers Card --}}
         <div class="bg-white rounded-xl border border-gray-200/60 shadow-sm overflow-hidden hover:border-blue-800/40 hover:shadow-md hover:shadow-blue-900/5 transition-all duration-200">
             <div class="px-5 py-4 border-b border-gray-200/60 bg-gradient-to-r from-blue-50/70 via-blue-900/5 to-transparent">
@@ -276,6 +276,64 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
                         </svg>
                         <p class="mt-2 text-sm text-gray-500">No withdrawal requests yet</p>
+                    </div>
+                @endif
+            </div>
+        </div>
+
+        {{-- Pending Commissions Card --}}
+        <div class="bg-white rounded-xl border border-gray-200/60 shadow-sm overflow-hidden hover:border-purple-500/40 hover:shadow-md transition-all duration-200">
+            <div class="px-5 py-4 border-b border-gray-200/60 bg-gradient-to-r from-purple-50/70 via-pink-50/30 to-transparent">
+                <div class="flex items-center space-x-3">
+                    <div class="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg flex items-center justify-center shadow-md">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-semibold text-gray-900">Pending Commissions</h3>
+                        <p class="text-xs text-gray-500 mt-0.5">Latest 5 pending</p>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4">
+                @if($pendingLedgers->count() > 0)
+                    <ul class="space-y-3">
+                        @foreach($pendingLedgers as $ledger)
+                            <li class="flex items-center justify-between p-2.5 rounded-lg hover:bg-purple-50/50 transition-colors duration-150 border border-transparent hover:border-purple-100">
+                                <div class="flex-1 min-w-0 mr-3">
+                                    <p class="text-sm font-semibold text-gray-900 truncate">
+                                        {{ $ledger->partner->partnerProfile->business_name ?? $ledger->partner->name }}
+                                    </p>
+                                    <p class="text-xs text-gray-500 mt-0.5">{{ \Carbon\Carbon::parse($ledger->batch_period)->format('M Y') }}</p>
+                                </div>
+                                <div class="flex flex-col items-end space-y-1">
+                                    <p class="text-sm font-bold text-purple-600">Rs {{ number_format($ledger->amount_outstanding, 0) }}</p>
+                                    @if($ledger->status === 'pending')
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
+                                            Pending
+                                        </span>
+                                    @elseif($ledger->status === 'partial')
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-orange-100 text-orange-800">
+                                            Partial
+                                        </span>
+                                    @endif
+                                </div>
+                            </li>
+                        @endforeach
+                    </ul>
+                    <div class="mt-4 pt-3 border-t border-gray-100">
+                        <a href="{{ route('admin.commissions.index') }}" class="block w-full text-center text-sm font-medium text-purple-600 hover:text-purple-700 hover:bg-purple-50 py-2 rounded-lg transition-colors duration-150">
+                            View All Commissions →
+                        </a>
+                    </div>
+                @else
+                    <!-- Empty State -->
+                    <div class="text-center py-8">
+                        <svg class="mx-auto h-12 w-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <p class="mt-2 text-sm text-gray-500">No pending commissions</p>
                     </div>
                 @endif
             </div>

@@ -13,6 +13,7 @@ use App\Models\SystemSetting;
 use App\Models\ProfitSharingDistribution;
 use App\Models\Wallet;
 use App\Models\WithdrawalRequest;
+use App\Models\CommissionLedger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -74,6 +75,16 @@ class DashboardController extends Controller
             ->limit(5)
             ->get();
 
+        // Get pending commission ledgers (last 5 with partner info)
+        $pendingLedgers = CommissionLedger::with('partner.partnerProfile')
+            ->where(function ($query) {
+                $query->where('status', 'pending')
+                      ->orWhere('status', 'partial');
+            })
+            ->orderBy('batch_period', 'desc')
+            ->limit(5)
+            ->get();
+
         // Get 7-day data for charts
         $last7Days = collect();
         for ($i = 6; $i >= 0; $i--) {
@@ -116,6 +127,7 @@ class DashboardController extends Controller
             'recentTransactions',
             'recentPartners',
             'recentWithdrawals',
+            'pendingLedgers',
             'user',
             'chartLabels',
             'customerChartData',
