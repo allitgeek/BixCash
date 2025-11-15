@@ -480,13 +480,25 @@ class CommissionController extends Controller
                 '--user-id' => auth()->id(),
             ]);
 
+            // Get the command output
+            $output = Artisan::output();
+
             if ($exitCode === 0) {
                 $batch = CommissionBatch::forPeriod($request->period)->first();
                 return redirect()
                     ->route('admin.commissions.batches.show', $batch->id)
                     ->with('success', 'Commission calculation completed successfully for ' . $request->period);
             } else {
-                return redirect()->back()->with('error', 'Commission calculation failed. Check logs for details.');
+                // Show the actual command output as the error message
+                $errorMessage = trim($output) ?: 'Commission calculation failed. Check logs for details.';
+
+                Log::warning("Commission calculation returned non-zero exit code", [
+                    'period' => $request->period,
+                    'exit_code' => $exitCode,
+                    'output' => $output,
+                ]);
+
+                return redirect()->back()->with('error', $errorMessage);
             }
 
         } catch (\Exception $e) {

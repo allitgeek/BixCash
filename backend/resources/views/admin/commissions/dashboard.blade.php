@@ -103,8 +103,16 @@
                 <form action="{{ route('admin.commissions.calculate') }}" method="POST" style="margin-bottom: 1rem;">
                     @csrf
                     <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Calculate Commissions</label>
-                    <input type="month" name="period" value="{{ date('Y-m', strtotime('-1 month')) }}" 
+                    <input type="month" name="period" value="{{ date('Y-m', strtotime('-1 month')) }}"
                            style="width: 100%; padding: 0.5rem; border: 1px solid #dee2e6; border-radius: 4px; margin-bottom: 0.5rem;" required>
+
+                    <div style="margin-bottom: 0.75rem;">
+                        <label style="display: flex; align-items: center; font-weight: normal; cursor: pointer;">
+                            <input type="checkbox" name="force" value="1" style="margin-right: 0.5rem;">
+                            <span style="font-size: 0.9rem;">Force recalculate (if batch exists)</span>
+                        </label>
+                    </div>
+
                     <button type="submit" class="btn btn-primary" style="width: 100%;">
                         📊 Calculate Now
                     </button>
