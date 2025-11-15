@@ -165,6 +165,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             // Batches
             Route::get('/batches', [CommissionController::class, 'batchIndex'])->name('batches.index');
             Route::get('/batches/{id}', [CommissionController::class, 'batchShow'])->name('batches.show');
+            Route::post('/batches/{id}/notify-all', [CommissionController::class, 'notifyAllPartners'])->name('batches.notify-all');
             Route::post('/calculate', [CommissionController::class, 'triggerCalculation'])->name('calculate');
 
             // Partners
@@ -173,12 +174,25 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
             // Settlements
             Route::get('/settlements/history', [CommissionController::class, 'settlementHistory'])->name('settlements.history');
+            Route::get('/settlements/proof-gallery', [CommissionController::class, 'proofGallery'])->name('settlements.proof-gallery');
             Route::get('/settlements/create/{ledgerId}', [CommissionController::class, 'settlementCreate'])->name('settlements.create');
             Route::post('/settlements/{ledgerId}', [CommissionController::class, 'settlementStore'])->name('settlements.store');
             Route::post('/settlements/bulk-settle', [CommissionController::class, 'bulkSettle'])->name('settlements.bulk-settle');
+            Route::post('/settlements/{id}/void', [CommissionController::class, 'voidSettlement'])->name('settlements.void');
+
+            // Adjustments
+            Route::get('/adjustments', [CommissionController::class, 'adjustmentIndex'])->name('adjustments.index');
+            Route::get('/adjustments/create/{ledgerId}', [CommissionController::class, 'adjustmentCreate'])->name('adjustments.create');
+            Route::post('/adjustments/{ledgerId}', [CommissionController::class, 'adjustmentStore'])->name('adjustments.store');
 
             // Invoice
             Route::get('/invoice/{ledgerId}', [CommissionController::class, 'downloadInvoice'])->name('invoice.download');
+
+            // Exports
+            Route::get('/export/batches', [CommissionController::class, 'exportBatches'])->name('export.batches');
+            Route::get('/export/ledgers', [CommissionController::class, 'exportLedgers'])->name('export.ledgers');
+            Route::get('/export/settlements', [CommissionController::class, 'exportSettlements'])->name('export.settlements');
+            Route::get('/export/partner/{partnerId}', [CommissionController::class, 'exportPartnerReport'])->name('export.partner');
         });
 
         // Roles & Permissions Management (Super Admin & Manager only)

@@ -39,9 +39,21 @@
         <div class="card-header" style="background: white; border-bottom: 2px solid #f8f9fa; padding: 1rem;">
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <h5 style="margin: 0;">📦 All Commission Batches</h5>
-                <span class="badge bg-primary" style="font-size: 1rem; padding: 0.5rem 1rem;">
-                    {{ $batches->total() }} Total
-                </span>
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <span class="badge bg-primary" style="font-size: 1rem; padding: 0.5rem 1rem;">
+                        {{ $batches->total() }} Total
+                    </span>
+                    <a href="{{ route('admin.commissions.export.batches', request()->query()) }}"
+                       class="btn btn-success btn-sm"
+                       style="padding: 0.5rem 1rem; display: flex; align-items: center; gap: 0.5rem;"
+                       title="Export with current filters: {{ request()->hasAny(['status', 'search']) ? 'Filtered' : 'All data' }}"
+                       onclick="return confirm('Export {{ $batches->total() }} batch(es) to Excel?\n\nCurrent filters will be applied to the export.');">
+                        📊 Export to Excel
+                        @if(request()->hasAny(['status', 'search']))
+                            <span class="badge bg-warning text-dark" style="font-size: 0.7rem;">Filtered</span>
+                        @endif
+                    </a>
+                </div>
             </div>
         </div>
         <div class="card-body" style="padding: 0;">

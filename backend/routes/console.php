@@ -25,3 +25,9 @@ Schedule::command('commission:calculate-monthly')
     ->monthlyOn(1, '02:00')
     ->withoutOverlapping()
     ->runInBackground();
+
+// Send commission payment reminders every Monday at 9:00 AM
+Schedule::command('commission:send-reminders --min-days=7 --min-amount=1000')
+    ->weeklyOn(1, '09:00')
+    ->withoutOverlapping()
+    ->runInBackground();

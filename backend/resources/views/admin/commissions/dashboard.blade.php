@@ -172,6 +172,29 @@
         </div>
     </div>
 
+    <!-- Charts Section -->
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-top: 1.5rem;">
+        <!-- Commission Trend Chart -->
+        <div class="card">
+            <div class="card-header" style="background: white; border-bottom: 2px solid #f8f9fa; padding: 1rem;">
+                <h5 style="margin: 0;">📈 Commission Trend (Last 12 Months)</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="commissionTrendChart" style="max-height: 300px;"></canvas>
+            </div>
+        </div>
+
+        <!-- Status Breakdown Chart -->
+        <div class="card">
+            <div class="card-header" style="background: white; border-bottom: 2px solid #f8f9fa; padding: 1rem;">
+                <h5 style="margin: 0;">📊 Settlement Status</h5>
+            </div>
+            <div class="card-body" style="display: flex; justify-content: center; align-items: center;">
+                <canvas id="statusBreakdownChart" style="max-width: 250px; max-height: 250px;"></canvas>
+            </div>
+        </div>
+    </div>
+
     <!-- Recent Settlements -->
     <div class="card" style="margin-top: 1.5rem;">
         <div class="card-header" style="background: white; border-bottom: 2px solid #f8f9fa; padding: 1rem;">
@@ -228,4 +251,136 @@
             </div>
         </div>
     </div>
+<!-- Chart.js Library -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<script>
+    // Commission Trend Chart (Line Chart)
+    const trendCtx = document.getElementById('commissionTrendChart').getContext('2d');
+    new Chart(trendCtx, {
+        type: 'line',
+        data: {
+            labels: @json($commissionTrend['labels']),
+            datasets: [{
+                label: 'Commission Amount (Rs)',
+                data: @json($commissionTrend['data']),
+                borderColor: 'rgb(102, 126, 234)',
+                backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                borderWidth: 3,
+                tension: 0.4,
+                fill: true,
+                pointBackgroundColor: 'rgb(102, 126, 234)',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 5,
+                pointHoverRadius: 7,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    padding: 12,
+                    titleFont: {
+                        size: 14
+                    },
+                    bodyFont: {
+                        size: 13
+                    },
+                    callbacks: {
+                        label: function(context) {
+                            return 'Rs ' + context.parsed.y.toLocaleString('en-PK', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return 'Rs ' + value.toLocaleString('en-PK');
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
+
+    // Status Breakdown Chart (Doughnut Chart)
+    const statusCtx = document.getElementById('statusBreakdownChart').getContext('2d');
+    new Chart(statusCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Pending', 'Partial', 'Settled'],
+            datasets: [{
+                data: [
+                    @json($statusBreakdown['pending']),
+                    @json($statusBreakdown['partial']),
+                    @json($statusBreakdown['settled'])
+                ],
+                backgroundColor: [
+                    'rgba(245, 87, 108, 0.8)',
+                    'rgba(250, 112, 154, 0.8)',
+                    'rgba(76, 211, 122, 0.8)'
+                ],
+                borderColor: [
+                    'rgb(245, 87, 108)',
+                    'rgb(250, 112, 154)',
+                    'rgb(76, 211, 122)'
+                ],
+                borderWidth: 2,
+                hoverOffset: 15
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 15,
+                        font: {
+                            size: 13
+                        },
+                        usePointStyle: true,
+                        pointStyle: 'circle'
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    padding: 12,
+                    titleFont: {
+                        size: 14
+                    },
+                    bodyFont: {
+                        size: 13
+                    },
+                    callbacks: {
+                        label: function(context) {
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = ((context.parsed / total) * 100).toFixed(1);
+                            return context.label + ': ' + context.parsed + ' (' + percentage + '%)';
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
+
 @endsection

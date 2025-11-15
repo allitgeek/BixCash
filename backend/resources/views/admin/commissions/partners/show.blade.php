@@ -11,14 +11,23 @@
                 <div>
                     <h3 style="margin: 0 0 0.5rem 0;">{{ $partner->name }}</h3>
                     <p style="margin: 0; color: #6c757d;">
-                        {{ $partner->partnerProfile->business_name ?? 'N/A' }} | 
-                        {{ $partner->phone }} | 
+                        {{ $partner->partnerProfile->business_name ?? 'N/A' }} |
+                        {{ $partner->phone }} |
                         Commission Rate: <strong>{{ number_format($partner->partnerProfile->commission_rate ?? 0, 2) }}%</strong>
                     </p>
                 </div>
-                <a href="{{ route('admin.partners.show', $partner->id) }}" class="btn btn-outline-secondary">
-                    View Partner Profile →
-                </a>
+                <div style="display: flex; gap: 0.75rem;">
+                    <a href="{{ route('admin.commissions.export.partner', $partner->id) }}"
+                       class="btn btn-success"
+                       style="display: flex; align-items: center; gap: 0.5rem;"
+                       title="Export complete commission history for {{ $partner->name }}"
+                       onclick="return confirm('Export complete commission report for {{ $partner->name }} to Excel?\n\nThis includes all ledgers, transactions, and settlement history.');">
+                        📊 Export Report
+                    </a>
+                    <a href="{{ route('admin.partners.show', $partner->id) }}" class="btn btn-outline-secondary">
+                        View Partner Profile →
+                    </a>
+                </div>
             </div>
         </div>
     </div>
@@ -138,6 +147,7 @@
                             <th style="padding: 0.75rem;">Reference</th>
                             <th style="padding: 0.75rem;">Processed By</th>
                             <th style="padding: 0.75rem;">Notes</th>
+                            <th style="padding: 0.75rem;">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -155,6 +165,12 @@
                                 </td>
                                 <td style="padding: 0.75rem;">
                                     <span class="badge bg-info">{{ $settlement->formatted_payment_method }}</span>
+                                    @if($settlement->adjustment_type)
+                                        <br>
+                                        <span class="badge bg-{{ $settlement->adjustment_type_badge['color'] }}" style="margin-top: 0.25rem;">
+                                            {{ $settlement->adjustment_type_badge['icon'] }} {{ $settlement->adjustment_type_badge['label'] }}
+                                        </span>
+                                    @endif
                                 </td>
                                 <td style="padding: 0.75rem;">
                                     {{ $settlement->settlement_reference ?? '-' }}
@@ -169,10 +185,22 @@
                                         <span style="color: #6c757d;">-</span>
                                     @endif
                                 </td>
+                                <td style="padding: 0.75rem;">
+                                    @if($settlement->canBeVoided())
+                                        <button type="button"
+                                                class="btn btn-sm btn-outline-danger"
+                                                onclick="openVoidModal({{ $settlement->id }}, {{ $settlement->amount_settled }})"
+                                                style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.875rem;">
+                                            🗑️ Void
+                                        </button>
+                                    @else
+                                        <span style="color: #6c757d; font-size: 0.875rem;">-</span>
+                                    @endif
+                                </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" style="padding: 2rem; text-align: center; color: #6c757d;">
+                                <td colspan="8" style="padding: 2rem; text-align: center; color: #6c757d;">
                                     No settlements recorded yet
                                 </td>
                             </tr>
@@ -186,4 +214,80 @@
     <div style="margin-top: 1.5rem;">
         <a href="{{ route('admin.commissions.partners.index') }}" class="btn btn-secondary">← Back to Partners</a>
     </div>
+
+    <!-- Void Settlement Modal -->
+    <div id="voidModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center;">
+        <div style="background: white; border-radius: 12px; width: 90%; max-width: 500px; box-shadow: 0 10px 40px rgba(0,0,0,0.3);">
+            <!-- Modal Header -->
+            <div style="background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%); color: white; padding: 1.5rem; border-radius: 12px 12px 0 0;">
+                <h5 style="margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+                    ⚠️ Void Settlement
+                </h5>
+            </div>
+
+            <!-- Modal Body -->
+            <div style="padding: 1.5rem;">
+                <div style="background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem;">
+                    <p style="margin: 0; color: #856404; font-weight: 500;">
+                        ⚠️ Warning: This action will reverse the settlement and refund <strong>Rs <span id="voidAmount">0</span></strong> to the ledger.
+                    </p>
+                </div>
+
+                <form id="voidForm" method="POST">
+                    @csrf
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
+                            Void Reason <span style="color: red;">*</span>
+                        </label>
+                        <textarea name="void_reason" id="voidReason" rows="4"
+                                  class="form-control"
+                                  style="padding: 0.75rem; width: 100%; border: 1px solid #dee2e6; border-radius: 4px;"
+                                  placeholder="Explain why this settlement needs to be voided (required for audit trail)"
+                                  required></textarea>
+                        <small style="color: #6c757d;">This action is irreversible and will be logged.</small>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                        <button type="button" onclick="closeVoidModal()" class="btn btn-outline-secondary">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-danger">
+                            🗑️ Confirm Void
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentVoidSettlementId = null;
+
+        function openVoidModal(settlementId, amount) {
+            currentVoidSettlementId = settlementId;
+            document.getElementById('voidAmount').textContent = parseFloat(amount).toFixed(2);
+            document.getElementById('voidForm').action = `/admin/commissions/settlements/${settlementId}/void`;
+            document.getElementById('voidReason').value = '';
+            document.getElementById('voidModal').style.display = 'flex';
+        }
+
+        function closeVoidModal() {
+            document.getElementById('voidModal').style.display = 'none';
+            currentVoidSettlementId = null;
+        }
+
+        // Close modal on background click
+        document.getElementById('voidModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeVoidModal();
+            }
+        });
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && document.getElementById('voidModal').style.display === 'flex') {
+                closeVoidModal();
+            }
+        });
+    </script>
 @endsection

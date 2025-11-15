@@ -39,7 +39,19 @@
     <!-- Partners Table -->
     <div class="card">
         <div class="card-header" style="background: white; border-bottom: 2px solid #f8f9fa; padding: 1rem;">
-            <h5 style="margin: 0;">👥 All Partners with Commissions</h5>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h5 style="margin: 0;">👥 All Partners with Commissions</h5>
+                <a href="{{ route('admin.commissions.export.ledgers', request()->query()) }}"
+                   class="btn btn-success btn-sm"
+                   style="padding: 0.5rem 1rem; display: flex; align-items: center; gap: 0.5rem;"
+                   title="Export with current filters: {{ request()->hasAny(['search', 'outstanding_only', 'sort']) ? 'Filtered' : 'All partners' }}"
+                   onclick="return confirm('Export commission ledgers to Excel?\n\nCurrent filters and sorting will be applied to the export.');">
+                    📊 Export Ledgers
+                    @if(request()->hasAny(['search', 'outstanding_only']))
+                        <span class="badge bg-warning text-dark" style="font-size: 0.7rem;">Filtered</span>
+                    @endif
+                </a>
+            </div>
         </div>
         <div class="card-body" style="padding: 0;">
             <div class="table-responsive">

@@ -285,6 +285,93 @@
 
         </div>
 
+        {{-- Commission Widget --}}
+        @if($commissionSummary['commission_rate'] > 0)
+        <div class="mt-4">
+            <div class="bg-gradient-to-br from-purple-50 to-blue-50 border @if($commissionSummary['total_outstanding'] > 0) border-purple-300 ring-2 ring-purple-200 @else border-purple-200 @endif rounded-xl p-6 hover:shadow-md transition-all duration-200">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center shadow-lg">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-semibold text-purple-900">Commission Owed to BixCash</h3>
+                            <p class="text-xs text-purple-600">{{ number_format($commissionSummary['commission_rate'], 2) }}% on confirmed transactions</p>
+                        </div>
+                    </div>
+                    <a href="{{ route('partner.commissions') }}" class="text-xs font-medium text-purple-700 hover:text-purple-900 bg-white px-3 py-1.5 rounded-lg border border-purple-200 hover:border-purple-300 transition-colors">
+                        View Details →
+                    </a>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    {{-- Outstanding Amount --}}
+                    <div class="bg-white rounded-lg p-4 border border-purple-100">
+                        <p class="text-xs font-medium text-neutral-500 uppercase tracking-wide mb-1">
+                            Outstanding
+                        </p>
+                        <p class="text-2xl font-bold @if($commissionSummary['total_outstanding'] > 0) text-red-600 @else text-green-600 @endif mb-2">
+                            Rs {{ number_format($commissionSummary['total_outstanding'], 2) }}
+                        </p>
+                        @if($commissionSummary['total_outstanding'] > 0)
+                        <div class="flex items-center gap-1.5">
+                            <div class="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></div>
+                            <span class="text-xs text-red-600 font-medium">{{ $commissionSummary['pending_ledgers_count'] }} pending period(s)</span>
+                        </div>
+                        @else
+                        <div class="flex items-center gap-1.5">
+                            <div class="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                            <span class="text-xs text-green-600 font-medium">All settled</span>
+                        </div>
+                        @endif
+                    </div>
+
+                    {{-- Last Settlement --}}
+                    <div class="bg-white rounded-lg p-4 border border-purple-100">
+                        <p class="text-xs font-medium text-neutral-500 uppercase tracking-wide mb-1">
+                            Last Settlement
+                        </p>
+                        @if($commissionSummary['last_settlement_at'])
+                        <p class="text-lg font-semibold text-neutral-900 mb-2">
+                            {{ \Carbon\Carbon::parse($commissionSummary['last_settlement_at'])->format('M d, Y') }}
+                        </p>
+                        <span class="text-xs text-neutral-600">{{ \Carbon\Carbon::parse($commissionSummary['last_settlement_at'])->diffForHumans() }}</span>
+                        @else
+                        <p class="text-lg font-semibold text-neutral-500 mb-2">-</p>
+                        <span class="text-xs text-neutral-500">No settlements yet</span>
+                        @endif
+                    </div>
+
+                    {{-- Quick Info --}}
+                    <div class="bg-white rounded-lg p-4 border border-purple-100">
+                        <p class="text-xs font-medium text-neutral-500 uppercase tracking-wide mb-1">
+                            Commission Info
+                        </p>
+                        <p class="text-lg font-semibold text-purple-700 mb-2">
+                            {{ number_format($commissionSummary['commission_rate'], 2) }}%
+                        </p>
+                        <span class="text-xs text-neutral-600">Tracked separately from wallet</span>
+                    </div>
+                </div>
+
+                @if($commissionSummary['total_outstanding'] > 0)
+                <div class="mt-4 bg-amber-50 border border-amber-200 rounded-lg p-3">
+                    <div class="flex items-start gap-2">
+                        <svg class="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                        </svg>
+                        <p class="text-xs text-amber-800">
+                            <strong>Note:</strong> Commission is tracked separately from your wallet balance. You can still withdraw wallet funds even with outstanding commission.
+                        </p>
+                    </div>
+                </div>
+                @endif
+            </div>
+        </div>
+        @endif
+
         {{-- Next Profit Distribution --}}
         @if($nextBatchDate)
         <div class="space-y-4">

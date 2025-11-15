@@ -7,6 +7,8 @@ use App\Models\CommissionLedger;
 use App\Models\CommissionTransaction;
 use App\Models\PartnerTransaction;
 use App\Models\User;
+use App\Notifications\Partner\NewCommissionLedger as NewCommissionLedgerNotification;
+use App\Notifications\Admin\MonthlyCommissionCalculated;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
@@ -21,7 +23,8 @@ class CalculateMonthlyCommissions extends Command
      */
     protected $signature = 'commission:calculate-monthly
                             {period? : The period to calculate (YYYY-MM format, defaults to last month)}
-                            {--force : Force recalculation even if batch already exists}';
+                            {--force : Force recalculation even if batch already exists}
+                            {--user-id= : ID of admin user who triggered calculation (for manual triggers)}';
 
     /**
      * The console command description.
@@ -68,14 +71,18 @@ class CalculateMonthlyCommissions extends Command
         try {
             DB::beginTransaction();
 
+            // Determine if manual or automatic trigger
+            $userId = $this->option('user-id');
+            $triggeredBy = $userId ? 'manual' : 'automatic';
+
             // Create commission batch
             $batch = CommissionBatch::create([
                 'batch_period' => $period,
                 'period_start' => $startDate,
                 'period_end' => $endDate,
                 'status' => 'processing',
-                'triggered_by' => 'automatic',
-                'triggered_by_user_id' => null,
+                'triggered_by' => $triggeredBy,
+                'triggered_by_user_id' => $userId,
                 'started_at' => now(),
             ]);
 
@@ -182,6 +189,9 @@ class CalculateMonthlyCommissions extends Command
                 // Update partner profile outstanding balance
                 $partnerProfile->increment('total_commission_outstanding', $partnerCommissionTotal);
 
+                // Send notification to partner
+                $partner->notify(new NewCommissionLedgerNotification($ledger));
+
                 $totalCommissionCalculated += $partnerCommissionTotal;
                 $totalTransactionAmount += $partnerInvoiceTotal;
 
@@ -213,6 +223,18 @@ class CalculateMonthlyCommissions extends Command
             ]);
 
             DB::commit();
+
+            // Clear commission caches after new batch
+            \Cache::forget('commission_total_outstanding');
+            \Cache::forget('commission_this_month');
+            \Cache::forget('commission_pending_count');
+            \Cache::forget('commission_top_outstanding');
+
+            // Notify all admins about batch completion
+            $admins = User::where('user_type', 'admin')->get();
+            foreach ($admins as $admin) {
+                $admin->notify(new MonthlyCommissionCalculated($batch));
+            }
 
             $this->info("✓ Commission calculation completed successfully!");
             $this->table(

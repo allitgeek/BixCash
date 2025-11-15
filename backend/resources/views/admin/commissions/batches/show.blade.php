@@ -7,13 +7,22 @@
     <!-- Batch Summary -->
     <div class="card" style="margin-bottom: 1.5rem;">
         <div class="card-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1.5rem;">
-            <div style="display: flex; justify-content: between; align-items: center;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
                 <div>
                     <h3 style="margin: 0 0 0.5rem 0;">📦 Batch #{{ $batch->id }} - {{ $batch->formatted_period }}</h3>
                     <p style="margin: 0; opacity: 0.9;">
                         {{ \Carbon\Carbon::parse($batch->period_start)->format('M d, Y') }} - {{ \Carbon\Carbon::parse($batch->period_end)->format('M d, Y') }}
                     </p>
                 </div>
+                @if($batch->status === 'completed' && $ledgers->count() > 0)
+                    <form action="{{ route('admin.commissions.batches.notify-all', $batch->id) }}" method="POST"
+                          onsubmit="return confirm('Send commission notification emails to all {{ $ledgers->count() }} partners in this batch?');">
+                        @csrf
+                        <button type="submit" class="btn btn-light" style="font-weight: 500;">
+                            📧 Notify All Partners
+                        </button>
+                    </form>
+                @endif
             </div>
         </div>
         <div class="card-body">

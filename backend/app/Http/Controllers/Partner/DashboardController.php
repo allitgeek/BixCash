@@ -76,6 +76,16 @@ class DashboardController extends Controller
             ->limit(5)
             ->get();
 
+        // Get commission summary
+        $commissionSummary = [
+            'total_outstanding' => $partnerProfile->total_commission_outstanding ?? 0,
+            'commission_rate' => $partnerProfile->commission_rate ?? 0,
+            'last_settlement_at' => $partnerProfile->last_commission_settlement_at,
+            'pending_ledgers_count' => \App\Models\CommissionLedger::where('partner_id', $partner->id)
+                ->where('amount_outstanding', '>', 0)
+                ->count(),
+        ];
+
         return view('partner.dashboard', compact(
             'partner',
             'partnerProfile',
@@ -84,7 +94,8 @@ class DashboardController extends Controller
             'nextBatchDate',
             'recentTransactions',
             'greeting',
-            'pendingTransactions'
+            'pendingTransactions',
+            'commissionSummary'
         ));
     }
 

@@ -120,25 +120,29 @@ class CommissionLedger extends Model
     }
 
     /**
-     * Record a settlement payment
+     * Record a settlement payment (supports negative amounts for adjustments/refunds)
      */
     public function recordSettlement(float $amount, array $settlementData)
     {
-        // Update amounts
+        // Update amounts (amount can be negative for adjustments/refunds)
         $this->amount_paid += $amount;
         $this->amount_outstanding = max(0, $this->commission_owed - $this->amount_paid);
 
-        // Update status
-        if ($this->amount_outstanding == 0) {
+        // Update status based on current balances
+        if ($this->amount_outstanding == 0 && $this->amount_paid >= $this->commission_owed) {
             $this->status = 'settled';
             $this->fully_settled_at = now();
-        } elseif ($this->amount_paid > 0) {
+        } elseif ($this->amount_paid > 0 && $this->amount_outstanding > 0) {
             $this->status = 'partial';
+            $this->fully_settled_at = null; // Clear if no longer fully settled
+        } else {
+            $this->status = 'pending';
+            $this->fully_settled_at = null;
         }
 
         $this->save();
 
-        // Update partner profile
+        // Update partner profile (negative amounts increase outstanding, positive decrease it)
         $partnerProfile = $this->partner->partnerProfile;
         if ($partnerProfile) {
             $partnerProfile->total_commission_outstanding -= $amount;
