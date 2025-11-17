@@ -222,7 +222,7 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-center">
-                                <button type="button" class="text-blue-600 hover:text-blue-800 transition-colors duration-150">
+                                <button type="button" onclick="showLevelCustomers(1, 'Level 1')" class="text-blue-600 hover:text-blue-800 transition-colors duration-150">
                                     <svg class="w-5 h-5 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
@@ -271,7 +271,7 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-center">
-                                <button type="button" class="text-blue-600 hover:text-blue-800 transition-colors duration-150">
+                                <button type="button" onclick="showLevelCustomers(2, 'Level 2')" class="text-blue-600 hover:text-blue-800 transition-colors duration-150">
                                     <svg class="w-5 h-5 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
@@ -320,7 +320,7 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-center">
-                                <button type="button" class="text-blue-600 hover:text-blue-800 transition-colors duration-150">
+                                <button type="button" onclick="showLevelCustomers(3, 'Level 3')" class="text-blue-600 hover:text-blue-800 transition-colors duration-150">
                                     <svg class="w-5 h-5 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
@@ -369,7 +369,7 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-center">
-                                <button type="button" class="text-blue-600 hover:text-blue-800 transition-colors duration-150">
+                                <button type="button" onclick="showLevelCustomers(4, 'Level 4')" class="text-blue-600 hover:text-blue-800 transition-colors duration-150">
                                     <svg class="w-5 h-5 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
@@ -418,7 +418,7 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-center">
-                                <button type="button" class="text-blue-600 hover:text-blue-800 transition-colors duration-150">
+                                <button type="button" onclick="showLevelCustomers(5, 'Level 5')" class="text-blue-600 hover:text-blue-800 transition-colors duration-150">
                                     <svg class="w-5 h-5 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
@@ -467,7 +467,7 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-center">
-                                <button type="button" class="text-blue-600 hover:text-blue-800 transition-colors duration-150">
+                                <button type="button" onclick="showLevelCustomers(6, 'Level 6')" class="text-blue-600 hover:text-blue-800 transition-colors duration-150">
                                     <svg class="w-5 h-5 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
@@ -516,7 +516,7 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-center">
-                                <button type="button" class="text-blue-600 hover:text-blue-800 transition-colors duration-150">
+                                <button type="button" onclick="showLevelCustomers(7, 'Level 7')" class="text-blue-600 hover:text-blue-800 transition-colors duration-150">
                                     <svg class="w-5 h-5 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
@@ -550,6 +550,53 @@
                         </tr>
                     </tfoot>
                 </table>
+            </div>
+        </div>
+
+        {{-- Customer List Modal --}}
+        <div id="customerListModal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black bg-opacity-50">
+            <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden">
+                {{-- Modal Header --}}
+                <div class="px-6 py-5 border-b border-gray-200 bg-gradient-to-r from-blue-600 to-blue-900">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 id="modalTitle" class="text-xl font-bold text-white">Customers in Level</h3>
+                            <p id="modalSubtitle" class="text-sm text-blue-100 mt-1"></p>
+                        </div>
+                        <button onclick="closeCustomerModal()" class="text-white hover:text-gray-200 transition-colors duration-150">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                {{-- Modal Body --}}
+                <div class="overflow-y-auto max-h-[calc(90vh-140px)]">
+                    <table class="w-full">
+                        <thead class="bg-gray-50 sticky top-0">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">#</th>
+                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Name</th>
+                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Phone</th>
+                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Email</th>
+                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Role</th>
+                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Qualified Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customerTableBody" class="bg-white divide-y divide-gray-200">
+                            {{-- Populated dynamically via JavaScript --}}
+                        </tbody>
+                    </table>
+                </div>
+
+                {{-- Modal Footer --}}
+                <div class="px-6 py-4 border-t border-gray-200 bg-gray-50">
+                    <button onclick="closeCustomerModal()" class="px-5 py-2 bg-gray-600 text-white text-sm font-semibold rounded-lg hover:bg-gray-700 transition-all duration-200">
+                        Close
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -1023,6 +1070,89 @@
             minimumFractionDigits: 0
         });
         document.getElementById('profit_level_total').textContent = formattedTotal;
+    }
+
+    /**
+     * Store customer data from PHP for each level
+     */
+    const levelCustomers = {
+        @foreach($levels as $levelNum => $levelData)
+            {{ $levelNum }}: [
+                @if(isset($levelData['users']) && $levelData['users']->count() > 0)
+                    @foreach($levelData['users'] as $user)
+                        {
+                            id: {{ $user->id }},
+                            name: "{{ $user->name }}",
+                            phone: "{{ $user->phone }}",
+                            email: "{{ $user->email ?? 'N/A' }}",
+                            role: "{{ $user->role->display_name ?? ucfirst($user->role->name ?? 'N/A') }}",
+                            status: "{{ $user->customerProfile ? ($user->customerProfile->is_active ? 'Active' : 'Inactive') : ($user->partnerProfile && $user->partnerProfile->is_active ? 'Active' : 'Inactive') }}",
+                            qualified_at: "{{ $user->profit_sharing_qualified_at ? \Carbon\Carbon::parse($user->profit_sharing_qualified_at)->format('d M Y') : 'N/A' }}"
+                        }{{ $loop->last ? '' : ',' }}
+                    @endforeach
+                @endif
+            ]{{ $loop->last ? '' : ',' }}
+        @endforeach
+    };
+
+    /**
+     * Show customer list modal for a specific level
+     * @param {number} level - The level number (1-7)
+     * @param {string} levelName - The display name (e.g., "Level 1")
+     */
+    function showLevelCustomers(level, levelName) {
+        const customers = levelCustomers[level];
+
+        if (!customers || customers.length === 0) {
+            alert('No customers found in ' + levelName);
+            return;
+        }
+
+        // Update modal title
+        document.getElementById('modalTitle').textContent = 'Customers in ' + levelName;
+        document.getElementById('modalSubtitle').textContent = customers.length + ' customer(s) found';
+
+        // Populate table
+        const tbody = document.getElementById('customerTableBody');
+        tbody.innerHTML = '';
+
+        customers.forEach((customer, index) => {
+            const row = document.createElement('tr');
+            row.className = index % 2 === 0 ? 'bg-white' : 'bg-gray-50';
+
+            // Determine status badge color
+            const statusColor = customer.status === 'Active'
+                ? 'bg-green-100 text-green-800'
+                : 'bg-red-100 text-red-800';
+
+            row.innerHTML = `
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${index + 1}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${customer.name}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${customer.phone}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${customer.email}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm">
+                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">${customer.role}</span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm">
+                    <span class="px-2 py-1 text-xs font-semibold rounded-full ${statusColor}">${customer.status}</span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${customer.qualified_at}</td>
+            `;
+
+            tbody.appendChild(row);
+        });
+
+        // Show modal
+        const modal = document.getElementById('customerListModal');
+        modal.classList.remove('hidden');
+    }
+
+    /**
+     * Close the customer list modal
+     */
+    function closeCustomerModal() {
+        const modal = document.getElementById('customerListModal');
+        modal.classList.add('hidden');
     }
 
     /**
