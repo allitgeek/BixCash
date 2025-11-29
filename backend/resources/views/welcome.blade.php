@@ -23,6 +23,13 @@
 
     <!-- Dynamic Content Loading Styles -->
     <style>
+        /* CRITICAL: Override Swiper CDN default theme colors */
+        :root {
+            --swiper-theme-color: #ffffff !important;
+            --swiper-navigation-color: #ffffff !important;
+            --swiper-pagination-color: #ffffff !important;
+        }
+
         /* Loading spinner animation */
         .loading-spinner {
             border: 4px solid rgba(255, 255, 255, 0.3);
@@ -41,7 +48,7 @@
 
         /* Loading states */
         .loading-slide {
-            background: linear-gradient(135deg, var(--bix-green) 0%, var(--bix-navy) 100%);
+            background: linear-gradient(135deg, var(--bix-navy) 0%, #000 100%);
             color: white;
             display: flex;
             align-items: center;
@@ -123,19 +130,37 @@
             background: rgba(220, 53, 69, 0.8) !important;
         }
 
-        /* Ensure videos fit properly */
+        /* Video styling */
         .hero-video {
-            object-fit: cover;
-            width: 100%;
-            height: 100%;
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover !important;
+            background: #000 !important; /* Black background to prevent color bleed */
         }
 
         /* Mobile-responsive video enhancements */
         @media (max-width: 768px) {
-            /* Show full video on mobile without cropping (important for TVC content) */
+            /* CRITICAL: Aggressive line removal for mobile video */
+            .hero-slider,
+            .hero-slider *,
+            .hero-slider video,
+            .hero-slider .hero-video,
+            .hero-slider .swiper-container,
+            .hero-slider .swiper-wrapper,
+            .hero-slider .swiper-slide {
+                border: none !important;
+                outline: none !important;
+                border-top: none !important;
+                border-bottom: none !important;
+                box-shadow: none !important;
+            }
+
+            /* Crop video to fill mobile screens for immersive experience */
             .hero-video {
-                object-fit: contain !important;
-                background: #000; /* Letterbox background for proper video display */
+                object-fit: cover !important;
+                background: #000 !important; /* Dark background for any visible edges */
+                border: none !important;
+                outline: none !important;
             }
 
             /* Responsive mute button for small screens */
@@ -157,6 +182,17 @@
                 transform: scale(0.9) !important;
                 box-shadow: 0 2px 6px rgba(0,0,0,0.3) !important;
             }
+
+            /* Force swiper pagination to not have green colors on mobile */
+            .hero-slider .swiper-pagination-bullet {
+                background: white !important;
+                border: none !important;
+            }
+
+            .hero-slider .swiper-pagination-bullet-active {
+                background: white !important;
+                border: none !important;
+            }
         }
 
         /* Medium mobile devices (481px - 767px) */
@@ -173,24 +209,35 @@
             }
         }
 
-        /* Tablet and landscape modes - use cover for dramatic effect */
+        /* Desktop video styling */
         @media (min-width: 769px) {
             .hero-video {
-                object-fit: cover;
+                object-fit: cover !important;
             }
 
-            /* Portrait videos (9:16, shot vertically) - show full content on desktop */
-            .hero-video.portrait-video {
-                object-fit: contain !important;
-                max-width: 70%; /* Prevent portrait videos from being too wide */
-                margin: 0 auto; /* Center horizontally */
+            /* CRITICAL: Aggressive line removal for desktop/laptop banners */
+            .hero-slider,
+            .hero-slider *,
+            .hero-slider img,
+            .hero-slider .swiper-container,
+            .hero-slider .swiper-wrapper,
+            .hero-slider .swiper-slide {
+                border: none !important;
+                outline: none !important;
+                border-top: none !important;
+                border-bottom: none !important;
+                box-shadow: none !important;
             }
 
-            /* Landscape videos (16:9, shot horizontally) - dramatic full-screen */
-            .hero-video.landscape-video {
-                object-fit: cover;
-                width: 100%;
-                max-width: 100%;
+            /* Force swiper pagination to not have green colors */
+            .hero-slider .swiper-pagination-bullet {
+                background: white !important;
+                border: none !important;
+            }
+
+            .hero-slider .swiper-pagination-bullet-active {
+                background: white !important;
+                border: none !important;
             }
         }
 
@@ -816,14 +863,17 @@
 
                 /* FIXED: Simplified hero height calculation */
                 .hero-slider {
-                    min-height: 400px; /* Safe minimum */
-                    height: 60vh; /* Simple viewport-based height */
+                    min-height: 320px; /* Reduced by 20% - was 400px */
+                    height: 48vh; /* Reduced by 20% - was 60vh */
                     margin-top: 0; /* Removed complex margin/padding calculations */
+                    margin-bottom: 0; /* Override desktop negative margin */
                     padding-top: 0;
+                    transform: none; /* Override desktop translateY transform */
                     /* Ensure proper positioning */
                     position: relative;
                     width: 100%;
                     overflow: hidden;
+                    background-color: #000; /* Black background for mobile */
                 }
 
                 /* Fluid typography for ultra-small screens */
@@ -854,14 +904,17 @@
 
                 /* FIXED: Simplified hero height calculation */
                 .hero-slider {
-                    min-height: 450px; /* Safe minimum */
-                    height: 65vh; /* Simple viewport-based height */
+                    min-height: 360px; /* Reduced by 20% - was 450px */
+                    height: 52vh; /* Reduced by 20% - was 65vh */
                     margin-top: 0; /* Removed complex margin/padding calculations */
+                    margin-bottom: 0; /* Override desktop negative margin */
                     padding-top: 0;
+                    transform: none; /* Override desktop translateY transform */
                     /* Ensure proper positioning */
                     position: relative;
                     width: 100%;
                     overflow: hidden;
+                    background-color: #000; /* Black background for mobile */
                 }
 
                 /* Enhanced typography */
@@ -887,14 +940,17 @@
 
                 /* FIXED: Simplified hero height calculation */
                 .hero-slider {
-                    min-height: 500px; /* Safe minimum */
-                    height: 70vh; /* Simple viewport-based height */
+                    min-height: 400px; /* Reduced by 20% - was 500px */
+                    height: 56vh; /* Reduced by 20% - was 70vh */
                     margin-top: 0; /* Removed complex margin/padding calculations */
+                    margin-bottom: 0; /* Override desktop negative margin */
                     padding-top: 0;
+                    transform: none; /* Override desktop translateY transform */
                     /* Ensure proper positioning */
                     position: relative;
                     width: 100%;
                     overflow: hidden;
+                    background-color: #000; /* Black background for mobile */
                 }
 
                 /* Typography scaling */
@@ -1220,6 +1276,26 @@
 
     <section id="brands" class="brands-section">
         <div class="brands-container">
+            <!-- Brands slider (moved above categories) -->
+            <h2><span class="green-text">Explore</span> Brands</h2>
+            <div class="swiper brands-carousel-container">
+                <div class="swiper-wrapper">
+                    <!-- Brands will be injected by JavaScript -->
+                </div>
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+            </div>
+
+            <!-- Patent-Pending Banner -->
+            <div class="patent-pending-banner">
+                <div class="banner-content">
+                    <span class="banner-title">Pakistan's First</span>
+                    <span class="banner-subtitle">Patent-Pending <strong class="highlight">Profit Sharing</strong> Platform</span>
+                </div>
+                <div class="banner-shine"></div>
+            </div>
+
+            <!-- Categories (moved below brands) -->
             <div class="category-carousel-wrapper">
                 <div class="category-container">
                     <!-- Categories will be injected by JavaScript -->
@@ -1229,14 +1305,6 @@
                     <div class="swiper-button-prev category-button-prev"></div>
                     <div class="swiper-button-next category-button-next"></div>
                 </div>
-            </div>
-            <h2><span class="green-text">Explore</span> Brands</h2>
-            <div class="swiper brands-carousel-container">
-                <div class="swiper-wrapper">
-                    <!-- Brands will be injected by JavaScript -->
-                </div>
-                <div class="swiper-button-next"></div>
-                <div class="swiper-button-prev"></div>
             </div>
         </div>
     </section>
@@ -1832,7 +1900,7 @@
                     const defaultSlide = document.createElement('div');
                     defaultSlide.classList.add('swiper-slide');
                     defaultSlide.style.cssText = `
-                        background: linear-gradient(135deg, var(--bix-green) 0%, var(--bix-navy) 100%);
+                        background: linear-gradient(135deg, var(--bix-navy) 0%, #000 100%);
                         color: white;
                         display: flex;
                         align-items: center;
@@ -1860,9 +1928,17 @@
 
                             if (youtubeEmbedUrl) {
                                 // YouTube video - use iframe
+                                // FIX: Add inline background color to prevent green lines on mobile
+                                slideElement.style.cssText = `
+                                    position: relative;
+                                    width: 100%;
+                                    height: 100%;
+                                    overflow: hidden;
+                                    background-color: #000 !important;
+                                `;
                                 slideElement.innerHTML = `
                                     <iframe src="${youtubeEmbedUrl}"
-                                            style="width: 100%; height: 100%; border: none;"
+                                            style="width: 100%; height: 100%; border: none; background: #000;"
                                             frameborder="0"
                                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                             allowfullscreen>
@@ -1870,9 +1946,18 @@
                                 `;
                             } else {
                                 // Direct video file - use video tag with audio enabled
+                                // FIX: Add inline background color to prevent green lines on mobile
+                                slideElement.style.cssText = `
+                                    position: relative;
+                                    width: 100%;
+                                    height: 100%;
+                                    overflow: hidden;
+                                    background-color: #000 !important;
+                                    ${slide.target_url ? 'cursor: pointer;' : ''}
+                                `;
                                 slideElement.innerHTML = `
-                                    <div style="position: relative; width: 100%; height: 100%; background: #000; display: flex; align-items: center; justify-content: center;">
-                                        <video class="hero-video" autoplay muted playsinline preload="metadata" style="width: 100%; height: 100%; object-fit: cover;" data-slide-id="${slide.id || Date.now()}">
+                                    <div style="position: relative; width: 100%; height: 100%; background: #000 !important; border: none; outline: none; overflow: hidden;">
+                                        <video class="hero-video" autoplay muted playsinline preload="metadata" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000 !important; object-fit: cover; border: none; outline: none;" data-slide-id="${slide.id || Date.now()}">
                                             <source src="${slide.media_path}" type="video/mp4">
                                         </video>
                                         <button class="video-mute-toggle muted" aria-label="Unmute video" style="position: absolute; bottom: 20px; right: 20px; background: rgba(220, 53, 69, 0.8); color: white; border: none; border-radius: 50%; width: 50px; height: 50px; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease;">
@@ -1891,11 +1976,11 @@
                                         if (aspectRatio < 1) {
                                             // Portrait video (e.g., 9:16, 1080x1920)
                                             this.classList.add('portrait-video');
-                                            console.log('✓ Portrait video detected - will use contain on desktop');
+                                            console.log('✓ Portrait video detected');
                                         } else {
                                             // Landscape video (e.g., 16:9, 1920x1080)
                                             this.classList.add('landscape-video');
-                                            console.log('✓ Landscape video detected - will use cover on desktop');
+                                            console.log('✓ Landscape video detected');
                                         }
                                     });
                                 }
@@ -1915,6 +2000,7 @@
                                 width: 100%;
                                 height: 100%;
                                 overflow: hidden;
+                                background-color: #000 !important;
                                 ${slide.target_url ? 'cursor: pointer;' : ''}
                             `;
 
@@ -1927,6 +2013,7 @@
                                 object-fit: cover;
                                 object-position: center;
                                 display: block;
+                                background-color: #000;
                             `;
 
                             slideElement.appendChild(imgElement);
@@ -2476,7 +2563,7 @@
                 // Fallback for hero slider
                 const swiperWrapper = document.querySelector('#home .swiper-wrapper');
                 if (swiperWrapper) {
-                    swiperWrapper.innerHTML = `<div class="swiper-slide" style="background-color: var(--bix-green);">
+                    swiperWrapper.innerHTML = `<div class="swiper-slide" style="background-color: var(--bix-navy);">
                         <div class="slide-content"><h1>Welcome to BixCash</h1><p>Shop to Earn</p></div>
                     </div>`;
                 }

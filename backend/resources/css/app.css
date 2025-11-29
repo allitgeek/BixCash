@@ -271,7 +271,7 @@ html {
     padding: 1.5rem 2rem;
     box-sizing: border-box;
     background-color: var(--bix-white);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    box-shadow: none; /* Removed shadow to prevent lines on hero banners */
 }
 
 .main-header .logo {
@@ -309,22 +309,25 @@ html {
 /* Hero Slider Styles */
 .hero-slider {
     width: 100%;
-    height: calc(100vh - 120px); /* Subtract header height */
-    min-height: 500px;
-    max-height: 800px; /* Prevent excessive height on large screens */
+    height: calc(80vh - 96px); /* Reduced by 20% - was calc(100vh - 120px) */
+    min-height: 400px; /* Reduced by 20% - was 500px */
+    max-height: 640px; /* Reduced by 20% - was 800px */
     position: relative;
-    background-color: var(--bix-white);
+    background-color: #000; /* Black background for video */
     overflow: hidden;
-    margin-top: -120px; /* Pull up to account for body padding */
-    padding-top: 120px; /* Add internal padding for header space */
+    /* FIX: Use transform instead of margin/padding to avoid black line artifact */
+    transform: translateY(-120px);
+    margin-bottom: -120px; /* Compensate for the transform so next section doesn't have gap */
     box-sizing: border-box;
+    border: none; /* Remove any borders */
+    outline: none; /* Remove any outlines */
 }
 
 /* LARGE MONITOR (1920px+): Remove max-height constraint */
 @media (min-width: 1920px) {
     .hero-slider {
         max-height: none; /* Remove max-height for large monitors */
-        height: calc(100vh - 120px); /* Use full viewport height */
+        height: calc(80vh - 96px); /* Reduced by 20% - was calc(100vh - 120px) */
     }
 }
 
@@ -332,11 +335,13 @@ html {
     width: 100%;
     height: 100%;
     position: relative;
+    background-color: #000; /* Black background */
 }
 
 .hero-slider .swiper-wrapper {
     width: 100%;
     height: 100%;
+    background-color: #000; /* Black background */
 }
 
 .hero-slider .swiper-slide {
@@ -348,7 +353,9 @@ html {
     height: 100%;
     position: relative;
     overflow: hidden;
-    background-color: var(--bix-white);
+    background-color: #000; /* Black background for video slides */
+    border: none; /* Remove any borders */
+    outline: none; /* Remove any outlines */
 }
 
 /* Hero slider images - responsive object-fit */
@@ -358,6 +365,20 @@ html {
     object-fit: cover; /* Default: cover for all screens */
     object-position: center;
     display: block;
+    border: none; /* Remove any borders */
+    outline: none; /* Remove any outlines */
+}
+
+/* Hero slider videos */
+.hero-slider .swiper-slide video,
+.hero-slider .hero-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border: none;
+    outline: none;
+    background: #000;
 }
 
 /* LAPTOP/SMALL DESKTOP (769px - 1919px): Show full images without cropping */
@@ -365,7 +386,7 @@ html {
     .hero-slider .swiper-slide img {
         object-fit: contain; /* Laptop: show full image, no crop */
         object-position: center;
-        background-color: var(--bix-white); /* Fill empty space */
+        background-color: #000; /* Black background for letterbox areas */
     }
 }
 
@@ -374,7 +395,7 @@ html {
     .hero-slider .swiper-slide img {
         object-fit: contain; /* Large monitor: show full image, no crop */
         object-position: center;
-        background-color: var(--bix-white); /* Fill empty space */
+        background-color: #000; /* Black background for letterbox areas */
     }
 }
 
@@ -456,8 +477,57 @@ html {
 }
 
 .hero-slider .swiper-pagination-bullet-active {
-    background: var(--bix-light-green);
+    background: var(--bix-white); /* Changed from green to white */
     opacity: 1;
+}
+
+/* ============================================================================
+   CRITICAL: Aggressive line/border removal for hero section
+   Fixes: Green lines on mobile video, Black line on laptop banners
+   ============================================================================ */
+
+/* Remove ALL potential borders and outlines from hero elements */
+.hero-slider,
+.hero-slider *,
+.hero-slider::before,
+.hero-slider::after,
+.hero-slider *::before,
+.hero-slider *::after {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* Override Swiper CDN default styles */
+.hero-slider .swiper-container,
+.hero-slider .swiper-wrapper,
+.hero-slider .swiper-slide {
+    border: none !important;
+    outline: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Ensure video container has no artifacts */
+.hero-slider video,
+.hero-slider .hero-video,
+.hero-slider iframe {
+    border: none !important;
+    outline: none !important;
+    background-color: #000 !important;
+    display: block !important;
+}
+
+/* Force all image backgrounds to black (for letterboxing) */
+.hero-slider img {
+    border: none !important;
+    outline: none !important;
+    background-color: #000 !important;
+}
+
+/* Remove any inherited box shadows from parent elements */
+section.hero-slider {
+    box-shadow: none !important;
 }
 
 /* Brands Section Styles */
@@ -522,10 +592,111 @@ html {
 .brands-carousel-container {
     width: 100%;
     max-width: 1200px;
-    margin: 0 auto;
+    margin: 0 auto 2rem auto; /* Reduced - banner will add spacing */
     padding: 0 4rem; /* Increased padding to accommodate arrows */
     position: relative;
     box-sizing: border-box;
+}
+
+/* Patent-Pending Banner */
+.patent-pending-banner {
+    position: relative;
+    background: var(--bix-light-green);
+    padding: 1.5rem 3rem;
+    margin: 0 auto 3rem;
+    border-radius: 12px;
+    overflow: hidden;
+    max-width: 900px;
+    box-shadow: 0 8px 30px rgba(147, 219, 77, 0.4);
+}
+
+.patent-pending-banner .banner-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+}
+
+.patent-pending-banner .banner-title {
+    display: inline-block;
+    background: #021c47;
+    color: #fff;
+    font-size: 2rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    text-align: left;
+    margin-bottom: 0.5rem;
+    padding: 0.3rem 0.8rem;
+    border-radius: 6px;
+}
+
+.patent-pending-banner .banner-subtitle {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #021c47;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-align: center;
+    width: 100%;
+}
+
+.patent-pending-banner .banner-subtitle .highlight {
+    display: inline-block;
+    background: #021c47;
+    color: #fff;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    font-weight: 800;
+    margin: 0 0.2rem;
+}
+
+/* Animated shine effect */
+.patent-pending-banner .banner-shine {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.4) 50%,
+        transparent 100%
+    );
+    animation: banner-shine 3s infinite;
+}
+
+@keyframes banner-shine {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+/* Patent-Pending Banner - Mobile responsive */
+@media (max-width: 767px) {
+    .patent-pending-banner {
+        padding: 0.8rem 1rem;
+        margin: 0 auto 2rem;
+        max-width: 95%;
+        border-radius: 10px;
+    }
+    .patent-pending-banner .banner-title {
+        font-size: 1.1rem;
+        letter-spacing: 1px;
+        padding: 0.2rem 0.5rem;
+        border-radius: 4px;
+    }
+    .patent-pending-banner .banner-subtitle {
+        font-size: 0.55rem;
+        letter-spacing: 0.3px;
+        white-space: nowrap;
+    }
+    .patent-pending-banner .banner-subtitle .highlight {
+        padding: 0.1rem 0.3rem;
+        font-size: 0.55rem;
+    }
 }
 
 .brands-carousel-container .swiper-wrapper {
@@ -1461,13 +1632,14 @@ html {
     }
 
     .hero-slider {
-        height: 75vh; /* Simplified: 75% of viewport height */
+        height: 60vh; /* Reduced by 20% - was 75vh */
         margin-top: -100px;
         padding-top: 100px;
-        min-height: 450px;
-        max-height: 600px; /* Prevent excessive height */
+        min-height: 360px; /* Reduced by 20% - was 450px */
+        max-height: 480px; /* Reduced by 20% - was 600px */
         width: 100%;
         overflow: hidden;
+        background-color: #000; /* Black background for mobile */
     }
 
     /* FIX: Reduce gaps and padding for mobile landscape */
@@ -1589,13 +1761,14 @@ html {
     }
 
     .hero-slider {
-        height: 70vh; /* Simplified: 70% of viewport height for small screens */
+        height: 56vh; /* Reduced by 20% - was 70vh */
         margin-top: -90px;
         padding-top: 90px;
-        min-height: 400px;
-        max-height: 550px; /* Prevent excessive height on small devices */
+        min-height: 320px; /* Reduced by 20% - was 400px */
+        max-height: 440px; /* Reduced by 20% - was 550px */
         width: 100%;
         overflow: hidden;
+        background-color: #000; /* Black background for mobile */
     }
 
     /* FIX: Reduce gaps and padding for mobile */
