@@ -7,14 +7,27 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Wallet - BixCash Partner</title>
     @vite(['resources/css/app.css'])
+
+    {{-- Inter Font from Google Fonts --}}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            font-feature-settings: 'cv11', 'ss01';
+            font-optical-sizing: auto;
+        }
+    </style>
 </head>
 <body class="bg-neutral-50 min-h-screen pb-32 pt-0 px-0" style="margin: 0;">
 
     {{-- Header --}}
-    <header class="bg-white border-b border-neutral-200 sticky top-0 z-40">
+    <header class="bg-white/80 backdrop-blur-xl shadow-lg shadow-blue-900/5 border-b border-gray-200/60 sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <a href="{{ route('partner.dashboard') }}" class="text-neutral-500 hover:text-neutral-900 transition-colors duration-200">
+                <a href="{{ route('partner.dashboard') }}" class="text-neutral-500 hover:text-blue-600 hover:scale-[1.02] transition-[transform,colors] duration-200">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                     </svg>
@@ -28,7 +41,7 @@
     <div class="max-w-7xl mx-auto px-4 mt-6">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
             {{-- Available Balance --}}
-            <div class="bg-white border border-neutral-200 rounded-xl p-6 hover:border-blue-300 hover:shadow-sm transition-all duration-200">
+            <div class="stat-card bg-white/90 backdrop-blur-sm border border-neutral-200 rounded-xl p-6 hover:border-blue-300 hover:shadow-md hover:scale-[1.02] transition-[transform,shadow,border-color] duration-200">
                 <div class="flex items-center justify-between mb-4">
                     <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
                         <svg class="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
@@ -43,7 +56,7 @@
             </div>
 
             {{-- Total Earned --}}
-            <div class="bg-white border border-neutral-200 rounded-xl p-6 hover:border-emerald-300 hover:shadow-sm transition-all duration-200">
+            <div class="stat-card bg-white/90 backdrop-blur-sm border border-neutral-200 rounded-xl p-6 hover:border-emerald-300 hover:shadow-md hover:scale-[1.02] transition-[transform,shadow,border-color] duration-200">
                 <div class="flex items-center justify-between mb-4">
                     <div class="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center">
                         <svg class="w-4 h-4 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
@@ -59,7 +72,7 @@
             </div>
 
             {{-- Total Withdrawn --}}
-            <div class="bg-white border border-neutral-200 rounded-xl p-6 hover:border-orange-300 hover:shadow-sm transition-all duration-200">
+            <div class="stat-card bg-white/90 backdrop-blur-sm border border-neutral-200 rounded-xl p-6 hover:border-orange-300 hover:shadow-md hover:scale-[1.02] transition-[transform,shadow,border-color] duration-200">
                 <div class="flex items-center justify-between mb-4">
                     <div class="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center">
                         <svg class="w-4 h-4 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
@@ -77,7 +90,7 @@
     </div>
 
     {{-- Main Content --}}
-    <main class="max-w-7xl mx-auto px-4 mt-6">
+    <main class="page-content max-w-7xl mx-auto px-4 mt-6">
 
         @php
             $profile = $partnerProfile;
@@ -223,7 +236,7 @@
                             </thead>
                             <tbody class="text-sm">
                                 @foreach($withdrawals as $withdrawal)
-                                <tr class="border-b border-gray-100 hover:bg-blue-50/50 transition-colors">
+                                <tr class="withdrawal-row border-b border-gray-100 hover:bg-blue-50/50 transition-colors">
                                     <td class="py-4 font-semibold text-gray-800 px-5 sm:px-0">Rs {{ number_format($withdrawal->amount, 0) }}</td>
                                     <td class="py-4 text-gray-600">{{ $withdrawal->created_at->format('M d, Y') }}</td>
                                     <td class="py-4">
@@ -264,7 +277,7 @@
     <nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl shadow-lg shadow-blue-900/10 border-t border-gray-200/60 z-50">
         <div class="grid grid-cols-5 max-w-7xl mx-auto">
             {{-- Home --}}
-            <a href="{{ route('partner.dashboard') }}" class="flex flex-col items-center justify-center py-3 px-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all duration-200">
+            <a href="{{ route('partner.dashboard') }}" class="flex flex-col items-center justify-center py-3 px-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 hover:scale-[1.05] transition-[transform,colors,background-color] duration-200 active:scale-95">
                 <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
                 </svg>
@@ -272,7 +285,7 @@
             </a>
 
             {{-- Transactions --}}
-            <a href="{{ route('partner.transactions') }}" class="flex flex-col items-center justify-center py-3 px-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all duration-200">
+            <a href="{{ route('partner.transactions') }}" class="flex flex-col items-center justify-center py-3 px-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 hover:scale-[1.05] transition-[transform,colors,background-color] duration-200 active:scale-95">
                 <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"></path>
                 </svg>
@@ -280,7 +293,7 @@
             </a>
 
             {{-- Wallet (Active) --}}
-            <a href="{{ route('partner.wallet') }}" class="flex flex-col items-center justify-center py-3 px-2 text-white bg-gradient-to-r from-blue-600 to-blue-900 border-t-2 border-blue-500 transition-all duration-200">
+            <a href="{{ route('partner.wallet') }}" class="flex flex-col items-center justify-center py-3 px-2 text-white bg-gradient-to-r from-blue-600 to-blue-900 border-t-2 border-blue-500 hover:scale-[1.05] transition-[transform,colors,background-color] duration-200 active:scale-95">
                 <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"></path>
                     <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"></path>
@@ -289,7 +302,7 @@
             </a>
 
             {{-- Commissions --}}
-            <a href="{{ route('partner.commissions') }}" class="flex flex-col items-center justify-center py-3 px-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all duration-200">
+            <a href="{{ route('partner.commissions') }}" class="flex flex-col items-center justify-center py-3 px-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 hover:scale-[1.05] transition-[transform,colors,background-color] duration-200 active:scale-95">
                 <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
@@ -297,7 +310,7 @@
             </a>
 
             {{-- Profile --}}
-            <a href="{{ route('partner.profile') }}" class="flex flex-col items-center justify-center py-3 px-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all duration-200">
+            <a href="{{ route('partner.profile') }}" class="flex flex-col items-center justify-center py-3 px-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 hover:scale-[1.05] transition-[transform,colors,background-color] duration-200 active:scale-95">
                 <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
                 </svg>
@@ -328,6 +341,29 @@
 
     {{-- Animations --}}
     <style>
+        /* Page entrance animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Fade in animation for rows */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Toast notifications */
         @keyframes slideIn {
             from { transform: translateX(100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
@@ -336,6 +372,28 @@
             from { transform: translateX(0); opacity: 1; }
             to { transform: translateX(100%); opacity: 0; }
         }
+
+        /* Apply animations */
+        .page-content {
+            animation: fadeInUp 0.6s ease-out both;
+        }
+
+        .stat-card {
+            animation: fadeInUp 0.6s ease-out both;
+        }
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+
+        .withdrawal-row {
+            animation: fadeIn 0.4s ease-out both;
+        }
+        .withdrawal-row:nth-child(1) { animation-delay: 0.1s; }
+        .withdrawal-row:nth-child(2) { animation-delay: 0.15s; }
+        .withdrawal-row:nth-child(3) { animation-delay: 0.2s; }
+        .withdrawal-row:nth-child(4) { animation-delay: 0.25s; }
+        .withdrawal-row:nth-child(5) { animation-delay: 0.3s; }
+
         .animate-slideIn {
             animation: slideIn 0.3s ease;
         }
