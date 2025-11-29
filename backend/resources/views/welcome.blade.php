@@ -1059,18 +1059,24 @@
                     padding: 0 var(--space-sm);
                 }
 
-                .category-container {
-                    display: grid !important;
-                    grid-template-columns: repeat(2, 1fr) !important;
-                    gap: var(--space-md);
-                    padding: 0 var(--space-sm);
-                    justify-items: center;
+                .category-carousel-wrapper {
+                    padding: 0 0.5rem !important;
                 }
 
-                /* Center the last item if odd number of categories */
-                .category-item:last-child:nth-child(odd) {
-                    grid-column: 1 / -1;
-                    justify-self: center;
+                .category-container {
+                    display: flex !important;
+                    flex-wrap: wrap !important;
+                    justify-content: space-evenly !important;
+                    gap: 0.4rem !important;
+                    padding: 0 !important;
+                }
+
+                .category-item {
+                    width: 110px !important;
+                    height: 130px !important;
+                    padding: 0.8rem !important;
+                    box-sizing: border-box !important;
+                    margin: 0 !important;
                 }
 
                 /* Mobile-first spacing */
@@ -1208,7 +1214,7 @@
                 <li><a href="#home" class="active">Home</a></li>
                 <li><a href="#brands">Brands</a></li>
                 <li><a href="#how-it-works">How It Works</a></li>
-                <li><a href="#partner">Partner with us</a></li>
+                <li><a href="/partner/register">Partner with us</a></li>
                 <li><a href="#promotions">Promotions</a></li>
                 <li><a href="#contact">Contact Us</a></li>
             </ul>
@@ -1245,7 +1251,7 @@
                     <li><a href="#home" class="mobile-nav-link">Home</a></li>
                     <li><a href="#brands" class="mobile-nav-link">Brands</a></li>
                     <li><a href="#how-it-works" class="mobile-nav-link">How It Works</a></li>
-                    <li><a href="#partner" class="mobile-nav-link">Partner with us</a></li>
+                    <li><a href="/partner/register" class="mobile-nav-link">Partner with us</a></li>
                     <li><a href="#promotions" class="mobile-nav-link">Promotions</a></li>
                     <li><a href="#contact" class="mobile-nav-link">Contact Us</a></li>
                 </ul>
@@ -1616,7 +1622,7 @@
                         <h3 class="footer-column-title">About Us</h3>
                         <ul class="footer-menu">
                             <li><a href="#home" class="footer-link">Home</a></li>
-                            <li><a href="#partner" class="footer-link">Partner with us</a></li>
+                            <li><a href="/partner/register" class="footer-link">Partner with us</a></li>
                             <li><a href="#promotions" class="footer-link">Promotions</a></li>
                         </ul>
                     </div>
@@ -2393,7 +2399,18 @@
 
                     // Remove carousel classes and set up static layout
                     categoryContainer.classList.remove('swiper');
-                    categoryContainer.style.cssText = 'display: flex; justify-content: center; flex-wrap: wrap; gap: 6rem; margin-bottom: 3rem;';
+
+                    // Responsive gap: smaller on mobile for 3 cards per row
+                    const isMobile = window.innerWidth <= 768;
+
+                    // FIX: Reduce wrapper padding on mobile (CSS !important doesn't work against inline styles)
+                    const wrapper = document.querySelector('.category-carousel-wrapper');
+                    if (wrapper && isMobile) {
+                        wrapper.style.padding = '0 0.25rem';
+                    }
+
+                    const gap = isMobile ? '0.4rem' : '6rem';
+                    categoryContainer.style.cssText = `display: flex; justify-content: ${isMobile ? 'space-evenly' : 'center'}; flex-wrap: wrap; gap: ${gap}; margin-bottom: 3rem;`;
 
                     categories.forEach(category => {
                         const categoryElement = createCategoryElement(category, false); // false = static mode
@@ -2417,14 +2434,19 @@
                     categoryElement.classList.add('category-item');
                 }
 
-                // CORRECT ORIGINAL CSS STYLING FROM app.css
+                // Responsive sizing: smaller on mobile for 3 cards per row
+                const isMobile = window.innerWidth <= 768;
+                const cardWidth = isMobile ? '100px' : '120px';
+                const cardHeight = isMobile ? '120px' : '160px';
+                const cardPadding = isMobile ? '0.6rem' : '1.2rem';
+
                 categoryElement.style.cssText = `
                     background-color: var(--bix-white);
                     border: 2px solid var(--bix-dark-blue);
                     border-radius: 8px;
-                    padding: 1.2rem;
-                    width: 120px;
-                    height: 160px;
+                    padding: ${cardPadding};
+                    width: ${cardWidth};
+                    height: ${cardHeight};
                     text-align: center;
                     transition: all 0.3s ease;
                     display: flex;
@@ -2432,15 +2454,17 @@
                     justify-content: center;
                     align-items: center;
                     cursor: pointer;
+                    box-sizing: border-box;
                 `;
 
-                // CORRECT ORIGINAL IMAGE STYLING - 90px height as per CSS
+                // Responsive image sizing
+                const imgHeight = isMobile ? '60px' : '90px';
                 const img = document.createElement('img');
                 img.src = category.icon_path;
                 img.alt = category.name;
                 img.loading = 'lazy';
                 img.decoding = 'async';
-                img.style.cssText = 'height: 90px; margin-bottom: 0.5rem;';
+                img.style.cssText = `height: ${imgHeight}; margin-bottom: 0.5rem;`;
 
                 img.onerror = function() {
                     this.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMzAiIGZpbGw9IiNmMGYwZjAiLz4KPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJMMTMuMDkgOC4yNkwyMCA5TDEzLjA5IDE1Ljc0TDEyIDIyTDEwLjkxIDE1Ljc0TDQgOUwxMC45MSA4LjI2TDEyIDJaIiBmaWxsPSIjY2NjIi8+Cjwvc3ZnPgo8L3N2Zz4K';
