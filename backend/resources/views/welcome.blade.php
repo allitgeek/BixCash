@@ -1537,7 +1537,7 @@
                 <!-- Right Side: Action Cards -->
                 <div class="dashboard-right-content">
                     <!-- Grow Your Money Card -->
-                    <a href="{{ route('partner.register') }}" class="dashboard-card grow-money" style="display: block; text-decoration: none; cursor: pointer;">
+                    <a href="{{ route('login') }}" class="dashboard-card grow-money" style="display: block; text-decoration: none; cursor: pointer;">
                         <img src="/images/elements/grow your money icon.png" alt="Grow your Money" class="card-full-image">
                         <div class="card-sparkles">
                             <div class="green-sparkle sparkle-1">✦</div>
@@ -1548,7 +1548,7 @@
                     </a>
 
                     <!-- Rewards Card -->
-                    <a href="{{ route('partner.register') }}" class="dashboard-card rewards" style="display: block; text-decoration: none; cursor: pointer;">
+                    <a href="{{ route('login') }}" class="dashboard-card rewards" style="display: block; text-decoration: none; cursor: pointer;">
                         <img src="/images/elements/rewards icon.png" alt="Rewards" class="card-full-image">
                         <div class="card-sparkles">
                             <div class="green-sparkle sparkle-1">✦</div>
@@ -1558,7 +1558,7 @@
                     </a>
 
                     <!-- Shop & Earn Card -->
-                    <a href="{{ route('partner.register') }}" class="dashboard-card shop-earn" style="display: block; text-decoration: none; cursor: pointer;">
+                    <a href="{{ route('login') }}" class="dashboard-card shop-earn" style="display: block; text-decoration: none; cursor: pointer;">
                         <img src="/images/elements/shop and earn.png" alt="Shop & Earn" class="card-full-image">
                         <div class="card-sparkles">
                             <div class="green-sparkle sparkle-1">✦</div>
@@ -1571,45 +1571,45 @@
 
             <!-- Bottom Navigation Icons - Full Width Below Both Columns -->
             <div class="bottom-nav-icons">
-                <!-- Cash Back Button -->
-                <div class="nav-icon-item">
-                    <div class="nav-button cash-back-btn">
-                        <img src="/images/elements/dashboard icons.png" alt="Cash Back" class="dashboard-icon-img">
+                <!-- Go Back Button -->
+                <a href="#home" class="nav-icon-item" style="text-decoration: none; cursor: pointer;">
+                    <div class="nav-button go-back-btn">
+                        <img src="/images/elements/dashboard icons.png" alt="Go Back" class="dashboard-icon-img">
                     </div>
-                    <span class="nav-label">Cash Back</span>
-                </div>
+                    <span class="nav-label">Go Back</span>
+                </a>
 
                 <!-- Wallet Button -->
-                <div class="nav-icon-item">
+                <a href="{{ route('login') }}" class="nav-icon-item" style="text-decoration: none; cursor: pointer;">
                     <div class="nav-button wallet-btn">
                         <img src="/images/elements/wallet icon.png" alt="Wallet" class="dashboard-icon-img">
                     </div>
                     <span class="nav-label">Wallet</span>
-                </div>
+                </a>
 
                 <!-- Transaction Button -->
-                <div class="nav-icon-item">
+                <a href="{{ route('login') }}" class="nav-icon-item" style="text-decoration: none; cursor: pointer;">
                     <div class="nav-button transaction-btn">
                         <img src="/images/elements/transaction icon.png" alt="Transaction" class="dashboard-icon-img">
                     </div>
                     <span class="nav-label">Transaction</span>
-                </div>
+                </a>
 
                 <!-- Receipt Button -->
-                <div class="nav-icon-item">
+                <a href="{{ route('login') }}" class="nav-icon-item" style="text-decoration: none; cursor: pointer;">
                     <div class="nav-button receipt-btn">
                         <img src="/images/elements/receipt icon.png" alt="Receipt" class="dashboard-icon-img">
                     </div>
                     <span class="nav-label">Receipt</span>
-                </div>
+                </a>
 
                 <!-- Withdrawal Button -->
-                <div class="nav-icon-item">
+                <a href="{{ route('login') }}" class="nav-icon-item" style="text-decoration: none; cursor: pointer;">
                     <div class="nav-button withdrawal-btn">
                         <img src="/images/elements/withdrawal icon.png" alt="Withdrawal" class="dashboard-icon-img">
                     </div>
                     <span class="nav-label">Withdrawal</span>
-                </div>
+                </a>
             </div>
         </div>
     </section>
