@@ -309,9 +309,9 @@ html {
 /* Hero Slider Styles */
 .hero-slider {
     width: 100%;
-    height: calc(80vh - 96px); /* Reduced by 20% - was calc(100vh - 120px) */
-    min-height: 400px; /* Reduced by 20% - was 500px */
-    max-height: 640px; /* Reduced by 20% - was 800px */
+    height: calc(72vh - 86px); /* Reduced by 10% - was calc(80vh - 96px) */
+    min-height: 360px; /* Reduced by 10% - was 400px */
+    max-height: 576px; /* Reduced by 10% - was 640px */
     position: relative;
     background-color: #000; /* Black background for video */
     overflow: hidden;
@@ -327,7 +327,7 @@ html {
 @media (min-width: 1920px) {
     .hero-slider {
         max-height: none; /* Remove max-height for large monitors */
-        height: calc(80vh - 96px); /* Reduced by 20% - was calc(100vh - 120px) */
+        height: calc(72vh - 86px); /* Reduced by 10% - was calc(80vh - 96px) */
     }
 }
 

@@ -849,31 +849,30 @@
             /* Ultra-small mobile (320px and below) */
             @media (max-width: 320px) {
                 body {
-                    padding-top: 70px;
+                    padding-top: 66px;
                 }
 
                 .main-header {
                     padding: var(--space-xs) var(--space-sm);
-                    height: 70px; /* Fixed header height */
+                    height: 66px; /* Reduced by 5% - was 70px */
                 }
 
                 .main-header .logo img {
-                    height: 35px;
+                    height: 33px;
                 }
 
-                /* FIXED: Simplified hero height calculation */
+                /* Hero height - reduced by 20% from previous */
                 .hero-slider {
-                    min-height: 320px; /* Reduced by 20% - was 400px */
-                    height: 48vh; /* Reduced by 20% - was 60vh */
-                    margin-top: 0; /* Removed complex margin/padding calculations */
-                    margin-bottom: 0; /* Override desktop negative margin */
+                    min-height: 256px; /* Reduced by 20% - was 320px */
+                    height: 38vh; /* Reduced by 20% - was 48vh */
+                    margin-top: 0;
+                    margin-bottom: 0;
                     padding-top: 0;
-                    transform: none; /* Override desktop translateY transform */
-                    /* Ensure proper positioning */
+                    transform: none;
                     position: relative;
                     width: 100%;
                     overflow: hidden;
-                    background-color: #000; /* Black background for mobile */
+                    background-color: #000;
                 }
 
                 /* Fluid typography for ultra-small screens */
@@ -890,31 +889,30 @@
             /* Mobile portrait (321px - 480px) */
             @media (min-width: 321px) and (max-width: 480px) {
                 body {
-                    padding-top: 80px;
+                    padding-top: 76px;
                 }
 
                 .main-header {
                     padding: var(--space-sm) var(--space-md);
-                    height: 80px; /* Fixed header height */
+                    height: 76px; /* Reduced by 5% - was 80px */
                 }
 
                 .main-header .logo img {
-                    height: 40px;
+                    height: 38px;
                 }
 
-                /* FIXED: Simplified hero height calculation */
+                /* Hero height - reduced by 20% from previous */
                 .hero-slider {
-                    min-height: 360px; /* Reduced by 20% - was 450px */
-                    height: 52vh; /* Reduced by 20% - was 65vh */
-                    margin-top: 0; /* Removed complex margin/padding calculations */
-                    margin-bottom: 0; /* Override desktop negative margin */
+                    min-height: 288px; /* Reduced by 20% - was 360px */
+                    height: 42vh; /* Reduced by 20% - was 52vh */
+                    margin-top: 0;
+                    margin-bottom: 0;
                     padding-top: 0;
-                    transform: none; /* Override desktop translateY transform */
-                    /* Ensure proper positioning */
+                    transform: none;
                     position: relative;
                     width: 100%;
                     overflow: hidden;
-                    background-color: #000; /* Black background for mobile */
+                    background-color: #000;
                 }
 
                 /* Enhanced typography */
@@ -931,26 +929,25 @@
             /* Mobile landscape (481px - 767px) */
             @media (min-width: 481px) and (max-width: 767px) {
                 body {
-                    padding-top: 90px;
+                    padding-top: 86px;
                 }
 
                 .main-header {
-                    height: 90px; /* Fixed header height */
+                    height: 86px; /* Reduced by 5% - was 90px */
                 }
 
-                /* FIXED: Simplified hero height calculation */
+                /* Hero height - reduced by 20% from previous */
                 .hero-slider {
-                    min-height: 400px; /* Reduced by 20% - was 500px */
-                    height: 56vh; /* Reduced by 20% - was 70vh */
-                    margin-top: 0; /* Removed complex margin/padding calculations */
-                    margin-bottom: 0; /* Override desktop negative margin */
+                    min-height: 320px; /* Reduced by 20% - was 400px */
+                    height: 45vh; /* Reduced by 20% - was 56vh */
+                    margin-top: 0;
+                    margin-bottom: 0;
                     padding-top: 0;
-                    transform: none; /* Override desktop translateY transform */
-                    /* Ensure proper positioning */
+                    transform: none;
                     position: relative;
                     width: 100%;
                     overflow: hidden;
-                    background-color: #000; /* Black background for mobile */
+                    background-color: #000;
                 }
 
                 /* Typography scaling */
