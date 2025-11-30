@@ -600,7 +600,7 @@
             position: relative;
             width: 90%;
             max-width: 400px;
-            max-height: 90vh;
+            max-height: 85vh;
             background: var(--bix-white);
             border-radius: 20px;
             padding: 0;
@@ -608,6 +608,9 @@
             /* FIXED: Reduced scale change and smoother easing */
             transform: scale(0.95);
             transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
         }
 
         .mobile-nav-overlay.active .mobile-nav-content {
@@ -619,12 +622,13 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1.5rem 1.5rem 1rem;
+            padding: 1rem 1.5rem;
             border-bottom: 2px solid var(--bix-light-gray-2);
+            flex-shrink: 0;
         }
 
         .mobile-nav-logo {
-            height: 40px;
+            height: 32px;
             width: auto;
         }
 
@@ -654,7 +658,9 @@
 
         /* Mobile Navigation Menu */
         .mobile-nav {
-            padding: 1rem 0 2rem;
+            padding: 0.5rem 0;
+            flex: 1;
+            overflow-y: auto;
         }
 
         .mobile-nav ul {
@@ -670,10 +676,10 @@
         .mobile-nav-link {
             display: flex;
             align-items: center;
-            padding: 1rem 1.5rem;
+            padding: 0.85rem 1.5rem;
             color: var(--bix-dark-blue);
             text-decoration: none;
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 600;
             transition: color 0.2s ease, background-color 0.2s ease;
             border-radius: 0;
@@ -699,11 +705,12 @@
             color: var(--bix-green);
         }
 
-        /* Mobile Authentication Button */
+        /* Mobile Authentication Button - now direct child of mobile-nav-content */
         .mobile-nav-auth {
-            padding: 1rem 1.5rem 0;
+            padding: 1rem 1.5rem;
             border-top: 2px solid var(--bix-light-gray-2);
-            margin-top: 1rem;
+            flex-shrink: 0;
+            background: var(--bix-white);
         }
 
         .mobile-auth-btn {
@@ -786,21 +793,21 @@
             }
 
             .mobile-nav-header {
-                padding: 1rem 1rem 0.5rem;
+                padding: 0.75rem 1rem;
             }
 
             .mobile-nav-logo {
-                height: 35px;
+                height: 28px;
             }
 
             .mobile-nav-link {
-                padding: 0.8rem 1rem;
-                font-size: 1rem;
+                padding: 0.75rem 1rem;
+                font-size: 0.95rem;
             }
 
             .mobile-auth-btn {
-                font-size: 1rem;
-                padding: 0.8rem;
+                font-size: 0.95rem;
+                padding: 0.75rem;
             }
         }
 
@@ -1285,6 +1292,37 @@
             font-weight: 600;
         }
 
+        /* Customer/Partner nav form button styling */
+        .bottom-nav-item-form {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .bottom-nav-item.logout-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .bottom-nav-item.logout-btn:hover i,
+        .bottom-nav-item.logout-btn:hover span {
+            color: #dc2626 !important;
+        }
+
+        /* Customer nav uses green accent */
+        .customer-nav .bottom-nav-item.active i,
+        .customer-nav .bottom-nav-item.active span {
+            color: var(--bix-light-green) !important;
+        }
+
+        /* Partner nav uses blue accent */
+        .partner-nav .bottom-nav-item.active i,
+        .partner-nav .bottom-nav-item.active span {
+            color: #2563eb !important;
+        }
+
         .bottom-nav-item.active,
         .bottom-nav-item:hover {
             color: var(--bix-dark-blue) !important;
@@ -1331,7 +1369,7 @@
     <div class="mobile-nav-overlay" id="mobile-nav-overlay">
         <div class="mobile-nav-content">
             <div class="mobile-nav-header">
-                <img src="/images/logos/logos-01.png" alt="BixCash Logo" class="mobile-nav-logo">
+                <img src="/images/logos/logos-01.png" alt="BixCash Logo" class="mobile-nav-logo" style="height: 28px; max-height: 28px;">
                 <button class="mobile-nav-close" id="mobile-nav-close" aria-label="Close mobile menu">
                     <span>&times;</span>
                 </button>
@@ -1345,17 +1383,17 @@
                     <li><a href="#promotions" class="mobile-nav-link">Promotions</a></li>
                     <li><a href="#contact" class="mobile-nav-link">Contact Us</a></li>
                 </ul>
-                <div class="mobile-nav-auth">
-                    @auth
-                        <a href="{{ route('customer.dashboard') }}" class="mobile-auth-btn">
-                            <svg fill="currentColor" viewBox="0 0 20 20" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 0.5rem;"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
-                            {{ Auth::user()->name }}
-                        </a>
-                    @else
-                        <a href="{{ route('login') }}" class="mobile-auth-btn">Sign In</a>
-                    @endauth
-                </div>
             </nav>
+            <div class="mobile-nav-auth">
+                @auth
+                    <a href="{{ route('customer.dashboard') }}" class="mobile-auth-btn">
+                        <svg fill="currentColor" viewBox="0 0 20 20" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 0.5rem;"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
+                        {{ Auth::user()->name }}
+                    </a>
+                @else
+                    <a href="{{ route('login') }}" class="mobile-auth-btn">Sign In</a>
+                @endauth
+            </div>
         </div>
     </div>
 
@@ -2831,7 +2869,7 @@
 
             function checkImageExists(brandName) {
                 return new Promise((resolve) => {
-                    const extensions = ['webp', 'png', 'jpg', 'jpeg'];
+                    const extensions = ['png', 'jpg', 'jpeg'];
                     let index = 0;
 
                     function tryNext() {
@@ -3076,6 +3114,8 @@
     </script>
 
     <!-- Mobile Bottom Navigation -->
+    @guest
+    {{-- Guest Navigation --}}
     <nav class="mobile-bottom-nav">
         <a href="/#home" class="bottom-nav-item active" data-section="home">
             <i class="fas fa-home"></i>
@@ -3085,17 +3125,10 @@
             <i class="fas fa-store"></i>
             <span>Brands</span>
         </a>
-        @auth
-            <a href="{{ route('customer.dashboard') }}" class="bottom-nav-item">
-                <i class="fas fa-user"></i>
-                <span>Account</span>
-            </a>
-        @else
-            <a href="{{ route('login') }}" class="bottom-nav-item">
-                <i class="fas fa-user"></i>
-                <span>Account</span>
-            </a>
-        @endauth
+        <a href="{{ route('login') }}" class="bottom-nav-item">
+            <i class="fas fa-user"></i>
+            <span>Account</span>
+        </a>
         <a href="/partner/register" class="bottom-nav-item">
             <i class="fas fa-handshake"></i>
             <span>Partner</span>
@@ -3105,6 +3138,86 @@
             <span>Promos</span>
         </a>
     </nav>
+    @endguest
+
+    @auth
+        @if(auth()->user()->isCustomer())
+        {{-- Customer Navigation --}}
+        <nav class="mobile-bottom-nav customer-nav">
+            <a href="{{ route('customer.dashboard') }}" class="bottom-nav-item active">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="{{ route('customer.wallet') }}" class="bottom-nav-item">
+                <i class="fas fa-wallet"></i>
+                <span>Wallet</span>
+            </a>
+            <a href="{{ route('customer.purchases') }}" class="bottom-nav-item">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Purchases</span>
+            </a>
+            <a href="{{ route('customer.profile') }}" class="bottom-nav-item">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </a>
+            <form method="POST" action="{{ route('customer.logout') }}" class="bottom-nav-item-form" onsubmit="return confirm('Are you sure you want to logout?');">
+                @csrf
+                <button type="submit" class="bottom-nav-item logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </form>
+        </nav>
+        @elseif(auth()->user()->isPartner())
+        {{-- Partner Navigation --}}
+        <nav class="mobile-bottom-nav partner-nav">
+            <a href="{{ route('partner.dashboard') }}" class="bottom-nav-item active">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="{{ route('partner.transactions') }}" class="bottom-nav-item">
+                <i class="fas fa-clipboard-list"></i>
+                <span>Transactions</span>
+            </a>
+            <a href="{{ route('partner.wallet') }}" class="bottom-nav-item">
+                <i class="fas fa-wallet"></i>
+                <span>Wallet</span>
+            </a>
+            <a href="{{ route('partner.commissions') }}" class="bottom-nav-item">
+                <i class="fas fa-coins"></i>
+                <span>Commissions</span>
+            </a>
+            <a href="{{ route('partner.profile') }}" class="bottom-nav-item">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </a>
+        </nav>
+        @else
+        {{-- Admin/Other Users - Show Guest Navigation --}}
+        <nav class="mobile-bottom-nav">
+            <a href="/#home" class="bottom-nav-item active" data-section="home">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="/#brands" class="bottom-nav-item" data-section="brands">
+                <i class="fas fa-store"></i>
+                <span>Brands</span>
+            </a>
+            <a href="{{ route('admin.dashboard') }}" class="bottom-nav-item">
+                <i class="fas fa-user-shield"></i>
+                <span>Admin</span>
+            </a>
+            <a href="/partner/register" class="bottom-nav-item">
+                <i class="fas fa-handshake"></i>
+                <span>Partner</span>
+            </a>
+            <a href="/#promotions" class="bottom-nav-item" data-section="promotions">
+                <i class="fas fa-gift"></i>
+                <span>Promos</span>
+            </a>
+        </nav>
+        @endif
+    @endauth
 
     <script>
         (function() {

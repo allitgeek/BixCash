@@ -72,6 +72,25 @@
             color: var(--bix-light-green, #76d37a) !important;
             font-weight: 600;
         }
+
+        /* Logout button styling */
+        .bottom-nav-item-form {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .bottom-nav-item.logout-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .bottom-nav-item.logout-btn:hover i,
+        .bottom-nav-item.logout-btn:hover span {
+            color: #dc2626 !important;
+        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen pb-24" style="margin: 0; padding: 0;">
@@ -256,26 +275,29 @@
 
     <!-- Mobile Bottom Navigation -->
     <nav class="mobile-bottom-nav">
-        <a href="/#home" class="bottom-nav-item" data-section="home">
+        <a href="{{ route('customer.dashboard') }}" class="bottom-nav-item">
             <i class="fas fa-home"></i>
             <span>Home</span>
         </a>
-        <a href="/#brands" class="bottom-nav-item" data-section="brands">
-            <i class="fas fa-store"></i>
-            <span>Brands</span>
+        <a href="{{ route('customer.wallet') }}" class="bottom-nav-item">
+            <i class="fas fa-wallet"></i>
+            <span>Wallet</span>
         </a>
-        <a href="{{ route('customer.dashboard') }}" class="bottom-nav-item active">
+        <a href="{{ route('customer.purchases') }}" class="bottom-nav-item active">
+            <i class="fas fa-shopping-cart"></i>
+            <span>Purchases</span>
+        </a>
+        <a href="{{ route('customer.profile') }}" class="bottom-nav-item">
             <i class="fas fa-user"></i>
-            <span>Account</span>
+            <span>Profile</span>
         </a>
-        <a href="/partner/register" class="bottom-nav-item">
-            <i class="fas fa-handshake"></i>
-            <span>Partner</span>
-        </a>
-        <a href="/#promotions" class="bottom-nav-item" data-section="promotions">
-            <i class="fas fa-gift"></i>
-            <span>Promos</span>
-        </a>
+        <form method="POST" action="{{ route('customer.logout') }}" class="bottom-nav-item-form" onsubmit="return confirm('Are you sure you want to logout?');">
+            @csrf
+            <button type="submit" class="bottom-nav-item logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </button>
+        </form>
     </nav>
 
 </body>
