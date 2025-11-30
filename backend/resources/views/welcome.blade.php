@@ -1245,34 +1245,49 @@
             color: #666;
             font-size: 10px;
             padding: 4px 12px;
-            transition: color 0.2s ease;
             min-width: 50px;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
         }
 
         .bottom-nav-item i {
             font-size: 20px;
             margin-bottom: 4px;
+            transition: color 0.1s ease, transform 0.1s ease;
         }
 
         .bottom-nav-item span {
             white-space: nowrap;
+            transition: color 0.1s ease;
         }
 
-        .bottom-nav-item.active,
-        .bottom-nav-item:hover {
-            color: var(--bix-dark-blue) !important;
+        /* Immediate feedback on press (CSS-only, no JS needed) */
+        .bottom-nav-item:active i,
+        .bottom-nav-item:active svg {
+            color: var(--bix-light-green) !important;
+            transform: scale(1.1);
         }
 
+        .bottom-nav-item:active span {
+            color: var(--bix-light-green) !important;
+            font-weight: 600;
+        }
+
+        /* Persistent active state (set by JS) */
         .bottom-nav-item.active i,
         .bottom-nav-item.active svg {
             color: var(--bix-light-green) !important;
             transform: scale(1.1);
-            transition: transform 0.15s ease, color 0.15s ease;
         }
 
         .bottom-nav-item.active span {
             color: var(--bix-light-green) !important;
             font-weight: 600;
+        }
+
+        .bottom-nav-item.active,
+        .bottom-nav-item:hover {
+            color: var(--bix-dark-blue) !important;
         }
     </style>
 </head>
@@ -2851,8 +2866,8 @@
 
             // Smooth scroll navigation system
             function initializeSmoothScroll() {
-                // Add smooth scroll behavior to navigation links
-                document.querySelectorAll('nav a[href^="#"], .footer-link[href^="#"]').forEach(link => {
+                // Add smooth scroll behavior to desktop and mobile overlay navigation links (NOT bottom nav)
+                document.querySelectorAll('.desktop-nav a[href^="#"], .mobile-nav-link[href^="#"], .footer-link[href^="#"]').forEach(link => {
                     link.addEventListener('click', function(e) {
                         e.preventDefault();
 
@@ -2860,8 +2875,8 @@
                         const targetElement = document.getElementById(targetId);
 
                         if (targetElement) {
-                            // Remove active class from all nav links
-                            document.querySelectorAll('nav a').forEach(navLink => {
+                            // Remove active class from desktop and mobile overlay nav links only
+                            document.querySelectorAll('.desktop-nav a, .mobile-nav-link').forEach(navLink => {
                                 navLink.classList.remove('active');
                             });
 
@@ -2889,13 +2904,13 @@
                 for (let i = sections.length - 1; i >= 0; i--) {
                     const section = document.getElementById(sections[i]);
                     if (section && section.offsetTop <= scrollPosition) {
-                        // Remove active class from all nav links
-                        document.querySelectorAll('nav a').forEach(link => {
+                        // Remove active class from desktop and mobile overlay nav links only (NOT bottom nav)
+                        document.querySelectorAll('.desktop-nav a, .mobile-nav-link').forEach(link => {
                             link.classList.remove('active');
                         });
 
-                        // Add active class to current section link
-                        const activeLink = document.querySelector(`nav a[href="#${sections[i]}"]`);
+                        // Add active class to current section link in desktop/mobile overlay nav
+                        const activeLink = document.querySelector(`.desktop-nav a[href="#${sections[i]}"], .mobile-nav-link[href="#${sections[i]}"]`);
                         if (activeLink) {
                             activeLink.classList.add('active');
                         }
@@ -3099,22 +3114,25 @@
             // Flag to prevent scroll detection during user interaction
             let userInteracting = false;
             let interactionTimeout = null;
+            let currentActiveSection = 'home';
 
             // Get all nav items once
             const navItems = document.querySelectorAll('.bottom-nav-item');
-            const sectionNavItems = document.querySelectorAll('.bottom-nav-item[data-section]');
 
-            // Set active state on a specific element
+            // Simple, direct function to set active state
             function setActive(element) {
+                if (!element) return;
+                // Always remove from all, always add to target
                 navItems.forEach(item => item.classList.remove('active'));
-                if (element) element.classList.add('active');
+                element.classList.add('active');
             }
 
             // Set active state by section ID
             function setActiveBySection(sectionId) {
-                navItems.forEach(item => item.classList.remove('active'));
+                if (sectionId === currentActiveSection) return;
+                currentActiveSection = sectionId;
                 const navItem = document.querySelector(`.bottom-nav-item[data-section="${sectionId}"]`);
-                if (navItem) navItem.classList.add('active');
+                if (navItem) setActive(navItem);
             }
 
             // Detect current section based on scroll position
@@ -3125,89 +3143,90 @@
                 const windowHeight = window.innerHeight;
                 const documentHeight = document.documentElement.scrollHeight;
 
-                // At bottom of page - Promotions
-                if (scrollY + windowHeight >= documentHeight - 50) {
-                    setActiveBySection('promotions');
-                    return;
-                }
+                let newSection = 'home';
 
-                // At top of page - Home
-                if (scrollY < 100) {
-                    setActiveBySection('home');
-                    return;
-                }
+                if (scrollY + windowHeight >= documentHeight - 100) {
+                    newSection = 'promotions';
+                } else if (scrollY < 150) {
+                    newSection = 'home';
+                } else {
+                    const promotionsSection = document.getElementById('promotions');
+                    const brandsSection = document.getElementById('brands');
 
-                // Find current section (check from bottom to top)
-                const sections = ['promotions', 'brands', 'home'];
-                for (const sectionId of sections) {
-                    const section = document.getElementById(sectionId);
-                    if (section && scrollY >= section.offsetTop - 200) {
-                        setActiveBySection(sectionId);
-                        return;
+                    if (promotionsSection && scrollY >= promotionsSection.offsetTop - 300) {
+                        newSection = 'promotions';
+                    } else if (brandsSection && scrollY >= brandsSection.offsetTop - 300) {
+                        newSection = 'brands';
                     }
                 }
 
-                // Default
-                setActiveBySection('home');
+                if (newSection !== currentActiveSection) {
+                    setActiveBySection(newSection);
+                }
             }
 
             // Throttled scroll handler
-            let scrollTimeout = null;
+            let ticking = false;
             function handleScroll() {
-                if (scrollTimeout) return;
-                scrollTimeout = setTimeout(() => {
-                    scrollTimeout = null;
-                    detectCurrentSection();
-                }, 50);
+                if (!ticking) {
+                    requestAnimationFrame(() => {
+                        detectCurrentSection();
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
             }
 
-            // Click handler for ALL nav items
+            // Handle clicks and touches on nav items
             navItems.forEach(item => {
-                item.addEventListener('click', function(e) {
-                    // Stop any pending scroll detection
+                // Use pointerdown for immediate response on both touch and mouse
+                item.addEventListener('pointerdown', function(e) {
                     userInteracting = true;
                     if (interactionTimeout) clearTimeout(interactionTimeout);
-
-                    // Set active state IMMEDIATELY
                     setActive(this);
 
                     const sectionId = this.getAttribute('data-section');
+                    if (sectionId) {
+                        currentActiveSection = sectionId;
+                    }
+                }, { passive: true });
 
-                    // If it has a section and we're on homepage, do smooth scroll
+                item.addEventListener('click', function(e) {
+                    userInteracting = true;
+                    if (interactionTimeout) clearTimeout(interactionTimeout);
+                    setActive(this);
+
+                    const sectionId = this.getAttribute('data-section');
+                    const href = this.getAttribute('href');
+
+                    if (sectionId) {
+                        currentActiveSection = sectionId;
+                    }
+
+                    // For section links, do smooth scroll
                     if (sectionId && isHomePage) {
                         e.preventDefault();
-                        e.stopPropagation();
-
                         const section = document.getElementById(sectionId);
                         if (section) {
                             section.scrollIntoView({ behavior: 'smooth' });
                         }
-
-                        // Re-enable scroll detection after animation
                         interactionTimeout = setTimeout(() => {
                             userInteracting = false;
                         }, 1200);
-                    } else {
-                        // For external links (Account, Partner), keep active briefly then navigate
-                        // The active state will be visible during the brief moment before navigation
-                        interactionTimeout = setTimeout(() => {
-                            userInteracting = false;
-                        }, 100);
+                    }
+                    // For external links, delay navigation briefly to show green state
+                    else if (href && !href.startsWith('#')) {
+                        e.preventDefault();
+                        setTimeout(() => {
+                            window.location.href = href;
+                        }, 150);
                     }
                 });
-
-                // Also handle touch events for mobile
-                item.addEventListener('touchstart', function() {
-                    userInteracting = true;
-                    if (interactionTimeout) clearTimeout(interactionTimeout);
-                    setActive(this);
-                }, { passive: true });
             });
 
-            // Initialize
+            // Initialize scroll detection on homepage
             if (isHomePage) {
                 window.addEventListener('scroll', handleScroll, { passive: true });
-                // Set initial state after a brief delay to ensure DOM is ready
                 setTimeout(detectCurrentSection, 100);
             }
         })();
