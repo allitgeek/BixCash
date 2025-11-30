@@ -671,7 +671,7 @@
                     </div>
 
                     {{-- Submit Button --}}
-                    <button class="w-full flex items-center justify-center gap-2 rounded-xl bg-[#76d37a] px-6 py-4 text-base font-bold text-[#021c47] shadow-lg shadow-[#76d37a]/30 transition-all hover:bg-[#93db4d] hover:shadow-xl hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-[#76d37a] focus:ring-offset-2" type="submit">
+                    <button class="w-full flex items-center justify-center gap-2 rounded-xl px-6 py-4 text-base font-bold text-white shadow-lg transition-all hover:shadow-xl hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2" type="submit" style="background-color: #93db4d; box-shadow: 0 10px 15px -3px rgba(147, 219, 77, 0.3);" onmouseover="this.style.backgroundColor='#85c441'" onmouseout="this.style.backgroundColor='#93db4d'">
                         <span>Submit Application</span>
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
