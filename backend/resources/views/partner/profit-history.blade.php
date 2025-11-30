@@ -6,6 +6,7 @@
     <meta name="theme-color" content="#021c47">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Profit History - BixCash Partner</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%2376d37a'/><text x='50' y='68' font-size='55' font-weight='bold' fill='white' text-anchor='middle' font-family='Arial'>B</text></svg>">
     @vite(['resources/css/app.css'])
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 </head>
