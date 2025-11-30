@@ -7,6 +7,72 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Purchase History - BixCash</title>
     @vite(['resources/css/app.css'])
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <style>
+        /* Mobile Bottom Navigation */
+        .mobile-bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            padding: 8px 0;
+            padding-bottom: calc(8px + env(safe-area-inset-bottom));
+        }
+
+        @media (max-width: 768px) {
+            .mobile-bottom-nav {
+                display: flex;
+                justify-content: space-around;
+                align-items: center;
+            }
+            body {
+                padding-bottom: 70px !important;
+            }
+        }
+
+        .bottom-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: #666;
+            font-size: 10px;
+            padding: 4px 12px;
+            transition: color 0.2s ease;
+            min-width: 50px;
+        }
+
+        .bottom-nav-item i {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .bottom-nav-item span {
+            white-space: nowrap;
+        }
+
+        .bottom-nav-item.active,
+        .bottom-nav-item:hover {
+            color: var(--bix-dark-blue, #1a365d) !important;
+        }
+
+        .bottom-nav-item.active i,
+        .bottom-nav-item.active svg {
+            color: var(--bix-light-green, #76d37a) !important;
+            transform: scale(1.1);
+            transition: transform 0.15s ease, color 0.15s ease;
+        }
+
+        .bottom-nav-item.active span {
+            color: var(--bix-light-green, #76d37a) !important;
+            font-weight: 600;
+        }
+    </style>
 </head>
 <body class="bg-gray-50 min-h-screen pb-24" style="margin: 0; padding: 0;">
 
@@ -186,6 +252,30 @@
                 </button>
             </form>
         </div>
+    </nav>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-bottom-nav">
+        <a href="/#home" class="bottom-nav-item" data-section="home">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="/#brands" class="bottom-nav-item" data-section="brands">
+            <i class="fas fa-store"></i>
+            <span>Brands</span>
+        </a>
+        <a href="{{ route('customer.dashboard') }}" class="bottom-nav-item active">
+            <i class="fas fa-user"></i>
+            <span>Account</span>
+        </a>
+        <a href="/partner/register" class="bottom-nav-item">
+            <i class="fas fa-handshake"></i>
+            <span>Partner</span>
+        </a>
+        <a href="/#promotions" class="bottom-nav-item" data-section="promotions">
+            <i class="fas fa-gift"></i>
+            <span>Promos</span>
+        </a>
     </nav>
 
 </body>

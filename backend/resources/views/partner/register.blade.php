@@ -33,10 +33,10 @@
             align-items: center !important;
         }
 
-        .main-header nav {
-            display: flex !important;
-            margin-left: auto !important;
-            margin-right: 2rem !important;
+        .main-header nav.desktop-nav {
+            display: flex;
+            margin-left: auto;
+            margin-right: 2rem;
         }
 
         /* Auth Button - Green Gradient */
@@ -249,33 +249,28 @@
             text-decoration: none;
             font-size: 1.1rem;
             font-weight: 600;
-            transition: all 0.3s ease;
+            transition: color 0.2s ease, background-color 0.2s ease;
             border-radius: 0;
             position: relative;
         }
 
-        .mobile-nav-link:hover,
-        .mobile-nav-link.active {
+        /* Only apply hover effects on devices with mouse/trackpad */
+        @media (hover: hover) and (pointer: fine) {
+            .mobile-nav-link:hover {
+                background-color: var(--bix-light-gray-1);
+                color: var(--bix-green);
+            }
+        }
+
+        /* Brief active state for touch devices */
+        .mobile-nav-link:active {
             background-color: var(--bix-light-gray-1);
             color: var(--bix-green);
-            transform: translateX(8px);
         }
 
-        .mobile-nav-link::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 4px;
-            background: var(--bix-green);
-            transform: scaleY(0);
-            transition: transform 0.3s ease;
-        }
-
-        .mobile-nav-link:hover::before,
-        .mobile-nav-link.active::before {
-            transform: scaleY(1);
+        /* Active class styling (for current page indicator if needed) */
+        .mobile-nav-link.active {
+            color: var(--bix-green);
         }
 
         /* Mobile Authentication Button */
@@ -331,8 +326,9 @@
 
             /* Hide desktop navigation */
             .desktop-nav,
-            .desktop-auth {
-                display: none;
+            .desktop-auth,
+            .main-header nav.desktop-nav {
+                display: none !important;
             }
 
             /* Enable mobile navigation overlay */
@@ -353,10 +349,6 @@
             .auth-btn {
                 font-size: 0.7rem;
                 padding: 0.4rem 0.8rem;
-            }
-
-            .main-header nav {
-                margin-right: 1rem !important;
             }
         }
 
@@ -428,6 +420,70 @@
                 padding: 2rem 1rem;
             }
         }
+
+        /* Mobile Bottom Navigation */
+        .mobile-bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            padding: 8px 0;
+            padding-bottom: calc(8px + env(safe-area-inset-bottom));
+        }
+
+        @media (max-width: 768px) {
+            .mobile-bottom-nav {
+                display: flex;
+                justify-content: space-around;
+                align-items: center;
+            }
+            body {
+                padding-bottom: 70px !important;
+            }
+        }
+
+        .bottom-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: #666;
+            font-size: 10px;
+            padding: 4px 12px;
+            transition: color 0.2s ease;
+            min-width: 50px;
+        }
+
+        .bottom-nav-item i {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .bottom-nav-item span {
+            white-space: nowrap;
+        }
+
+        .bottom-nav-item.active,
+        .bottom-nav-item:hover {
+            color: var(--bix-dark-blue, #1a365d) !important;
+        }
+
+        .bottom-nav-item.active i,
+        .bottom-nav-item.active svg {
+            color: var(--bix-light-green, #76d37a) !important;
+            transform: scale(1.1);
+            transition: transform 0.15s ease, color 0.15s ease;
+        }
+
+        .bottom-nav-item.active span {
+            color: var(--bix-light-green, #76d37a) !important;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
@@ -443,7 +499,7 @@
                 <li><a href="/#home">Home</a></li>
                 <li><a href="/#brands">Brands</a></li>
                 <li><a href="/#how-it-works">How It Works</a></li>
-                <li><a href="/partner/register" class="active">Partner with us</a></li>
+                <li><a href="/partner/register">Partner with us</a></li>
                 <li><a href="/#promotions">Promotions</a></li>
                 <li><a href="/#contact">Contact Us</a></li>
             </ul>
@@ -484,7 +540,7 @@
                     <li><a href="/#home" class="mobile-nav-link">Home</a></li>
                     <li><a href="/#brands" class="mobile-nav-link">Brands</a></li>
                     <li><a href="/#how-it-works" class="mobile-nav-link">How It Works</a></li>
-                    <li><a href="/partner/register" class="mobile-nav-link active">Partner with us</a></li>
+                    <li><a href="/partner/register" class="mobile-nav-link">Partner with us</a></li>
                     <li><a href="/#promotions" class="mobile-nav-link">Promotions</a></li>
                     <li><a href="/#contact" class="mobile-nav-link">Contact Us</a></li>
                 </ul>
@@ -743,5 +799,30 @@
             });
         }
     </script>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-bottom-nav">
+        <a href="/#home" class="bottom-nav-item" data-section="home">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="/#brands" class="bottom-nav-item" data-section="brands">
+            <i class="fas fa-store"></i>
+            <span>Brands</span>
+        </a>
+        <a href="{{ route('login') }}" class="bottom-nav-item">
+            <i class="fas fa-user"></i>
+            <span>Account</span>
+        </a>
+        <a href="/partner/register" class="bottom-nav-item active">
+            <i class="fas fa-handshake"></i>
+            <span>Partner</span>
+        </a>
+        <a href="/#promotions" class="bottom-nav-item" data-section="promotions">
+            <i class="fas fa-gift"></i>
+            <span>Promos</span>
+        </a>
+    </nav>
+
 </body>
 </html>

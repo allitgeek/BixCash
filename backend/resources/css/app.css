@@ -313,21 +313,18 @@ html {
     min-height: 360px; /* Reduced by 10% - was 400px */
     max-height: 576px; /* Reduced by 10% - was 640px */
     position: relative;
-    background-color: #000; /* Black background for video */
+    background-color: transparent;
     overflow: hidden;
-    /* FIX: Use transform instead of margin/padding to avoid black line artifact */
-    transform: translateY(-120px);
-    margin-bottom: -120px; /* Compensate for the transform so next section doesn't have gap */
     box-sizing: border-box;
-    border: none; /* Remove any borders */
-    outline: none; /* Remove any outlines */
+    border: none;
+    outline: none;
 }
 
 /* LARGE MONITOR (1920px+): Remove max-height constraint */
 @media (min-width: 1920px) {
     .hero-slider {
-        max-height: none; /* Remove max-height for large monitors */
-        height: calc(72vh - 86px); /* Reduced by 10% - was calc(80vh - 96px) */
+        max-height: none;
+        height: calc(72vh - 86px);
     }
 }
 
@@ -335,13 +332,13 @@ html {
     width: 100%;
     height: 100%;
     position: relative;
-    background-color: #000; /* Black background */
+    background-color: transparent;
 }
 
 .hero-slider .swiper-wrapper {
     width: 100%;
     height: 100%;
-    background-color: #000; /* Black background */
+    background-color: transparent;
 }
 
 .hero-slider .swiper-slide {
@@ -353,9 +350,9 @@ html {
     height: 100%;
     position: relative;
     overflow: hidden;
-    background-color: #000; /* Black background for video slides */
-    border: none; /* Remove any borders */
-    outline: none; /* Remove any outlines */
+    background-color: transparent;
+    border: none;
+    outline: none;
 }
 
 /* Hero slider images - responsive object-fit */
@@ -381,30 +378,10 @@ html {
     background: #000;
 }
 
-/* LAPTOP/SMALL DESKTOP (769px - 1919px): Show full images without cropping */
-@media (min-width: 769px) and (max-width: 1919px) {
-    .hero-slider .swiper-slide img {
-        object-fit: contain; /* Laptop: show full image, no crop */
-        object-position: center;
-        background-color: #000; /* Black background for letterbox areas */
-    }
-}
-
-/* LARGE MONITOR (1920px+): Show full images without cropping */
-@media (min-width: 1920px) {
-    .hero-slider .swiper-slide img {
-        object-fit: contain; /* Large monitor: show full image, no crop */
-        object-position: center;
-        background-color: #000; /* Black background for letterbox areas */
-    }
-}
-
-/* Mobile optimization - keep crop for immersive mobile view */
-@media (max-width: 768px) {
-    .hero-slider .swiper-slide img {
-        object-fit: cover; /* Mobile: fill screen, crop is acceptable */
-        object-position: center center;
-    }
+/* All screens: Use cover to fill container completely - no black bars */
+.hero-slider .swiper-slide img {
+    object-fit: cover;
+    object-position: center;
 }
 
 .slide-content {
@@ -514,15 +491,16 @@ html {
 .hero-slider iframe {
     border: none !important;
     outline: none !important;
-    background-color: #000 !important;
+    background-color: transparent !important;
     display: block !important;
 }
 
-/* Force all image backgrounds to black (for letterboxing) */
+/* Remove any borders from hero images */
 .hero-slider img {
     border: none !important;
     outline: none !important;
-    background-color: #000 !important;
+    background-color: transparent !important;
+    vertical-align: top; /* Prevent inline gap */
 }
 
 /* Remove any inherited box shadows from parent elements */
@@ -2719,33 +2697,28 @@ img {
     text-decoration: none;
     font-size: 1.1rem;
     font-weight: 600;
-    transition: all 0.3s ease;
+    transition: color 0.2s ease, background-color 0.2s ease;
     border-radius: 0;
     position: relative;
 }
 
-.mobile-nav-link:hover,
-.mobile-nav-link.active {
+/* Only apply hover effects on devices with mouse/trackpad (not touch) */
+@media (hover: hover) and (pointer: fine) {
+    .mobile-nav-link:hover {
+        background-color: var(--bix-light-gray-1);
+        color: var(--bix-green);
+    }
+}
+
+/* Brief active state for touch devices */
+.mobile-nav-link:active {
     background-color: var(--bix-light-gray-1);
     color: var(--bix-green);
-    transform: translateX(8px);
 }
 
-.mobile-nav-link::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 4px;
-    background: var(--bix-green);
-    transform: scaleY(0);
-    transition: transform 0.3s ease;
-}
-
-.mobile-nav-link:hover::before,
-.mobile-nav-link.active::before {
-    transform: scaleY(1);
+/* Active class styling (for current page indicator) */
+.mobile-nav-link.active {
+    color: var(--bix-green);
 }
 
 /* Mobile Authentication Button */

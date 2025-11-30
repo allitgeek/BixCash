@@ -13,12 +13,16 @@
 
     <!-- Performance Optimization: Resource Hints -->
     <link rel="dns-prefetch" href="//unpkg.com">
+    <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
     <link rel="preconnect" href="https://unpkg.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <link rel="preload" href="/images/logos/logos-01.png" as="image">
 
-    <!-- Stylesheets -->
-    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Non-render-blocking Stylesheets -->
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" /></noscript>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" /></noscript>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <!-- Dynamic Content Loading Styles -->
@@ -132,10 +136,10 @@
 
         /* Video styling */
         .hero-video {
-            width: 100% !important;
-            height: 100% !important;
+            width: 101% !important;
+            height: 101% !important;
             object-fit: cover !important;
-            background: #000 !important; /* Black background to prevent color bleed */
+            background: transparent !important;
         }
 
         /* Mobile-responsive video enhancements */
@@ -158,7 +162,7 @@
             /* Crop video to fill mobile screens for immersive experience */
             .hero-video {
                 object-fit: cover !important;
-                background: #000 !important; /* Dark background for any visible edges */
+                background: transparent !important;
                 border: none !important;
                 outline: none !important;
             }
@@ -671,33 +675,28 @@
             text-decoration: none;
             font-size: 1.1rem;
             font-weight: 600;
-            transition: all 0.3s ease;
+            transition: color 0.2s ease, background-color 0.2s ease;
             border-radius: 0;
             position: relative;
         }
 
-        .mobile-nav-link:hover,
-        .mobile-nav-link.active {
+        /* Only apply hover effects on devices with mouse/trackpad (not touch) */
+        @media (hover: hover) and (pointer: fine) {
+            .mobile-nav-link:hover {
+                background-color: var(--bix-light-gray-1);
+                color: var(--bix-green);
+            }
+        }
+
+        /* Brief active state for touch devices */
+        .mobile-nav-link:active {
             background-color: var(--bix-light-gray-1);
             color: var(--bix-green);
-            transform: translateX(8px);
         }
 
-        .mobile-nav-link::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 4px;
-            background: var(--bix-green);
-            transform: scaleY(0);
-            transition: transform 0.3s ease;
-        }
-
-        .mobile-nav-link:hover::before,
-        .mobile-nav-link.active::before {
-            transform: scaleY(1);
+        /* Active class styling (for current page indicator) */
+        .mobile-nav-link.active {
+            color: var(--bix-green);
         }
 
         /* Mobile Authentication Button */
@@ -849,16 +848,16 @@
             /* Ultra-small mobile (320px and below) */
             @media (max-width: 320px) {
                 body {
-                    padding-top: 66px;
+                    padding-top: 56px;
                 }
 
                 .main-header {
                     padding: var(--space-xs) var(--space-sm);
-                    height: 66px; /* Reduced by 5% - was 70px */
+                    height: 56px;
                 }
 
                 .main-header .logo img {
-                    height: 33px;
+                    height: 28px;
                 }
 
                 /* Hero height - reduced by 20% from previous */
@@ -872,7 +871,7 @@
                     position: relative;
                     width: 100%;
                     overflow: hidden;
-                    background-color: #000;
+                    background-color: transparent;
                 }
 
                 /* Fluid typography for ultra-small screens */
@@ -889,16 +888,16 @@
             /* Mobile portrait (321px - 480px) */
             @media (min-width: 321px) and (max-width: 480px) {
                 body {
-                    padding-top: 76px;
+                    padding-top: 65px;
                 }
 
                 .main-header {
                     padding: var(--space-sm) var(--space-md);
-                    height: 76px; /* Reduced by 5% - was 80px */
+                    height: 65px;
                 }
 
                 .main-header .logo img {
-                    height: 38px;
+                    height: 32px;
                 }
 
                 /* Hero height - reduced by 20% from previous */
@@ -912,7 +911,7 @@
                     position: relative;
                     width: 100%;
                     overflow: hidden;
-                    background-color: #000;
+                    background-color: transparent;
                 }
 
                 /* Enhanced typography */
@@ -929,11 +928,11 @@
             /* Mobile landscape (481px - 767px) */
             @media (min-width: 481px) and (max-width: 767px) {
                 body {
-                    padding-top: 86px;
+                    padding-top: 73px;
                 }
 
                 .main-header {
-                    height: 86px; /* Reduced by 5% - was 90px */
+                    height: 73px;
                 }
 
                 /* Hero height - reduced by 20% from previous */
@@ -947,7 +946,7 @@
                     position: relative;
                     width: 100%;
                     overflow: hidden;
-                    background-color: #000;
+                    background-color: transparent;
                 }
 
                 /* Typography scaling */
@@ -1084,6 +1083,19 @@
                 .contact-section {
                     padding: var(--space-xl) var(--space-md);
                 }
+
+                /* Reduced spacing for brands section on mobile */
+                .brands-section {
+                    padding-top: 0.9rem !important;
+                }
+
+                .brands-section h2 {
+                    margin-bottom: 0.7rem !important;
+                }
+
+                .brands-carousel-container {
+                    margin-bottom: 0.9rem !important;
+                }
             }
 
             /* Show mobile overlay */
@@ -1196,6 +1208,72 @@
             /* REMOVED: Dark mode support to maintain consistent BixCash branding */
             /* Forces light theme on all devices regardless of system preference */
         }
+
+        /* ==================== Mobile Bottom Navigation ==================== */
+        .mobile-bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            padding: 8px 0;
+            padding-bottom: calc(8px + env(safe-area-inset-bottom));
+        }
+
+        @media (max-width: 768px) {
+            .mobile-bottom-nav {
+                display: flex;
+                justify-content: space-around;
+                align-items: center;
+            }
+
+            /* Prevent content from being hidden behind bottom nav */
+            body {
+                padding-bottom: 70px !important;
+            }
+        }
+
+        .bottom-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: #666;
+            font-size: 10px;
+            padding: 4px 12px;
+            transition: color 0.2s ease;
+            min-width: 50px;
+        }
+
+        .bottom-nav-item i {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .bottom-nav-item span {
+            white-space: nowrap;
+        }
+
+        .bottom-nav-item.active,
+        .bottom-nav-item:hover {
+            color: var(--bix-dark-blue) !important;
+        }
+
+        .bottom-nav-item.active i,
+        .bottom-nav-item.active svg {
+            color: var(--bix-light-green) !important;
+            transform: scale(1.1);
+            transition: transform 0.15s ease, color 0.15s ease;
+        }
+
+        .bottom-nav-item.active span {
+            color: var(--bix-light-green) !important;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
@@ -1292,8 +1370,8 @@
             <!-- Patent-Pending Banner -->
             <div class="patent-pending-banner">
                 <div class="banner-content">
-                    <span class="banner-title">Pakistan's First</span>
-                    <span class="banner-subtitle">Patent-Pending <strong class="highlight">Profit Sharing</strong> Platform</span>
+                    <span class="banner-title">World's First</span>
+                    <span class="banner-subtitle">Innovative Patent-Pending <strong class="highlight">Profit Sharing</strong> Platform</span>
                 </div>
                 <div class="banner-shine"></div>
             </div>
@@ -1750,6 +1828,15 @@
                 // Handle mobile navigation link clicks
                 mobileNavLinks.forEach(link => {
                     link.addEventListener('click', function(e) {
+                        const href = this.getAttribute('href');
+
+                        // Only intercept anchor links (starting with #), let other links navigate normally
+                        if (!href || !href.startsWith('#')) {
+                            // Close mobile menu and let the link navigate normally
+                            closeMobileMenu();
+                            return;
+                        }
+
                         e.preventDefault();
 
                         // Remove active class from all mobile nav links
@@ -1764,7 +1851,7 @@
                         closeMobileMenu();
 
                         // Navigate to section (reuse existing smooth scroll logic)
-                        const targetId = this.getAttribute('href').substring(1);
+                        const targetId = href.substring(1);
                         const targetElement = document.getElementById(targetId);
 
                         if (targetElement) {
@@ -1920,9 +2007,10 @@
                     `;
                     swiperWrapper.appendChild(defaultSlide);
                 } else {
-                    slides.forEach(slide => {
+                    slides.forEach((slide, index) => {
                         const slideElement = document.createElement('div');
                         slideElement.classList.add('swiper-slide');
+                        const isFirstSlide = index === 0;
 
                         // Handle different media types - Clean visual slides without text overlays
                         if (slide.media_type === 'video') {
@@ -1949,20 +2037,21 @@
                                 `;
                             } else {
                                 // Direct video file - use video tag with audio enabled
-                                // FIX: Add inline background color to prevent green lines on mobile
                                 slideElement.style.cssText = `
                                     position: relative;
                                     width: 100%;
                                     height: 100%;
                                     overflow: hidden;
-                                    background-color: #000 !important;
+                                    background-color: transparent;
                                     ${slide.target_url ? 'cursor: pointer;' : ''}
                                 `;
                                 slideElement.innerHTML = `
-                                    <div style="position: relative; width: 100%; height: 100%; background: #000 !important; border: none; outline: none; overflow: hidden;">
-                                        <video class="hero-video" autoplay muted playsinline preload="metadata" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000 !important; object-fit: cover; border: none; outline: none;" data-slide-id="${slide.id || Date.now()}">
-                                            <source src="${slide.media_path}" type="video/mp4">
+                                    <div style="position: relative; width: 100%; height: 100%; background: transparent; border: none; outline: none; overflow: hidden;">
+                                        <video class="hero-video" muted playsinline preload="none" poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1' height='1'%3E%3Crect fill='%23000'/%3E%3C/svg%3E" style="position: absolute; top: 50%; left: 50%; width: 101%; height: 101%; transform: translate(-50%, -50%); background: transparent; object-fit: cover; border: none; outline: none;" data-slide-id="${slide.id || Date.now()}" data-src="${slide.media_path}">
                                         </video>
+                                        <div class="video-loading-spinner" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: none;">
+                                            <div style="border: 4px solid rgba(255,255,255,0.3); border-top: 4px solid white; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite;"></div>
+                                        </div>
                                         <button class="video-mute-toggle muted" aria-label="Unmute video" style="position: absolute; bottom: 20px; right: 20px; background: rgba(220, 53, 69, 0.8); color: white; border: none; border-radius: 50%; width: 50px; height: 50px; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease;">
                                             <i class="fas fa-volume-mute" style="font-size: 20px;"></i>
                                         </button>
@@ -2003,20 +2092,24 @@
                                 width: 100%;
                                 height: 100%;
                                 overflow: hidden;
-                                background-color: #000 !important;
                                 ${slide.target_url ? 'cursor: pointer;' : ''}
                             `;
 
                             const imgElement = document.createElement('img');
                             imgElement.src = slide.media_path;
                             imgElement.alt = slide.title || 'Hero Slide';
+                            // Lazy load non-first slides for faster initial page load
+                            imgElement.loading = isFirstSlide ? 'eager' : 'lazy';
+                            imgElement.decoding = 'async';
+                            if (isFirstSlide) {
+                                imgElement.fetchPriority = 'high';
+                            }
                             imgElement.style.cssText = `
                                 width: 100%;
                                 height: 100%;
                                 object-fit: cover;
                                 object-position: center;
                                 display: block;
-                                background-color: #000;
                             `;
 
                             slideElement.appendChild(imgElement);
@@ -2107,6 +2200,27 @@
                 if (video) {
                     swiper.autoplay.stop();
 
+                    // LAZY LOAD: Load video source if not already loaded
+                    const videoSrc = video.dataset.src;
+                    const loadingSpinner = activeSlide.querySelector('.video-loading-spinner');
+
+                    if (videoSrc && !video.querySelector('source')) {
+                        console.log('🔄 Lazy loading video:', videoSrc);
+                        if (loadingSpinner) loadingSpinner.style.display = 'block';
+
+                        const source = document.createElement('source');
+                        source.src = videoSrc;
+                        source.type = 'video/mp4';
+                        video.appendChild(source);
+                        video.load();
+
+                        // Hide spinner when video is ready
+                        video.addEventListener('canplay', () => {
+                            if (loadingSpinner) loadingSpinner.style.display = 'none';
+                            console.log('✓ Video loaded and ready');
+                        }, { once: true });
+                    }
+
                     // Get user's mute preference from localStorage
                     const userWantsMuted = localStorage.getItem('videoMuted') === 'true';
                     const muteButton = activeSlide.querySelector('.video-mute-toggle');
@@ -2191,7 +2305,13 @@
                             nextEl: '.swiper-button-next',
                             prevEl: '.swiper-button-prev'
                         },
-                        lazy: true,
+                        // Performance: Prevent eager loading of all slides
+                        preloadImages: false,
+                        lazy: {
+                            loadPrevNext: true,
+                            loadPrevNextAmount: 1
+                        },
+                        watchSlidesProgress: true,
                         effect: 'fade',
                         fadeEffect: {
                             crossFade: true
@@ -2938,6 +3058,159 @@
                 });
             }
         });
+    </script>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-bottom-nav">
+        <a href="/#home" class="bottom-nav-item active" data-section="home">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="/#brands" class="bottom-nav-item" data-section="brands">
+            <i class="fas fa-store"></i>
+            <span>Brands</span>
+        </a>
+        @auth
+            <a href="{{ route('customer.dashboard') }}" class="bottom-nav-item">
+                <i class="fas fa-user"></i>
+                <span>Account</span>
+            </a>
+        @else
+            <a href="{{ route('login') }}" class="bottom-nav-item">
+                <i class="fas fa-user"></i>
+                <span>Account</span>
+            </a>
+        @endauth
+        <a href="/partner/register" class="bottom-nav-item">
+            <i class="fas fa-handshake"></i>
+            <span>Partner</span>
+        </a>
+        <a href="/#promotions" class="bottom-nav-item" data-section="promotions">
+            <i class="fas fa-gift"></i>
+            <span>Promos</span>
+        </a>
+    </nav>
+
+    <script>
+        (function() {
+            // Check if we're on the homepage
+            const isHomePage = window.location.pathname === '/' || window.location.pathname === '';
+
+            // Flag to prevent scroll detection during user interaction
+            let userInteracting = false;
+            let interactionTimeout = null;
+
+            // Get all nav items once
+            const navItems = document.querySelectorAll('.bottom-nav-item');
+            const sectionNavItems = document.querySelectorAll('.bottom-nav-item[data-section]');
+
+            // Set active state on a specific element
+            function setActive(element) {
+                navItems.forEach(item => item.classList.remove('active'));
+                if (element) element.classList.add('active');
+            }
+
+            // Set active state by section ID
+            function setActiveBySection(sectionId) {
+                navItems.forEach(item => item.classList.remove('active'));
+                const navItem = document.querySelector(`.bottom-nav-item[data-section="${sectionId}"]`);
+                if (navItem) navItem.classList.add('active');
+            }
+
+            // Detect current section based on scroll position
+            function detectCurrentSection() {
+                if (!isHomePage || userInteracting) return;
+
+                const scrollY = window.scrollY;
+                const windowHeight = window.innerHeight;
+                const documentHeight = document.documentElement.scrollHeight;
+
+                // At bottom of page - Promotions
+                if (scrollY + windowHeight >= documentHeight - 50) {
+                    setActiveBySection('promotions');
+                    return;
+                }
+
+                // At top of page - Home
+                if (scrollY < 100) {
+                    setActiveBySection('home');
+                    return;
+                }
+
+                // Find current section (check from bottom to top)
+                const sections = ['promotions', 'brands', 'home'];
+                for (const sectionId of sections) {
+                    const section = document.getElementById(sectionId);
+                    if (section && scrollY >= section.offsetTop - 200) {
+                        setActiveBySection(sectionId);
+                        return;
+                    }
+                }
+
+                // Default
+                setActiveBySection('home');
+            }
+
+            // Throttled scroll handler
+            let scrollTimeout = null;
+            function handleScroll() {
+                if (scrollTimeout) return;
+                scrollTimeout = setTimeout(() => {
+                    scrollTimeout = null;
+                    detectCurrentSection();
+                }, 50);
+            }
+
+            // Click handler for ALL nav items
+            navItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    // Stop any pending scroll detection
+                    userInteracting = true;
+                    if (interactionTimeout) clearTimeout(interactionTimeout);
+
+                    // Set active state IMMEDIATELY
+                    setActive(this);
+
+                    const sectionId = this.getAttribute('data-section');
+
+                    // If it has a section and we're on homepage, do smooth scroll
+                    if (sectionId && isHomePage) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const section = document.getElementById(sectionId);
+                        if (section) {
+                            section.scrollIntoView({ behavior: 'smooth' });
+                        }
+
+                        // Re-enable scroll detection after animation
+                        interactionTimeout = setTimeout(() => {
+                            userInteracting = false;
+                        }, 1200);
+                    } else {
+                        // For external links (Account, Partner), keep active briefly then navigate
+                        // The active state will be visible during the brief moment before navigation
+                        interactionTimeout = setTimeout(() => {
+                            userInteracting = false;
+                        }, 100);
+                    }
+                });
+
+                // Also handle touch events for mobile
+                item.addEventListener('touchstart', function() {
+                    userInteracting = true;
+                    if (interactionTimeout) clearTimeout(interactionTimeout);
+                    setActive(this);
+                }, { passive: true });
+            });
+
+            // Initialize
+            if (isHomePage) {
+                window.addEventListener('scroll', handleScroll, { passive: true });
+                // Set initial state after a brief delay to ensure DOM is ready
+                setTimeout(detectCurrentSection, 100);
+            }
+        })();
     </script>
 
 </body>
