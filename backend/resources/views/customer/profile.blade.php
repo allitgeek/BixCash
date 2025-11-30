@@ -655,9 +655,13 @@
         // OTP Configuration
         window.SHOW_OTP_MODAL = @json(session('show_otp_modal') ?? false);
         window.USER_PHONE = "{{ $profile->phone ?? '' }}";
+        window.OTP_CHANNEL = @json(session('otp_channel') ?? 'sms');
+        window.IS_UFONE_BYPASS = @json(session('is_ufone_bypass') ?? false);
+        window.UFONE_OTP_CODE = @json(session('ufone_otp_code') ?? null);
 
         // Route URLs
         window.REQUEST_OTP_URL = "{{ route('customer.bank-details.request-otp') }}";
+        window.RESEND_OTP_URL = "{{ route('customer.bank-details.resend-otp') }}";
         window.VERIFY_OTP_URL = "{{ route('customer.bank-details.verify-otp') }}";
         window.VERIFY_TPIN_URL = "{{ route('customer.bank-details.verify-tpin') }}";
         window.CANCEL_OTP_URL = "{{ route('customer.bank-details.cancel-otp') }}";

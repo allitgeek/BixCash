@@ -263,15 +263,16 @@ class FirebaseOtpService
      */
     protected function checkRateLimit(string $phone): array
     {
-        // Check resend delay - only for unverified OTPs
+        // Check resend delay - only for recent unverified OTPs (last 10 minutes)
         $lastUnverifiedOtp = OtpVerification::where('phone', $phone)
             ->where('is_verified', false)
+            ->where('created_at', '>=', Carbon::now()->subMinutes(10))
             ->latest()
             ->first();
 
         if ($lastUnverifiedOtp) {
             $resendDelaySeconds = config('firebase.otp.resend_delay_seconds', 60);
-            $secondsSinceLastOtp = Carbon::now()->diffInSeconds($lastUnverifiedOtp->created_at);
+            $secondsSinceLastOtp = (int) abs(Carbon::now()->diffInSeconds($lastUnverifiedOtp->created_at));
 
             if ($secondsSinceLastOtp < $resendDelaySeconds) {
                 $waitSeconds = $resendDelaySeconds - $secondsSinceLastOtp;

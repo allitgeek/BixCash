@@ -933,36 +933,13 @@
 
             async sendFirebaseOTP() {
                 try {
-                    // Check if this is Ufone - use backend OTP bypass
-                    if (this.isUfoneNumber(this.userPhone)) {
-                        console.log('Ufone number detected, using backend OTP');
-                        return await this.sendBackendOTP();
-                    }
-
-                    // Otherwise use Firebase (Jazz/Telenor)
-                    // Send SMS via Firebase
-                    this.confirmationResult = await auth.signInWithPhoneNumber(this.userPhone, this.recaptchaVerifier);
-
-                    // SMS sent successfully
-                    console.log('Firebase SMS sent successfully');
-                    this.showSuccess('OTP sent to your mobile number');
-                    this.showStep('otp');
-                    this.startOtpTimer();
+                    // UPDATED: Always use backend OTP
+                    // Backend handles cascading: WhatsApp → Firebase → Ufone bypass
+                    console.log('Sending OTP via backend (WhatsApp/Firebase/Ufone cascade)');
+                    return await this.sendBackendOTP();
                 } catch (error) {
-                    console.error('Firebase SMS error:', error);
-
-                    // Handle specific Firebase errors
-                    let errorMessage = 'Failed to send OTP. Please try again.';
-
-                    if (error.code === 'auth/invalid-phone-number') {
-                        errorMessage = 'Invalid phone number format';
-                    } else if (error.code === 'auth/too-many-requests') {
-                        errorMessage = 'Too many requests. Please try again later.';
-                    } else if (error.code === 'auth/quota-exceeded') {
-                        errorMessage = 'SMS quota exceeded. Please contact support.';
-                    }
-
-                    this.showError(errorMessage);
+                    console.error('OTP send error:', error);
+                    this.showError(error.message || 'Failed to send OTP. Please try again.');
                     throw error;
                 }
             }
@@ -978,13 +955,29 @@
                         purpose: purpose
                     });
 
+                    // DEBUG: Log the full API response
+                    console.log('=== OTP API RESPONSE ===');
+                    console.log('Full response:', JSON.stringify(response, null, 2));
+                    console.log('channel:', response.channel);
+                    console.log('is_ufone_bypass:', response.is_ufone_bypass);
+                    console.log('otp_code:', response.otp_code);
+                    console.log('========================');
+
                     if (response.success) {
-                        // Check if this is Ufone bypass with OTP code
-                        if (response.is_ufone_bypass && response.otp_code) {
+                        // Handle different OTP channels
+                        if (response.channel === 'whatsapp') {
+                            console.log('DEBUG: Taking WhatsApp branch');
+                            // Show visible notification for WhatsApp OTP
+                            alert('OTP has been sent to your WhatsApp. Please check your messages.');
+                        } else if (response.channel !== 'whatsapp' && response.is_ufone_bypass && response.otp_code) {
+                            console.log('DEBUG: Taking Ufone bypass branch');
+                            // Ufone bypass - show OTP code directly (only when NOT WhatsApp)
                             alert(`Your OTP is: ${response.otp_code}\n\nPlease enter this code to continue.`);
                             this.autoFillOtp(response.otp_code);
                         } else {
-                            this.showSuccess(response.message);
+                            console.log('DEBUG: Taking default/Firebase branch');
+                            // Firebase or default message
+                            this.showSuccess(response.message || 'OTP sent to your mobile');
                         }
 
                         // Set flag to use backend verification

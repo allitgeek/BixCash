@@ -12,6 +12,7 @@ use App\Models\Promotion;
 use App\Models\PurchaseHistory;
 use App\Models\Wallet;
 use App\Models\WithdrawalRequest;
+use App\Services\OtpManagerService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -123,7 +124,7 @@ class DashboardController extends Controller
             $expiresAt = session('otp_modal_expires_at');
             if (now()->timestamp > $expiresAt) {
                 // Session expired, clear it
-                session()->forget(['pending_bank_data', 'show_otp_modal', 'otp_modal_expires_at']);
+                session()->forget(['pending_bank_data', 'show_otp_modal', 'otp_modal_expires_at', 'otp_channel', 'is_ufone_bypass', 'ufone_otp_code']);
                 Log::info('OTP modal session expired and cleared', ['user_id' => $user->id]);
             }
         }
@@ -188,17 +189,47 @@ class DashboardController extends Controller
     {
         // Validation is handled by BankDetailsRequest
         $validated = $request->validated();
+        $user = Auth::user();
 
-        // Store pending bank details in session for Firebase verification
+        // Send OTP via OtpManagerService (cascading: WhatsApp → Firebase → Ufone)
+        $otpService = app(OtpManagerService::class);
+        $otpResult = $otpService->sendOtp(
+            $user->phone,
+            'bank_details',
+            $request->ip(),
+            $request->userAgent()
+        );
+
+        if (!$otpResult['success']) {
+            Log::warning('Bank details OTP send failed', [
+                'user_id' => $user->id,
+                'error' => $otpResult['message'] ?? 'Unknown error',
+            ]);
+
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $otpResult['message'] ?? 'Failed to send OTP',
+                ], 400);
+            }
+
+            return redirect()->back()->with('error', $otpResult['message'] ?? 'Failed to send OTP');
+        }
+
+        // Store pending bank details in session
         session([
             'pending_bank_data' => $validated,
             'show_otp_modal' => true,
-            'otp_modal_expires_at' => now()->addMinutes(10)->timestamp, // Auto-expire after 10 minutes
+            'otp_modal_expires_at' => now()->addMinutes(10)->timestamp,
+            'otp_channel' => $otpResult['channel'] ?? 'firebase',
+            'is_ufone_bypass' => $otpResult['is_ufone_bypass'] ?? false,
+            'ufone_otp_code' => $otpResult['otp_code'] ?? null,
         ]);
 
         Log::info('Bank details OTP requested', [
-            'user_id' => Auth::id(),
+            'user_id' => $user->id,
             'bank_name' => $validated['bank_name'],
+            'channel' => $otpResult['channel'] ?? 'firebase',
             'ip' => $request->ip(),
         ]);
 
@@ -206,7 +237,10 @@ class DashboardController extends Controller
         if ($request->wantsJson() || $request->ajax()) {
             return response()->json([
                 'success' => true,
-                'message' => 'Bank details stored in session.',
+                'message' => $otpResult['message'] ?? 'OTP sent successfully',
+                'channel' => $otpResult['channel'] ?? 'firebase',
+                'is_ufone_bypass' => $otpResult['is_ufone_bypass'] ?? false,
+                'otp_code' => $otpResult['otp_code'] ?? null,
             ]);
         }
 
@@ -215,18 +249,41 @@ class DashboardController extends Controller
 
     public function verifyBankDetailsOtp(Request $request)
     {
-        // Firebase verification is handled on the frontend
-        // This method is called after successful Firebase phone auth
         $user = Auth::user();
+
+        // Validate OTP code
+        $request->validate([
+            'verification_code' => 'required|string|min:6|max:6',
+        ]);
 
         // Get pending bank data from session
         $pendingBankData = session('pending_bank_data');
-        if (! $pendingBankData) {
+        if (!$pendingBankData) {
             Log::warning('Bank details verification failed - session expired', ['user_id' => $user->id]);
 
             return response()->json([
                 'success' => false,
                 'message' => 'Session expired. Please try again.',
+            ], 400);
+        }
+
+        // Verify OTP via OtpManagerService
+        $otpService = app(OtpManagerService::class);
+        $verifyResult = $otpService->verifyOtp(
+            $user->phone,
+            $request->verification_code,
+            'bank_details'
+        );
+
+        if (!$verifyResult['success']) {
+            Log::warning('Bank details OTP verification failed', [
+                'user_id' => $user->id,
+                'error' => $verifyResult['message'] ?? 'Invalid OTP',
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => $verifyResult['message'] ?? 'Invalid verification code',
             ], 400);
         }
 
@@ -272,7 +329,7 @@ class DashboardController extends Controller
             DB::commit();
 
             // Clear session
-            session()->forget(['pending_bank_data', 'show_otp_modal', 'otp_modal_expires_at']);
+            session()->forget(['pending_bank_data', 'show_otp_modal', 'otp_modal_expires_at', 'otp_channel', 'is_ufone_bypass', 'ufone_otp_code']);
 
             Log::info('Bank details updated successfully', [
                 'user_id' => $user->id,
@@ -299,6 +356,58 @@ class DashboardController extends Controller
                 'message' => 'An error occurred while updating bank details. Please try again.',
             ], 500);
         }
+    }
+
+    public function resendBankDetailsOtp(Request $request)
+    {
+        $user = Auth::user();
+
+        // Check if there's pending bank data in session
+        $pendingBankData = session('pending_bank_data');
+        if (!$pendingBankData) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Session expired. Please start over.',
+            ], 400);
+        }
+
+        // Resend OTP via OtpManagerService
+        $otpService = app(OtpManagerService::class);
+        $otpResult = $otpService->sendOtp(
+            $user->phone,
+            'bank_details',
+            $request->ip(),
+            $request->userAgent()
+        );
+
+        if (!$otpResult['success']) {
+            Log::warning('Bank details OTP resend failed', [
+                'user_id' => $user->id,
+                'error' => $otpResult['message'] ?? 'Unknown error',
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => $otpResult['message'] ?? 'Failed to resend OTP',
+            ], 400);
+        }
+
+        // Refresh session expiry
+        session(['otp_modal_expires_at' => now()->addMinutes(10)->timestamp]);
+
+        Log::info('Bank details OTP resent', [
+            'user_id' => $user->id,
+            'channel' => $otpResult['channel'] ?? 'firebase',
+            'ip' => $request->ip(),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => $otpResult['message'] ?? 'OTP resent successfully',
+            'channel' => $otpResult['channel'] ?? 'firebase',
+            'is_ufone_bypass' => $otpResult['is_ufone_bypass'] ?? false,
+            'otp_code' => $otpResult['otp_code'] ?? null,
+        ]);
     }
 
     public function verifyBankDetailsTpin(Request $request)
@@ -414,7 +523,7 @@ class DashboardController extends Controller
             DB::commit();
 
             // Clear session
-            session()->forget(['pending_bank_data', 'show_otp_modal', 'otp_modal_expires_at']);
+            session()->forget(['pending_bank_data', 'show_otp_modal', 'otp_modal_expires_at', 'otp_channel', 'is_ufone_bypass', 'ufone_otp_code']);
 
             Log::info('Bank details updated successfully via TPIN', [
                 'user_id' => $user->id,
@@ -446,7 +555,7 @@ class DashboardController extends Controller
     public function cancelBankDetailsOtp()
     {
         // Clear session
-        session()->forget(['pending_bank_data', 'show_otp_modal', 'otp_modal_expires_at']);
+        session()->forget(['pending_bank_data', 'show_otp_modal', 'otp_modal_expires_at', 'otp_channel', 'is_ufone_bypass', 'ufone_otp_code']);
 
         return redirect()->route('customer.profile');
     }

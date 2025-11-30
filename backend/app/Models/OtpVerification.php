@@ -11,6 +11,8 @@ class OtpVerification extends Model
         'phone',
         'otp_code',
         'purpose',
+        'channel',
+        'reference_id',
         'is_verified',
         'verified_at',
         'expires_at',
@@ -82,6 +84,14 @@ class OtpVerification extends Model
     {
         return $query->where('phone', $phone)
             ->where('purpose', $purpose);
+    }
+
+    /**
+     * Scope to filter by channel (firebase or whatsapp)
+     */
+    public function scopeForChannel($query, string $channel)
+    {
+        return $query->where('channel', $channel);
     }
 
     /**

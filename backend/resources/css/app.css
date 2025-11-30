@@ -306,6 +306,25 @@ html {
     color: var(--bix-black);
 }
 
+/* Desktop header size reduction (~10%) */
+@media (min-width: 1024px) {
+    body {
+        padding-top: 100px; /* Reduced from 120px to match smaller header */
+    }
+    .main-header {
+        padding: 1.2rem 1.8rem;
+    }
+    .main-header .logo img {
+        height: 54px;
+    }
+    .main-header nav ul {
+        gap: 1.2rem;
+    }
+    .main-header nav a {
+        font-size: 1.05rem;
+    }
+}
+
 /* Hero Slider Styles */
 .hero-slider {
     width: 100%;

@@ -739,7 +739,11 @@
         // Configuration Variables
         window.SHOW_OTP_MODAL = @json(session('show_otp_modal') ?? false);
         window.USER_PHONE = "{{ Auth::user()->phone }}";
+        window.OTP_CHANNEL = @json(session('otp_channel') ?? 'sms');
+        window.IS_UFONE_BYPASS = @json(session('is_ufone_bypass') ?? false);
+        window.UFONE_OTP_CODE = @json(session('ufone_otp_code') ?? null);
         window.REQUEST_OTP_URL = "{{ route('partner.bank-details.request-otp') }}";
+        window.RESEND_OTP_URL = "{{ route('partner.bank-details.resend-otp') }}";
         window.VERIFY_OTP_URL = "{{ route('partner.bank-details.verify-otp') }}";
         window.VERIFY_TPIN_URL = "{{ route('partner.bank-details.verify-tpin') }}";
         window.CANCEL_OTP_URL = "{{ route('partner.bank-details.cancel-otp') }}";
@@ -747,7 +751,6 @@
 
         // State Variables
         let selectedAuthMethod = window.DEFAULT_AUTH_METHOD;
-        let confirmationResult = null;
         let otpTimerInterval = null;
 
         // CSRF Token
@@ -953,25 +956,8 @@
         }
     </script>
 
-    {{-- Firebase SDK (for OTP verification) --}}
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-
+    {{-- OTP Modal Functions (using backend OTP service) --}}
     <script>
-        // Firebase Config
-        const firebaseConfig = {
-            apiKey: "{{ config('firebase.web.api_key') }}",
-            authDomain: "{{ config('firebase.web.auth_domain') }}",
-            projectId: "{{ config('firebase.web.project_id') }}",
-            storageBucket: "{{ config('firebase.web.storage_bucket') }}",
-            messagingSenderId: "{{ config('firebase.web.messaging_sender_id') }}",
-            appId: "{{ config('firebase.web.app_id') }}"
-        };
-
-        // Initialize Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-
         // ============================================
         // OTP MODAL FUNCTIONS
         // ============================================
@@ -990,16 +976,26 @@
             document.getElementById('verifyBtn').disabled = true;
             hideOtpError();
 
-            // Initialize Firebase and send OTP
-            initializeRecaptchaAndSendOtp(window.USER_PHONE);
+            // OTP was already sent by backend when form was submitted
+            // Handle different channels
+            if (window.IS_UFONE_BYPASS && window.UFONE_OTP_CODE) {
+                alert(`Your OTP is: ${window.UFONE_OTP_CODE}\n\nPlease enter this code to continue.`);
+                document.getElementById('otpCode').value = window.UFONE_OTP_CODE;
+                document.getElementById('verifyBtn').disabled = false;
+            } else if (window.OTP_CHANNEL === 'whatsapp') {
+                showNotification('Verification code sent to your WhatsApp', 'success');
+            } else {
+                showNotification('Verification code sent to ' + window.USER_PHONE, 'success');
+            }
+
+            // Start countdown timer
+            startOtpTimer();
+
+            // Focus on OTP input
+            setTimeout(() => document.getElementById('otpCode').focus(), 300);
         }
 
         function closeOtpModal() {
-            if (window.recaptchaVerifier) {
-                window.recaptchaVerifier.clear();
-                window.recaptchaVerifier = null;
-            }
-
             if (otpTimerInterval) {
                 clearInterval(otpTimerInterval);
                 otpTimerInterval = null;
@@ -1007,46 +1003,6 @@
 
             // Redirect to cancel URL to clear session
             window.location.href = window.CANCEL_OTP_URL;
-        }
-
-        function initializeRecaptchaAndSendOtp(phoneNumber) {
-            // Setup reCAPTCHA verifier (invisible)
-            window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-                'size': 'invisible',
-                'callback': function(response) {
-                    console.log('reCAPTCHA solved');
-                },
-                'error-callback': function(error) {
-                    console.error('reCAPTCHA error:', error);
-                    showOtpError('reCAPTCHA verification failed. Please try again.');
-                }
-            });
-
-            // Send OTP
-            auth.signInWithPhoneNumber(phoneNumber, window.recaptchaVerifier)
-                .then(function(result) {
-                    confirmationResult = result;
-                    console.log('OTP sent successfully');
-                    startOtpTimer();
-                })
-                .catch(function(error) {
-                    console.error('Error sending OTP:', error);
-                    let errorMessage = 'Failed to send OTP. ';
-
-                    if (error.code === 'auth/invalid-phone-number') {
-                        errorMessage += 'Invalid phone number.';
-                    } else if (error.code === 'auth/too-many-requests') {
-                        errorMessage += 'Too many requests. Please try again later.';
-                    } else {
-                        errorMessage += error.message;
-                    }
-
-                    showOtpError(errorMessage);
-
-                    if (window.recaptchaVerifier) {
-                        window.recaptchaVerifier.clear();
-                    }
-                });
         }
 
         function startOtpTimer() {
@@ -1082,14 +1038,7 @@
             verifyBtn.textContent = 'Verifying...';
 
             try {
-                // Verify OTP with Firebase
-                const result = await confirmationResult.confirm(otpCode);
-                console.log('Firebase verification successful:', result);
-
-                // Get Firebase ID token
-                const idToken = await result.user.getIdToken();
-
-                // Send to backend for verification and bank details update
+                // Verify OTP via backend
                 const response = await fetch(window.VERIFY_OTP_URL, {
                     method: 'POST',
                     headers: {
@@ -1097,15 +1046,15 @@
                         'X-CSRF-TOKEN': csrfToken
                     },
                     body: JSON.stringify({
-                        firebase_token: idToken
+                        verification_code: otpCode
                     })
                 });
 
                 const data = await response.json();
 
                 if (data.success) {
-                    alert('✓ ' + data.message);
-                    window.location.reload();
+                    showNotification('✓ ' + data.message, 'success');
+                    setTimeout(() => window.location.reload(), 1500);
                 } else {
                     showOtpError(data.message || 'Verification failed');
                     verifyBtn.disabled = false;
@@ -1114,32 +1063,16 @@
 
             } catch (error) {
                 console.error('OTP verification error:', error);
-
-                let errorMessage = 'Invalid code. Please try again.';
-
-                if (error.code === 'auth/invalid-verification-code') {
-                    errorMessage = 'Invalid verification code';
-                } else if (error.code === 'auth/code-expired') {
-                    errorMessage = 'Code expired. Please request a new one.';
-                } else if (error.message) {
-                    errorMessage = error.message;
-                }
-
-                showOtpError(errorMessage);
+                showOtpError('Failed to verify code. Please try again.');
                 verifyBtn.disabled = false;
                 verifyBtn.textContent = 'Verify Code';
             }
         }
 
-        function resendOtp() {
+        async function resendOtp() {
             const resendBtn = document.getElementById('resendBtn');
             resendBtn.disabled = true;
-
-            // Clear previous reCAPTCHA
-            if (window.recaptchaVerifier) {
-                window.recaptchaVerifier.clear();
-                window.recaptchaVerifier = null;
-            }
+            resendBtn.textContent = 'Sending...';
 
             // Reset timer
             if (otpTimerInterval) {
@@ -1152,8 +1085,44 @@
             document.getElementById('verifyBtn').disabled = true;
             hideOtpError();
 
-            // Send new OTP
-            initializeRecaptchaAndSendOtp(window.USER_PHONE);
+            try {
+                // Resend OTP via backend
+                const response = await fetch(window.RESEND_OTP_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({ resend: true })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Handle different channels
+                    if (data.is_ufone_bypass && data.otp_code) {
+                        alert(`Your OTP is: ${data.otp_code}\n\nPlease enter this code to continue.`);
+                        document.getElementById('otpCode').value = data.otp_code;
+                        document.getElementById('verifyBtn').disabled = false;
+                    } else if (data.channel === 'whatsapp') {
+                        showNotification('OTP resent to your WhatsApp', 'success');
+                    } else {
+                        showNotification(data.message || 'OTP resent successfully', 'success');
+                    }
+                    // Restart timer
+                    startOtpTimer();
+                } else {
+                    showOtpError(data.message || 'Failed to resend OTP');
+                    resendBtn.disabled = false;
+                }
+            } catch (error) {
+                console.error('Error resending OTP:', error);
+                showOtpError('Failed to resend OTP. Please try again.');
+                resendBtn.disabled = false;
+            }
+
+            resendBtn.textContent = 'Resend Code';
         }
 
         function showOtpError(message) {
@@ -1165,6 +1134,25 @@
 
         function hideOtpError() {
             document.getElementById('otpError').classList.add('hidden');
+        }
+
+        function showNotification(message, type = 'success') {
+            const bgColor = type === 'success' ? 'bg-green-500' : 'bg-red-500';
+            const notification = document.createElement('div');
+            notification.className = `fixed top-5 right-5 ${bgColor} text-white px-6 py-4 rounded-xl shadow-2xl z-[2000] flex items-center gap-3`;
+            notification.innerHTML = `
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                </svg>
+                ${message}
+            `;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.transition = 'opacity 0.3s ease';
+                notification.style.opacity = '0';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
         }
     </script>
 

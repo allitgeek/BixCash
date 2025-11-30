@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\WithdrawalSettingsController;
 use App\Http\Controllers\Admin\CommissionController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\PermissionController;
+use App\Http\Controllers\Admin\WhatsAppSettingsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -143,6 +144,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
             // Withdrawal Settings
             Route::get('/withdrawals', [WithdrawalSettingsController::class, 'index'])->name('withdrawals');
             Route::post('/withdrawals', [WithdrawalSettingsController::class, 'update'])->name('withdrawals.update');
+
+            // WhatsApp OTP Settings
+            Route::get('/whatsapp', [WhatsAppSettingsController::class, 'index'])->name('whatsapp');
+            Route::post('/whatsapp', [WhatsAppSettingsController::class, 'save'])->name('whatsapp.save');
+            Route::post('/whatsapp/test', [WhatsAppSettingsController::class, 'testConnection'])->name('whatsapp.test');
         });
 
         // Withdrawal Management (Super Admin & Admin)

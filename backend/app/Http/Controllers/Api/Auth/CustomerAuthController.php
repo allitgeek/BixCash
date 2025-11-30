@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Role;
 use App\Models\CustomerProfile;
-use App\Services\FirebaseOtpService;
+use App\Services\OtpManagerService;
 use App\Services\SecurityLogService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -15,9 +15,9 @@ use Illuminate\Validation\ValidationException;
 
 class CustomerAuthController extends Controller
 {
-    protected $otpService;
+    protected OtpManagerService $otpService;
 
-    public function __construct(FirebaseOtpService $otpService)
+    public function __construct(OtpManagerService $otpService)
     {
         $this->otpService = $otpService;
     }
@@ -107,7 +107,8 @@ class CustomerAuthController extends Controller
                 'message' => $result['message'],
                 'expires_in_minutes' => $result['expires_in_minutes'],
                 'otp_code' => $result['otp_code'] ?? null,
-                'is_ufone_bypass' => $result['is_ufone_bypass'] ?? false
+                'is_ufone_bypass' => $result['is_ufone_bypass'] ?? false,
+                'channel' => $result['channel'] ?? 'firebase'
             ]);
 
         } catch (ValidationException $e) {
@@ -505,7 +506,8 @@ class CustomerAuthController extends Controller
                 'message' => $result['message'],
                 'expires_in_minutes' => $result['expires_in_minutes'],
                 'otp_code' => $result['otp_code'] ?? null,
-                'is_ufone_bypass' => $result['is_ufone_bypass'] ?? false
+                'is_ufone_bypass' => $result['is_ufone_bypass'] ?? false,
+                'channel' => $result['channel'] ?? 'firebase'
             ]);
 
         } catch (ValidationException $e) {

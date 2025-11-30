@@ -63,6 +63,9 @@ Route::prefix('customer')->name('customer.')->middleware(['auth', 'customer.role
     Route::post('/profile/bank-details/request-otp', [CustomerDashboard::class, 'requestBankDetailsOtp'])
         ->name('bank-details.request-otp')
         ->middleware('throttle:3,60'); // 3 attempts per hour
+    Route::post('/profile/bank-details/resend-otp', [CustomerDashboard::class, 'resendBankDetailsOtp'])
+        ->name('bank-details.resend-otp')
+        ->middleware('throttle:5,60'); // 5 resend attempts per hour
     Route::post('/profile/bank-details/verify-otp', [CustomerDashboard::class, 'verifyBankDetailsOtp'])
         ->name('bank-details.verify-otp')
         ->middleware('throttle:5,60'); // 5 verification attempts per hour
@@ -131,6 +134,9 @@ Route::prefix('partner')->name('partner.')->middleware(['auth', 'partner'])->gro
     Route::post('/profile/bank-details/request-otp', [PartnerDashboard::class, 'requestBankDetailsOtp'])
         ->name('bank-details.request-otp')
         ->middleware('throttle:3,60'); // 3 attempts per hour
+    Route::post('/profile/bank-details/resend-otp', [PartnerDashboard::class, 'resendBankDetailsOtp'])
+        ->name('bank-details.resend-otp')
+        ->middleware('throttle:5,60'); // 5 resend attempts per hour
     Route::post('/profile/bank-details/verify-otp', [PartnerDashboard::class, 'verifyBankDetailsOtp'])
         ->name('bank-details.verify-otp')
         ->middleware('throttle:5,60'); // 5 verification attempts per hour

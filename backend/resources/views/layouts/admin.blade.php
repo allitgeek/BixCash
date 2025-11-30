@@ -322,6 +322,10 @@
                                    class="block px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('admin.settings.withdrawals') ? 'bg-white/20 text-white' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
                                     Withdrawal Settings
                                 </a>
+                                <a href="{{ route('admin.settings.whatsapp') }}"
+                                   class="block px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('admin.settings.whatsapp') ? 'bg-white/20 text-white' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
+                                    WhatsApp OTP
+                                </a>
                             </div>
                         </div>
                         @endif
@@ -646,6 +650,11 @@
                                @click="mobileMenuOpen = false"
                                class="block px-3 py-1.5 text-[0.75rem] font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('admin.settings.withdrawals') ? 'bg-white/20 text-white' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
                                 Withdrawal Settings
+                            </a>
+                            <a href="{{ route('admin.settings.whatsapp') }}"
+                               @click="mobileMenuOpen = false"
+                               class="block px-3 py-1.5 text-[0.75rem] font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('admin.settings.whatsapp') ? 'bg-white/20 text-white' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
+                                WhatsApp OTP
                             </a>
                         </div>
                     </div>
