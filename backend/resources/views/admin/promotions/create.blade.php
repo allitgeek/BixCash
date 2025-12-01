@@ -118,7 +118,7 @@
 
                 <!-- Discount Configuration -->
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-12">
                         <div class="form-group">
                             <label class="form-label">Discount Type *</label>
                             <div>
@@ -134,16 +134,24 @@
                                         <span style="background: #e67e22; color: white; padding: 0.25rem 0.5rem; border-radius: 3px; font-size: 0.8rem;">FLAT</span>
                                     </label>
                                 </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="discount_type" id="discount_coming_soon" value="coming_soon" {{ old('discount_type') === 'coming_soon' ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="discount_coming_soon">
+                                        <span style="background: #9b59b6; color: white; padding: 0.25rem 0.5rem; border-radius: 3px; font-size: 0.8rem;">COMING SOON</span>
+                                    </label>
+                                </div>
                             </div>
                             @error('discount_type')
                                 <div class="text-danger small">{{ $message }}</div>
                             @enderror
                         </div>
                     </div>
+                </div>
 
-                    <div class="col-md-4">
+                <div class="row">
+                    <div class="col-md-6" id="discount-value-group">
                         <div class="form-group">
-                            <label for="discount_value" class="form-label">Discount Percentage *</label>
+                            <label for="discount_value" class="form-label">Discount Percentage <span id="discount-value-required">*</span></label>
                             <div class="input-group">
                                 <input type="number"
                                        class="form-control @error('discount_value') is-invalid @enderror"
@@ -152,7 +160,6 @@
                                        value="{{ old('discount_value') }}"
                                        min="1"
                                        max="100"
-                                       required
                                        placeholder="20">
                                 <div class="input-group-append">
                                     <span class="input-group-text">%</span>
@@ -164,19 +171,20 @@
                         </div>
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-6" id="discount-text-group">
                         <div class="form-group">
-                            <label for="discount_text" class="form-label">Custom Discount Text</label>
+                            <label for="discount_text" class="form-label">Custom Display Text <span id="discount-text-required" style="display: none;">*</span></label>
                             <input type="text"
                                    class="form-control @error('discount_text') is-invalid @enderror"
                                    id="discount_text"
                                    name="discount_text"
                                    value="{{ old('discount_text') }}"
+                                   maxlength="40"
                                    placeholder="Leave empty for auto-generation">
                             @error('discount_text')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
-                            <small class="form-text text-muted">Optional. If empty, will auto-generate (e.g., "Upto 20% Off")</small>
+                            <small class="form-text text-muted" id="discount-text-help">Optional. If empty, will auto-generate (e.g., "Upto 20% Off")</small>
                         </div>
                     </div>
                 </div>
@@ -231,16 +239,51 @@ function previewImage(input, previewId) {
     }
 }
 
-// Auto-generate discount text preview
+// Auto-generate discount text preview and handle coming_soon type
 document.addEventListener('DOMContentLoaded', function() {
     const discountTypeInputs = document.querySelectorAll('input[name="discount_type"]');
     const discountValueInput = document.getElementById('discount_value');
     const discountTextInput = document.getElementById('discount_text');
+    const discountValueGroup = document.getElementById('discount-value-group');
+    const discountValueRequired = document.getElementById('discount-value-required');
+    const discountTextRequired = document.getElementById('discount-text-required');
+    const discountTextHelp = document.getElementById('discount-text-help');
+
+    function handleDiscountTypeChange() {
+        const type = document.querySelector('input[name="discount_type"]:checked')?.value;
+
+        if (type === 'coming_soon') {
+            // Hide discount value field for coming_soon
+            discountValueGroup.style.display = 'none';
+            discountValueInput.removeAttribute('required');
+            discountValueRequired.style.display = 'none';
+
+            // Update text field for coming_soon
+            discountTextInput.placeholder = 'e.g., Coming Soon, Coming Soon on 25th Nov';
+            discountTextHelp.textContent = 'Enter custom text to display (max 40 characters). Default: "Coming Soon"';
+            discountTextRequired.style.display = 'none';
+        } else {
+            // Show discount value field for upto/flat
+            discountValueGroup.style.display = 'block';
+            discountValueInput.setAttribute('required', 'required');
+            discountValueRequired.style.display = 'inline';
+
+            // Update text field for upto/flat
+            discountTextInput.placeholder = 'Leave empty for auto-generation';
+            discountTextHelp.textContent = 'Optional. If empty, will auto-generate (e.g., "Upto 20% Off")';
+            discountTextRequired.style.display = 'none';
+
+            // Update placeholder with preview
+            updateDiscountPreview();
+        }
+    }
 
     function updateDiscountPreview() {
+        const type = document.querySelector('input[name="discount_type"]:checked')?.value;
+        if (type === 'coming_soon') return; // Skip for coming_soon
+
         if (discountTextInput.value) return; // Don't override custom text
 
-        const type = document.querySelector('input[name="discount_type"]:checked')?.value;
         const value = discountValueInput.value;
 
         if (type && value) {
@@ -250,12 +293,16 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     discountTypeInputs.forEach(input => {
-        input.addEventListener('change', updateDiscountPreview);
+        input.addEventListener('change', function() {
+            handleDiscountTypeChange();
+            updateDiscountPreview();
+        });
     });
 
     discountValueInput.addEventListener('input', updateDiscountPreview);
 
-    // Initial preview
+    // Initial setup
+    handleDiscountTypeChange();
     updateDiscountPreview();
 });
 </script>

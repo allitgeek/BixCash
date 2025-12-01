@@ -115,6 +115,24 @@
             100% { background-position: 200% 0; }
         }
 
+        /* Bounce animation for Coming Soon promotions */
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-6px);
+            }
+            60% {
+                transform: translateY(-3px);
+            }
+        }
+
+        .discount-text.bounce {
+            display: inline-block;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
         /* Video mute toggle button styles */
         .video-mute-toggle {
             transition: all 0.3s ease;
@@ -348,41 +366,50 @@
             padding: 4px;
         }
 
-        /* Category Carousel Navigation - Clean Design Matching Brands Section */
+        /* Category Carousel Navigation - Aligned with Brand Arrows */
         .category-carousel-wrapper {
             position: relative;
             width: 100%;
-            padding: 0 4rem; /* Add padding for arrow space */
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 4rem; /* Match brands-carousel-container padding */
+            box-sizing: border-box;
+            /* Override Swiper navigation color for this section only */
+            --swiper-navigation-color: #1a365d !important;
+            --swiper-navigation-size: 20px;
         }
 
-        .category-nav-buttons {
-            position: absolute;
-            top: 50%;
-            left: 0;
-            right: 0;
-            z-index: 20;
-            pointer-events: none;
-            transform: translateY(-50%);
+        .category-container {
+            position: relative;
+            width: 100%;
+        }
+
+        /* Override app.css flex/grid styles when Swiper is active */
+        .category-container.swiper {
+            display: block !important;
+            gap: unset !important;
+            padding: 0 !important;
         }
 
         .category-button-prev,
         .category-button-next {
-            color: var(--bix-dark-blue);
-            background: none;
-            width: 40px;
-            height: 40px;
-            margin-top: -20px;
-            z-index: 20;
-            transition: color 0.3s ease;
             position: absolute;
             top: 50%;
-            pointer-events: auto;
+            background: rgba(255, 255, 255, 0.9) !important;
+            border-radius: 50% !important;
+            width: 44px !important;
+            height: 44px !important;
+            margin-top: -22px; /* Center vertically */
+            z-index: 20;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+            transition: all 0.3s ease;
             cursor: pointer;
-        }
-
-        .category-button-prev:hover,
-        .category-button-next:hover {
-            color: var(--bix-light-green);
+            /* Override Swiper's default color */
+            --swiper-navigation-color: #1a365d;
+            color: var(--bix-dark-blue) !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .category-button-prev {
@@ -393,36 +420,52 @@
             right: 10px;
         }
 
+        .category-button-prev:hover,
+        .category-button-next:hover {
+            background: rgba(255, 255, 255, 1) !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+            color: var(--bix-light-green) !important;
+        }
+
+        /* Force arrow color override */
         .category-button-prev:after,
-        .category-button-next:after {
-            font-size: 24px;
+        .category-button-next:after,
+        .category-button-prev::after,
+        .category-button-next::after {
+            color: var(--bix-dark-blue) !important;
+            font-size: 20px !important;
             font-weight: bold;
+        }
+
+        .category-button-prev:hover::after,
+        .category-button-next:hover::after {
+            color: var(--bix-light-green) !important;
         }
 
         /* Responsive adjustments for category navigation */
         @media (max-width: 768px) {
             .category-carousel-wrapper {
-                padding: 0 3rem;
+                padding: 0 2.5rem; /* Reduce padding on mobile */
             }
 
             .category-button-prev,
             .category-button-next {
-                width: 35px;
-                height: 35px;
-                margin-top: -17.5px;
+                width: 36px !important;
+                height: 36px !important;
+                margin-top: -18px;
             }
 
             .category-button-prev {
-                left: -10px;
+                left: 5px;
             }
 
             .category-button-next {
-                right: -10px;
+                right: 5px;
             }
 
             .category-button-prev:after,
             .category-button-next:after {
-                font-size: 20px;
+                font-size: 14px !important;
             }
         }
         /* Promotions Loading Styles */
@@ -1070,17 +1113,17 @@
                 .category-container {
                     display: flex !important;
                     flex-wrap: wrap !important;
-                    justify-content: space-evenly !important;
-                    gap: 0.4rem !important;
-                    padding: 0 !important;
+                    justify-content: center !important;
+                    gap: 0.75rem !important;
+                    padding: 0.5rem !important;
                 }
 
                 .category-item {
-                    width: 110px !important;
-                    height: 130px !important;
-                    padding: 0.8rem !important;
+                    width: 100px !important;
+                    height: 120px !important;
+                    padding: 0.6rem !important;
                     box-sizing: border-box !important;
-                    margin: 0 !important;
+                    margin: 0.25rem !important;
                 }
 
                 /* Mobile-first spacing */
@@ -1435,11 +1478,9 @@
                 <div class="category-container">
                     <!-- Categories will be injected by JavaScript -->
                 </div>
-                <!-- Navigation buttons (hidden by default, shown only when carousel is active) -->
-                <div class="category-nav-buttons" style="display: none;">
-                    <div class="swiper-button-prev category-button-prev"></div>
-                    <div class="swiper-button-next category-button-next"></div>
-                </div>
+                <!-- Navigation buttons OUTSIDE container so they're not cleared by JS -->
+                <div class="swiper-button-prev category-button-prev" style="--swiper-navigation-color: #1a365d; color: #1a365d; display: none;"></div>
+                <div class="swiper-button-next category-button-next" style="--swiper-navigation-color: #1a365d; color: #1a365d; display: none;"></div>
             </div>
         </div>
     </section>
@@ -2486,7 +2527,8 @@
             // Enhanced Categories Population with dynamic carousel/static display
             function populateCategories(categories) {
                 const categoryContainer = document.querySelector('.category-container');
-                const categoryNavButtons = document.querySelector('.category-nav-buttons');
+                const categoryPrevBtn = document.querySelector('.category-button-prev');
+                const categoryNextBtn = document.querySelector('.category-button-next');
 
                 if (!categoryContainer) return;
 
@@ -2510,6 +2552,12 @@
                     // CAROUSEL MODE: Convert to Swiper carousel for 6+ categories
                     console.log(`Categories (${categories.length}): Using carousel mode`);
 
+                    // Reset wrapper padding for carousel mode
+                    const wrapper = document.querySelector('.category-carousel-wrapper');
+                    if (wrapper) {
+                        wrapper.style.padding = ''; // Reset to CSS default
+                    }
+
                     // Set up carousel structure
                     categoryContainer.classList.add('swiper');
                     const swiperWrapper = document.createElement('div');
@@ -2523,37 +2571,53 @@
                     categoryContainer.appendChild(swiperWrapper);
 
                     // Show navigation buttons
-                    if (categoryNavButtons) {
-                        categoryNavButtons.style.display = 'block';
-                    }
+                    if (categoryPrevBtn) categoryPrevBtn.style.display = 'flex';
+                    if (categoryNextBtn) categoryNextBtn.style.display = 'flex';
 
-                    // Initialize Swiper carousel with FIXED width to respect original CSS
+                    // Initialize Swiper carousel - with autoplay like brands
+                    // Use fractional slidesPerView to ensure there's always content to scroll
                     setTimeout(() => {
                         const categoryCarousel = new Swiper(categoryContainer, {
-                            slidesPerView: 'auto', // Let slides maintain their CSS width
-                            spaceBetween: 96, // 6rem gap as per original CSS (96px)
+                            slidesPerView: 4.5, // Show 4.5 slides - partial slide indicates more content
+                            spaceBetween: 32,
                             centeredSlides: false,
-                            loop: categories.length > 5,
+                            loop: true, // Always loop for seamless infinite scroll
+                            loopedSlides: categories.length, // Duplicate all slides for loop
+                            slidesPerGroup: 1, // Scroll one slide at a time
+                            grabCursor: true, // Show grab cursor on hover
+                            autoplay: {
+                                delay: 3000, // 3 seconds between slides
+                                disableOnInteraction: false, // Continue autoplay after user interaction
+                                pauseOnMouseEnter: true // Pause when hovering
+                            },
                             navigation: {
                                 nextEl: '.category-button-next',
                                 prevEl: '.category-button-prev'
                             },
                             breakpoints: {
                                 320: {
-                                    slidesPerView: 'auto',
-                                    spaceBetween: 32 // 2rem for mobile
+                                    slidesPerView: 2.5, // Show 2.5 slides - peek effect
+                                    spaceBetween: 12
+                                },
+                                480: {
+                                    slidesPerView: 3.2, // Show 3.2 slides
+                                    spaceBetween: 16
                                 },
                                 640: {
-                                    slidesPerView: 'auto',
-                                    spaceBetween: 48 // 3rem for tablet
+                                    slidesPerView: 3.8, // Show 3.8 slides
+                                    spaceBetween: 20
                                 },
                                 768: {
-                                    slidesPerView: 'auto',
-                                    spaceBetween: 64 // 4rem for larger tablet
+                                    slidesPerView: 4.5, // Show 4.5 slides
+                                    spaceBetween: 24
                                 },
                                 1024: {
-                                    slidesPerView: 'auto',
-                                    spaceBetween: 96 // 6rem for desktop
+                                    slidesPerView: 5.5, // Show 5.5 slides on desktop
+                                    spaceBetween: 32
+                                },
+                                1200: {
+                                    slidesPerView: 6.5, // Show 6.5 on large screens
+                                    spaceBetween: 32
                                 }
                             },
                             on: {
@@ -2580,8 +2644,8 @@
                         wrapper.style.padding = '0 0.25rem';
                     }
 
-                    const gap = isMobile ? '0.4rem' : '6rem';
-                    categoryContainer.style.cssText = `display: flex; justify-content: ${isMobile ? 'space-evenly' : 'center'}; flex-wrap: wrap; gap: ${gap}; margin-bottom: 3rem;`;
+                    const gap = isMobile ? '0.75rem' : '6rem';
+                    categoryContainer.style.cssText = `display: flex; justify-content: center; flex-wrap: wrap; gap: ${gap}; margin-bottom: 3rem; padding: ${isMobile ? '0.5rem' : '0'};`;
 
                     categories.forEach(category => {
                         const categoryElement = createCategoryElement(category, false); // false = static mode
@@ -2589,9 +2653,8 @@
                     });
 
                     // Hide navigation buttons
-                    if (categoryNavButtons) {
-                        categoryNavButtons.style.display = 'none';
-                    }
+                    if (categoryPrevBtn) categoryPrevBtn.style.display = 'none';
+                    if (categoryNextBtn) categoryNextBtn.style.display = 'none';
                 }
             }
 
@@ -2816,7 +2879,7 @@
                                  onerror="this.src='https://via.placeholder.com/150x80/ffffff/000000?text=${encodeURIComponent(promotion.brand_name)}'">
                         </div>
                         <div class="promotion-discount">
-                            <span class="discount-text">${promotion.discount_text}</span>
+                            <span class="discount-text${promotion.discount_type === 'coming_soon' ? ' bounce' : ''}">${promotion.discount_text}</span>
                         </div>
                     `;
 

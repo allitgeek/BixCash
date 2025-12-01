@@ -61,9 +61,9 @@ class PromotionController extends Controller
             'brand_name' => 'required|string|max:255',
             'logo_file' => 'nullable|image|mimes:png,jpg,jpeg,svg,webp|max:2048',
             'logo_path' => 'nullable|string|max:500',
-            'discount_type' => 'required|in:upto,flat',
-            'discount_value' => 'required|integer|min:1|max:100',
-            'discount_text' => 'nullable|string|max:100',
+            'discount_type' => 'required|in:upto,flat,coming_soon',
+            'discount_value' => 'required_unless:discount_type,coming_soon|nullable|integer|min:1|max:100',
+            'discount_text' => 'nullable|string|max:40',
             'order' => 'required|integer|min:0',
             'is_active' => 'boolean',
         ]);
@@ -77,6 +77,11 @@ class PromotionController extends Controller
         } elseif (!$request->filled('logo_path')) {
             // If neither file nor URL provided, set to null
             $validated['logo_path'] = null;
+        }
+
+        // For coming_soon, set discount_value to null if not provided
+        if ($request->discount_type === 'coming_soon' && empty($validated['discount_value'])) {
+            $validated['discount_value'] = null;
         }
 
         $validated['is_active'] = $request->boolean('is_active');
@@ -117,9 +122,9 @@ class PromotionController extends Controller
             'brand_name' => 'required|string|max:255',
             'logo_file' => 'nullable|image|mimes:png,jpg,jpeg,svg,webp|max:2048',
             'logo_path' => 'nullable|string|max:500',
-            'discount_type' => 'required|in:upto,flat',
-            'discount_value' => 'required|integer|min:1|max:100',
-            'discount_text' => 'nullable|string|max:100',
+            'discount_type' => 'required|in:upto,flat,coming_soon',
+            'discount_value' => 'required_unless:discount_type,coming_soon|nullable|integer|min:1|max:100',
+            'discount_text' => 'nullable|string|max:40',
             'order' => 'required|integer|min:0',
             'is_active' => 'boolean',
         ]);
@@ -133,6 +138,11 @@ class PromotionController extends Controller
         } elseif (!$request->filled('logo_path')) {
             // If neither file nor URL provided, keep current logo
             unset($validated['logo_path']);
+        }
+
+        // For coming_soon, set discount_value to null if not provided
+        if ($request->discount_type === 'coming_soon' && empty($validated['discount_value'])) {
+            $validated['discount_value'] = null;
         }
 
         $validated['is_active'] = $request->boolean('is_active');

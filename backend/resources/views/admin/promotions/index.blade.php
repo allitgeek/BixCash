@@ -61,8 +61,16 @@
                                         </span>
                                     </td>
                                     <td style="padding: 0.75rem;">
-                                        <span style="background: {{ $promotion->discount_type === 'upto' ? '#3498db' : '#e67e22' }}; color: white; padding: 0.25rem 0.5rem; border-radius: 3px; font-size: 0.8rem; text-transform: uppercase;">
-                                            {{ $promotion->discount_type }}
+                                        @php
+                                            $badgeColor = match($promotion->discount_type) {
+                                                'upto' => '#3498db',
+                                                'flat' => '#e67e22',
+                                                'coming_soon' => '#9b59b6',
+                                                default => '#95a5a6'
+                                            };
+                                        @endphp
+                                        <span style="background: {{ $badgeColor }}; color: white; padding: 0.25rem 0.5rem; border-radius: 3px; font-size: 0.8rem; text-transform: uppercase;">
+                                            {{ str_replace('_', ' ', $promotion->discount_type) }}
                                         </span>
                                     </td>
                                     <td style="padding: 0.75rem;">

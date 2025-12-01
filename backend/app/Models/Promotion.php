@@ -38,7 +38,13 @@ class Promotion extends Model
         parent::boot();
 
         static::saving(function ($promotion) {
-            if (empty($promotion->discount_text)) {
+            if ($promotion->discount_type === 'coming_soon') {
+                // For coming_soon, use custom text as-is (default if empty)
+                if (empty($promotion->discount_text)) {
+                    $promotion->discount_text = 'Coming Soon';
+                }
+            } elseif (empty($promotion->discount_text)) {
+                // Existing logic for upto/flat
                 $type = ucfirst($promotion->discount_type);
                 $promotion->discount_text = "{$type} {$promotion->discount_value}% Off";
             }
@@ -112,6 +118,11 @@ class Promotion extends Model
     {
         if ($this->discount_text) {
             return $this->discount_text;
+        }
+
+        // For coming_soon, default to "Coming Soon" if no custom text
+        if ($this->discount_type === 'coming_soon') {
+            return 'Coming Soon';
         }
 
         $type = ucfirst($this->discount_type);

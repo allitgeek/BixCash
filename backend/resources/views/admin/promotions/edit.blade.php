@@ -80,10 +80,18 @@
                             </div>
                         @endif
 
+                        <!-- Keep Current Logo Notice -->
+                        @if($promotion->logo_path)
+                            <div style="background: #d4edda; padding: 0.75rem 1rem; border-radius: 6px; border-left: 4px solid #28a745; margin-bottom: 1rem;">
+                                <strong style="color: #155724;">✓ Current logo will be kept</strong>
+                                <span style="color: #155724; font-size: 0.9rem;"> — Only use the fields below if you want to change the logo</span>
+                            </div>
+                        @endif
+
                         <!-- File Upload -->
                         <div class="row">
                             <div class="col-md-6">
-                                <label for="logo_file" class="form-label">{{ $promotion->logo_path ? 'Replace with New File' : 'Upload Logo File' }}</label>
+                                <label for="logo_file" class="form-label">{{ $promotion->logo_path ? 'Upload New Logo (optional)' : 'Upload Logo File' }}</label>
                                 <input type="file"
                                        class="form-control @error('logo_file') is-invalid @enderror"
                                        id="logo_file"
@@ -93,18 +101,15 @@
                                 @error('logo_file')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-                                @if($promotion->logo_path)
-                                    <small class="form-text text-muted">Leave empty to keep current logo</small>
-                                @endif
                             </div>
 
                             <div class="col-md-6">
-                                <label for="logo_path" class="form-label">{{ $promotion->logo_path ? 'Or Replace with URL' : 'Or Enter Logo URL' }}</label>
+                                <label for="logo_path" class="form-label">{{ $promotion->logo_path ? 'Or Use New URL (optional)' : 'Or Enter Logo URL' }}</label>
                                 <input type="url"
                                        class="form-control @error('logo_path') is-invalid @enderror"
                                        id="logo_path"
                                        name="logo_path"
-                                       value="{{ old('logo_path', $promotion->logo_path) }}"
+                                       value="{{ old('logo_path') }}"
                                        placeholder="https://example.com/logo.png"
                                        onchange="previewImage(this, 'url-preview')">
                                 @error('logo_path')
@@ -113,16 +118,14 @@
                             </div>
                         </div>
 
-                        <!-- Preview Areas -->
+                        <!-- Preview Areas (only shown when new file/URL entered) -->
                         <div class="row" style="margin-top: 1rem;">
                             <div class="col-md-6">
-                                <div id="file-preview" style="text-align: center; min-height: 100px; border: 2px dashed #ddd; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
-                                    <span style="color: #999;">New file preview will appear here</span>
+                                <div id="file-preview" style="text-align: center; min-height: 80px; border: 2px dashed #ddd; border-radius: 6px; display: none; align-items: center; justify-content: center;">
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div id="url-preview" style="text-align: center; min-height: 100px; border: 2px dashed #ddd; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
-                                    <span style="color: #999;">URL preview will appear here</span>
+                                <div id="url-preview" style="text-align: center; min-height: 80px; border: 2px dashed #ddd; border-radius: 6px; display: none; align-items: center; justify-content: center;">
                                 </div>
                             </div>
                         </div>
@@ -131,7 +134,7 @@
 
                 <!-- Discount Configuration -->
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-12">
                         <div class="form-group">
                             <label class="form-label">Discount Type *</label>
                             <div>
@@ -147,16 +150,24 @@
                                         <span style="background: #e67e22; color: white; padding: 0.25rem 0.5rem; border-radius: 3px; font-size: 0.8rem;">FLAT</span>
                                     </label>
                                 </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="discount_type" id="discount_coming_soon" value="coming_soon" {{ old('discount_type', $promotion->discount_type) === 'coming_soon' ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="discount_coming_soon">
+                                        <span style="background: #9b59b6; color: white; padding: 0.25rem 0.5rem; border-radius: 3px; font-size: 0.8rem;">COMING SOON</span>
+                                    </label>
+                                </div>
                             </div>
                             @error('discount_type')
                                 <div class="text-danger small">{{ $message }}</div>
                             @enderror
                         </div>
                     </div>
+                </div>
 
-                    <div class="col-md-4">
+                <div class="row">
+                    <div class="col-md-6" id="discount-value-group">
                         <div class="form-group">
-                            <label for="discount_value" class="form-label">Discount Percentage *</label>
+                            <label for="discount_value" class="form-label">Discount Percentage <span id="discount-value-required">*</span></label>
                             <div class="input-group">
                                 <input type="number"
                                        class="form-control @error('discount_value') is-invalid @enderror"
@@ -165,7 +176,6 @@
                                        value="{{ old('discount_value', $promotion->discount_value) }}"
                                        min="1"
                                        max="100"
-                                       required
                                        placeholder="20">
                                 <div class="input-group-append">
                                     <span class="input-group-text">%</span>
@@ -177,19 +187,20 @@
                         </div>
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-6" id="discount-text-group">
                         <div class="form-group">
-                            <label for="discount_text" class="form-label">Custom Discount Text</label>
+                            <label for="discount_text" class="form-label">Custom Display Text <span id="discount-text-required" style="display: none;">*</span></label>
                             <input type="text"
                                    class="form-control @error('discount_text') is-invalid @enderror"
                                    id="discount_text"
                                    name="discount_text"
                                    value="{{ old('discount_text', $promotion->discount_text) }}"
+                                   maxlength="40"
                                    placeholder="Leave empty for auto-generation">
                             @error('discount_text')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
-                            <small class="form-text text-muted">Optional. If empty, will auto-generate (e.g., "Upto 20% Off")</small>
+                            <small class="form-text text-muted" id="discount-text-help">Optional. If empty, will auto-generate (e.g., "Upto 20% Off")</small>
                         </div>
                     </div>
                 </div>
@@ -272,42 +283,88 @@
 <script>
 function previewImage(input, previewId) {
     const preview = document.getElementById(previewId);
+    const filePreview = document.getElementById('file-preview');
+    const urlPreview = document.getElementById('url-preview');
 
     if (input.type === 'file' && input.files && input.files[0]) {
         const reader = new FileReader();
         reader.onload = function(e) {
             preview.innerHTML = `<img src="${e.target.result}" style="max-width: 100%; max-height: 80px; object-fit: contain;" alt="Preview">`;
+            preview.style.display = 'flex';
         };
         reader.readAsDataURL(input.files[0]);
 
-        // Clear the URL field
+        // Clear the URL field and hide its preview
         document.getElementById('logo_path').value = '';
-        document.getElementById('url-preview').innerHTML = '<span style="color: #999;">URL preview will appear here</span>';
+        urlPreview.innerHTML = '';
+        urlPreview.style.display = 'none';
     } else if (input.type === 'url' && input.value) {
         const img = new Image();
         img.onload = function() {
             preview.innerHTML = `<img src="${input.value}" style="max-width: 100%; max-height: 80px; object-fit: contain;" alt="Preview">`;
+            preview.style.display = 'flex';
         };
         img.onerror = function() {
             preview.innerHTML = '<span style="color: #e74c3c;">Invalid image URL</span>';
+            preview.style.display = 'flex';
         };
         img.src = input.value;
 
-        // Clear the file field
+        // Clear the file field and hide its preview
         document.getElementById('logo_file').value = '';
-        document.getElementById('file-preview').innerHTML = '<span style="color: #999;">New file preview will appear here</span>';
+        filePreview.innerHTML = '';
+        filePreview.style.display = 'none';
+    } else if (input.type === 'url' && !input.value) {
+        // URL field cleared
+        urlPreview.innerHTML = '';
+        urlPreview.style.display = 'none';
     }
 }
 
-// Auto-generate discount text preview
+// Auto-generate discount text preview and handle coming_soon type
 document.addEventListener('DOMContentLoaded', function() {
     const discountTypeInputs = document.querySelectorAll('input[name="discount_type"]');
     const discountValueInput = document.getElementById('discount_value');
     const discountTextInput = document.getElementById('discount_text');
+    const discountValueGroup = document.getElementById('discount-value-group');
+    const discountValueRequired = document.getElementById('discount-value-required');
+    const discountTextRequired = document.getElementById('discount-text-required');
+    const discountTextHelp = document.getElementById('discount-text-help');
+
+    function handleDiscountTypeChange() {
+        const type = document.querySelector('input[name="discount_type"]:checked')?.value;
+
+        if (type === 'coming_soon') {
+            // Hide discount value field for coming_soon
+            discountValueGroup.style.display = 'none';
+            discountValueInput.removeAttribute('required');
+            discountValueRequired.style.display = 'none';
+
+            // Update text field for coming_soon
+            discountTextInput.placeholder = 'e.g., Coming Soon, Coming Soon on 25th Nov';
+            discountTextHelp.textContent = 'Enter custom text to display (max 40 characters). Default: "Coming Soon"';
+            discountTextRequired.style.display = 'none';
+        } else {
+            // Show discount value field for upto/flat
+            discountValueGroup.style.display = 'block';
+            discountValueInput.setAttribute('required', 'required');
+            discountValueRequired.style.display = 'inline';
+
+            // Update text field for upto/flat
+            discountTextInput.placeholder = 'Leave empty for auto-generation';
+            discountTextHelp.textContent = 'Optional. If empty, will auto-generate (e.g., "Upto 20% Off")';
+            discountTextRequired.style.display = 'none';
+
+            // Update placeholder with preview
+            updateDiscountPreview();
+        }
+    }
 
     function updateDiscountPreview() {
-        // Only update placeholder, don't override actual value
         const type = document.querySelector('input[name="discount_type"]:checked')?.value;
+        if (type === 'coming_soon') return; // Skip for coming_soon
+
+        // Only update placeholder, don't override actual value
         const value = discountValueInput.value;
 
         if (type && value && !discountTextInput.value) {
@@ -317,12 +374,16 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     discountTypeInputs.forEach(input => {
-        input.addEventListener('change', updateDiscountPreview);
+        input.addEventListener('change', function() {
+            handleDiscountTypeChange();
+            updateDiscountPreview();
+        });
     });
 
     discountValueInput.addEventListener('input', updateDiscountPreview);
 
-    // Initial preview
+    // Initial setup
+    handleDiscountTypeChange();
     updateDiscountPreview();
 });
 </script>
