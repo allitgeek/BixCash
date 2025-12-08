@@ -655,7 +655,7 @@
                         <div class="footer-column">
                             <h3 class="footer-column-title">Contact Us</h3>
                             <div class="footer-contact">
-                                <p class="contact-item">021 111 222 333</p>
+                                <p class="contact-item">0341-1055553</p>
                                 <p class="contact-item">info@bixcash.com</p>
                             </div>
                         </div>
