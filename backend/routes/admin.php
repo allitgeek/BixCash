@@ -19,6 +19,7 @@ use App\Http\Controllers\Admin\CommissionController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\WhatsAppSettingsController;
+use App\Http\Controllers\Admin\ProjectRoadmapController;
 
 /*
 |--------------------------------------------------------------------------
@@ -245,6 +246,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::middleware(['role.permission:manage_settings'])->group(function () {
             Route::get('settings', [DashboardController::class, 'settings'])->name('settings');
             Route::get('settings/admin', [DashboardController::class, 'adminSettings'])->name('settings.admin');
+
+            // Project Roadmap (Super Admin only - development tracking)
+            Route::get('roadmap', [ProjectRoadmapController::class, 'index'])->name('roadmap');
 
             // Active Criteria Management
             Route::post('settings/admin/criteria', [DashboardController::class, 'updateActiveCriteria'])->name('settings.admin.criteria.update');
