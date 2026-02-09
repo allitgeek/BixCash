@@ -4,105 +4,121 @@
 @section('page-title', 'Customer Management')
 
 @section('content')
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">Manage Customers</h3>
-            <div style="color: #666; font-size: 0.9rem; margin-top: 0.25rem;">
-                View and manage customer accounts registered via mobile app
-            </div>
+    {{-- Page Header --}}
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm mb-6">
+        <div class="px-6 py-4 border-b border-gray-100">
+            <h3 class="text-lg font-bold text-[#021c47]">Manage Customers</h3>
+            <p class="text-sm text-gray-500 mt-1">View and manage customer accounts registered via mobile app</p>
         </div>
-        <div class="card-body">
-
-            <!-- Search and Filter Form -->
-            <form method="GET" action="{{ route('admin.customers.index') }}" class="mb-4">
-                <div style="display: flex; gap: 1rem; align-items: end; flex-wrap: wrap;">
-                    <div style="flex: 1; min-width: 250px;">
-                        <label for="search" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Search</label>
+        
+        <div class="p-6">
+            {{-- Search and Filter Form --}}
+            <form method="GET" action="{{ route('admin.customers.index') }}" class="mb-6">
+                <div class="flex flex-wrap gap-4 items-end">
+                    <div class="flex-1 min-w-[250px]">
+                        <label for="search" class="block text-sm font-medium text-[#021c47] mb-2">Search</label>
                         <input type="text" id="search" name="search" value="{{ request('search') }}"
                                placeholder="Search by name, email, or phone..."
-                               style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 5px;">
+                               class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-all">
                     </div>
                     <div>
-                        <label for="status" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Status</label>
-                        <select id="status" name="status" style="padding: 0.5rem; border: 1px solid #ddd; border-radius: 5px; min-width: 120px;">
+                        <label for="status" class="block text-sm font-medium text-[#021c47] mb-2">Status</label>
+                        <select id="status" name="status" class="px-4 py-2.5 border border-gray-200 rounded-lg min-w-[130px] focus:outline-none focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-all">
                             <option value="">All Status</option>
                             <option value="1" {{ request('status') === '1' ? 'selected' : '' }}>Active</option>
                             <option value="0" {{ request('status') === '0' ? 'selected' : '' }}>Inactive</option>
                         </select>
                     </div>
                     <div>
-                        <label for="phone_verified" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Phone</label>
-                        <select id="phone_verified" name="phone_verified" style="padding: 0.5rem; border: 1px solid #ddd; border-radius: 5px; min-width: 120px;">
+                        <label for="phone_verified" class="block text-sm font-medium text-[#021c47] mb-2">Phone</label>
+                        <select id="phone_verified" name="phone_verified" class="px-4 py-2.5 border border-gray-200 rounded-lg min-w-[130px] focus:outline-none focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-all">
                             <option value="">All</option>
                             <option value="1" {{ request('phone_verified') === '1' ? 'selected' : '' }}>Verified</option>
                             <option value="0" {{ request('phone_verified') === '0' ? 'selected' : '' }}>Unverified</option>
                         </select>
                     </div>
-                    <div>
-                        <button type="submit" class="btn btn-primary">Filter</button>
+                    <div class="flex gap-2">
+                        <button type="submit" class="px-5 py-2.5 bg-[#021c47] text-white font-medium rounded-lg hover:bg-[#93db4d] hover:text-[#021c47] transition-all duration-200">
+                            Filter
+                        </button>
                         @if(request()->hasAny(['search', 'status', 'phone_verified']))
-                            <a href="{{ route('admin.customers.index') }}" class="btn" style="background: #6c757d; color: white; margin-left: 0.5rem;">Clear</a>
+                            <a href="{{ route('admin.customers.index') }}" class="px-5 py-2.5 bg-gray-100 text-gray-600 font-medium rounded-lg hover:bg-gray-200 transition-all duration-200">
+                                Clear
+                            </a>
                         @endif
                     </div>
                 </div>
             </form>
 
-            <!-- Statistics -->
-            <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
-                <div style="flex: 1; min-width: 200px; padding: 1rem; background: #e3f2fd; border-radius: 8px;">
-                    <div style="font-size: 0.9rem; color: #1976d2; font-weight: 500;">Total Customers</div>
-                    <div style="font-size: 1.8rem; font-weight: 600; color: #0d47a1;">{{ $customers->total() }}</div>
-                </div>
-                <div style="flex: 1; min-width: 200px; padding: 1rem; background: #e8f5e9; border-radius: 8px;">
-                    <div style="font-size: 0.9rem; color: #388e3c; font-weight: 500;">Active Customers</div>
-                    <div style="font-size: 1.8rem; font-weight: 600; color: #1b5e20;">
-                        {{ $customers->where('is_active', true)->count() }}
+            {{-- Statistics Cards --}}
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                {{-- Total Customers --}}
+                <div class="relative bg-white rounded-xl border border-gray-200 p-5 hover:border-[#93db4d] hover:shadow-md transition-all duration-200 overflow-hidden">
+                    <div class="absolute left-0 top-0 bottom-0 w-1 bg-[#021c47]"></div>
+                    <div class="pl-3">
+                        <p class="text-sm font-medium text-gray-500">Total Customers</p>
+                        <p class="text-3xl font-bold text-[#021c47] mt-1">{{ $customers->total() }}</p>
                     </div>
                 </div>
-                <div style="flex: 1; min-width: 200px; padding: 1rem; background: #fff3e0; border-radius: 8px;">
-                    <div style="font-size: 0.9rem; color: #f57c00; font-weight: 500;">Active (Criteria)</div>
-                    <div style="font-size: 1.8rem; font-weight: 600; color: #e65100;">
-                        {{ $customers->filter(function($c) use ($minSpending) {
-                            return floatval($c->total_spending ?? 0) >= $minSpending;
-                        })->count() }}
+                
+                {{-- Active Customers --}}
+                <div class="relative bg-white rounded-xl border border-gray-200 p-5 hover:border-[#93db4d] hover:shadow-md transition-all duration-200 overflow-hidden">
+                    <div class="absolute left-0 top-0 bottom-0 w-1 bg-[#93db4d]"></div>
+                    <div class="pl-3">
+                        <p class="text-sm font-medium text-gray-500">Active Customers</p>
+                        <p class="text-3xl font-bold text-[#93db4d] mt-1">
+                            {{ $customers->where('is_active', true)->count() }}
+                        </p>
                     </div>
-                    <small style="color: #f57c00; font-size: 0.75rem;">Current month only</small>
+                </div>
+                
+                {{-- Active (Criteria) --}}
+                <div class="relative bg-white rounded-xl border border-gray-200 p-5 hover:border-[#93db4d] hover:shadow-md transition-all duration-200 overflow-hidden">
+                    <div class="absolute left-0 top-0 bottom-0 w-1 bg-[#021c47]"></div>
+                    <div class="pl-3">
+                        <p class="text-sm font-medium text-gray-500">Active (Criteria)</p>
+                        <p class="text-3xl font-bold text-[#021c47] mt-1">
+                            {{ $customers->filter(function($c) use ($minSpending) {
+                                return floatval($c->total_spending ?? 0) >= $minSpending;
+                            })->count() }}
+                        </p>
+                        <p class="text-xs text-gray-400 mt-1">Current month only</p>
+                    </div>
                 </div>
             </div>
 
-            <!-- Customers Table -->
+            {{-- Customers Table --}}
             @if($customers->count() > 0)
-                <div style="overflow-x: auto;">
-                    <table style="width: 100%; border-collapse: collapse;">
+                <div class="overflow-x-auto rounded-lg border border-gray-200">
+                    <table class="w-full">
                         <thead>
-                            <tr style="background: #f8f9fa; border-bottom: 2px solid #dee2e6;">
-                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Customer</th>
-                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Phone</th>
-                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Email</th>
-                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Account Status</th>
-                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Criteria Status</th>
-                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Wallet Balance</th>
-                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Last Transaction</th>
-                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">PIN</th>
-                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Registered</th>
-                                <th style="padding: 0.75rem; text-align: center; font-weight: 600;">Actions</th>
+                            <tr class="bg-[#021c47] text-white">
+                                <th class="px-4 py-3 text-left text-sm font-semibold">Customer</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold">Phone</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold">Email</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold">Account Status</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold">Criteria Status</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold">Wallet Balance</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold">Last Transaction</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold">PIN</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold">Registered</th>
+                                <th class="px-4 py-3 text-center text-sm font-semibold">Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="divide-y divide-gray-100">
                             @foreach($customers as $customer)
-                                <tr style="border-bottom: 1px solid #dee2e6;">
-                                    <td style="padding: 0.75rem;">
+                                <tr class="hover:bg-[#93db4d]/5 transition-colors duration-150">
+                                    <td class="px-4 py-3">
                                         <div>
-                                            <strong>{{ $customer->name }}</strong>
+                                            <p class="font-semibold text-[#021c47]">{{ $customer->name }}</p>
                                             @if($customer->customerProfile && $customer->customerProfile->full_name)
-                                                <br>
-                                                <small style="color: #666;">{{ $customer->customerProfile->full_name }}</small>
+                                                <p class="text-xs text-gray-500">{{ $customer->customerProfile->full_name }}</p>
                                             @endif
                                         </div>
                                     </td>
-                                    <td style="padding: 0.75rem;">
-                                        <div>
-                                            {{ $customer->phone }}
+                                    <td class="px-4 py-3">
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-sm">{{ $customer->phone }}</span>
                                             @php
                                                 $profile = $customer->customerProfile;
                                                 $phoneVerified = $customer->hasVerifiedPhone();
@@ -110,113 +126,109 @@
                                             @endphp
 
                                             @if($phoneVerified && $manuallyVerified)
-                                                {{-- Fully verified (green) --}}
-                                                <span style="background: #27ae60; color: white; padding: 0.15rem 0.3rem; border-radius: 3px; font-size: 0.7rem; margin-left: 0.25rem;">
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-[#93db4d]/20 text-[#021c47]">
                                                     ✓ Verified
                                                 </span>
                                             @elseif($phoneVerified && !$manuallyVerified)
-                                                {{-- Ufone bypass - needs manual verification (orange) --}}
-                                                <form method="POST" action="{{ route('admin.customers.verify-phone', $customer) }}" style="display: inline;" onsubmit="return confirm('Have you called this customer to confirm their identity?');">
+                                                <form method="POST" action="{{ route('admin.customers.verify-phone', $customer) }}" class="inline" onsubmit="return confirm('Have you called this customer to confirm their identity?');">
                                                     @csrf
-                                                    <button type="submit" style="background: #f39c12; color: white; padding: 0.15rem 0.3rem; border-radius: 3px; font-size: 0.7rem; margin-left: 0.25rem; border: none; cursor: pointer;">
+                                                    <button type="submit" class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800 hover:bg-yellow-200 transition-colors">
                                                         ⚠ Verify Phone
                                                     </button>
                                                 </form>
                                             @else
-                                                {{-- Not verified at all (red) --}}
-                                                <span style="background: #e74c3c; color: white; padding: 0.15rem 0.3rem; border-radius: 3px; font-size: 0.7rem; margin-left: 0.25rem;">
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
                                                     ✗ Unverified
                                                 </span>
                                             @endif
                                         </div>
                                     </td>
-                                    <td style="padding: 0.75rem;">
+                                    <td class="px-4 py-3 text-sm text-gray-600">
                                         {{ $customer->email ?? '-' }}
                                     </td>
-                                    <td style="padding: 0.75rem;">
+                                    <td class="px-4 py-3">
                                         @if($customer->is_active)
-                                            <span style="background: #27ae60; color: white; padding: 0.25rem 0.5rem; border-radius: 3px; font-size: 0.8rem;">
+                                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-[#93db4d]/20 text-[#021c47]">
                                                 Active
                                             </span>
                                         @else
-                                            <span style="background: #e74c3c; color: white; padding: 0.25rem 0.5rem; border-radius: 3px; font-size: 0.8rem;">
+                                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800">
                                                 Inactive
                                             </span>
                                         @endif
                                     </td>
-                                    <td style="padding: 0.75rem;">
+                                    <td class="px-4 py-3">
                                         @php
                                             $totalSpending = floatval($customer->total_spending ?? 0);
                                             $meetsCriteria = $totalSpending >= $minSpending;
                                         @endphp
                                         @if($meetsCriteria)
-                                            <span style="background: #27ae60; color: white; padding: 0.25rem 0.5rem; border-radius: 3px; font-size: 0.8rem;" title="Total spending: Rs. {{ number_format($totalSpending, 0) }} (Min: Rs. {{ number_format($minSpending, 0) }})">
+                                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-[#93db4d]/20 text-[#021c47]" title="Total spending: Rs. {{ number_format($totalSpending, 0) }} (Min: Rs. {{ number_format($minSpending, 0) }})">
                                                 ✓ Active
                                             </span>
                                         @else
-                                            <span style="background: #e74c3c; color: white; padding: 0.25rem 0.5rem; border-radius: 3px; font-size: 0.8rem;" title="Total spending: Rs. {{ number_format($totalSpending, 0) }} (Min: Rs. {{ number_format($minSpending, 0) }})">
+                                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800" title="Total spending: Rs. {{ number_format($totalSpending, 0) }} (Min: Rs. {{ number_format($minSpending, 0) }})">
                                                 ✗ Inactive
                                             </span>
                                         @endif
                                     </td>
-                                    <td style="padding: 0.75rem;">
+                                    <td class="px-4 py-3">
                                         @if($customer->wallet)
-                                            <span style="color: #27ae60; font-weight: 600;">
+                                            <span class="font-semibold text-[#93db4d]">
                                                 Rs. {{ number_format($customer->wallet->balance, 0) }}
                                             </span>
                                         @else
-                                            <span style="color: #999;">Rs. 0</span>
+                                            <span class="text-gray-400">Rs. 0</span>
                                         @endif
                                     </td>
-                                    <td style="padding: 0.75rem;">
+                                    <td class="px-4 py-3">
                                         @if($customer->last_transaction_date)
-                                            <small style="color: #666;">
+                                            <span class="text-sm text-gray-600">
                                                 {{ \Carbon\Carbon::parse($customer->last_transaction_date)->format('M j, Y') }}
-                                            </small>
+                                            </span>
                                         @else
-                                            <small style="color: #999; font-style: italic;">No transactions</small>
+                                            <span class="text-sm text-gray-400 italic">No transactions</span>
                                         @endif
                                     </td>
-                                    <td style="padding: 0.75rem;">
+                                    <td class="px-4 py-3">
                                         @if($customer->pin_hash)
                                             @if($customer->isPinLocked())
-                                                <span style="background: #e67e22; color: white; padding: 0.25rem 0.5rem; border-radius: 3px; font-size: 0.75rem;">
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
                                                     Locked
                                                 </span>
                                             @else
-                                                <span style="background: #27ae60; color: white; padding: 0.25rem 0.5rem; border-radius: 3px; font-size: 0.75rem;">
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-[#93db4d]/20 text-[#021c47]">
                                                     Set
                                                 </span>
                                             @endif
                                         @else
-                                            <span style="color: #999; font-size: 0.8rem;">Not Set</span>
+                                            <span class="text-sm text-gray-400">Not Set</span>
                                         @endif
                                     </td>
-                                    <td style="padding: 0.75rem;">
-                                        <small style="color: #666;">
+                                    <td class="px-4 py-3">
+                                        <span class="text-sm text-gray-600">
                                             {{ $customer->created_at->format('M j, Y') }}
-                                        </small>
+                                        </span>
                                     </td>
-                                    <td style="padding: 0.75rem; text-align: center;">
-                                        <div style="display: flex; gap: 0.25rem; justify-content: center; flex-wrap: wrap;">
+                                    <td class="px-4 py-3">
+                                        <div class="flex gap-1 justify-center flex-wrap">
                                             <a href="{{ route('admin.customers.show', $customer) }}"
-                                               class="btn" style="background: #17a2b8; color: white; padding: 0.25rem 0.5rem; font-size: 0.8rem;">
+                                               class="px-3 py-1.5 text-xs font-medium bg-[#021c47] text-white rounded hover:bg-[#93db4d] hover:text-[#021c47] transition-all duration-200">
                                                 View
                                             </a>
                                             <a href="{{ route('admin.customers.edit', $customer) }}"
-                                               class="btn btn-warning" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">
+                                               class="px-3 py-1.5 text-xs font-medium bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-all duration-200">
                                                 Edit
                                             </a>
                                             <a href="{{ route('admin.customers.transactions', $customer) }}"
-                                               class="btn btn-info" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">
-                                                Transactions
+                                               class="px-3 py-1.5 text-xs font-medium bg-[#93db4d]/20 text-[#021c47] rounded hover:bg-[#93db4d] hover:text-white transition-all duration-200">
+                                                Txns
                                             </a>
-                                            <form method="POST" action="{{ route('admin.customers.toggle-status', $customer) }}" style="display: inline;">
+                                            <form method="POST" action="{{ route('admin.customers.toggle-status', $customer) }}" class="inline">
                                                 @csrf
                                                 @method('PATCH')
                                                 <button type="submit"
-                                                        class="btn {{ $customer->is_active ? 'btn-warning' : 'btn-success' }}"
-                                                        style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">
+                                                        class="px-3 py-1.5 text-xs font-medium rounded transition-all duration-200 {{ $customer->is_active ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200' : 'bg-[#93db4d] text-white hover:bg-[#021c47]' }}">
                                                     {{ $customer->is_active ? 'Deactivate' : 'Activate' }}
                                                 </button>
                                             </form>
@@ -228,31 +240,22 @@
                     </table>
                 </div>
 
-                <!-- Pagination -->
-                <div style="margin-top: 1.5rem; display: flex; justify-content: center;">
+                {{-- Pagination --}}
+                <div class="mt-6 flex justify-center">
                     {{ $customers->withQueryString()->links() }}
                 </div>
             @else
-                <div style="text-align: center; padding: 3rem; color: #666;">
-                    <h4>No customers found</h4>
-                    <p>{{ request()->hasAny(['search', 'status', 'phone_verified']) ? 'Try adjusting your search criteria.' : 'Customers will appear here once they register via the mobile app.' }}</p>
+                {{-- Empty State --}}
+                <div class="text-center py-12">
+                    <svg class="mx-auto h-16 w-16 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <h4 class="mt-4 text-lg font-semibold text-[#021c47]">No customers found</h4>
+                    <p class="mt-2 text-gray-500">
+                        {{ request()->hasAny(['search', 'status', 'phone_verified']) ? 'Try adjusting your search criteria.' : 'Customers will appear here once they register via the mobile app.' }}
+                    </p>
                 </div>
             @endif
         </div>
     </div>
 @endsection
-
-@push('scripts')
-<script>
-    // Simple pagination styling
-    document.addEventListener('DOMContentLoaded', function() {
-        const paginationLinks = document.querySelectorAll('.pagination a, .pagination span');
-        paginationLinks.forEach(link => {
-            link.style.cssText = 'padding: 0.5rem 0.75rem; margin: 0 0.25rem; border: 1px solid #dee2e6; border-radius: 3px; text-decoration: none; color: #495057;';
-            if (link.classList.contains('active')) {
-                link.style.cssText += 'background: #3498db; color: white; border-color: #3498db;';
-            }
-        });
-    });
-</script>
-@endpush

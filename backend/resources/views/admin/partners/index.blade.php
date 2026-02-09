@@ -4,228 +4,204 @@
 @section('page-title', 'Partner Management')
 
 @section('content')
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">Manage Partners</h3>
-            <div style="display: flex; gap: 1rem; margin-top: 0.5rem; flex-wrap: wrap;">
-                <a href="{{ route('admin.partners.create') }}" class="btn btn-success" style="padding: 0.5rem 1rem;">
-                    + Create New Partner
-                </a>
-                <a href="{{ route('admin.partners.pending') }}" class="btn btn-warning" style="padding: 0.5rem 1rem;">
-                    View Pending Applications
-                    @php
-                        $pendingCount = \App\Models\User::whereHas('role', function($q) {
-                            $q->where('name', 'partner');
-                        })->whereHas('partnerProfile', function($q) {
-                            $q->where('status', 'pending');
-                        })->count();
-                    @endphp
-                    @if($pendingCount > 0)
-                        <span class="badge-notification">{{ $pendingCount }}</span>
-                    @endif
-                </a>
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
+        <div class="px-6 py-4 border-b border-gray-100">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                    <h3 class="text-lg font-bold text-[#021c47]">Manage Partners</h3>
+                    <p class="text-sm text-gray-500 mt-1">View and manage all business partners</p>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <a href="{{ route('admin.partners.create') }}" class="px-4 py-2 bg-[#93db4d] text-[#021c47] font-medium rounded-lg hover:bg-[#7fc93d] transition-all duration-200">
+                        + Create Partner
+                    </a>
+                    <a href="{{ route('admin.partners.pending') }}" class="px-4 py-2 bg-yellow-500 text-white font-medium rounded-lg hover:bg-yellow-600 transition-all duration-200 flex items-center gap-2">
+                        Pending Applications
+                        @php
+                            $pendingCount = \App\Models\User::whereHas('role', function($q) {
+                                $q->where('name', 'partner');
+                            })->whereHas('partnerProfile', function($q) {
+                                $q->where('status', 'pending');
+                            })->count();
+                        @endphp
+                        @if($pendingCount > 0)
+                            <span class="px-2 py-0.5 text-xs font-bold bg-white text-yellow-600 rounded-full">{{ $pendingCount }}</span>
+                        @endif
+                    </a>
+                </div>
             </div>
         </div>
-        <div class="card-body">
-
-            <!-- Search and Filter Form -->
-            <form method="GET" action="{{ route('admin.partners.index') }}" class="mb-4">
-                <div style="display: flex; gap: 1rem; align-items: end; flex-wrap: wrap;">
-                    <div style="flex: 1; min-width: 250px;">
-                        <label for="search" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Search</label>
+        
+        <div class="p-6">
+            {{-- Search and Filter --}}
+            <form method="GET" action="{{ route('admin.partners.index') }}" class="mb-6">
+                <div class="flex flex-wrap gap-4 items-end">
+                    <div class="flex-1 min-w-[250px]">
+                        <label for="search" class="block text-sm font-medium text-[#021c47] mb-2">Search</label>
                         <input type="text" id="search" name="search" value="{{ request('search') }}"
                                placeholder="Search by name, phone, or business name..."
-                               style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 5px;">
+                               class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-all">
                     </div>
                     <div>
-                        <label for="status" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Status</label>
-                        <select id="status" name="status" style="padding: 0.5rem; border: 1px solid #ddd; border-radius: 5px; min-width: 150px;">
+                        <label for="status" class="block text-sm font-medium text-[#021c47] mb-2">Status</label>
+                        <select id="status" name="status" class="px-4 py-2.5 border border-gray-200 rounded-lg min-w-[150px] focus:outline-none focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-all">
                             <option value="all">All Status</option>
                             <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
                             <option value="approved" {{ request('status') === 'approved' ? 'selected' : '' }}>Approved</option>
                             <option value="rejected" {{ request('status') === 'rejected' ? 'selected' : '' }}>Rejected</option>
                         </select>
                     </div>
-                    <div>
-                        <button type="submit" class="btn btn-primary">Filter</button>
+                    <div class="flex gap-2">
+                        <button type="submit" class="px-5 py-2.5 bg-[#021c47] text-white font-medium rounded-lg hover:bg-[#93db4d] hover:text-[#021c47] transition-all duration-200">
+                            Filter
+                        </button>
                         @if(request()->hasAny(['search', 'status']))
-                            <a href="{{ route('admin.partners.index') }}" class="btn" style="background: #6c757d; color: white; margin-left: 0.5rem;">Clear</a>
+                            <a href="{{ route('admin.partners.index') }}" class="px-5 py-2.5 bg-gray-100 text-gray-600 font-medium rounded-lg hover:bg-gray-200 transition-all duration-200">
+                                Clear
+                            </a>
                         @endif
                     </div>
                 </div>
             </form>
 
-            <!-- Statistics -->
-            <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
-                <div style="flex: 1; min-width: 200px; padding: 1rem; background: #e3f2fd; border-radius: 8px;">
-                    <div style="font-size: 0.9rem; color: #1976d2; font-weight: 500;">Total Partners</div>
-                    <div style="font-size: 1.8rem; font-weight: 600; color: #0d47a1;">{{ $partners->total() }}</div>
-                </div>
-                <div style="flex: 1; min-width: 200px; padding: 1rem; background: #e8f5e9; border-radius: 8px;">
-                    <div style="font-size: 0.9rem; color: #388e3c; font-weight: 500;">Approved Partners</div>
-                    <div style="font-size: 1.8rem; font-weight: 600; color: #1b5e20;">
-                        {{ $partners->filter(fn($p) => $p->partnerProfile && $p->partnerProfile->status === 'approved')->count() }}
+            {{-- Statistics Cards --}}
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div class="relative bg-white rounded-xl border border-gray-200 p-5 hover:border-[#93db4d] hover:shadow-md transition-all duration-200 overflow-hidden">
+                    <div class="absolute left-0 top-0 bottom-0 w-1 bg-[#021c47]"></div>
+                    <div class="pl-3">
+                        <p class="text-sm font-medium text-gray-500">Total Partners</p>
+                        <p class="text-3xl font-bold text-[#021c47] mt-1">{{ $partners->total() }}</p>
                     </div>
                 </div>
-                <div style="flex: 1; min-width: 200px; padding: 1rem; background: #fff3e0; border-radius: 8px;">
-                    <div style="font-size: 0.9rem; color: #f57c00; font-weight: 500;">Active (Criteria)</div>
-                    <div style="font-size: 1.8rem; font-weight: 600; color: #e65100;">
-                        {{ $partners->filter(function($p) use ($minCustomers, $minAmount) {
-                            $uniqueCustomers = intval($p->unique_customers_count ?? 0);
-                            $totalAmount = floatval($p->total_transaction_amount ?? 0);
-                            return ($uniqueCustomers >= $minCustomers) && ($totalAmount >= $minAmount);
-                        })->count() }}
+                <div class="relative bg-white rounded-xl border border-gray-200 p-5 hover:border-[#93db4d] hover:shadow-md transition-all duration-200 overflow-hidden">
+                    <div class="absolute left-0 top-0 bottom-0 w-1 bg-[#93db4d]"></div>
+                    <div class="pl-3">
+                        <p class="text-sm font-medium text-gray-500">Approved Partners</p>
+                        <p class="text-3xl font-bold text-[#93db4d] mt-1">
+                            {{ $partners->filter(fn($p) => $p->partnerProfile && $p->partnerProfile->status === 'approved')->count() }}
+                        </p>
                     </div>
-                    <small style="color: #f57c00; font-size: 0.75rem;">Current month only</small>
+                </div>
+                <div class="relative bg-white rounded-xl border border-gray-200 p-5 hover:border-[#93db4d] hover:shadow-md transition-all duration-200 overflow-hidden">
+                    <div class="absolute left-0 top-0 bottom-0 w-1 bg-yellow-500"></div>
+                    <div class="pl-3">
+                        <p class="text-sm font-medium text-gray-500">Active (Criteria)</p>
+                        <p class="text-3xl font-bold text-yellow-600 mt-1">
+                            {{ $partners->filter(function($p) use ($minCustomers, $minAmount) {
+                                $uniqueCustomers = intval($p->unique_customers_count ?? 0);
+                                $totalAmount = floatval($p->total_transaction_amount ?? 0);
+                                return ($uniqueCustomers >= $minCustomers) && ($totalAmount >= $minAmount);
+                            })->count() }}
+                        </p>
+                        <p class="text-xs text-gray-400 mt-1">Current month only</p>
+                    </div>
                 </div>
             </div>
 
-            <!-- Partners Table -->
+            {{-- Partners Table --}}
             @if($partners->count() > 0)
-                <div style="overflow-x: auto;">
-                    <table style="width: 100%; border-collapse: collapse;">
+                <div class="overflow-x-auto rounded-lg border border-gray-200">
+                    <table class="w-full text-sm">
                         <thead>
-                            <tr style="background: #f8f9fa; border-bottom: 2px solid #dee2e6;">
-                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Partner</th>
-                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Business Name</th>
-                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Commission</th>
-                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Phone</th>
-                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Status</th>
-                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Account Active</th>
-                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Criteria Status</th>
-                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Wallet Balance</th>
-                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Last Transaction</th>
-                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Registered</th>
-                                <th style="padding: 0.75rem; text-align: center; font-weight: 600;">Actions</th>
+                            <tr class="bg-[#021c47] text-white">
+                                <th class="px-3 py-3 text-left font-semibold">Partner</th>
+                                <th class="px-3 py-3 text-left font-semibold">Business</th>
+                                <th class="px-3 py-3 text-left font-semibold">Commission</th>
+                                <th class="px-3 py-3 text-left font-semibold">Phone</th>
+                                <th class="px-3 py-3 text-center font-semibold">Status</th>
+                                <th class="px-3 py-3 text-center font-semibold">Account</th>
+                                <th class="px-3 py-3 text-center font-semibold">Criteria</th>
+                                <th class="px-3 py-3 text-right font-semibold">Wallet</th>
+                                <th class="px-3 py-3 text-left font-semibold">Last Txn</th>
+                                <th class="px-3 py-3 text-center font-semibold">Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="divide-y divide-gray-100">
                             @foreach($partners as $partner)
-                                <tr style="border-bottom: 1px solid #dee2e6;">
-                                    <td style="padding: 0.75rem;">
-                                        <strong>{{ $partner->name }}</strong>
+                                <tr class="hover:bg-[#93db4d]/5 transition-colors">
+                                    <td class="px-3 py-3">
+                                        <span class="font-semibold text-[#021c47]">{{ $partner->name }}</span>
                                     </td>
-                                    <td style="padding: 0.75rem;">
+                                    <td class="px-3 py-3 text-gray-600">
                                         {{ $partner->partnerProfile->business_name ?? '-' }}
                                     </td>
-                                    <td style="padding: 0.75rem;">
+                                    <td class="px-3 py-3">
                                         @if($partner->partnerProfile && $partner->partnerProfile->commission_rate > 0)
-                                            <span style="color: #2d3748; font-weight: 500;">
-                                                {{ number_format($partner->partnerProfile->commission_rate, 2) }}%
-                                            </span>
+                                            <span class="font-medium text-[#021c47]">{{ number_format($partner->partnerProfile->commission_rate, 2) }}%</span>
                                         @else
-                                            <span style="color: #a0aec0; font-size: 0.875rem;">0%</span>
+                                            <span class="text-gray-400">0%</span>
                                         @endif
                                     </td>
-                                    <td style="padding: 0.75rem;">
-                                        <div>
-                                            {{ $partner->phone }}
+                                    <td class="px-3 py-3">
+                                        <div class="flex items-center gap-1">
+                                            <span class="text-[#021c47]">{{ $partner->phone }}</span>
                                             @php
                                                 $profile = $partner->partnerProfile;
                                                 $phoneVerified = $partner->hasVerifiedPhone();
                                                 $manuallyVerified = $profile && $profile->is_verified;
                                             @endphp
-
                                             @if($phoneVerified && $manuallyVerified)
-                                                {{-- Fully verified (green) --}}
-                                                <span style="background: #27ae60; color: white; padding: 0.15rem 0.3rem; border-radius: 3px; font-size: 0.7rem; margin-left: 0.25rem;">
-                                                    ✓ Verified
-                                                </span>
+                                                <span class="px-1.5 py-0.5 text-xs font-medium rounded bg-[#93db4d]/20 text-[#65a030]">✓</span>
                                             @elseif($phoneVerified && !$manuallyVerified)
-                                                {{-- Ufone bypass - needs manual verification (orange) --}}
-                                                <form method="POST" action="{{ route('admin.partners.verify-phone', $partner) }}" style="display: inline;" onsubmit="return confirm('Have you called this partner to confirm their identity?');">
+                                                <form method="POST" action="{{ route('admin.partners.verify-phone', $partner) }}" class="inline" onsubmit="return confirm('Verify this phone?')">
                                                     @csrf
-                                                    <button type="submit" style="background: #f39c12; color: white; padding: 0.15rem 0.3rem; border-radius: 3px; font-size: 0.7rem; margin-left: 0.25rem; border: none; cursor: pointer;">
-                                                        ⚠ Verify Phone
-                                                    </button>
+                                                    <button type="submit" class="px-1.5 py-0.5 text-xs font-medium rounded bg-yellow-100 text-yellow-700">⚠</button>
                                                 </form>
                                             @else
-                                                {{-- Not verified at all (red) --}}
-                                                <span style="background: #e74c3c; color: white; padding: 0.15rem 0.3rem; border-radius: 3px; font-size: 0.7rem; margin-left: 0.25rem;">
-                                                    ✗ Unverified
-                                                </span>
+                                                <span class="px-1.5 py-0.5 text-xs font-medium rounded bg-red-100 text-red-600">✗</span>
                                             @endif
                                         </div>
                                     </td>
-                                    <td style="padding: 0.75rem;">
+                                    <td class="px-3 py-3 text-center">
                                         @if($partner->partnerProfile)
                                             @if($partner->partnerProfile->status === 'approved')
-                                                <span style="background: #27ae60; color: white; padding: 0.25rem 0.5rem; border-radius: 3px; font-size: 0.8rem;">
-                                                    Approved
-                                                </span>
+                                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-[#93db4d]/20 text-[#65a030]">Approved</span>
                                             @elseif($partner->partnerProfile->status === 'pending')
-                                                <span style="background: #f39c12; color: white; padding: 0.25rem 0.5rem; border-radius: 3px; font-size: 0.8rem;">
-                                                    Pending
-                                                </span>
+                                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-700">Pending</span>
                                             @else
-                                                <span style="background: #e74c3c; color: white; padding: 0.25rem 0.5rem; border-radius: 3px; font-size: 0.8rem;">
-                                                    Rejected
-                                                </span>
+                                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-600">Rejected</span>
                                             @endif
                                         @else
-                                            <span style="color: #999;">-</span>
+                                            <span class="text-gray-400">-</span>
                                         @endif
                                     </td>
-                                    <td style="padding: 0.75rem;">
+                                    <td class="px-3 py-3 text-center">
                                         @if($partner->is_active)
-                                            <span style="background: #27ae60; color: white; padding: 0.25rem 0.5rem; border-radius: 3px; font-size: 0.8rem;">
-                                                Active
-                                            </span>
+                                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-[#93db4d]/20 text-[#65a030]">Active</span>
                                         @else
-                                            <span style="background: #e74c3c; color: white; padding: 0.25rem 0.5rem; border-radius: 3px; font-size: 0.8rem;">
-                                                Inactive
-                                            </span>
+                                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-600">Inactive</span>
                                         @endif
                                     </td>
-                                    <td style="padding: 0.75rem;">
+                                    <td class="px-3 py-3 text-center">
                                         @php
                                             $uniqueCustomers = intval($partner->unique_customers_count ?? 0);
                                             $totalAmount = floatval($partner->total_transaction_amount ?? 0);
                                             $meetsCriteria = ($uniqueCustomers >= $minCustomers) && ($totalAmount >= $minAmount);
                                         @endphp
                                         @if($meetsCriteria)
-                                            <span style="background: #27ae60; color: white; padding: 0.25rem 0.5rem; border-radius: 3px; font-size: 0.8rem;" title="Customers: {{ $uniqueCustomers }} (Min: {{ $minCustomers }}), Amount: Rs. {{ number_format($totalAmount, 0) }} (Min: Rs. {{ number_format($minAmount, 0) }})">
-                                                ✓ Active
-                                            </span>
+                                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-[#93db4d]/20 text-[#65a030]" title="Customers: {{ $uniqueCustomers }}, Amount: Rs. {{ number_format($totalAmount, 0) }}">✓</span>
                                         @else
-                                            <span style="background: #e74c3c; color: white; padding: 0.25rem 0.5rem; border-radius: 3px; font-size: 0.8rem;" title="Customers: {{ $uniqueCustomers }} (Min: {{ $minCustomers }}), Amount: Rs. {{ number_format($totalAmount, 0) }} (Min: Rs. {{ number_format($minAmount, 0) }})">
-                                                ✗ Inactive
-                                            </span>
+                                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-600" title="Customers: {{ $uniqueCustomers }}, Amount: Rs. {{ number_format($totalAmount, 0) }}">✗</span>
                                         @endif
                                     </td>
-                                    <td style="padding: 0.75rem;">
+                                    <td class="px-3 py-3 text-right">
                                         @if($partner->wallet)
-                                            <span style="color: #27ae60; font-weight: 600;">
-                                                Rs. {{ number_format($partner->wallet->balance, 0) }}
-                                            </span>
+                                            <span class="font-semibold text-[#93db4d]">Rs. {{ number_format($partner->wallet->balance, 0) }}</span>
                                         @else
-                                            <span style="color: #999;">Rs. 0</span>
+                                            <span class="text-gray-400">Rs. 0</span>
                                         @endif
                                     </td>
-                                    <td style="padding: 0.75rem;">
+                                    <td class="px-3 py-3">
                                         @if($partner->last_transaction_date)
-                                            <small style="color: #666;">
-                                                {{ \Carbon\Carbon::parse($partner->last_transaction_date)->format('M j, Y') }}
-                                            </small>
+                                            <span class="text-xs text-gray-500">{{ \Carbon\Carbon::parse($partner->last_transaction_date)->format('M j, Y') }}</span>
                                         @else
-                                            <small style="color: #999; font-style: italic;">No transactions</small>
+                                            <span class="text-xs text-gray-400 italic">None</span>
                                         @endif
                                     </td>
-                                    <td style="padding: 0.75rem;">
-                                        <small style="color: #666;">
-                                            {{ $partner->created_at->format('M j, Y') }}
-                                        </small>
-                                    </td>
-                                    <td style="padding: 0.75rem; text-align: center;">
-                                        <div style="display: flex; gap: 0.25rem; justify-content: center; flex-wrap: wrap;">
-                                            <a href="{{ route('admin.partners.show', $partner) }}"
-                                               class="btn" style="background: #17a2b8; color: white; padding: 0.25rem 0.5rem; font-size: 0.8rem;">
-                                                View
-                                            </a>
-                                            <a href="{{ route('admin.partners.transactions', $partner) }}"
-                                               class="btn btn-info" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">
-                                                Transactions
-                                            </a>
+                                    <td class="px-3 py-3 text-center">
+                                        <div class="flex gap-1 justify-center">
+                                            <a href="{{ route('admin.partners.show', $partner) }}" class="px-2 py-1 text-xs font-medium bg-[#021c47] text-white rounded hover:bg-[#93db4d] hover:text-[#021c47] transition-all">View</a>
+                                            <a href="{{ route('admin.partners.transactions', $partner) }}" class="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-all">Txns</a>
                                         </div>
                                     </td>
                                 </tr>
@@ -234,31 +210,20 @@
                     </table>
                 </div>
 
-                <!-- Pagination -->
-                <div style="margin-top: 1.5rem; display: flex; justify-content: center;">
-                    {{ $partners->withQueryString()->links() }}
-                </div>
+                @if($partners->hasPages())
+                    <div class="mt-6 flex justify-center">
+                        {{ $partners->withQueryString()->links() }}
+                    </div>
+                @endif
             @else
-                <div style="text-align: center; padding: 3rem; color: #666;">
-                    <h4>No partners found</h4>
-                    <p>{{ request()->hasAny(['search', 'status']) ? 'Try adjusting your search criteria.' : 'Partners will appear here once they register.' }}</p>
+                <div class="text-center py-12">
+                    <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                    </svg>
+                    <h4 class="text-lg font-semibold text-[#021c47] mb-2">No partners found</h4>
+                    <p class="text-gray-500">{{ request()->hasAny(['search', 'status']) ? 'Try adjusting your search criteria.' : 'Partners will appear here once they register.' }}</p>
                 </div>
             @endif
         </div>
     </div>
 @endsection
-
-@push('scripts')
-<script>
-    // Simple pagination styling
-    document.addEventListener('DOMContentLoaded', function() {
-        const paginationLinks = document.querySelectorAll('.pagination a, .pagination span');
-        paginationLinks.forEach(link => {
-            link.style.cssText = 'padding: 0.5rem 0.75rem; margin: 0 0.25rem; border: 1px solid #dee2e6; border-radius: 3px; text-decoration: none; color: #495057;';
-            if (link.classList.contains('active')) {
-                link.style.cssText += 'background: #3498db; color: white; border-color: #3498db;';
-            }
-        });
-    });
-</script>
-@endpush

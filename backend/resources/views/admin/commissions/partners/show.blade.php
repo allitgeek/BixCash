@@ -5,26 +5,24 @@
 
 @section('content')
     <!-- Partner Header -->
-    <div class="card" style="margin-bottom: 1.5rem;">
-        <div class="card-body">
-            <div style="display: flex; justify-content: space-between; align-items: start;">
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm mb-6">
+        <div class="p-6">
+            <div class="flex flex-col sm:flex-row justify-between items-start gap-4">
                 <div>
-                    <h3 style="margin: 0 0 0.5rem 0;">{{ $partner->partnerProfile->business_name ?? $partner->name }}</h3>
-                    <p style="margin: 0; color: #6c757d;">
+                    <h2 class="text-2xl font-bold text-[#021c47] mb-2">{{ $partner->partnerProfile->business_name ?? $partner->name }}</h2>
+                    <p class="text-gray-600">
                         {{ $partner->name }} |
                         {{ $partner->phone }} |
-                        Commission Rate: <strong>{{ number_format($partner->partnerProfile->commission_rate ?? 0, 2) }}%</strong>
+                        Commission Rate: <span class="font-semibold text-[#021c47]">{{ number_format($partner->partnerProfile->commission_rate ?? 0, 2) }}%</span>
                     </p>
                 </div>
-                <div style="display: flex; gap: 0.75rem;">
+                <div class="flex gap-3">
                     <a href="{{ route('admin.commissions.export.partner', $partner->id) }}"
-                       class="btn btn-success"
-                       style="display: flex; align-items: center; gap: 0.5rem;"
-                       title="Export complete commission history for {{ $partner->partnerProfile->business_name ?? $partner->name }}"
+                       class="inline-flex items-center px-4 py-2 bg-[#93db4d] text-[#021c47] rounded-lg font-medium hover:bg-[#7bc62e] transition-colors"
                        onclick="return confirm('Export complete commission report for {{ $partner->partnerProfile->business_name ?? $partner->name }} to Excel?\n\nThis includes all ledgers, transactions, and settlement history.');">
-                        📊 Export Report
+                        Export Report
                     </a>
-                    <a href="{{ route('admin.partners.show', $partner->id) }}" class="btn btn-outline-secondary">
+                    <a href="{{ route('admin.partners.show', $partner->id) }}" class="inline-flex items-center px-4 py-2 border border-gray-200 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors">
                         View Partner Profile →
                     </a>
                 </div>
@@ -33,226 +31,209 @@
     </div>
 
     <!-- Summary Stats -->
-    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 2rem;">
-        <div class="card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
-            <div class="card-body">
-                <h5 style="margin-bottom: 0.5rem; opacity: 0.9;">Total Commission Owed</h5>
-                <h2 style="margin: 0;">Rs {{ number_format($totalCommissionOwed, 2) }}</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <div class="p-5 border-l-4 border-[#021c47]">
+                <p class="text-sm font-medium text-gray-500 mb-1">Total Commission Owed</p>
+                <p class="text-2xl font-bold text-[#021c47]">Rs {{ number_format($totalCommissionOwed, 2) }}</p>
             </div>
         </div>
-        <div class="card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
-            <div class="card-body">
-                <h5 style="margin-bottom: 0.5rem; opacity: 0.9;">Total Paid</h5>
-                <h2 style="margin: 0;">Rs {{ number_format($totalPaid, 2) }}</h2>
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <div class="p-5 border-l-4 border-[#93db4d]">
+                <p class="text-sm font-medium text-gray-500 mb-1">Total Paid</p>
+                <p class="text-2xl font-bold text-[#93db4d]">Rs {{ number_format($totalPaid, 2) }}</p>
             </div>
         </div>
-        <div class="card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
-            <div class="card-body">
-                <h5 style="margin-bottom: 0.5rem; opacity: 0.9;">Outstanding</h5>
-                <h2 style="margin: 0;">Rs {{ number_format($totalOutstanding, 2) }}</h2>
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <div class="p-5 border-l-4 border-red-500">
+                <p class="text-sm font-medium text-gray-500 mb-1">Outstanding</p>
+                <p class="text-2xl font-bold text-red-600">Rs {{ number_format($totalOutstanding, 2) }}</p>
             </div>
         </div>
     </div>
 
     <!-- Ledgers Table -->
-    <div class="card" style="margin-bottom: 1.5rem;">
-        <div class="card-header" style="background: white; border-bottom: 2px solid #f8f9fa; padding: 1rem;">
-            <h5 style="margin: 0;">📊 Commission Ledgers by Period</h5>
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden mb-6">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-semibold text-[#021c47]">Commission Ledgers by Period</h3>
         </div>
-        <div class="card-body" style="padding: 0;">
-            <div class="table-responsive">
-                <table class="table table-hover" style="margin: 0;">
-                    <thead style="background: #f8f9fa;">
-                        <tr>
-                            <th style="padding: 0.75rem;">Period</th>
-                            <th style="padding: 0.75rem;">Rate</th>
-                            <th style="padding: 0.75rem;">Transactions</th>
-                            <th style="padding: 0.75rem;">Invoice Total</th>
-                            <th style="padding: 0.75rem;">Commission</th>
-                            <th style="padding: 0.75rem;">Paid</th>
-                            <th style="padding: 0.75rem;">Outstanding</th>
-                            <th style="padding: 0.75rem;">Status</th>
-                            <th style="padding: 0.75rem;">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($ledgers as $ledger)
-                            <tr>
-                                <td style="padding: 0.75rem;">
-                                    <strong>{{ $ledger->formatted_period }}</strong>
-                                </td>
-                                <td style="padding: 0.75rem;">
-                                    <span class="badge bg-info">{{ number_format($ledger->commission_rate_used, 2) }}%</span>
-                                </td>
-                                <td style="padding: 0.75rem;">{{ number_format($ledger->total_transactions) }}</td>
-                                <td style="padding: 0.75rem;">Rs {{ number_format($ledger->total_invoice_amount, 2) }}</td>
-                                <td style="padding: 0.75rem;">
-                                    <strong>Rs {{ number_format($ledger->commission_owed, 2) }}</strong>
-                                </td>
-                                <td style="padding: 0.75rem;">
-                                    Rs {{ number_format($ledger->amount_paid, 2) }}
-                                </td>
-                                <td style="padding: 0.75rem;">
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-[#021c47] text-white">
+                    <tr>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Period</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Rate</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Transactions</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Invoice Total</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Commission</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Paid</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Outstanding</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Status</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    @foreach($ledgers as $ledger)
+                        <tr class="hover:bg-[#93db4d]/5 transition-colors">
+                            <td class="px-4 py-3">
+                                <span class="font-semibold text-gray-900">{{ $ledger->formatted_period }}</span>
+                            </td>
+                            <td class="px-4 py-3">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700">{{ number_format($ledger->commission_rate_used, 2) }}%</span>
+                            </td>
+                            <td class="px-4 py-3 text-gray-600">{{ number_format($ledger->total_transactions) }}</td>
+                            <td class="px-4 py-3 text-gray-700">Rs {{ number_format($ledger->total_invoice_amount, 2) }}</td>
+                            <td class="px-4 py-3">
+                                <span class="font-semibold text-[#021c47]">Rs {{ number_format($ledger->commission_owed, 2) }}</span>
+                            </td>
+                            <td class="px-4 py-3 text-gray-600">Rs {{ number_format($ledger->amount_paid, 2) }}</td>
+                            <td class="px-4 py-3">
+                                @if($ledger->amount_outstanding > 0)
+                                    <span class="font-semibold text-red-600">Rs {{ number_format($ledger->amount_outstanding, 2) }}</span>
+                                @else
+                                    <span class="text-gray-400">-</span>
+                                @endif
+                            </td>
+                            <td class="px-4 py-3">
+                                @if($ledger->status === 'settled')
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#93db4d]/20 text-[#5a8a2e]">Settled</span>
+                                @elseif($ledger->status === 'partial')
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700">Partial</span>
+                                @else
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">Pending</span>
+                                @endif
+                            </td>
+                            <td class="px-4 py-3">
+                                <div class="flex gap-2">
                                     @if($ledger->amount_outstanding > 0)
-                                        <strong style="color: #f5576c;">Rs {{ number_format($ledger->amount_outstanding, 2) }}</strong>
-                                    @else
-                                        <span style="color: #6c757d;">-</span>
-                                    @endif
-                                </td>
-                                <td style="padding: 0.75rem;">
-                                    @if($ledger->status === 'settled')
-                                        <span class="badge bg-success">Settled</span>
-                                    @elseif($ledger->status === 'partial')
-                                        <span class="badge bg-warning">Partial</span>
-                                    @else
-                                        <span class="badge bg-danger">Pending</span>
-                                    @endif
-                                </td>
-                                <td style="padding: 0.75rem;">
-                                    <div style="display: flex; gap: 0.5rem;">
-                                        @if($ledger->amount_outstanding > 0)
-                                            <a href="{{ route('admin.commissions.settlements.create', $ledger->id) }}" 
-                                               class="btn btn-sm btn-success">
-                                                Settle
-                                            </a>
-                                        @endif
-                                        <a href="{{ route('admin.commissions.invoice.download', $ledger->id) }}" 
-                                           class="btn btn-sm btn-outline-secondary" target="_blank">
-                                            Invoice
+                                        <a href="{{ route('admin.commissions.settlements.create', $ledger->id) }}"
+                                           class="inline-flex items-center px-3 py-1.5 bg-[#93db4d] text-[#021c47] rounded-lg text-sm font-medium hover:bg-[#7bc62e] transition-colors">
+                                            Settle
                                         </a>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
+                                    @endif
+                                    <a href="{{ route('admin.commissions.invoice.download', $ledger->id) }}"
+                                       class="inline-flex items-center px-3 py-1.5 border border-gray-200 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors" target="_blank">
+                                        Invoice
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
     </div>
 
     <!-- Settlement History -->
-    <div class="card">
-        <div class="card-header" style="background: white; border-bottom: 2px solid #f8f9fa; padding: 1rem;">
-            <h5 style="margin: 0;">💵 Settlement History</h5>
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-semibold text-[#021c47]">Settlement History</h3>
         </div>
-        <div class="card-body" style="padding: 0;">
-            <div class="table-responsive">
-                <table class="table" style="margin: 0;">
-                    <thead style="background: #f8f9fa;">
-                        <tr>
-                            <th style="padding: 0.75rem;">Date</th>
-                            <th style="padding: 0.75rem;">Period</th>
-                            <th style="padding: 0.75rem;">Amount</th>
-                            <th style="padding: 0.75rem;">Method</th>
-                            <th style="padding: 0.75rem;">Reference</th>
-                            <th style="padding: 0.75rem;">Processed By</th>
-                            <th style="padding: 0.75rem;">Notes</th>
-                            <th style="padding: 0.75rem;">Actions</th>
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-[#021c47] text-white">
+                    <tr>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Date</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Period</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Amount</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Method</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Reference</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Processed By</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Notes</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    @forelse($settlements as $settlement)
+                        <tr class="hover:bg-[#93db4d]/5 transition-colors">
+                            <td class="px-4 py-3">
+                                <span class="text-gray-900">{{ $settlement->processed_at->format('M d, Y') }}</span><br>
+                                <span class="text-sm text-gray-500">{{ $settlement->processed_at->format('h:i A') }}</span>
+                            </td>
+                            <td class="px-4 py-3 text-gray-600">{{ $settlement->ledger->formatted_period }}</td>
+                            <td class="px-4 py-3">
+                                <span class="font-semibold text-[#93db4d]">Rs {{ number_format($settlement->amount_settled, 2) }}</span>
+                            </td>
+                            <td class="px-4 py-3">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700">{{ $settlement->formatted_payment_method }}</span>
+                                @if($settlement->adjustment_type)
+                                    <span class="block mt-1 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-{{ $settlement->adjustment_type_badge['color'] }}-100 text-{{ $settlement->adjustment_type_badge['color'] }}-700">
+                                        {{ $settlement->adjustment_type_badge['label'] }}
+                                    </span>
+                                @endif
+                            </td>
+                            <td class="px-4 py-3 text-gray-600">{{ $settlement->settlement_reference ?? '-' }}</td>
+                            <td class="px-4 py-3 text-gray-600">{{ $settlement->processedByUser->name ?? 'N/A' }}</td>
+                            <td class="px-4 py-3">
+                                @if($settlement->admin_notes)
+                                    <span class="text-sm text-gray-600">{{ Str::limit($settlement->admin_notes, 50) }}</span>
+                                @else
+                                    <span class="text-gray-400">-</span>
+                                @endif
+                            </td>
+                            <td class="px-4 py-3">
+                                @if($settlement->canBeVoided())
+                                    <button type="button"
+                                            class="inline-flex items-center px-3 py-1.5 border border-red-500 text-red-500 rounded-lg text-sm font-medium hover:bg-red-500 hover:text-white transition-colors"
+                                            onclick="openVoidModal({{ $settlement->id }}, {{ $settlement->amount_settled }})">
+                                        Void
+                                    </button>
+                                @else
+                                    <span class="text-gray-400">-</span>
+                                @endif
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($settlements as $settlement)
-                            <tr>
-                                <td style="padding: 0.75rem;">
-                                    {{ $settlement->processed_at->format('M d, Y') }}<br>
-                                    <small style="color: #6c757d;">{{ $settlement->processed_at->format('h:i A') }}</small>
-                                </td>
-                                <td style="padding: 0.75rem;">
-                                    {{ $settlement->ledger->formatted_period }}
-                                </td>
-                                <td style="padding: 0.75rem;">
-                                    <strong style="color: #00f2fe;">Rs {{ number_format($settlement->amount_settled, 2) }}</strong>
-                                </td>
-                                <td style="padding: 0.75rem;">
-                                    <span class="badge bg-info">{{ $settlement->formatted_payment_method }}</span>
-                                    @if($settlement->adjustment_type)
-                                        <br>
-                                        <span class="badge bg-{{ $settlement->adjustment_type_badge['color'] }}" style="margin-top: 0.25rem;">
-                                            {{ $settlement->adjustment_type_badge['icon'] }} {{ $settlement->adjustment_type_badge['label'] }}
-                                        </span>
-                                    @endif
-                                </td>
-                                <td style="padding: 0.75rem;">
-                                    {{ $settlement->settlement_reference ?? '-' }}
-                                </td>
-                                <td style="padding: 0.75rem;">
-                                    {{ $settlement->processedByUser->name ?? 'N/A' }}
-                                </td>
-                                <td style="padding: 0.75rem;">
-                                    @if($settlement->admin_notes)
-                                        <small>{{ Str::limit($settlement->admin_notes, 50) }}</small>
-                                    @else
-                                        <span style="color: #6c757d;">-</span>
-                                    @endif
-                                </td>
-                                <td style="padding: 0.75rem;">
-                                    @if($settlement->canBeVoided())
-                                        <button type="button"
-                                                class="btn btn-sm btn-outline-danger"
-                                                onclick="openVoidModal({{ $settlement->id }}, {{ $settlement->amount_settled }})"
-                                                style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.875rem;">
-                                            🗑️ Void
-                                        </button>
-                                    @else
-                                        <span style="color: #6c757d; font-size: 0.875rem;">-</span>
-                                    @endif
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="8" style="padding: 2rem; text-align: center; color: #6c757d;">
-                                    No settlements recorded yet
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+                    @empty
+                        <tr>
+                            <td colspan="8" class="px-4 py-8 text-center text-gray-500">No settlements recorded yet</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
     </div>
 
-    <div style="margin-top: 1.5rem;">
-        <a href="{{ route('admin.commissions.partners.index') }}" class="btn btn-secondary">← Back to Partners</a>
+    <div class="mt-6">
+        <a href="{{ route('admin.commissions.partners.index') }}" class="inline-flex items-center px-4 py-2 border border-gray-200 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors">
+            ← Back to Partners
+        </a>
     </div>
 
     <!-- Void Settlement Modal -->
-    <div id="voidModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center;">
-        <div style="background: white; border-radius: 12px; width: 90%; max-width: 500px; box-shadow: 0 10px 40px rgba(0,0,0,0.3);">
+    <div id="voidModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl w-full max-w-md shadow-2xl">
             <!-- Modal Header -->
-            <div style="background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%); color: white; padding: 1.5rem; border-radius: 12px 12px 0 0;">
-                <h5 style="margin: 0; display: flex; align-items: center; gap: 0.5rem;">
-                    ⚠️ Void Settlement
-                </h5>
+            <div class="bg-red-500 px-6 py-4 rounded-t-xl">
+                <h3 class="text-lg font-semibold text-white">Void Settlement</h3>
             </div>
 
             <!-- Modal Body -->
-            <div style="padding: 1.5rem;">
-                <div style="background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem;">
-                    <p style="margin: 0; color: #856404; font-weight: 500;">
-                        ⚠️ Warning: This action will reverse the settlement and refund <strong>Rs <span id="voidAmount">0</span></strong> to the ledger.
+            <div class="p-6">
+                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+                    <p class="text-yellow-800 font-medium">
+                        Warning: This action will reverse the settlement and refund <strong>Rs <span id="voidAmount">0</span></strong> to the ledger.
                     </p>
                 </div>
 
                 <form id="voidForm" method="POST">
                     @csrf
-                    <div style="margin-bottom: 1.5rem;">
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
-                            Void Reason <span style="color: red;">*</span>
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Void Reason <span class="text-red-500">*</span>
                         </label>
                         <textarea name="void_reason" id="voidReason" rows="4"
-                                  class="form-control"
-                                  style="padding: 0.75rem; width: 100%; border: 1px solid #dee2e6; border-radius: 4px;"
+                                  class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-colors"
                                   placeholder="Explain why this settlement needs to be voided (required for audit trail)"
                                   required></textarea>
-                        <small style="color: #6c757d;">This action is irreversible and will be logged.</small>
+                        <p class="mt-1 text-sm text-gray-500">This action is irreversible and will be logged.</p>
                     </div>
 
-                    <div style="display: flex; gap: 1rem; justify-content: flex-end;">
-                        <button type="button" onclick="closeVoidModal()" class="btn btn-outline-secondary">
+                    <div class="flex gap-3 justify-end">
+                        <button type="button" onclick="closeVoidModal()" class="px-4 py-2 border border-gray-200 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors">
                             Cancel
                         </button>
-                        <button type="submit" class="btn btn-danger">
-                            🗑️ Confirm Void
+                        <button type="submit" class="px-4 py-2 bg-red-500 text-white rounded-lg font-medium hover:bg-red-600 transition-colors">
+                            Confirm Void
                         </button>
                     </div>
                 </form>
@@ -268,24 +249,20 @@
             document.getElementById('voidAmount').textContent = parseFloat(amount).toFixed(2);
             document.getElementById('voidForm').action = `/admin/commissions/settlements/${settlementId}/void`;
             document.getElementById('voidReason').value = '';
-            document.getElementById('voidModal').style.display = 'flex';
+            document.getElementById('voidModal').classList.remove('hidden');
         }
 
         function closeVoidModal() {
-            document.getElementById('voidModal').style.display = 'none';
+            document.getElementById('voidModal').classList.add('hidden');
             currentVoidSettlementId = null;
         }
 
-        // Close modal on background click
         document.getElementById('voidModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeVoidModal();
-            }
+            if (e.target === this) closeVoidModal();
         });
 
-        // Close modal on Escape key
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && document.getElementById('voidModal').style.display === 'flex') {
+            if (e.key === 'Escape' && !document.getElementById('voidModal').classList.contains('hidden')) {
                 closeVoidModal();
             }
         });

@@ -4,61 +4,68 @@
 @section('page-title', 'Customer Transactions')
 
 @section('content')
-    <div class="card">
-        <div class="card-header">
+    {{-- Main Card --}}
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
+        <div class="px-6 py-4 border-b border-gray-100 flex flex-wrap items-center justify-between gap-4">
             <div>
-                <h3 class="card-title">Transactions: {{ $customer->name }}</h3>
-                <p style="color: #666; margin-top: 0.25rem;">{{ $customer->phone }}</p>
+                <h3 class="text-lg font-bold text-[#021c47]">{{ $customer->name }}</h3>
+                <p class="text-sm text-gray-500 mt-1">{{ $customer->phone }}</p>
             </div>
-            <a href="{{ route('admin.customers.show', $customer) }}" class="btn btn-secondary">Back to Customer Details</a>
+            <a href="{{ route('admin.customers.show', $customer) }}" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-all duration-200">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+                Back to Details
+            </a>
         </div>
-        <div class="card-body">
-
+        
+        <div class="p-6">
             @if($transactions->count() > 0)
-                <div style="overflow-x: auto;">
-                    <table style="width: 100%; border-collapse: collapse;">
+                {{-- Transactions Table --}}
+                <div class="overflow-x-auto rounded-lg border border-gray-200">
+                    <table class="w-full">
                         <thead>
-                            <tr style="background: #f8f9fa; border-bottom: 2px solid #dee2e6;">
-                                <th style="padding: 0.75rem; text-align: left;">Transaction Code</th>
-                                <th style="padding: 0.75rem; text-align: left;">Partner</th>
-                                <th style="padding: 0.75rem; text-align: right;">Amount</th>
-                                <th style="padding: 0.75rem; text-align: right;">Customer Profit</th>
-                                <th style="padding: 0.75rem; text-align: center;">Status</th>
-                                <th style="padding: 0.75rem; text-align: left;">Date</th>
+                            <tr class="bg-[#021c47] text-white">
+                                <th class="px-4 py-3 text-left text-sm font-semibold">Transaction Code</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold">Partner</th>
+                                <th class="px-4 py-3 text-right text-sm font-semibold">Amount</th>
+                                <th class="px-4 py-3 text-right text-sm font-semibold">Customer Profit</th>
+                                <th class="px-4 py-3 text-center text-sm font-semibold">Status</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold">Date</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="divide-y divide-gray-100">
                             @foreach($transactions as $transaction)
-                                <tr style="border-bottom: 1px solid #dee2e6;">
-                                    <td style="padding: 0.75rem;">
-                                        <strong>{{ $transaction->transaction_code }}</strong>
+                                <tr class="hover:bg-[#93db4d]/5 transition-colors">
+                                    <td class="px-4 py-3">
+                                        <span class="font-semibold text-[#021c47]">{{ $transaction->transaction_code }}</span>
                                     </td>
-                                    <td style="padding: 0.75rem;">
-                                        {{ $transaction->partner->partnerProfile->business_name ?? $transaction->partner->name ?? '-' }}
-                                        <br>
-                                        <small style="color: #666;">{{ $transaction->partner->phone ?? '' }}</small>
-                                    </td>
-                                    <td style="padding: 0.75rem; text-align: right;">
-                                        Rs. {{ number_format($transaction->invoice_amount, 0) }}
-                                    </td>
-                                    <td style="padding: 0.75rem; text-align: right;">
-                                        Rs. {{ number_format($transaction->customer_profit_share, 0) }}
-                                    </td>
-                                    <td style="padding: 0.75rem; text-align: center;">
-                                        @if($transaction->status === 'confirmed')
-                                            <span class="badge-success">Confirmed</span>
-                                        @elseif($transaction->status === 'pending_confirmation')
-                                            <span class="badge-warning">Pending</span>
-                                        @elseif($transaction->status === 'rejected')
-                                            <span style="background: #e74c3c; color: white; padding: 0.25rem 0.5rem; border-radius: 3px; font-size: 0.75rem;">Rejected</span>
-                                        @else
-                                            <span class="badge-secondary">{{ ucfirst($transaction->status) }}</span>
+                                    <td class="px-4 py-3">
+                                        <div class="text-sm text-[#021c47]">{{ $transaction->partner->partnerProfile->business_name ?? $transaction->partner->name ?? '-' }}</div>
+                                        @if($transaction->partner->phone)
+                                            <div class="text-xs text-gray-400 mt-0.5">{{ $transaction->partner->phone }}</div>
                                         @endif
                                     </td>
-                                    <td style="padding: 0.75rem;">
-                                        {{ $transaction->transaction_date->format('M j, Y') }}
-                                        <br>
-                                        <small style="color: #999;">{{ $transaction->transaction_date->format('g:i A') }}</small>
+                                    <td class="px-4 py-3 text-right">
+                                        <span class="font-medium text-[#021c47]">Rs. {{ number_format($transaction->invoice_amount, 0) }}</span>
+                                    </td>
+                                    <td class="px-4 py-3 text-right">
+                                        <span class="font-semibold text-[#93db4d]">Rs. {{ number_format($transaction->customer_profit_share, 0) }}</span>
+                                    </td>
+                                    <td class="px-4 py-3 text-center">
+                                        @if($transaction->status === 'confirmed')
+                                            <span class="inline-flex px-2.5 py-1 text-xs font-semibold rounded-full bg-[#93db4d]/20 text-[#65a030]">Confirmed</span>
+                                        @elseif($transaction->status === 'pending_confirmation')
+                                            <span class="inline-flex px-2.5 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-700">Pending</span>
+                                        @elseif($transaction->status === 'rejected')
+                                            <span class="inline-flex px-2.5 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-600">Rejected</span>
+                                        @else
+                                            <span class="inline-flex px-2.5 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-600">{{ ucfirst($transaction->status) }}</span>
+                                        @endif
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <div class="text-sm text-[#021c47]">{{ $transaction->transaction_date->format('M j, Y') }}</div>
+                                        <div class="text-xs text-gray-400 mt-0.5">{{ $transaction->transaction_date->format('g:i A') }}</div>
                                     </td>
                                 </tr>
                             @endforeach
@@ -66,31 +73,22 @@
                     </table>
                 </div>
 
-                <!-- Pagination -->
-                <div style="margin-top: 1.5rem; display: flex; justify-content: center;">
-                    {{ $transactions->links() }}
-                </div>
+                {{-- Pagination --}}
+                @if($transactions->hasPages())
+                    <div class="mt-6 flex justify-center">
+                        {{ $transactions->links() }}
+                    </div>
+                @endif
             @else
-                <div style="text-align: center; padding: 3rem; color: #666;">
-                    <h4>No transactions found</h4>
-                    <p>This customer hasn't made any purchases yet.</p>
+                {{-- Empty State --}}
+                <div class="text-center py-12">
+                    <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+                    </svg>
+                    <h4 class="text-lg font-semibold text-[#021c47] mb-2">No transactions found</h4>
+                    <p class="text-gray-500">This customer hasn't made any purchases yet.</p>
                 </div>
             @endif
-
         </div>
     </div>
 @endsection
-
-@push('scripts')
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const paginationLinks = document.querySelectorAll('.pagination a, .pagination span');
-        paginationLinks.forEach(link => {
-            link.style.cssText = 'padding: 0.5rem 0.75rem; margin: 0 0.25rem; border: 1px solid #dee2e6; border-radius: 3px; text-decoration: none; color: #495057;';
-            if (link.classList.contains('active')) {
-                link.style.cssText += 'background: #3498db; color: white; border-color: #3498db;';
-            }
-        });
-    });
-</script>
-@endpush

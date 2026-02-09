@@ -4,230 +4,221 @@
 @section('page-title', 'Create New Partner')
 
 @section('content')
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">Add New Partner</h3>
-            <a href="{{ route('admin.partners.index') }}" class="btn btn-secondary">Back to Partners</a>
+    {{-- Back Button --}}
+    <div class="mb-6">
+        <a href="{{ route('admin.partners.index') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-all duration-200">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+            Back to Partners
+        </a>
+    </div>
+
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
+        <div class="px-6 py-4 border-b border-gray-100">
+            <h3 class="text-lg font-bold text-[#021c47]">Add New Partner</h3>
+            <p class="text-sm text-gray-500 mt-1">Create a new business partner account</p>
         </div>
-        <div class="card-body">
+        
+        <div class="p-6">
             @if($errors->any())
-            <div style="background: #fee2e2; color: #991b1b; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid #ef4444;">
-                <strong>Please fix the following errors:</strong>
-                <ul style="list-style: disc; padding-left: 1.25rem; margin-top: 0.5rem;">
-                    @foreach($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
+                <div class="bg-red-50 border-l-4 border-red-400 p-4 rounded-r-lg mb-6">
+                    <p class="text-sm text-red-700 font-medium">Please fix the following errors:</p>
+                    <ul class="list-disc pl-5 mt-2 text-sm text-red-600">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
             @endif
 
             <form method="POST" action="{{ route('admin.partners.store') }}" id="createPartnerForm" enctype="multipart/form-data">
                 @csrf
 
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
-                    <!-- Business Name -->
-                    <div class="form-group">
-                        <label for="business_name" style="display: block; font-weight: 600; margin-bottom: 0.5rem;">
-                            Business Name <span style="color: #ef4444;">*</span>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    {{-- Business Name --}}
+                    <div>
+                        <label for="business_name" class="block text-sm font-medium text-[#021c47] mb-2">
+                            Business Name <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" id="business_name" name="business_name" class="form-control" required
-                               value="{{ old('business_name') }}" placeholder="e.g., KFC Lahore">
+                        <input type="text" id="business_name" name="business_name" required
+                               value="{{ old('business_name') }}" placeholder="e.g., KFC Lahore"
+                               class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-all">
                     </div>
 
-                    <!-- Mobile Number -->
-                    <div class="form-group">
-                        <label for="phone" style="display: block; font-weight: 600; margin-bottom: 0.5rem;">
-                            Mobile Number <span style="color: #ef4444;">*</span>
+                    {{-- Mobile Number --}}
+                    <div>
+                        <label for="phone" class="block text-sm font-medium text-[#021c47] mb-2">
+                            Mobile Number <span class="text-red-500">*</span>
                         </label>
-                        <div style="display: flex; gap: 0.5rem;">
-                            <div style="padding: 0.5rem 1rem; background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 5px; font-weight: 600;">+92</div>
-                            <input type="text" id="phone" name="phone" class="form-control" required maxlength="10" pattern="[0-9]{10}"
-                                   value="{{ old('phone') }}" placeholder="3001234567" style="flex: 1;">
+                        <div class="flex gap-2">
+                            <div class="px-4 py-2.5 bg-gray-100 border border-gray-200 rounded-lg font-medium text-gray-600">+92</div>
+                            <input type="text" id="phone" name="phone" required maxlength="10" pattern="[0-9]{10}"
+                                   value="{{ old('phone') }}" placeholder="3001234567"
+                                   class="flex-1 px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-all">
                         </div>
-                        <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                        <div class="flex gap-2 mt-2">
                             <button type="button" id="sendOtpBtn" onclick="sendPartnerOtp()"
-                                    style="flex: 1; padding: 0.5rem 1rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                                           color: white; border: none; border-radius: 6px; font-weight: 500; cursor: pointer;
-                                           transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                                    class="flex-1 px-4 py-2 bg-[#021c47] text-white font-medium rounded-lg hover:bg-[#93db4d] hover:text-[#021c47] transition-all flex items-center justify-center gap-2">
                                 <span id="otpBtnIcon">📤</span>
                                 <span id="otpBtnText">Send OTP</span>
                             </button>
                             <button type="button" id="setPinBtn" onclick="openSetPinModal()"
-                                    style="flex: 1; padding: 0.5rem 1rem; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-                                           color: white; border: none; border-radius: 6px; font-weight: 500; cursor: pointer;
-                                           transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                                    class="flex-1 px-4 py-2 bg-[#93db4d] text-[#021c47] font-medium rounded-lg hover:bg-[#7fc93d] transition-all flex items-center justify-center gap-2">
                                 <span id="pinBtnIcon">🔐</span>
                                 <span id="pinBtnText">Set PIN</span>
                             </button>
                         </div>
-                        <small style="color: #718096; font-size: 0.75rem;">Enter 10-digit mobile number without +92</small>
+                        <p class="mt-1 text-xs text-gray-400">Enter 10-digit mobile number without +92</p>
                     </div>
 
-                    <!-- Contact Person Name -->
-                    <div class="form-group">
-                        <label for="contact_person_name" style="display: block; font-weight: 600; margin-bottom: 0.5rem;">
-                            Contact Person Name <span style="color: #ef4444;">*</span>
+                    {{-- Contact Person Name --}}
+                    <div>
+                        <label for="contact_person_name" class="block text-sm font-medium text-[#021c47] mb-2">
+                            Contact Person Name <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" id="contact_person_name" name="contact_person_name" class="form-control" required
-                               value="{{ old('contact_person_name') }}" placeholder="Full name">
+                        <input type="text" id="contact_person_name" name="contact_person_name" required
+                               value="{{ old('contact_person_name') }}" placeholder="Full name"
+                               class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-all">
                     </div>
 
-                    <!-- Email -->
-                    <div class="form-group">
-                        <label for="email" style="display: block; font-weight: 600; margin-bottom: 0.5rem;">
-                            Email (Optional)
-                        </label>
-                        <input type="email" id="email" name="email" class="form-control"
-                               value="{{ old('email') }}" placeholder="partner@email.com">
+                    {{-- Email --}}
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-[#021c47] mb-2">Email (Optional)</label>
+                        <input type="email" id="email" name="email"
+                               value="{{ old('email') }}" placeholder="partner@email.com"
+                               class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-all">
                     </div>
 
-                    <!-- Business Type -->
-                    <div class="form-group">
-                        <label for="business_type" style="display: block; font-weight: 600; margin-bottom: 0.5rem;">
-                            Business Type <span style="color: #ef4444;">*</span>
+                    {{-- Business Type --}}
+                    <div>
+                        <label for="business_type" class="block text-sm font-medium text-[#021c47] mb-2">
+                            Business Type <span class="text-red-500">*</span>
                         </label>
-                        <select id="business_type" name="business_type" class="form-control" required>
+                        <select id="business_type" name="business_type" required
+                                class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-all">
                             <option value="">Select business type</option>
-                            <option value="Restaurant" {{ old('business_type') == 'Restaurant' ? 'selected' : '' }}>Restaurant</option>
-                            <option value="Retail" {{ old('business_type') == 'Retail' ? 'selected' : '' }}>Retail Store</option>
-                            <option value="Cafe" {{ old('business_type') == 'Cafe' ? 'selected' : '' }}>Cafe</option>
-                            <option value="Grocery" {{ old('business_type') == 'Grocery' ? 'selected' : '' }}>Grocery Store</option>
-                            <option value="Fashion" {{ old('business_type') == 'Fashion' ? 'selected' : '' }}>Fashion & Clothing</option>
-                            <option value="Electronics" {{ old('business_type') == 'Electronics' ? 'selected' : '' }}>Electronics</option>
-                            <option value="Salon" {{ old('business_type') == 'Salon' ? 'selected' : '' }}>Salon & Spa</option>
-                            <option value="Pharmacy" {{ old('business_type') == 'Pharmacy' ? 'selected' : '' }}>Pharmacy</option>
-                            <option value="Services" {{ old('business_type') == 'Services' ? 'selected' : '' }}>Services</option>
-                            <option value="Other" {{ old('business_type') == 'Other' ? 'selected' : '' }}>Other</option>
+                            @foreach(['Restaurant', 'Retail', 'Cafe', 'Grocery', 'Fashion', 'Electronics', 'Salon', 'Pharmacy', 'Services', 'Other'] as $type)
+                                <option value="{{ $type }}" {{ old('business_type') == $type ? 'selected' : '' }}>{{ $type }}</option>
+                            @endforeach
                         </select>
                     </div>
 
-                    <!-- City -->
-                    <div class="form-group">
-                        <label for="city" style="display: block; font-weight: 600; margin-bottom: 0.5rem;">
-                            City (Optional)
-                        </label>
-                        <input type="text" id="city" name="city" class="form-control"
-                               value="{{ old('city') }}" placeholder="e.g., Lahore">
+                    {{-- City --}}
+                    <div>
+                        <label for="city" class="block text-sm font-medium text-[#021c47] mb-2">City (Optional)</label>
+                        <input type="text" id="city" name="city"
+                               value="{{ old('city') }}" placeholder="e.g., Lahore"
+                               class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-all">
                     </div>
 
-                    <!-- Commission Rate -->
-                    <div class="form-group">
-                        <label for="commission_rate" style="display: block; font-weight: 600; margin-bottom: 0.5rem;">
-                            Commission Rate (%) <small style="color: #718096; font-weight: 400;">(Optional)</small>
-                        </label>
-                        <input type="number" id="commission_rate" name="commission_rate" class="form-control"
-                               value="{{ old('commission_rate', 0) }}" placeholder="0.00" min="0" max="100" step="0.01">
-                        <small style="color: #718096; font-size: 0.75rem;">Percentage the partner pays BixCash (0-100%)</small>
+                    {{-- Commission Rate --}}
+                    <div>
+                        <label for="commission_rate" class="block text-sm font-medium text-[#021c47] mb-2">Commission Rate (%)</label>
+                        <input type="number" id="commission_rate" name="commission_rate"
+                               value="{{ old('commission_rate', 0) }}" placeholder="0.00" min="0" max="100" step="0.01"
+                               class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-all">
+                        <p class="mt-1 text-xs text-gray-400">Percentage the partner pays BixCash (0-100%)</p>
                     </div>
 
-                    <!-- Logo -->
-                    <div class="form-group">
-                        <label for="logo" style="display: block; font-weight: 600; margin-bottom: 0.5rem;">
-                            Business Logo (Optional)
-                        </label>
-                        <input type="file" id="logo" name="logo" class="form-control" accept="image/jpeg,image/jpg,image/png"
-                               onchange="previewLogo(event)">
-                        <small style="color: #718096; font-size: 0.75rem;">JPG or PNG, max 2MB</small>
-                        <div id="logoPreview" style="margin-top: 0.75rem; display: none;">
-                            <img id="logoPreviewImg" src="" alt="Logo Preview" style="width: 64px; height: 64px; object-fit: cover; border-radius: 8px; border: 2px solid #e2e8f0;">
+                    {{-- Logo --}}
+                    <div>
+                        <label for="logo" class="block text-sm font-medium text-[#021c47] mb-2">Business Logo (Optional)</label>
+                        <input type="file" id="logo" name="logo" accept="image/jpeg,image/jpg,image/png" onchange="previewLogo(event)"
+                               class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:border-[#93db4d]">
+                        <p class="mt-1 text-xs text-gray-400">JPG or PNG, max 2MB</p>
+                        <div id="logoPreview" class="mt-2 hidden">
+                            <img id="logoPreviewImg" src="" alt="Preview" class="w-16 h-16 rounded-lg object-cover border-2 border-gray-200">
                         </div>
                     </div>
                 </div>
 
-                <!-- Business Address (Full Width) -->
-                <div class="form-group" style="margin-bottom: 1.5rem;">
-                    <label for="business_address" style="display: block; font-weight: 600; margin-bottom: 0.5rem;">
-                        Business Address (Optional)
-                    </label>
-                    <input type="text" id="business_address" name="business_address" class="form-control"
-                           value="{{ old('business_address') }}" placeholder="Complete business address">
+                {{-- Business Address --}}
+                <div class="mb-6">
+                    <label for="business_address" class="block text-sm font-medium text-[#021c47] mb-2">Business Address (Optional)</label>
+                    <input type="text" id="business_address" name="business_address"
+                           value="{{ old('business_address') }}" placeholder="Complete business address"
+                           class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-all">
                 </div>
 
-                <!-- Auto-Approve Option -->
-                <div class="form-group" style="margin-bottom: 1.5rem; padding: 1rem; background: #e3f2fd; border-radius: 8px;">
-                    <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer;">
+                {{-- Auto-Approve --}}
+                <div class="mb-6 p-4 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
+                    <label class="flex items-center gap-3 cursor-pointer">
                         <input type="checkbox" name="auto_approve" value="1" {{ old('auto_approve', '1') ? 'checked' : '' }}
-                               style="width: 18px; height: 18px;">
-                        <span style="font-weight: 600; color: #1976d2;">
-                            Auto-approve this partner (Partner will be immediately active)
-                        </span>
+                               class="w-5 h-5 text-[#93db4d] rounded focus:ring-[#93db4d]">
+                        <span class="text-sm font-medium text-[#021c47]">Auto-approve this partner (Partner will be immediately active)</span>
                     </label>
-                    <small style="color: #718096; margin-left: 2rem; display: block; margin-top: 0.25rem;">
-                        If unchecked, partner will be created with "Pending" status and require manual approval.
-                    </small>
+                    <p class="mt-1 ml-8 text-xs text-gray-500">If unchecked, partner will be created with "Pending" status.</p>
                 </div>
 
-                <!-- Hidden Fields for OTP & PIN -->
+                {{-- Hidden PIN Field --}}
                 <input type="hidden" id="partner_pin" name="partner_pin" value="">
 
-                <!-- Submit Buttons -->
-                <div style="display: flex; gap: 1rem; justify-content: flex-end;">
-                    <a href="{{ route('admin.partners.index') }}" class="btn btn-secondary">Cancel</a>
-                    <button type="submit" class="btn btn-primary">Create Partner</button>
+                {{-- Submit --}}
+                <div class="flex justify-end gap-3 pt-6 border-t border-gray-200">
+                    <a href="{{ route('admin.partners.index') }}" class="px-5 py-2.5 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-all duration-200">
+                        Cancel
+                    </a>
+                    <button type="submit" class="px-5 py-2.5 bg-[#021c47] text-white font-medium rounded-lg hover:bg-[#93db4d] hover:text-[#021c47] transition-all duration-200">
+                        Create Partner
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- OTP Verification Modal -->
-    <div id="otpModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center;">
-        <div style="background: white; border-radius: 12px; padding: 2rem; max-width: 400px; width: 90%; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
-            <h3 style="margin: 0 0 0.5rem; font-size: 1.25rem; font-weight: 600;">Verify Phone Number</h3>
-            <p style="color: #718096; margin-bottom: 1.5rem; font-size: 0.875rem;">Enter the 6-digit code sent to <strong id="otpPhoneDisplay"></strong></p>
-
-            <div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; justify-content: center;">
-                <input type="text" id="otp1" maxlength="1" style="width: 50px; height: 50px; text-align: center; font-size: 1.5rem; font-weight: 600; border: 2px solid #e2e8f0; border-radius: 8px;" onkeyup="moveOtpFocus(event, 1)" onkeydown="handleOtpBackspace(event, 1)">
-                <input type="text" id="otp2" maxlength="1" style="width: 50px; height: 50px; text-align: center; font-size: 1.5rem; font-weight: 600; border: 2px solid #e2e8f0; border-radius: 8px;" onkeyup="moveOtpFocus(event, 2)" onkeydown="handleOtpBackspace(event, 2)">
-                <input type="text" id="otp3" maxlength="1" style="width: 50px; height: 50px; text-align: center; font-size: 1.5rem; font-weight: 600; border: 2px solid #e2e8f0; border-radius: 8px;" onkeyup="moveOtpFocus(event, 3)" onkeydown="handleOtpBackspace(event, 3)">
-                <input type="text" id="otp4" maxlength="1" style="width: 50px; height: 50px; text-align: center; font-size: 1.5rem; font-weight: 600; border: 2px solid #e2e8f0; border-radius: 8px;" onkeyup="moveOtpFocus(event, 4)" onkeydown="handleOtpBackspace(event, 4)">
-                <input type="text" id="otp5" maxlength="1" style="width: 50px; height: 50px; text-align: center; font-size: 1.5rem; font-weight: 600; border: 2px solid #e2e8f0; border-radius: 8px;" onkeyup="moveOtpFocus(event, 5)" onkeydown="handleOtpBackspace(event, 5)">
-                <input type="text" id="otp6" maxlength="1" style="width: 50px; height: 50px; text-align: center; font-size: 1.5rem; font-weight: 600; border: 2px solid #e2e8f0; border-radius: 8px;" onkeyup="moveOtpFocus(event, 6)" onkeydown="handleOtpBackspace(event, 6)">
+    {{-- OTP Modal --}}
+    <div id="otpModal" class="hidden fixed inset-0 bg-black/50 z-50 items-center justify-center">
+        <div class="bg-white rounded-xl shadow-xl max-w-sm w-full mx-4 p-6">
+            <h3 class="text-lg font-bold text-[#021c47] mb-1">Verify Phone Number</h3>
+            <p class="text-sm text-gray-500 mb-4">Enter the 6-digit code sent to <strong id="otpPhoneDisplay"></strong></p>
+            <div class="flex gap-2 justify-center mb-4">
+                @for($i = 1; $i <= 6; $i++)
+                    <input type="text" id="otp{{ $i }}" maxlength="1"
+                           class="w-10 h-12 text-center text-xl font-bold border-2 border-gray-200 rounded-lg focus:border-[#93db4d] focus:outline-none"
+                           onkeyup="moveOtpFocus(event, {{ $i }})" onkeydown="handleOtpBackspace(event, {{ $i }})">
+                @endfor
             </div>
-
-            <div id="otpError" style="display: none; background: #fee2e2; color: #991b1b; padding: 0.75rem; border-radius: 6px; margin-bottom: 1rem; font-size: 0.875rem;"></div>
-
-            <div style="display: flex; gap: 0.75rem;">
-                <button type="button" onclick="closeOtpModal()" style="flex: 1; padding: 0.75rem; background: #e2e8f0; color: #4a5568; border: none; border-radius: 6px; font-weight: 500; cursor: pointer;">Cancel</button>
-                <button type="button" id="verifyOtpBtn" onclick="verifyPartnerOtp()" style="flex: 1; padding: 0.75rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 6px; font-weight: 500; cursor: pointer;">Verify OTP</button>
+            <div id="otpError" class="hidden bg-red-50 text-red-600 p-3 rounded-lg text-sm mb-4"></div>
+            <div class="flex gap-3">
+                <button type="button" onclick="closeOtpModal()" class="flex-1 px-4 py-2.5 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200">Cancel</button>
+                <button type="button" id="verifyOtpBtn" onclick="verifyPartnerOtp()" class="flex-1 px-4 py-2.5 bg-[#021c47] text-white font-medium rounded-lg hover:bg-[#93db4d] hover:text-[#021c47]">Verify</button>
             </div>
-
-            <div style="text-align: center; margin-top: 1rem;">
-                <button type="button" id="resendOtpBtn" onclick="resendPartnerOtp()" style="background: none; border: none; color: #667eea; font-size: 0.875rem; cursor: pointer; text-decoration: underline;">Resend OTP</button>
+            <div class="text-center mt-3">
+                <button type="button" onclick="resendPartnerOtp()" class="text-sm text-[#021c47] hover:underline">Resend OTP</button>
             </div>
         </div>
     </div>
 
-    <!-- PIN Setup Modal -->
-    <div id="pinModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center;">
-        <div style="background: white; border-radius: 12px; padding: 2rem; max-width: 400px; width: 90%; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
-            <h3 style="margin: 0 0 0.5rem; font-size: 1.25rem; font-weight: 600;">Set Partner PIN</h3>
-            <p style="color: #718096; margin-bottom: 1.5rem; font-size: 0.875rem;">Create a 4-digit PIN for partner authentication</p>
-
-            <div style="margin-bottom: 1.5rem;">
-                <label style="display: block; font-weight: 500; margin-bottom: 0.5rem; font-size: 0.875rem;">Enter PIN</label>
-                <div style="display: flex; gap: 0.5rem; justify-content: center;">
-                    <input type="password" id="pin1" maxlength="1" style="width: 50px; height: 50px; text-align: center; font-size: 1.5rem; font-weight: 600; border: 2px solid #e2e8f0; border-radius: 8px;" onkeyup="movePinFocus(event, 1)" onkeydown="handlePinBackspace(event, 1)">
-                    <input type="password" id="pin2" maxlength="1" style="width: 50px; height: 50px; text-align: center; font-size: 1.5rem; font-weight: 600; border: 2px solid #e2e8f0; border-radius: 8px;" onkeyup="movePinFocus(event, 2)" onkeydown="handlePinBackspace(event, 2)">
-                    <input type="password" id="pin3" maxlength="1" style="width: 50px; height: 50px; text-align: center; font-size: 1.5rem; font-weight: 600; border: 2px solid #e2e8f0; border-radius: 8px;" onkeyup="movePinFocus(event, 3)" onkeydown="handlePinBackspace(event, 3)">
-                    <input type="password" id="pin4" maxlength="1" style="width: 50px; height: 50px; text-align: center; font-size: 1.5rem; font-weight: 600; border: 2px solid #e2e8f0; border-radius: 8px;" onkeyup="movePinFocus(event, 4)" onkeydown="handlePinBackspace(event, 4)">
+    {{-- PIN Modal --}}
+    <div id="pinModal" class="hidden fixed inset-0 bg-black/50 z-50 items-center justify-center">
+        <div class="bg-white rounded-xl shadow-xl max-w-sm w-full mx-4 p-6">
+            <h3 class="text-lg font-bold text-[#021c47] mb-1">Set Partner PIN</h3>
+            <p class="text-sm text-gray-500 mb-4">Create a 4-digit PIN for authentication</p>
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-[#021c47] mb-2">Enter PIN</label>
+                <div class="flex gap-2 justify-center">
+                    @for($i = 1; $i <= 4; $i++)
+                        <input type="password" id="pin{{ $i }}" maxlength="1"
+                               class="w-12 h-14 text-center text-2xl font-bold border-2 border-gray-200 rounded-lg focus:border-[#93db4d] focus:outline-none"
+                               onkeyup="movePinFocus(event, {{ $i }})" onkeydown="handlePinBackspace(event, {{ $i }})">
+                    @endfor
                 </div>
             </div>
-
-            <div style="margin-bottom: 1.5rem;">
-                <label style="display: block; font-weight: 500; margin-bottom: 0.5rem; font-size: 0.875rem;">Confirm PIN</label>
-                <div style="display: flex; gap: 0.5rem; justify-content: center;">
-                    <input type="password" id="pinConfirm1" maxlength="1" style="width: 50px; height: 50px; text-align: center; font-size: 1.5rem; font-weight: 600; border: 2px solid #e2e8f0; border-radius: 8px;" onkeyup="movePinConfirmFocus(event, 1)" onkeydown="handlePinConfirmBackspace(event, 1)">
-                    <input type="password" id="pinConfirm2" maxlength="1" style="width: 50px; height: 50px; text-align: center; font-size: 1.5rem; font-weight: 600; border: 2px solid #e2e8f0; border-radius: 8px;" onkeyup="movePinConfirmFocus(event, 2)" onkeydown="handlePinConfirmBackspace(event, 2)">
-                    <input type="password" id="pinConfirm3" maxlength="1" style="width: 50px; height: 50px; text-align: center; font-size: 1.5rem; font-weight: 600; border: 2px solid #e2e8f0; border-radius: 8px;" onkeyup="movePinConfirmFocus(event, 3)" onkeydown="handlePinConfirmBackspace(event, 3)">
-                    <input type="password" id="pinConfirm4" maxlength="1" style="width: 50px; height: 50px; text-align: center; font-size: 1.5rem; font-weight: 600; border: 2px solid #e2e8f0; border-radius: 8px;" onkeyup="movePinConfirmFocus(event, 4)" onkeydown="handlePinConfirmBackspace(event, 4)">
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-[#021c47] mb-2">Confirm PIN</label>
+                <div class="flex gap-2 justify-center">
+                    @for($i = 1; $i <= 4; $i++)
+                        <input type="password" id="pinConfirm{{ $i }}" maxlength="1"
+                               class="w-12 h-14 text-center text-2xl font-bold border-2 border-gray-200 rounded-lg focus:border-[#93db4d] focus:outline-none"
+                               onkeyup="movePinConfirmFocus(event, {{ $i }})" onkeydown="handlePinConfirmBackspace(event, {{ $i }})">
+                    @endfor
                 </div>
             </div>
-
-            <div id="pinError" style="display: none; background: #fee2e2; color: #991b1b; padding: 0.75rem; border-radius: 6px; margin-bottom: 1rem; font-size: 0.875rem;"></div>
-
-            <div style="display: flex; gap: 0.75rem;">
-                <button type="button" onclick="closePinModal()" style="flex: 1; padding: 0.75rem; background: #e2e8f0; color: #4a5568; border: none; border-radius: 6px; font-weight: 500; cursor: pointer;">Cancel</button>
-                <button type="button" id="setPinSubmitBtn" onclick="setPartnerPin()" style="flex: 1; padding: 0.75rem; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border: none; border-radius: 6px; font-weight: 500; cursor: pointer;">Set PIN</button>
+            <div id="pinError" class="hidden bg-red-50 text-red-600 p-3 rounded-lg text-sm mb-4"></div>
+            <div class="flex gap-3">
+                <button type="button" onclick="closePinModal()" class="flex-1 px-4 py-2.5 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200">Cancel</button>
+                <button type="button" onclick="setPartnerPin()" class="flex-1 px-4 py-2.5 bg-[#93db4d] text-[#021c47] font-medium rounded-lg hover:bg-[#7fc93d]">Set PIN</button>
             </div>
         </div>
     </div>
@@ -235,7 +226,6 @@
 
 @push('scripts')
 <script>
-    // Phone number validation
     const phoneInput = document.getElementById('phone');
     if (phoneInput) {
         phoneInput.addEventListener('input', function(e) {
@@ -243,81 +233,36 @@
         });
     }
 
-    // Logo preview function
     function previewLogo(event) {
         const file = event.target.files[0];
         if (!file) return;
-
-        // Validate file size (max 2MB)
-        if (file.size > 2 * 1024 * 1024) {
-            alert('File size must be less than 2MB');
-            event.target.value = '';
-            return;
-        }
-
-        // Validate file type
+        if (file.size > 2 * 1024 * 1024) { alert('File size must be less than 2MB'); event.target.value = ''; return; }
         const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
-        if (!allowedTypes.includes(file.type)) {
-            alert('Only JPG and PNG images are allowed');
-            event.target.value = '';
-            return;
-        }
-
-        // Show preview
+        if (!allowedTypes.includes(file.type)) { alert('Only JPG and PNG images are allowed'); event.target.value = ''; return; }
         const reader = new FileReader();
         reader.onload = function(e) {
-            const previewDiv = document.getElementById('logoPreview');
-            const previewImg = document.getElementById('logoPreviewImg');
-            previewImg.src = e.target.result;
-            previewDiv.style.display = 'block';
+            document.getElementById('logoPreviewImg').src = e.target.result;
+            document.getElementById('logoPreview').classList.remove('hidden');
         };
         reader.readAsDataURL(file);
     }
 
-    // Form submission handler
-    const form = document.getElementById('createPartnerForm');
-    if (form) {
-        form.addEventListener('submit', function(e) {
-            const submitBtn = this.querySelector('button[type="submit"]');
-            submitBtn.textContent = 'Creating...';
-            submitBtn.disabled = true;
-        });
-    }
-
-    // ========== OTP & PIN Functions ==========
-
     let currentPhone = '';
 
-    // Send OTP to partner's phone
     async function sendPartnerOtp() {
-        const phoneInput = document.getElementById('phone');
-        const phone = phoneInput.value.trim();
-
-        if (phone.length !== 10) {
-            alert('Please enter a valid 10-digit mobile number');
-            return;
-        }
-
+        const phone = document.getElementById('phone').value.trim();
+        if (phone.length !== 10) { alert('Please enter a valid 10-digit mobile number'); return; }
         currentPhone = phone;
-        const sendOtpBtn = document.getElementById('sendOtpBtn');
-        const otpBtnText = document.getElementById('otpBtnText');
-        const originalText = otpBtnText.textContent;
-
+        const btn = document.getElementById('sendOtpBtn');
+        const txt = document.getElementById('otpBtnText');
         try {
-            sendOtpBtn.disabled = true;
-            otpBtnText.textContent = 'Sending...';
-
+            btn.disabled = true; txt.textContent = 'Sending...';
             const response = await fetch('{{ route('admin.partners.send-registration-otp') }}', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
                 body: JSON.stringify({ phone: phone })
             });
-
             const data = await response.json();
-
             if (data.success) {
                 document.getElementById('otpPhoneDisplay').textContent = data.phone;
                 openOtpModal();
@@ -327,99 +272,46 @@
         } catch (error) {
             alert('Error sending OTP: ' + error.message);
         } finally {
-            sendOtpBtn.disabled = false;
-            otpBtnText.textContent = originalText;
+            btn.disabled = false; txt.textContent = 'Send OTP';
         }
     }
 
-    // Open OTP modal
     function openOtpModal() {
         document.getElementById('otpModal').style.display = 'flex';
         clearOtpInputs();
         document.getElementById('otp1').focus();
     }
+    function closeOtpModal() { document.getElementById('otpModal').style.display = 'none'; clearOtpInputs(); }
+    function clearOtpInputs() { for (let i = 1; i <= 6; i++) document.getElementById('otp' + i).value = ''; document.getElementById('otpError').classList.add('hidden'); }
 
-    // Close OTP modal
-    function closeOtpModal() {
-        document.getElementById('otpModal').style.display = 'none';
-        clearOtpInputs();
-    }
-
-    // Clear OTP inputs
-    function clearOtpInputs() {
-        for (let i = 1; i <= 6; i++) {
-            document.getElementById('otp' + i).value = '';
-        }
-        document.getElementById('otpError').style.display = 'none';
-    }
-
-    // Move focus for OTP inputs
     function moveOtpFocus(event, position) {
-        const input = event.target;
-        if (input.value.length === 1 && position < 6) {
-            document.getElementById('otp' + (position + 1)).focus();
-        }
-        // Check if all 6 digits entered
-        checkOtpComplete();
+        if (event.target.value.length === 1 && position < 6) document.getElementById('otp' + (position + 1)).focus();
     }
-
-    // Handle backspace for OTP
     function handleOtpBackspace(event, position) {
-        if (event.key === 'Backspace' && position > 1 && event.target.value === '') {
-            document.getElementById('otp' + (position - 1)).focus();
-        } else if (event.key === 'Enter') {
-            verifyPartnerOtp();
-        }
+        if (event.key === 'Backspace' && position > 1 && event.target.value === '') document.getElementById('otp' + (position - 1)).focus();
+        else if (event.key === 'Enter') verifyPartnerOtp();
     }
 
-    // Check if OTP is complete
-    function checkOtpComplete() {
-        let complete = true;
-        for (let i = 1; i <= 6; i++) {
-            if (document.getElementById('otp' + i).value === '') {
-                complete = false;
-                break;
-            }
-        }
-        document.getElementById('verifyOtpBtn').disabled = !complete;
-    }
-
-    // Verify OTP
     async function verifyPartnerOtp() {
         let otp = '';
-        for (let i = 1; i <= 6; i++) {
-            otp += document.getElementById('otp' + i).value;
-        }
-
-        if (otp.length !== 6) {
-            showOtpError('Please enter all 6 digits');
-            return;
-        }
-
-        const verifyBtn = document.getElementById('verifyOtpBtn');
-        const originalText = verifyBtn.textContent;
-
+        for (let i = 1; i <= 6; i++) otp += document.getElementById('otp' + i).value;
+        if (otp.length !== 6) { showOtpError('Please enter all 6 digits'); return; }
+        const btn = document.getElementById('verifyOtpBtn');
         try {
-            verifyBtn.disabled = true;
-            verifyBtn.textContent = 'Verifying...';
-
+            btn.disabled = true; btn.textContent = 'Verifying...';
             const response = await fetch('{{ route('admin.partners.verify-registration-otp') }}', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({
-                    phone: currentPhone,
-                    otp: otp
-                })
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                body: JSON.stringify({ phone: currentPhone, otp: otp })
             });
-
             const data = await response.json();
-
             if (data.success) {
                 closeOtpModal();
-                updateOtpButtonSuccess();
+                document.getElementById('otpBtnIcon').textContent = '✅';
+                document.getElementById('otpBtnText').textContent = 'Verified';
+                document.getElementById('sendOtpBtn').classList.remove('bg-[#021c47]', 'hover:bg-[#93db4d]', 'hover:text-[#021c47]');
+                document.getElementById('sendOtpBtn').classList.add('bg-green-500');
+                document.getElementById('sendOtpBtn').disabled = true;
                 alert('Phone verified successfully!');
             } else {
                 showOtpError(data.message || 'Invalid OTP');
@@ -427,163 +319,44 @@
         } catch (error) {
             showOtpError('Error verifying OTP: ' + error.message);
         } finally {
-            verifyBtn.disabled = false;
-            verifyBtn.textContent = originalText;
+            btn.disabled = false; btn.textContent = 'Verify';
         }
     }
+    function resendPartnerOtp() { sendPartnerOtp(); }
+    function showOtpError(message) { const el = document.getElementById('otpError'); el.textContent = message; el.classList.remove('hidden'); }
 
-    // Resend OTP
-    async function resendPartnerOtp() {
-        await sendPartnerOtp();
-    }
-
-    // Show OTP error
-    function showOtpError(message) {
-        const errorDiv = document.getElementById('otpError');
-        errorDiv.textContent = message;
-        errorDiv.style.display = 'block';
-    }
-
-    // Update OTP button to show success
-    function updateOtpButtonSuccess() {
-        const icon = document.getElementById('otpBtnIcon');
-        const text = document.getElementById('otpBtnText');
-        icon.textContent = '✅';
-        text.textContent = 'Verified';
-        document.getElementById('sendOtpBtn').style.background = 'linear-gradient(135deg, #48bb78 0%, #38a169 100%)';
-        document.getElementById('sendOtpBtn').disabled = true;
-    }
-
-    // ========== PIN Functions ==========
-
-    // Open PIN modal
     function openSetPinModal() {
         document.getElementById('pinModal').style.display = 'flex';
         clearPinInputs();
         document.getElementById('pin1').focus();
     }
+    function closePinModal() { document.getElementById('pinModal').style.display = 'none'; clearPinInputs(); }
+    function clearPinInputs() { for (let i = 1; i <= 4; i++) { document.getElementById('pin' + i).value = ''; document.getElementById('pinConfirm' + i).value = ''; } document.getElementById('pinError').classList.add('hidden'); }
 
-    // Close PIN modal
-    function closePinModal() {
-        document.getElementById('pinModal').style.display = 'none';
-        clearPinInputs();
-    }
+    function movePinFocus(event, position) { if (event.target.value.length === 1 && position < 4) document.getElementById('pin' + (position + 1)).focus(); }
+    function handlePinBackspace(event, position) { if (event.key === 'Backspace' && position > 1 && event.target.value === '') document.getElementById('pin' + (position - 1)).focus(); else if (event.key === 'Enter' && position === 4) document.getElementById('pinConfirm1').focus(); }
+    function movePinConfirmFocus(event, position) { if (event.target.value.length === 1 && position < 4) document.getElementById('pinConfirm' + (position + 1)).focus(); }
+    function handlePinConfirmBackspace(event, position) { if (event.key === 'Backspace' && position > 1 && event.target.value === '') document.getElementById('pinConfirm' + (position - 1)).focus(); else if (event.key === 'Enter' && position === 4) setPartnerPin(); }
 
-    // Clear PIN inputs
-    function clearPinInputs() {
-        for (let i = 1; i <= 4; i++) {
-            document.getElementById('pin' + i).value = '';
-            document.getElementById('pinConfirm' + i).value = '';
-        }
-        document.getElementById('pinError').style.display = 'none';
-    }
-
-    // Move focus for PIN inputs
-    function movePinFocus(event, position) {
-        const input = event.target;
-        if (input.value.length === 1 && position < 4) {
-            document.getElementById('pin' + (position + 1)).focus();
-        }
-    }
-
-    // Handle backspace for PIN
-    function handlePinBackspace(event, position) {
-        if (event.key === 'Backspace' && position > 1 && event.target.value === '') {
-            document.getElementById('pin' + (position - 1)).focus();
-        } else if (event.key === 'Enter' && position === 4) {
-            document.getElementById('pinConfirm1').focus();
-        }
-    }
-
-    // Move focus for PIN confirmation inputs
-    function movePinConfirmFocus(event, position) {
-        const input = event.target;
-        if (input.value.length === 1 && position < 4) {
-            document.getElementById('pinConfirm' + (position + 1)).focus();
-        }
-    }
-
-    // Handle backspace for PIN confirmation
-    function handlePinConfirmBackspace(event, position) {
-        if (event.key === 'Backspace' && position > 1 && event.target.value === '') {
-            document.getElementById('pinConfirm' + (position - 1)).focus();
-        } else if (event.key === 'Enter' && position === 4) {
-            setPartnerPin();
-        }
-    }
-
-    // Set partner PIN
     function setPartnerPin() {
-        let pin = '';
-        let pinConfirm = '';
-
-        for (let i = 1; i <= 4; i++) {
-            pin += document.getElementById('pin' + i).value;
-            pinConfirm += document.getElementById('pinConfirm' + i).value;
-        }
-
-        if (pin.length !== 4) {
-            showPinError('Please enter a 4-digit PIN');
-            return;
-        }
-
-        if (pinConfirm.length !== 4) {
-            showPinError('Please confirm your PIN');
-            return;
-        }
-
-        if (pin !== pinConfirm) {
-            showPinError('PINs do not match');
-            return;
-        }
-
-        // Validate numeric
-        if (!/^\d{4}$/.test(pin)) {
-            showPinError('PIN must be 4 digits (0-9)');
-            return;
-        }
-
-        // Store PIN in hidden field
+        let pin = '', pinConfirm = '';
+        for (let i = 1; i <= 4; i++) { pin += document.getElementById('pin' + i).value; pinConfirm += document.getElementById('pinConfirm' + i).value; }
+        if (pin.length !== 4) { showPinError('Please enter a 4-digit PIN'); return; }
+        if (pinConfirm.length !== 4) { showPinError('Please confirm your PIN'); return; }
+        if (pin !== pinConfirm) { showPinError('PINs do not match'); return; }
+        if (!/^\d{4}$/.test(pin)) { showPinError('PIN must be 4 digits (0-9)'); return; }
         document.getElementById('partner_pin').value = pin;
-
-        // Update button
-        updatePinButtonSuccess();
-
-        // Close modal
+        document.getElementById('pinBtnIcon').textContent = '✅';
+        document.getElementById('pinBtnText').textContent = 'PIN Set';
+        document.getElementById('setPinBtn').classList.remove('bg-[#93db4d]', 'hover:bg-[#7fc93d]');
+        document.getElementById('setPinBtn').classList.add('bg-green-500', 'text-white');
         closePinModal();
-
         alert('PIN set successfully!');
     }
+    function showPinError(message) { const el = document.getElementById('pinError'); el.textContent = message; el.classList.remove('hidden'); }
 
-    // Show PIN error
-    function showPinError(message) {
-        const errorDiv = document.getElementById('pinError');
-        errorDiv.textContent = message;
-        errorDiv.style.display = 'block';
-    }
-
-    // Update PIN button to show success
-    function updatePinButtonSuccess() {
-        const icon = document.getElementById('pinBtnIcon');
-        const text = document.getElementById('pinBtnText');
-        icon.textContent = '✅';
-        text.textContent = 'PIN Set';
-        document.getElementById('setPinBtn').style.background = 'linear-gradient(135deg, #48bb78 0%, #38a169 100%)';
-    }
-
-    // Expose functions to global scope for inline handlers
-    window.sendPartnerOtp = sendPartnerOtp;
-    window.openSetPinModal = openSetPinModal;
-    window.closeOtpModal = closeOtpModal;
-    window.closePinModal = closePinModal;
-    window.verifyPartnerOtp = verifyPartnerOtp;
-    window.resendPartnerOtp = resendPartnerOtp;
-    window.setPartnerPin = setPartnerPin;
-    window.moveOtpFocus = moveOtpFocus;
-    window.handleOtpBackspace = handleOtpBackspace;
-    window.movePinFocus = movePinFocus;
-    window.handlePinBackspace = handlePinBackspace;
-    window.movePinConfirmFocus = movePinConfirmFocus;
-    window.handlePinConfirmBackspace = handlePinConfirmBackspace;
+    // Close modals on outside click
+    document.getElementById('otpModal')?.addEventListener('click', function(e) { if (e.target === this) closeOtpModal(); });
+    document.getElementById('pinModal')?.addEventListener('click', function(e) { if (e.target === this) closePinModal(); });
 </script>
 @endpush

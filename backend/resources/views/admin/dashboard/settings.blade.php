@@ -4,23 +4,23 @@
 @section('page-title', 'Settings')
 
 @section('content')
-    <!-- Firebase Configuration Section -->
-    <div class="card" style="margin-bottom: 1.5rem;">
-        <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
-            <h3 class="card-title">Firebase Configuration (Customer Authentication)</h3>
+    {{-- Firebase Configuration Section --}}
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm mb-6">
+        <div class="px-6 py-4 border-b border-gray-100 flex flex-wrap items-center justify-between gap-4">
+            <div>
+                <h3 class="text-lg font-bold text-[#021c47]">Firebase Configuration</h3>
+                <p class="text-sm text-gray-500 mt-1">Customer Authentication Setup</p>
+            </div>
             @if($firebaseConfig['credentials_exists'])
-                <span style="background: #27ae60; color: white; padding: 0.25rem 0.75rem; border-radius: 3px; font-size: 0.8rem;">
-                    ✓ Configured
-                </span>
+                <span class="px-3 py-1 text-xs font-semibold rounded-full bg-[#93db4d]/20 text-[#65a030]">✓ Configured</span>
             @else
-                <span style="background: #e74c3c; color: white; padding: 0.25rem 0.75rem; border-radius: 3px; font-size: 0.8rem;">
-                    ⚠ Not Configured
-                </span>
+                <span class="px-3 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-600">⚠ Not Configured</span>
             @endif
         </div>
-        <div class="card-body">
-            <div style="background: #e3f2fd; padding: 1rem; border-radius: 5px; margin-bottom: 1.5rem; border-left: 4px solid #2196f3;">
-                <p style="margin: 0; color: #1976d2;">
+        <div class="p-6">
+            {{-- Info Banner --}}
+            <div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-r-lg mb-6">
+                <p class="text-sm text-blue-800">
                     <strong>📱 Customer Authentication Setup</strong><br>
                     Configure Firebase to enable OTP-based authentication for customers. You'll need a Firebase service account JSON file.
                 </p>
@@ -29,226 +29,184 @@
             <form method="POST" action="{{ route('admin.firebase-config.update') }}" id="firebaseConfigForm">
                 @csrf
 
-                <div style="margin-bottom: 1.5rem;">
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
-                        Firebase Project ID *
-                    </label>
-                    <input type="text"
-                           name="firebase_project_id"
-                           id="firebase_project_id"
-                           value="{{ $firebaseConfig['project_id'] }}"
-                           required
-                           placeholder="your-firebase-project-id"
-                           style="width: 100%; padding: 0.5rem; border: 1px solid #dee2e6; border-radius: 4px;">
-                    <small style="color: #666; display: block; margin-top: 0.25rem;">
-                        Find this in Firebase Console → Project Settings → General
-                    </small>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    {{-- Firebase Project ID --}}
+                    <div>
+                        <label for="firebase_project_id" class="block text-sm font-medium text-[#021c47] mb-2">
+                            Firebase Project ID <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" name="firebase_project_id" id="firebase_project_id"
+                               value="{{ $firebaseConfig['project_id'] }}" required
+                               placeholder="your-firebase-project-id"
+                               class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-all">
+                        <p class="mt-1 text-xs text-gray-400">Find this in Firebase Console → Project Settings → General</p>
+                    </div>
+
+                    {{-- Firebase Database URL --}}
+                    <div>
+                        <label for="firebase_database_url" class="block text-sm font-medium text-[#021c47] mb-2">
+                            Firebase Database URL
+                        </label>
+                        <input type="url" name="firebase_database_url" id="firebase_database_url"
+                               value="{{ $firebaseConfig['database_url'] }}"
+                               placeholder="https://your-project-id.firebaseio.com"
+                               class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-all">
+                        <p class="mt-1 text-xs text-gray-400">Optional: Only needed if using Firebase Realtime Database</p>
+                    </div>
+
+                    {{-- Firebase Storage Bucket --}}
+                    <div>
+                        <label for="firebase_storage_bucket" class="block text-sm font-medium text-[#021c47] mb-2">
+                            Firebase Storage Bucket
+                        </label>
+                        <input type="text" name="firebase_storage_bucket" id="firebase_storage_bucket"
+                               value="{{ $firebaseConfig['storage_bucket'] }}"
+                               placeholder="your-project-id.appspot.com"
+                               class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-all">
+                        <p class="mt-1 text-xs text-gray-400">Optional: Only needed if using Firebase Storage</p>
+                    </div>
+
+                    {{-- Firebase Web API Key --}}
+                    <div>
+                        <label for="firebase_web_api_key" class="block text-sm font-medium text-[#021c47] mb-2">
+                            Firebase Web API Key <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" name="firebase_web_api_key" id="firebase_web_api_key"
+                               value="{{ $firebaseConfig['web_api_key'] }}" required
+                               placeholder="AIzaSyXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+                               class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-all">
+                        <p class="mt-1 text-xs text-gray-400">Required for client-side Firebase authentication</p>
+                    </div>
+
+                    {{-- Firebase Auth Domain --}}
+                    <div>
+                        <label for="firebase_auth_domain" class="block text-sm font-medium text-[#021c47] mb-2">
+                            Firebase Auth Domain <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" name="firebase_auth_domain" id="firebase_auth_domain"
+                               value="{{ $firebaseConfig['auth_domain'] }}" required
+                               placeholder="your-project-id.firebaseapp.com"
+                               class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-all">
+                        <p class="mt-1 text-xs text-gray-400">Usually your-project-id.firebaseapp.com</p>
+                    </div>
+
+                    {{-- Firebase Messaging Sender ID --}}
+                    <div>
+                        <label for="firebase_messaging_sender_id" class="block text-sm font-medium text-[#021c47] mb-2">
+                            Firebase Messaging Sender ID <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" name="firebase_messaging_sender_id" id="firebase_messaging_sender_id"
+                               value="{{ $firebaseConfig['messaging_sender_id'] }}" required
+                               placeholder="123456789012"
+                               class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-all">
+                        <p class="mt-1 text-xs text-gray-400">Numeric sender ID for Firebase Cloud Messaging</p>
+                    </div>
+
+                    {{-- Firebase App ID --}}
+                    <div>
+                        <label for="firebase_app_id" class="block text-sm font-medium text-[#021c47] mb-2">
+                            Firebase App ID <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" name="firebase_app_id" id="firebase_app_id"
+                               value="{{ $firebaseConfig['app_id'] }}" required
+                               placeholder="1:123456789012:web:abcdef123456"
+                               class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-all">
+                        <p class="mt-1 text-xs text-gray-400">Unique identifier for your Firebase web app</p>
+                    </div>
                 </div>
 
-                <div style="margin-bottom: 1.5rem;">
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
-                        Firebase Database URL
+                {{-- Service Account JSON --}}
+                <div class="mb-6">
+                    <label for="firebase_credentials_json" class="block text-sm font-medium text-[#021c47] mb-2">
+                        Service Account JSON <span class="text-red-500">*</span>
                     </label>
-                    <input type="url"
-                           name="firebase_database_url"
-                           id="firebase_database_url"
-                           value="{{ $firebaseConfig['database_url'] }}"
-                           placeholder="https://your-project-id.firebaseio.com"
-                           style="width: 100%; padding: 0.5rem; border: 1px solid #dee2e6; border-radius: 4px;">
-                    <small style="color: #666; display: block; margin-top: 0.25rem;">
-                        Optional: Only needed if using Firebase Realtime Database
-                    </small>
-                </div>
-
-                <div style="margin-bottom: 1.5rem;">
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
-                        Firebase Storage Bucket
-                    </label>
-                    <input type="text"
-                           name="firebase_storage_bucket"
-                           id="firebase_storage_bucket"
-                           value="{{ $firebaseConfig['storage_bucket'] }}"
-                           placeholder="your-project-id.appspot.com"
-                           style="width: 100%; padding: 0.5rem; border: 1px solid #dee2e6; border-radius: 4px;">
-                    <small style="color: #666; display: block; margin-top: 0.25rem;">
-                        Optional: Only needed if using Firebase Storage
-                    </small>
-                </div>
-
-                <div style="background: #fff3cd; padding: 1rem; border-radius: 5px; margin-bottom: 1.5rem; border-left: 4px solid #ffc107;">
-                    <p style="margin: 0; color: #856404;">
-                        <strong>📱 Web Client Credentials (For Phone Authentication)</strong><br>
-                        The following credentials are required for Firebase Phone Authentication to work from the web browser.
+                    <textarea name="firebase_credentials_json" id="firebase_credentials_json" required rows="8"
+                              placeholder='Paste your Firebase service account JSON here...'
+                              class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-all font-mono text-sm"></textarea>
+                    <p class="mt-1 text-xs text-gray-400">
+                        <strong>How to get this:</strong> Firebase Console → Project Settings → Service Accounts → Generate New Private Key
                     </p>
                 </div>
 
-                <div style="margin-bottom: 1.5rem;">
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
-                        Firebase Web API Key *
-                    </label>
-                    <input type="text"
-                           name="firebase_web_api_key"
-                           id="firebase_web_api_key"
-                           value="{{ $firebaseConfig['web_api_key'] }}"
-                           required
-                           placeholder="AIzaSyXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-                           style="width: 100%; padding: 0.5rem; border: 1px solid #dee2e6; border-radius: 4px;">
-                    <small style="color: #666; display: block; margin-top: 0.25rem;">
-                        Required for client-side Firebase authentication
-                    </small>
-                </div>
-
-                <div style="margin-bottom: 1.5rem;">
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
-                        Firebase Auth Domain *
-                    </label>
-                    <input type="text"
-                           name="firebase_auth_domain"
-                           id="firebase_auth_domain"
-                           value="{{ $firebaseConfig['auth_domain'] }}"
-                           required
-                           placeholder="your-project-id.firebaseapp.com"
-                           style="width: 100%; padding: 0.5rem; border: 1px solid #dee2e6; border-radius: 4px;">
-                    <small style="color: #666; display: block; margin-top: 0.25rem;">
-                        Usually your-project-id.firebaseapp.com
-                    </small>
-                </div>
-
-                <div style="margin-bottom: 1.5rem;">
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
-                        Firebase Messaging Sender ID *
-                    </label>
-                    <input type="text"
-                           name="firebase_messaging_sender_id"
-                           id="firebase_messaging_sender_id"
-                           value="{{ $firebaseConfig['messaging_sender_id'] }}"
-                           required
-                           placeholder="123456789012"
-                           style="width: 100%; padding: 0.5rem; border: 1px solid #dee2e6; border-radius: 4px;">
-                    <small style="color: #666; display: block; margin-top: 0.25rem;">
-                        Numeric sender ID for Firebase Cloud Messaging
-                    </small>
-                </div>
-
-                <div style="margin-bottom: 1.5rem;">
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
-                        Firebase App ID *
-                    </label>
-                    <input type="text"
-                           name="firebase_app_id"
-                           id="firebase_app_id"
-                           value="{{ $firebaseConfig['app_id'] }}"
-                           required
-                           placeholder="1:123456789012:web:abcdef123456"
-                           style="width: 100%; padding: 0.5rem; border: 1px solid #dee2e6; border-radius: 4px;">
-                    <small style="color: #666; display: block; margin-top: 0.25rem;">
-                        Unique identifier for your Firebase web app
-                    </small>
-                </div>
-
-                <div style="margin-bottom: 1.5rem;">
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
-                        Service Account JSON *
-                    </label>
-                    <textarea name="firebase_credentials_json"
-                              id="firebase_credentials_json"
-                              required
-                              rows="8"
-                              placeholder='Paste your Firebase service account JSON here...
-{
-  "type": "service_account",
-  "project_id": "your-project-id",
-  "private_key_id": "...",
-  "private_key": "-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n",
-  ...
-}'
-                              style="width: 100%; padding: 0.5rem; border: 1px solid #dee2e6; border-radius: 4px; font-family: monospace; font-size: 0.9rem;"></textarea>
-                    <small style="color: #666; display: block; margin-top: 0.25rem;">
-                        <strong>How to get this:</strong> Firebase Console → Project Settings → Service Accounts → Generate New Private Key
-                    </small>
-                </div>
-
-                <div style="display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 2rem;">
-                    <button type="button"
-                            onclick="testFirebaseConnection()"
-                            class="btn btn-secondary"
-                            id="testButton">
+                {{-- Buttons --}}
+                <div class="flex justify-end gap-3 pt-6 border-t border-gray-200">
+                    <button type="button" onclick="testFirebaseConnection()" id="testButton"
+                            class="px-5 py-2.5 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-all duration-200">
                         Test Connection
                     </button>
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" class="px-5 py-2.5 bg-[#021c47] text-white font-medium rounded-lg hover:bg-[#93db4d] hover:text-[#021c47] transition-all duration-200">
                         Save Configuration
                     </button>
                 </div>
             </form>
 
-            <div id="testResult" style="margin-top: 1.5rem; display: none;"></div>
+            <div id="testResult" class="mt-6 hidden"></div>
         </div>
     </div>
 
-    <!-- Social Media Links Section -->
-    <div class="card" style="margin-bottom: 1.5rem;">
-        <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
-            <h3 class="card-title">Social Media Links</h3>
-            <button type="button" class="btn btn-primary" onclick="openAddModal()">
-                + Add Social Media Link
+    {{-- Social Media Links Section --}}
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
+        <div class="px-6 py-4 border-b border-gray-100 flex flex-wrap items-center justify-between gap-4">
+            <div>
+                <h3 class="text-lg font-bold text-[#021c47]">Social Media Links</h3>
+                <p class="text-sm text-gray-500 mt-1">Manage footer social media links</p>
+            </div>
+            <button type="button" onclick="openAddModal()" class="px-4 py-2 bg-[#021c47] text-white font-medium rounded-lg hover:bg-[#93db4d] hover:text-[#021c47] transition-all duration-200">
+                + Add Link
             </button>
         </div>
-        <div class="card-body">
+        <div class="p-6">
             @if($socialMediaLinks->count() > 0)
-                <div style="overflow-x: auto;">
-                    <table style="width: 100%; border-collapse: collapse;">
+                <div class="overflow-x-auto rounded-lg border border-gray-200">
+                    <table class="w-full">
                         <thead>
-                            <tr style="background: #f8f9fa; border-bottom: 2px solid #dee2e6;">
-                                <th style="padding: 0.75rem; text-align: left; font-weight: 600; width: 50px;">Order</th>
-                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Platform</th>
-                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">URL</th>
-                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Icon</th>
-                                <th style="padding: 0.75rem; text-align: center; font-weight: 600; width: 100px;">Status</th>
-                                <th style="padding: 0.75rem; text-align: center; font-weight: 600; width: 150px;">Actions</th>
+                            <tr class="bg-[#021c47] text-white">
+                                <th class="px-4 py-3 text-left text-sm font-semibold w-16">Order</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold">Platform</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold">URL</th>
+                                <th class="px-4 py-3 text-center text-sm font-semibold w-20">Icon</th>
+                                <th class="px-4 py-3 text-center text-sm font-semibold w-24">Status</th>
+                                <th class="px-4 py-3 text-center text-sm font-semibold w-32">Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="divide-y divide-gray-100">
                             @foreach($socialMediaLinks as $link)
-                                <tr style="border-bottom: 1px solid #dee2e6;">
-                                    <td style="padding: 0.75rem;">
-                                        <strong>{{ $link->order }}</strong>
+                                <tr class="hover:bg-[#93db4d]/5 transition-colors">
+                                    <td class="px-4 py-3">
+                                        <span class="font-semibold text-[#021c47]">{{ $link->order }}</span>
                                     </td>
-                                    <td style="padding: 0.75rem;">
-                                        <strong style="text-transform: capitalize;">{{ $link->platform }}</strong>
+                                    <td class="px-4 py-3">
+                                        <span class="font-semibold text-[#021c47] capitalize">{{ $link->platform }}</span>
                                     </td>
-                                    <td style="padding: 0.75rem;">
-                                        <a href="{{ $link->url }}" target="_blank" style="color: #3498db; text-decoration: none;">
-                                            {{ Str::limit($link->url, 50) }}
+                                    <td class="px-4 py-3">
+                                        <a href="{{ $link->url }}" target="_blank" class="text-sm text-blue-600 hover:underline">
+                                            {{ Str::limit($link->url, 40) }}
                                         </a>
                                     </td>
-                                    <td style="padding: 0.75rem;">
+                                    <td class="px-4 py-3 text-center">
                                         @if($link->icon_file)
-                                            <img src="{{ asset('storage/' . $link->icon_file) }}" alt="{{ $link->platform }}" style="width: 40px; height: 40px; object-fit: contain;">
+                                            <img src="{{ asset('storage/' . $link->icon_file) }}" alt="{{ $link->platform }}" class="w-8 h-8 object-contain mx-auto">
                                         @else
-                                            <i class="{{ $link->icon }}" style="font-size: 1.5rem; color: #666;"></i>
+                                            <i class="{{ $link->icon }} text-xl text-gray-400"></i>
                                         @endif
                                     </td>
-                                    <td style="padding: 0.75rem; text-align: center;">
+                                    <td class="px-4 py-3 text-center">
                                         @if($link->is_enabled)
-                                            <span style="background: #27ae60; color: white; padding: 0.25rem 0.75rem; border-radius: 3px; font-size: 0.8rem;">
-                                                Enabled
-                                            </span>
+                                            <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-[#93db4d]/20 text-[#65a030]">Enabled</span>
                                         @else
-                                            <span style="background: #95a5a6; color: white; padding: 0.25rem 0.75rem; border-radius: 3px; font-size: 0.8rem;">
-                                                Disabled
-                                            </span>
+                                            <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-500">Disabled</span>
                                         @endif
                                     </td>
-                                    <td style="padding: 0.75rem; text-align: center;">
-                                        <div style="display: flex; gap: 0.25rem; justify-content: center;">
+                                    <td class="px-4 py-3 text-center">
+                                        <div class="flex gap-2 justify-center">
                                             <button onclick="openEditModal({{ $link->id }}, '{{ $link->platform }}', '{{ $link->url }}', '{{ $link->icon }}', {{ $link->is_enabled ? 'true' : 'false' }}, {{ $link->order }}, '{{ $link->icon_file ? asset('storage/' . $link->icon_file) : '' }}')"
-                                                    class="btn btn-primary" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">
+                                                    class="px-3 py-1.5 text-xs font-medium bg-[#021c47] text-white rounded-lg hover:bg-[#93db4d] hover:text-[#021c47] transition-all">
                                                 Edit
                                             </button>
-                                            <form method="POST" action="{{ route('admin.social-media.destroy', $link) }}" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this social media link?')">
+                                            <form method="POST" action="{{ route('admin.social-media.destroy', $link) }}" class="inline" onsubmit="return confirm('Delete this social media link?')">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-danger" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">
+                                                <button type="submit" class="px-3 py-1.5 text-xs font-medium bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all">
                                                     Delete
                                                 </button>
                                             </form>
@@ -260,77 +218,83 @@
                     </table>
                 </div>
             @else
-                <div style="text-align: center; padding: 3rem; color: #666;">
-                    <i class="fas fa-share-alt fa-3x" style="color: #ddd; margin-bottom: 1rem;"></i>
-                    <h4>No Social Media Links</h4>
-                    <p>Add your social media links to display them on the website footer.</p>
-                    <button type="button" class="btn btn-primary" onclick="openAddModal()" style="margin-top: 1rem;">
-                        + Add Your First Social Media Link
+                <div class="text-center py-12">
+                    <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
+                    </svg>
+                    <h4 class="text-lg font-semibold text-[#021c47] mb-2">No Social Media Links</h4>
+                    <p class="text-gray-500 mb-4">Add your social media links to display them on the website footer.</p>
+                    <button type="button" onclick="openAddModal()" class="px-5 py-2.5 bg-[#021c47] text-white font-medium rounded-lg hover:bg-[#93db4d] hover:text-[#021c47] transition-all duration-200">
+                        + Add Your First Link
                     </button>
                 </div>
             @endif
         </div>
     </div>
 
-    <!-- Add/Edit Modal -->
-    <div id="socialMediaModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; overflow-y: auto;">
-        <div style="max-width: 600px; margin: 50px auto; background: white; border-radius: 8px; padding: 2rem; position: relative;">
-            <h3 style="margin-bottom: 1.5rem;" id="modalTitle">Add Social Media Link</h3>
+    {{-- Add/Edit Modal --}}
+    <div id="socialMediaModal" class="hidden fixed inset-0 bg-black/50 z-50 overflow-y-auto">
+        <div class="max-w-lg mx-auto my-12 bg-white rounded-xl shadow-xl p-6">
+            <h3 id="modalTitle" class="text-lg font-bold text-[#021c47] mb-6">Add Social Media Link</h3>
 
             <form id="socialMediaForm" method="POST" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" name="_method" id="formMethod" value="POST">
 
-                <div style="margin-bottom: 1.5rem;">
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Platform *</label>
-                    <select name="platform" id="platform" required onchange="updateIcon()" style="width: 100%; padding: 0.5rem; border: 1px solid #dee2e6; border-radius: 4px;">
-                        <option value="">Select Platform</option>
-                        <option value="facebook">Facebook</option>
-                        <option value="twitter">Twitter</option>
-                        <option value="instagram">Instagram</option>
-                        <option value="linkedin">LinkedIn</option>
-                        <option value="youtube">YouTube</option>
-                        <option value="tiktok">TikTok</option>
-                        <option value="pinterest">Pinterest</option>
-                        <option value="whatsapp">WhatsApp</option>
-                    </select>
-                </div>
+                <div class="space-y-5">
+                    <div>
+                        <label for="platform" class="block text-sm font-medium text-[#021c47] mb-2">Platform <span class="text-red-500">*</span></label>
+                        <select name="platform" id="platform" required onchange="updateIcon()"
+                                class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-all">
+                            <option value="">Select Platform</option>
+                            <option value="facebook">Facebook</option>
+                            <option value="twitter">Twitter</option>
+                            <option value="instagram">Instagram</option>
+                            <option value="linkedin">LinkedIn</option>
+                            <option value="youtube">YouTube</option>
+                            <option value="tiktok">TikTok</option>
+                            <option value="pinterest">Pinterest</option>
+                            <option value="whatsapp">WhatsApp</option>
+                        </select>
+                    </div>
 
-                <div style="margin-bottom: 1.5rem;">
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">URL *</label>
-                    <input type="url" name="url" id="url" required placeholder="https://facebook.com/yourpage" style="width: 100%; padding: 0.5rem; border: 1px solid #dee2e6; border-radius: 4px;">
-                </div>
+                    <div>
+                        <label for="url" class="block text-sm font-medium text-[#021c47] mb-2">URL <span class="text-red-500">*</span></label>
+                        <input type="url" name="url" id="url" required placeholder="https://facebook.com/yourpage"
+                               class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-all">
+                    </div>
 
-                <div style="margin-bottom: 1.5rem;">
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Icon Image *</label>
-                    <input type="file" name="icon_file" id="icon_file" accept="image/png,image/jpeg,image/jpg,image/svg+xml" style="width: 100%; padding: 0.5rem; border: 1px solid #dee2e6; border-radius: 4px;">
-                    <small style="color: #666; display: block; margin-top: 0.25rem;">
-                        <strong>Recommended size: 64x64 pixels</strong> (PNG, JPG, or SVG format, max 2MB)
-                    </small>
-                    <div id="currentIcon" style="margin-top: 0.5rem; display: none;">
-                        <small style="color: #666;">Current icon:</small>
-                        <img id="currentIconPreview" src="" alt="Current icon" style="width: 40px; height: 40px; margin-left: 0.5rem; object-fit: contain;">
+                    <div>
+                        <label for="icon_file" class="block text-sm font-medium text-[#021c47] mb-2">Icon Image <span class="text-red-500">*</span></label>
+                        <input type="file" name="icon_file" id="icon_file" accept="image/png,image/jpeg,image/jpg,image/svg+xml"
+                               class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-all">
+                        <p class="mt-1 text-xs text-gray-400">Recommended: 64x64px (PNG, JPG, SVG, max 2MB)</p>
+                        <div id="currentIcon" class="mt-2 hidden flex items-center gap-2">
+                            <span class="text-xs text-gray-500">Current:</span>
+                            <img id="currentIconPreview" src="" alt="Current icon" class="w-8 h-8 object-contain">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="order" class="block text-sm font-medium text-[#021c47] mb-2">Display Order</label>
+                        <input type="number" name="order" id="order" value="0" min="0"
+                               class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-all">
+                        <p class="mt-1 text-xs text-gray-400">Lower numbers appear first</p>
+                    </div>
+
+                    <div>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="is_enabled" id="is_enabled" value="1" checked class="w-4 h-4 text-[#93db4d] rounded focus:ring-[#93db4d]">
+                            <span class="text-sm font-medium text-[#021c47]">Enable this link</span>
+                        </label>
                     </div>
                 </div>
 
-                <div style="margin-bottom: 1.5rem;">
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Display Order</label>
-                    <input type="number" name="order" id="order" value="0" min="0" style="width: 100%; padding: 0.5rem; border: 1px solid #dee2e6; border-radius: 4px;">
-                    <small style="color: #666; display: block; margin-top: 0.25rem;">Lower numbers appear first</small>
-                </div>
-
-                <div style="margin-bottom: 1.5rem;">
-                    <label style="display: flex; align-items: center; cursor: pointer;">
-                        <input type="checkbox" name="is_enabled" id="is_enabled" value="1" checked style="margin-right: 0.5rem;">
-                        <span style="font-weight: 500;">Enable this social media link</span>
-                    </label>
-                </div>
-
-                <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
-                    <button type="button" onclick="closeModal()" class="btn btn-secondary">
+                <div class="flex justify-end gap-3 mt-6 pt-6 border-t border-gray-200">
+                    <button type="button" onclick="closeModal()" class="px-5 py-2.5 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-all duration-200">
                         Cancel
                     </button>
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" class="px-5 py-2.5 bg-[#021c47] text-white font-medium rounded-lg hover:bg-[#93db4d] hover:text-[#021c47] transition-all duration-200">
                         Save
                     </button>
                 </div>
@@ -338,16 +302,19 @@
         </div>
     </div>
 
+    {{-- Toast Messages --}}
     @if(session('success'))
-        <div style="position: fixed; top: 20px; right: 20px; background: #27ae60; color: white; padding: 1rem 1.5rem; border-radius: 5px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); z-index: 9999;" id="successMessage">
+        <div id="successMessage" class="fixed top-5 right-5 bg-[#93db4d] text-[#021c47] px-6 py-4 rounded-lg shadow-lg font-medium z-50">
             {{ session('success') }}
         </div>
-        <script>
-            setTimeout(() => {
-                const msg = document.getElementById('successMessage');
-                if (msg) msg.remove();
-            }, 3000);
-        </script>
+        <script>setTimeout(() => document.getElementById('successMessage')?.remove(), 3000);</script>
+    @endif
+
+    @if(session('error'))
+        <div id="errorMessage" class="fixed top-5 right-5 bg-red-500 text-white px-6 py-4 rounded-lg shadow-lg font-medium z-50">
+            {{ session('error') }}
+        </div>
+        <script>setTimeout(() => document.getElementById('errorMessage')?.remove(), 5000);</script>
     @endif
 
     <script>
@@ -371,8 +338,8 @@
             document.getElementById('icon_file').value = '';
             document.getElementById('order').value = '0';
             document.getElementById('is_enabled').checked = true;
-            document.getElementById('currentIcon').style.display = 'none';
-            document.getElementById('socialMediaModal').style.display = 'block';
+            document.getElementById('currentIcon').classList.add('hidden');
+            document.getElementById('socialMediaModal').classList.remove('hidden');
         }
 
         function openEditModal(id, platform, url, icon, isEnabled, order, iconFile) {
@@ -385,37 +352,32 @@
             document.getElementById('order').value = order;
             document.getElementById('is_enabled').checked = isEnabled;
 
-            // Show current icon if exists
             if (iconFile) {
                 document.getElementById('currentIconPreview').src = iconFile;
-                document.getElementById('currentIcon').style.display = 'block';
+                document.getElementById('currentIcon').classList.remove('hidden');
             } else {
-                document.getElementById('currentIcon').style.display = 'none';
+                document.getElementById('currentIcon').classList.add('hidden');
             }
 
-            document.getElementById('socialMediaModal').style.display = 'block';
+            document.getElementById('socialMediaModal').classList.remove('hidden');
         }
 
         function closeModal() {
-            document.getElementById('socialMediaModal').style.display = 'none';
+            document.getElementById('socialMediaModal').classList.add('hidden');
         }
 
         function updateIcon() {
             const platform = document.getElementById('platform').value;
             const iconInput = document.getElementById('icon');
-            if (platform && iconMap[platform] && !iconInput.value) {
+            if (platform && iconMap[platform] && iconInput && !iconInput.value) {
                 iconInput.value = iconMap[platform];
             }
         }
 
-        // Close modal when clicking outside
         document.getElementById('socialMediaModal')?.addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeModal();
-            }
+            if (e.target === this) closeModal();
         });
 
-        // Firebase Configuration Test
         function testFirebaseConnection() {
             const testButton = document.getElementById('testButton');
             const testResult = document.getElementById('testResult');
@@ -423,38 +385,21 @@
             testButton.disabled = true;
             testButton.textContent = 'Testing...';
 
-            testResult.style.display = 'block';
-            testResult.innerHTML = '<div style="text-align: center; color: #666;"><i class="fas fa-spinner fa-spin"></i> Testing Firebase connection...</div>';
+            testResult.classList.remove('hidden');
+            testResult.innerHTML = '<div class="text-center text-gray-500"><svg class="animate-spin h-5 w-5 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Testing Firebase connection...</div>';
 
             fetch('{{ route("admin.firebase-config.test") }}', {
                 method: 'GET',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'Accept': 'application/json'
-                }
+                headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
             })
             .then(response => response.json())
             .then(data => {
-                if (data.success) {
-                    testResult.innerHTML = `
-                        <div style="background: #d4edda; color: #155724; padding: 1rem; border-radius: 5px; border: 1px solid #c3e6cb;">
-                            <strong>✓ Success!</strong> ${data.message}
-                        </div>
-                    `;
-                } else {
-                    testResult.innerHTML = `
-                        <div style="background: #f8d7da; color: #721c24; padding: 1rem; border-radius: 5px; border: 1px solid #f5c6cb;">
-                            <strong>✗ Error:</strong> ${data.message}
-                        </div>
-                    `;
-                }
+                testResult.innerHTML = data.success
+                    ? `<div class="bg-[#93db4d]/20 text-[#021c47] p-4 rounded-lg"><strong>✓ Success!</strong> ${data.message}</div>`
+                    : `<div class="bg-red-100 text-red-700 p-4 rounded-lg"><strong>✗ Error:</strong> ${data.message}</div>`;
             })
             .catch(error => {
-                testResult.innerHTML = `
-                    <div style="background: #f8d7da; color: #721c24; padding: 1rem; border-radius: 5px; border: 1px solid #f5c6cb;">
-                        <strong>✗ Error:</strong> ${error.message}
-                    </div>
-                `;
+                testResult.innerHTML = `<div class="bg-red-100 text-red-700 p-4 rounded-lg"><strong>✗ Error:</strong> ${error.message}</div>`;
             })
             .finally(() => {
                 testButton.disabled = false;
@@ -462,16 +407,4 @@
             });
         }
     </script>
-
-    @if(session('error'))
-        <div style="position: fixed; top: 20px; right: 20px; background: #e74c3c; color: white; padding: 1rem 1.5rem; border-radius: 5px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); z-index: 9999;" id="errorMessage">
-            {{ session('error') }}
-        </div>
-        <script>
-            setTimeout(() => {
-                const msg = document.getElementById('errorMessage');
-                if (msg) msg.remove();
-            }, 5000);
-        </script>
-    @endif
 @endsection

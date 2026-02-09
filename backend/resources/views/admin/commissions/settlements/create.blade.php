@@ -4,30 +4,30 @@
 @section('page-title', 'Process Commission Settlement')
 
 @section('content')
-    <div class="card">
-        <div class="card-header" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 1.5rem;">
-            <h4 style="margin: 0;">💵 Settlement for {{ $ledger->partner->partnerProfile->business_name ?? $ledger->partner->name }}</h4>
-            <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">Period: {{ $ledger->formatted_period }}</p>
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        <div class="bg-[#93db4d] px-6 py-5">
+            <h2 class="text-xl font-bold text-[#021c47]">Settlement for {{ $ledger->partner->partnerProfile->business_name ?? $ledger->partner->name }}</h2>
+            <p class="text-[#021c47]/80 mt-1">Period: {{ $ledger->formatted_period }}</p>
         </div>
-        <div class="card-body">
+        <div class="p-6">
             <!-- Ledger Summary -->
-            <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
-                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem;">
+            <div class="bg-gray-50 rounded-xl p-6 mb-8">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
                     <div>
-                        <small style="color: #6c757d; display: block;">Commission Owed</small>
-                        <strong style="font-size: 1.25rem;">Rs {{ number_format($ledger->commission_owed, 2) }}</strong>
+                        <p class="text-sm text-gray-500 mb-1">Commission Owed</p>
+                        <p class="text-xl font-bold text-[#021c47]">Rs {{ number_format($ledger->commission_owed, 2) }}</p>
                     </div>
                     <div>
-                        <small style="color: #6c757d; display: block;">Already Paid</small>
-                        <strong style="font-size: 1.25rem; color: #00f2fe;">Rs {{ number_format($ledger->amount_paid, 2) }}</strong>
+                        <p class="text-sm text-gray-500 mb-1">Already Paid</p>
+                        <p class="text-xl font-bold text-[#93db4d]">Rs {{ number_format($ledger->amount_paid, 2) }}</p>
                     </div>
                     <div>
-                        <small style="color: #6c757d; display: block;">Outstanding</small>
-                        <strong style="font-size: 1.25rem; color: #f5576c;">Rs {{ number_format($ledger->amount_outstanding, 2) }}</strong>
+                        <p class="text-sm text-gray-500 mb-1">Outstanding</p>
+                        <p class="text-xl font-bold text-red-600">Rs {{ number_format($ledger->amount_outstanding, 2) }}</p>
                     </div>
                     <div>
-                        <small style="color: #6c757d; display: block;">Transactions</small>
-                        <strong style="font-size: 1.25rem;">{{ number_format($ledger->total_transactions) }}</strong>
+                        <p class="text-sm text-gray-500 mb-1">Transactions</p>
+                        <p class="text-xl font-bold text-[#021c47]">{{ number_format($ledger->total_transactions) }}</p>
                     </div>
                 </div>
             </div>
@@ -36,23 +36,21 @@
             <form action="{{ route('admin.commissions.settlements.store', $ledger->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
 
-                <div class="row">
-                    <div class="col-md-6" style="margin-bottom: 1.5rem;">
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Amount to Settle <span style="color: red;">*</span></label>
-                        <input type="number" name="amount_settled" step="0.01" min="0.01" max="{{ $ledger->amount_outstanding }}" 
-                               value="{{ old('amount_settled', $ledger->amount_outstanding) }}" 
-                               class="form-control @error('amount_settled') is-invalid @enderror" 
-                               style="padding: 0.75rem;" required>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Amount to Settle <span class="text-red-500">*</span></label>
+                        <input type="number" name="amount_settled" step="0.01" min="0.01" max="{{ $ledger->amount_outstanding }}"
+                               value="{{ old('amount_settled', $ledger->amount_outstanding) }}"
+                               class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-colors @error('amount_settled') border-red-500 @enderror" required>
                         @error('amount_settled')
-                            <div class="invalid-feedback">{{ $message }}</div>
+                            <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                         @enderror
-                        <small style="color: #6c757d;">Maximum: Rs {{ number_format($ledger->amount_outstanding, 2) }}</small>
+                        <p class="mt-1 text-sm text-gray-500">Maximum: Rs {{ number_format($ledger->amount_outstanding, 2) }}</p>
                     </div>
 
-                    <div class="col-md-6" style="margin-bottom: 1.5rem;">
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Payment Method <span style="color: red;">*</span></label>
-                        <select name="payment_method" class="form-control @error('payment_method') is-invalid @enderror" 
-                                style="padding: 0.75rem;" required>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Payment Method <span class="text-red-500">*</span></label>
+                        <select name="payment_method" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-colors @error('payment_method') border-red-500 @enderror" required>
                             <option value="">Select Method</option>
                             <option value="bank_transfer" {{ old('payment_method') == 'bank_transfer' ? 'selected' : '' }}>Bank Transfer</option>
                             <option value="cash" {{ old('payment_method') == 'cash' ? 'selected' : '' }}>Cash</option>
@@ -61,86 +59,80 @@
                             <option value="other" {{ old('payment_method') == 'other' ? 'selected' : '' }}>Other</option>
                         </select>
                         @error('payment_method')
-                            <div class="invalid-feedback">{{ $message }}</div>
+                            <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                         @enderror
 
                         {{-- Wallet Balance Info --}}
                         @if($ledger->partner->wallet)
-                            <div id="wallet-balance-info" style="display: none; margin-top: 0.75rem; padding: 0.75rem; background: #d1ecf1; border: 1px solid #bee5eb; border-radius: 4px;">
-                                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
-                                    <svg style="width: 16px; height: 16px; fill: #0c5460;" viewBox="0 0 20 20">
+                            <div id="wallet-balance-info" class="hidden mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <svg class="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
                                         <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"></path>
                                         <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"></path>
                                     </svg>
-                                    <strong style="color: #0c5460; font-size: 0.9rem;">Partner's Wallet Balance</strong>
+                                    <span class="font-semibold text-sm text-blue-800">Partner's Wallet Balance</span>
                                 </div>
-                                <div style="font-size: 1.1rem; color: #0c5460; font-weight: 600;">
-                                    Rs {{ number_format($ledger->partner->wallet->balance, 2) }}
-                                </div>
+                                <p class="text-lg font-bold text-blue-800">Rs {{ number_format($ledger->partner->wallet->balance, 2) }}</p>
                                 @if($ledger->partner->wallet->balance < $ledger->amount_outstanding)
-                                    <small style="color: #856404; display: block; margin-top: 0.5rem;">
-                                        ⚠️ Insufficient balance for full settlement. Available: Rs {{ number_format($ledger->partner->wallet->balance, 2) }}
-                                    </small>
+                                    <p class="text-sm text-yellow-700 mt-2">
+                                        Insufficient balance for full settlement. Available: Rs {{ number_format($ledger->partner->wallet->balance, 2) }}
+                                    </p>
                                 @endif
                             </div>
                         @else
-                            <div id="wallet-unavailable-info" style="display: none; margin-top: 0.75rem; padding: 0.75rem; background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px;">
-                                <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                    <svg style="width: 16px; height: 16px; fill: #721c24;" viewBox="0 0 20 20">
+                            <div id="wallet-unavailable-info" class="hidden mt-3 p-3 bg-red-50 border border-red-200 rounded-lg">
+                                <div class="flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-red-600" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
                                     </svg>
-                                    <strong style="color: #721c24; font-size: 0.9rem;">Partner does not have a wallet</strong>
+                                    <span class="font-semibold text-sm text-red-800">Partner does not have a wallet</span>
                                 </div>
-                                <small style="color: #721c24; display: block; margin-top: 0.25rem;">
-                                    Please use another payment method.
-                                </small>
+                                <p class="text-sm text-red-600 mt-1">Please use another payment method.</p>
                             </div>
                         @endif
                     </div>
                 </div>
 
-                <div class="row">
-                    <div class="col-md-6" style="margin-bottom: 1.5rem;">
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Settlement Reference</label>
-                        <input type="text" name="settlement_reference" value="{{ old('settlement_reference') }}" 
-                               class="form-control @error('settlement_reference') is-invalid @enderror" 
-                               style="padding: 0.75rem;" 
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Settlement Reference</label>
+                        <input type="text" name="settlement_reference" value="{{ old('settlement_reference') }}"
+                               class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-colors @error('settlement_reference') border-red-500 @enderror"
                                placeholder="Transaction ID, Check #, etc.">
                         @error('settlement_reference')
-                            <div class="invalid-feedback">{{ $message }}</div>
+                            <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                         @enderror
                     </div>
 
-                    <div class="col-md-6" style="margin-bottom: 1.5rem;">
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Proof of Payment</label>
-                        <input type="file" name="proof_of_payment" 
-                               class="form-control @error('proof_of_payment') is-invalid @enderror" 
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Proof of Payment</label>
+                        <input type="file" name="proof_of_payment"
+                               class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-colors @error('proof_of_payment') border-red-500 @enderror"
                                accept=".jpg,.jpeg,.png,.pdf">
                         @error('proof_of_payment')
-                            <div class="invalid-feedback">{{ $message }}</div>
+                            <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                         @enderror
-                        <small style="color: #6c757d;">JPG, PNG, PDF (Max 5MB)</small>
+                        <p class="mt-1 text-sm text-gray-500">JPG, PNG, PDF (Max 5MB)</p>
                     </div>
                 </div>
 
-                <div style="margin-bottom: 1.5rem;">
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Admin Notes</label>
-                    <textarea name="admin_notes" rows="3" 
-                              class="form-control @error('admin_notes') is-invalid @enderror" 
-                              style="padding: 0.75rem;" 
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Admin Notes</label>
+                    <textarea name="admin_notes" rows="3"
+                              class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-colors @error('admin_notes') border-red-500 @enderror"
                               placeholder="Any notes about this settlement...">{{ old('admin_notes') }}</textarea>
                     @error('admin_notes')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror>
+                        <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                    @enderror
                 </div>
 
-                <hr style="margin: 2rem 0;">
+                <hr class="my-8 border-gray-200">
 
-                <div style="display: flex; gap: 1rem;">
-                    <button type="submit" class="btn btn-success" style="padding: 0.75rem 2rem;">
-                        ✅ Process Settlement
+                <div class="flex gap-4">
+                    <button type="submit" class="px-6 py-3 bg-[#93db4d] text-[#021c47] rounded-lg font-semibold hover:bg-[#7bc62e] transition-colors">
+                        Process Settlement
                     </button>
-                    <a href="{{ route('admin.commissions.partners.show', $ledger->partner_id) }}" class="btn btn-secondary" style="padding: 0.75rem 2rem;">
+                    <a href="{{ route('admin.commissions.partners.show', $ledger->partner_id) }}" class="px-6 py-3 border border-gray-200 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors">
                         Cancel
                     </a>
                 </div>
@@ -160,18 +152,15 @@ document.addEventListener('DOMContentLoaded', function() {
         const isWalletDeduction = paymentMethodSelect.value === 'wallet_deduction';
 
         if (walletBalanceInfo) {
-            walletBalanceInfo.style.display = isWalletDeduction ? 'block' : 'none';
+            walletBalanceInfo.classList.toggle('hidden', !isWalletDeduction);
         }
 
         if (walletUnavailableInfo) {
-            walletUnavailableInfo.style.display = isWalletDeduction ? 'block' : 'none';
+            walletUnavailableInfo.classList.toggle('hidden', !isWalletDeduction);
         }
     }
 
-    // Toggle on change
     paymentMethodSelect.addEventListener('change', toggleWalletInfo);
-
-    // Check initial state (in case of validation errors and old input)
     toggleWalletInfo();
 });
 </script>

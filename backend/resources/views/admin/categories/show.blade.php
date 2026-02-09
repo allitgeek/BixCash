@@ -4,271 +4,228 @@
 @section('page-title', 'View Category')
 
 @section('content')
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">{{ $category->name }}</h3>
-            <div>
-                <a href="{{ route('admin.categories.index') }}" class="btn btn-secondary">
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <h3 class="text-lg font-semibold text-[#021c47]">{{ $category->name }}</h3>
+            <div class="flex flex-wrap gap-2">
+                <a href="{{ route('admin.categories.index') }}" class="inline-flex items-center px-4 py-2 border border-gray-200 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors">
                     Back to Categories
                 </a>
-                <a href="{{ route('admin.categories.edit', $category) }}" class="btn btn-warning">
+                <a href="{{ route('admin.categories.edit', $category) }}" class="inline-flex items-center px-4 py-2 bg-yellow-100 text-yellow-700 rounded-lg font-medium hover:bg-yellow-200 transition-colors">
                     Edit Category
                 </a>
                 @if($category->is_active)
-                    <form method="POST" action="{{ route('admin.categories.toggle-status', $category) }}" style="display: inline;">
+                    <form method="POST" action="{{ route('admin.categories.toggle-status', $category) }}" class="inline">
                         @csrf
                         @method('PATCH')
-                        <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to deactivate this category?')">
+                        <button type="submit" class="inline-flex items-center px-4 py-2 bg-red-100 text-red-700 rounded-lg font-medium hover:bg-red-200 transition-colors" onclick="return confirm('Are you sure you want to deactivate this category?')">
                             Deactivate
                         </button>
                     </form>
                 @else
-                    <form method="POST" action="{{ route('admin.categories.toggle-status', $category) }}" style="display: inline;">
+                    <form method="POST" action="{{ route('admin.categories.toggle-status', $category) }}" class="inline">
                         @csrf
                         @method('PATCH')
-                        <button type="submit" class="btn btn-success">
+                        <button type="submit" class="inline-flex items-center px-4 py-2 bg-[#93db4d] text-[#021c47] rounded-lg font-medium hover:bg-[#7bc62e] transition-colors">
                             Activate
                         </button>
                     </form>
                 @endif
             </div>
         </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-8">
+        <div class="p-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2">
                     <!-- Category Preview -->
-                    <div class="category-preview" style="
-                        background: #f8f9fa;
-                        padding: 2rem;
-                        border-radius: 15px;
-                        margin-bottom: 2rem;
-                        text-align: center;
-                    ">
-                        <div style="
-                            background: white;
-                            border: 2px solid {{ $category->color ?: '#021c47' }};
-                            border-radius: 8px;
-                            padding: 1.5rem;
-                            width: 150px;
-                            height: 200px;
-                            display: inline-flex;
-                            flex-direction: column;
-                            justify-content: center;
-                            align-items: center;
-                            transition: all 0.3s ease;
-                        ">
+                    <div class="bg-gray-50 rounded-xl p-8 mb-6 text-center">
+                        <div class="inline-flex flex-col items-center justify-center bg-white rounded-xl p-6 w-36 h-48" style="border: 2px solid {{ $category->color ?: '#021c47' }};">
                             @if($category->icon_path)
                                 <img src="{{ $category->icon_path }}"
                                      alt="{{ $category->name }}"
-                                     style="width: 90px; height: 90px; object-fit: cover; border-radius: 4px; margin-bottom: 1rem;"
-                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                                <div style="display: none; width: 90px; height: 90px; background: #f0f0f0; border-radius: 4px; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; color: #999;">
+                                     class="w-[90px] h-[90px] object-cover rounded mb-4"
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <div class="hidden w-[90px] h-[90px] bg-gray-100 rounded mb-4 items-center justify-center text-gray-400 text-sm">
                                     No Icon
                                 </div>
                             @else
-                                <div style="width: 90px; height: 90px; background: #f0f0f0; border-radius: 4px; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; color: #999; font-size: 0.8rem;">
+                                <div class="w-[90px] h-[90px] bg-gray-100 rounded mb-4 flex items-center justify-center text-gray-400 text-sm">
                                     No Icon
                                 </div>
                             @endif
-                            <span style="color: {{ $category->color ?: '#021c47' }}; font-weight: bold; font-size: 1rem;">
-                                {{ $category->name }}
-                            </span>
+                            <span class="font-bold" style="color: {{ $category->color ?: '#021c47' }};">{{ $category->name }}</span>
                         </div>
                     </div>
 
                     <!-- Category Details -->
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h5>Basic Information</h5>
-                            <table class="table table-sm">
-                                <tr>
-                                    <td><strong>Name:</strong></td>
-                                    <td>{{ $category->name }}</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Description:</strong></td>
-                                    <td>{{ $category->description ?: 'No description' }}</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Color:</strong></td>
-                                    <td>
-                                        @if($category->color)
-                                            <span style="
-                                                background: {{ $category->color }};
-                                                color: white;
-                                                padding: 0.25rem 0.5rem;
-                                                border-radius: 3px;
-                                                font-size: 0.8rem;
-                                            ">{{ $category->color }}</span>
-                                        @else
-                                            Default (#3498db)
-                                        @endif
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Status:</strong></td>
-                                    <td>
-                                        @if($category->is_active)
-                                            <span class="badge badge-success">Active</span>
-                                        @else
-                                            <span class="badge badge-secondary">Inactive</span>
-                                        @endif
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Display Order:</strong></td>
-                                    <td>{{ $category->order }}</td>
-                                </tr>
-                            </table>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h5 class="text-lg font-semibold text-[#021c47] mb-4">Basic Information</h5>
+                            <div class="space-y-3">
+                                <div class="flex justify-between py-2 border-b border-gray-100">
+                                    <span class="font-medium text-gray-600">Name:</span>
+                                    <span class="text-gray-900">{{ $category->name }}</span>
+                                </div>
+                                <div class="flex justify-between py-2 border-b border-gray-100">
+                                    <span class="font-medium text-gray-600">Description:</span>
+                                    <span class="text-gray-900 text-right max-w-[200px]">{{ $category->description ?: 'No description' }}</span>
+                                </div>
+                                <div class="flex justify-between py-2 border-b border-gray-100">
+                                    <span class="font-medium text-gray-600">Color:</span>
+                                    @if($category->color)
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium text-white" style="background: {{ $category->color }};">{{ $category->color }}</span>
+                                    @else
+                                        <span class="text-gray-500">Default (#021c47)</span>
+                                    @endif
+                                </div>
+                                <div class="flex justify-between py-2 border-b border-gray-100">
+                                    <span class="font-medium text-gray-600">Status:</span>
+                                    @if($category->is_active)
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#93db4d]/20 text-[#5a8a2e]">Active</span>
+                                    @else
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">Inactive</span>
+                                    @endif
+                                </div>
+                                <div class="flex justify-between py-2">
+                                    <span class="font-medium text-gray-600">Display Order:</span>
+                                    <span class="text-gray-900">{{ $category->order }}</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <h5>SEO & Links</h5>
-                            <table class="table table-sm">
-                                <tr>
-                                    <td><strong>Icon URL:</strong></td>
-                                    <td>
+                        <div>
+                            <h5 class="text-lg font-semibold text-[#021c47] mb-4">SEO & Links</h5>
+                            <div class="space-y-3">
+                                <div class="flex justify-between py-2 border-b border-gray-100">
+                                    <span class="font-medium text-gray-600">Icon URL:</span>
+                                    <span class="text-gray-900">
                                         @if($category->icon_path)
-                                            <a href="{{ $category->icon_path }}" target="_blank" style="word-break: break-all;">
-                                                {{ Str::limit($category->icon_path, 40) }}
-                                                <i class="fas fa-external-link-alt" style="font-size: 0.8em;"></i>
+                                            <a href="{{ $category->icon_path }}" target="_blank" class="text-[#021c47] hover:text-[#93db4d] transition-colors break-all">
+                                                {{ Str::limit($category->icon_path, 30) }}
                                             </a>
                                         @else
                                             No icon URL
                                         @endif
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Meta Title:</strong></td>
-                                    <td>{{ $category->meta_title ?: 'Not set' }}</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Meta Description:</strong></td>
-                                    <td>{{ $category->meta_description ?: 'Not set' }}</td>
-                                </tr>
-                            </table>
+                                    </span>
+                                </div>
+                                <div class="flex justify-between py-2 border-b border-gray-100">
+                                    <span class="font-medium text-gray-600">Meta Title:</span>
+                                    <span class="text-gray-900 text-right max-w-[200px]">{{ $category->meta_title ?: 'Not set' }}</span>
+                                </div>
+                                <div class="flex justify-between py-2">
+                                    <span class="font-medium text-gray-600">Meta Description:</span>
+                                    <span class="text-gray-900 text-right max-w-[200px]">{{ $category->meta_description ?: 'Not set' }}</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Associated Brands -->
                     @if($category->brands->count() > 0)
-                        <div class="mt-4">
-                            <h5>Associated Brands ({{ $category->brands->count() }})</h5>
-                            <div class="row">
+                        <div class="mt-8">
+                            <h5 class="text-lg font-semibold text-[#021c47] mb-4">Associated Brands ({{ $category->brands->count() }})</h5>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 @foreach($category->brands as $brand)
-                                    <div class="col-md-4 mb-3">
-                                        <div class="card card-sm">
-                                            <div class="card-body d-flex align-items-center">
-                                                @if($brand->logo_path)
-                                                    <img src="{{ $brand->logo_path }}"
-                                                         alt="{{ $brand->name }}"
-                                                         style="width: 40px; height: 40px; object-fit: contain; margin-right: 0.75rem;"
-                                                         onerror="this.style.display='none';">
+                                    <div class="bg-white rounded-xl border border-gray-200 p-4 flex items-center gap-3">
+                                        @if($brand->logo_path)
+                                            <img src="{{ $brand->logo_path }}"
+                                                 alt="{{ $brand->name }}"
+                                                 class="w-10 h-10 object-contain"
+                                                 onerror="this.style.display='none';">
+                                        @endif
+                                        <div>
+                                            <p class="font-semibold text-gray-900">{{ $brand->name }}</p>
+                                            <div class="flex gap-1 mt-1">
+                                                @if($brand->is_active)
+                                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-[#93db4d]/20 text-[#5a8a2e]">Active</span>
+                                                @else
+                                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600">Inactive</span>
                                                 @endif
-                                                <div>
-                                                    <strong>{{ $brand->name }}</strong>
-                                                    <br>
-                                                    <small class="text-muted">
-                                                        @if($brand->is_active)
-                                                            <span class="badge badge-success badge-sm">Active</span>
-                                                        @else
-                                                            <span class="badge badge-secondary badge-sm">Inactive</span>
-                                                        @endif
-                                                        @if($brand->is_featured)
-                                                            <span class="badge badge-warning badge-sm">Featured</span>
-                                                        @endif
-                                                    </small>
-                                                </div>
+                                                @if($brand->is_featured)
+                                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-700">Featured</span>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>
                                 @endforeach
                             </div>
-                            <a href="{{ route('admin.brands.index', ['category_id' => $category->id]) }}" class="btn btn-outline-primary">
+                            <a href="{{ route('admin.brands.index', ['category_id' => $category->id]) }}" class="inline-flex items-center mt-4 px-4 py-2 border border-[#021c47] text-[#021c47] rounded-lg font-medium hover:bg-[#021c47] hover:text-white transition-colors">
                                 View All Brands in This Category
                             </a>
                         </div>
                     @else
-                        <div class="mt-4">
-                            <div class="alert alert-info">
-                                <strong>No brands associated with this category yet.</strong>
-                                <br>
-                                <a href="{{ route('admin.brands.create') }}" class="btn btn-sm btn-primary mt-2">
-                                    Create First Brand
-                                </a>
-                            </div>
+                        <div class="mt-8 bg-blue-50 border border-blue-200 rounded-xl p-4">
+                            <p class="font-semibold text-blue-800 mb-2">No brands associated with this category yet.</p>
+                            <a href="{{ route('admin.brands.create') }}" class="inline-flex items-center px-4 py-2 bg-[#021c47] text-white rounded-lg font-medium hover:bg-[#93db4d] hover:text-[#021c47] transition-colors">
+                                Create First Brand
+                            </a>
                         </div>
                     @endif
                 </div>
 
-                <div class="col-md-4">
+                <div>
                     <!-- Metadata -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="card-title">Metadata</h5>
+                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden mb-6">
+                        <div class="px-4 py-3 border-b border-gray-200">
+                            <h5 class="font-semibold text-[#021c47]">Metadata</h5>
                         </div>
-                        <div class="card-body">
-                            <table class="table table-sm">
-                                <tr>
-                                    <td><strong>Created:</strong></td>
-                                    <td>{{ $category->created_at->format('M j, Y g:i A') }}</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Updated:</strong></td>
-                                    <td>{{ $category->updated_at->format('M j, Y g:i A') }}</td>
-                                </tr>
-                                @if($category->creator)
-                                    <tr>
-                                        <td><strong>Created by:</strong></td>
-                                        <td>{{ $category->creator->name }}</td>
-                                    </tr>
-                                @endif
-                            </table>
+                        <div class="p-4 space-y-3">
+                            <div class="flex justify-between py-2 border-b border-gray-100">
+                                <span class="text-sm font-medium text-gray-600">Created:</span>
+                                <span class="text-sm text-gray-900">{{ $category->created_at->format('M j, Y g:i A') }}</span>
+                            </div>
+                            <div class="flex justify-between py-2 border-b border-gray-100">
+                                <span class="text-sm font-medium text-gray-600">Updated:</span>
+                                <span class="text-sm text-gray-900">{{ $category->updated_at->format('M j, Y g:i A') }}</span>
+                            </div>
+                            @if($category->creator)
+                                <div class="flex justify-between py-2">
+                                    <span class="text-sm font-medium text-gray-600">Created by:</span>
+                                    <span class="text-sm text-gray-900">{{ $category->creator->name }}</span>
+                                </div>
+                            @endif
                         </div>
                     </div>
 
                     <!-- Quick Actions -->
-                    <div class="card mt-3">
-                        <div class="card-header">
-                            <h5 class="card-title">Quick Actions</h5>
+                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                        <div class="px-4 py-3 border-b border-gray-200">
+                            <h5 class="font-semibold text-[#021c47]">Quick Actions</h5>
                         </div>
-                        <div class="card-body">
-                            <div class="d-grid gap-2">
-                                <a href="{{ route('admin.categories.edit', $category) }}" class="btn btn-warning btn-sm">
-                                    <i class="fas fa-edit"></i> Edit Category
-                                </a>
+                        <div class="p-4 space-y-3">
+                            <a href="{{ route('admin.categories.edit', $category) }}" class="block w-full text-center py-2 px-4 bg-yellow-100 text-yellow-700 rounded-lg font-medium hover:bg-yellow-200 transition-colors">
+                                Edit Category
+                            </a>
 
-                                @if($category->is_active)
-                                    <form method="POST" action="{{ route('admin.categories.toggle-status', $category) }}">
-                                        @csrf
-                                        @method('PATCH')
-                                        <button type="submit" class="btn btn-danger btn-sm w-100" onclick="return confirm('Are you sure you want to deactivate this category?')">
-                                            <i class="fas fa-eye-slash"></i> Deactivate
-                                        </button>
-                                    </form>
-                                @else
-                                    <form method="POST" action="{{ route('admin.categories.toggle-status', $category) }}">
-                                        @csrf
-                                        @method('PATCH')
-                                        <button type="submit" class="btn btn-success btn-sm w-100">
-                                            <i class="fas fa-eye"></i> Activate
-                                        </button>
-                                    </form>
-                                @endif
-
-                                @if($category->brands->count() == 0)
-                                    <form method="POST" action="{{ route('admin.categories.destroy', $category) }}">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm w-100" onclick="return confirm('Are you sure you want to delete this category? This action cannot be undone.')">
-                                            <i class="fas fa-trash"></i> Delete
-                                        </button>
-                                    </form>
-                                @else
-                                    <button class="btn btn-danger btn-sm w-100" disabled title="Cannot delete category with associated brands">
-                                        <i class="fas fa-trash"></i> Delete ({{ $category->brands->count() }} brands)
+                            @if($category->is_active)
+                                <form method="POST" action="{{ route('admin.categories.toggle-status', $category) }}">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button type="submit" class="w-full py-2 px-4 bg-red-100 text-red-700 rounded-lg font-medium hover:bg-red-200 transition-colors" onclick="return confirm('Are you sure you want to deactivate this category?')">
+                                        Deactivate
                                     </button>
-                                @endif
-                            </div>
+                                </form>
+                            @else
+                                <form method="POST" action="{{ route('admin.categories.toggle-status', $category) }}">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button type="submit" class="w-full py-2 px-4 bg-[#93db4d] text-[#021c47] rounded-lg font-medium hover:bg-[#7bc62e] transition-colors">
+                                        Activate
+                                    </button>
+                                </form>
+                            @endif
+
+                            @if($category->brands->count() == 0)
+                                <form method="POST" action="{{ route('admin.categories.destroy', $category) }}">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="w-full py-2 px-4 border border-red-500 text-red-500 rounded-lg font-medium hover:bg-red-500 hover:text-white transition-colors" onclick="return confirm('Are you sure you want to delete this category? This action cannot be undone.')">
+                                        Delete Category
+                                    </button>
+                                </form>
+                            @else
+                                <button class="w-full py-2 px-4 bg-gray-100 text-gray-400 rounded-lg font-medium cursor-not-allowed" disabled title="Cannot delete category with associated brands">
+                                    Delete ({{ $category->brands->count() }} brands)
+                                </button>
+                            @endif
                         </div>
                     </div>
                 </div>

@@ -4,81 +4,75 @@
 @section('page-title', 'Brands')
 
 @section('content')
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">Manage Brands</h3>
-            <div>
-                <a href="{{ route('admin.brands.create') }}" class="btn btn-primary">
-                    Add New Brand
-                </a>
-            </div>
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <h3 class="text-lg font-semibold text-[#021c47]">Manage Brands</h3>
+            <a href="{{ route('admin.brands.create') }}" class="inline-flex items-center px-4 py-2 bg-[#021c47] text-white rounded-lg font-medium hover:bg-[#93db4d] hover:text-[#021c47] transition-colors">
+                Add New Brand
+            </a>
         </div>
-        <div class="card-body">
+        <div class="p-6">
             @if($brands->count() > 0)
-                <div style="overflow-x: auto;">
-                    <table id="brandsTable" style="width: 100%; border-collapse: collapse;">
-                        <thead>
-                            <tr style="background: #f8f9fa; border-bottom: 2px solid #dee2e6;">
-                                <th style="padding: 0.75rem; text-align: center; font-weight: 600; width: 50px;">
-                                    <span title="Drag to reorder">⋮⋮</span>
+                <div class="overflow-x-auto">
+                    <table id="brandsTable" class="w-full">
+                        <thead class="bg-[#021c47] text-white">
+                            <tr>
+                                <th class="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider w-12" title="Drag to reorder">
+                                    <svg class="w-4 h-4 mx-auto" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M7 2a2 2 0 1 0 .001 4.001A2 2 0 0 0 7 2zm0 6a2 2 0 1 0 .001 4.001A2 2 0 0 0 7 8zm0 6a2 2 0 1 0 .001 4.001A2 2 0 0 0 7 14zm6-8a2 2 0 1 0-.001-4.001A2 2 0 0 0 13 6zm0 2a2 2 0 1 0 .001 4.001A2 2 0 0 0 13 8zm0 6a2 2 0 1 0 .001 4.001A2 2 0 0 0 13 14z"></path>
+                                    </svg>
                                 </th>
-                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Order</th>
-                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Name</th>
-                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Status</th>
-                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Commission</th>
-                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Created</th>
-                                <th style="padding: 0.75rem; text-align: center; font-weight: 600;">Actions</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Order</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Name</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Status</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Commission</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Created</th>
+                                <th class="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="sortableBrands">
+                        <tbody id="sortableBrands" class="divide-y divide-gray-200">
                             @foreach($brands as $brand)
-                                <tr class="brand-row" data-brand-id="{{ $brand->id }}" style="border-bottom: 1px solid #dee2e6; cursor: move;">
-                                    <td style="padding: 0.75rem; text-align: center;">
-                                        <div class="drag-handle" style="cursor: grab; font-size: 1.2rem; color: #666; user-select: none;" title="Drag to reorder">
-                                            ⋮⋮
+                                <tr class="brand-row hover:bg-[#93db4d]/5 transition-colors cursor-move" data-brand-id="{{ $brand->id }}">
+                                    <td class="px-4 py-3 text-center">
+                                        <div class="drag-handle cursor-grab text-gray-400 hover:text-[#021c47] transition-colors" title="Drag to reorder">
+                                            <svg class="w-5 h-5 mx-auto" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M7 2a2 2 0 1 0 .001 4.001A2 2 0 0 0 7 2zm0 6a2 2 0 1 0 .001 4.001A2 2 0 0 0 7 8zm0 6a2 2 0 1 0 .001 4.001A2 2 0 0 0 7 14zm6-8a2 2 0 1 0-.001-4.001A2 2 0 0 0 13 6zm0 2a2 2 0 1 0 .001 4.001A2 2 0 0 0 13 8zm0 6a2 2 0 1 0 .001 4.001A2 2 0 0 0 13 14z"></path>
+                                            </svg>
                                         </div>
                                     </td>
-                                    <td style="padding: 0.75rem;">
-                                        <span class="order-badge" style="background: #3498db; color: white; padding: 0.25rem 0.5rem; border-radius: 3px; font-weight: 500;">
+                                    <td class="px-4 py-3">
+                                        <span class="order-badge inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#021c47] text-white">
                                             {{ $brand->order ?? $loop->iteration }}
                                         </span>
                                     </td>
-                                    <td style="padding: 0.75rem;">
-                                        <strong>{{ $brand->name }}</strong>
+                                    <td class="px-4 py-3">
+                                        <span class="font-semibold text-gray-900">{{ $brand->name }}</span>
                                         @if($brand->description)
-                                            <br><small style="color: #666;">{{ Str::limit($brand->description, 60) }}</small>
+                                            <br><span class="text-sm text-gray-500">{{ Str::limit($brand->description, 60) }}</span>
                                         @endif
                                     </td>
-                                    <td style="padding: 0.75rem;">
+                                    <td class="px-4 py-3">
                                         @if($brand->is_active)
-                                            <span style="background: #27ae60; color: white; padding: 0.25rem 0.5rem; border-radius: 3px; font-size: 0.8rem;">
-                                                Active
-                                            </span>
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#93db4d]/20 text-[#5a8a2e]">Active</span>
                                         @else
-                                            <span style="background: #e74c3c; color: white; padding: 0.25rem 0.5rem; border-radius: 3px; font-size: 0.8rem;">
-                                                Inactive
-                                            </span>
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">Inactive</span>
                                         @endif
                                     </td>
-                                    <td style="padding: 0.75rem;">
-                                        <span style="color: #27ae60; font-weight: 500;">
-                                            {{ $brand->commission_rate ?? '0' }}%
-                                        </span>
+                                    <td class="px-4 py-3">
+                                        <span class="font-medium text-[#93db4d]">{{ $brand->commission_rate ?? '0' }}%</span>
                                     </td>
-                                    <td style="padding: 0.75rem;">
-                                        <small style="color: #666;">
-                                            {{ $brand->created_at->format('M j, Y') }}
-                                        </small>
+                                    <td class="px-4 py-3">
+                                        <span class="text-sm text-gray-500">{{ $brand->created_at->format('M j, Y') }}</span>
                                     </td>
-                                    <td style="padding: 0.75rem; text-align: center;">
-                                        <div style="display: flex; gap: 0.25rem; justify-content: center;">
-                                            <a href="{{ route('admin.brands.edit', $brand) }}" class="btn btn-warning" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">
+                                    <td class="px-4 py-3 text-center">
+                                        <div class="flex gap-2 justify-center">
+                                            <a href="{{ route('admin.brands.edit', $brand) }}" class="inline-flex items-center px-3 py-1.5 bg-yellow-100 text-yellow-700 rounded-lg text-sm font-medium hover:bg-yellow-200 transition-colors">
                                                 Edit
                                             </a>
-                                            <form method="POST" action="{{ route('admin.brands.destroy', $brand) }}" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this brand?')">
+                                            <form method="POST" action="{{ route('admin.brands.destroy', $brand) }}" class="inline" onsubmit="return confirm('Are you sure you want to delete this brand?')">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-danger" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">
+                                                <button type="submit" class="inline-flex items-center px-3 py-1.5 bg-red-100 text-red-700 rounded-lg text-sm font-medium hover:bg-red-200 transition-colors">
                                                     Delete
                                                 </button>
                                             </form>
@@ -91,14 +85,19 @@
                 </div>
 
                 <!-- Pagination -->
-                <div style="margin-top: 1.5rem; display: flex; justify-content: center;">
-                    {{ $brands->links() }}
-                </div>
+                @if($brands->hasPages())
+                    <div class="mt-6 flex justify-center">
+                        {{ $brands->links() }}
+                    </div>
+                @endif
             @else
-                <div style="text-align: center; padding: 3rem; color: #666;">
-                    <h4>No brands found</h4>
-                    <p>Get started by creating your first brand.</p>
-                    <a href="{{ route('admin.brands.create') }}" class="btn btn-primary" style="margin-top: 1rem;">
+                <div class="text-center py-12">
+                    <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path>
+                    </svg>
+                    <h4 class="text-lg font-semibold text-gray-700 mb-2">No brands found</h4>
+                    <p class="text-gray-500 mb-4">Get started by creating your first brand.</p>
+                    <a href="{{ route('admin.brands.create') }}" class="inline-flex items-center px-4 py-2 bg-[#021c47] text-white rounded-lg font-medium hover:bg-[#93db4d] hover:text-[#021c47] transition-colors">
                         Create First Brand
                     </a>
                 </div>
@@ -110,23 +109,12 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Simple pagination styling
-    const paginationLinks = document.querySelectorAll('.pagination a, .pagination span');
-    paginationLinks.forEach(link => {
-        link.style.cssText = 'padding: 0.5rem 0.75rem; margin: 0 0.25rem; border: 1px solid #dee2e6; border-radius: 3px; text-decoration: none; color: #495057;';
-        if (link.classList.contains('active')) {
-            link.style.cssText += 'background: #3498db; color: white; border-color: #3498db;';
-        }
-    });
-
-    // SIMPLE, RELIABLE DRAG AND DROP SYSTEM FOR BRANDS
     const tbody = document.getElementById('sortableBrands');
     if (!tbody) return;
 
     let draggedElement = null;
     let isUpdating = false;
 
-    // Add drag and drop to each row
     function initializeDragAndDrop() {
         const rows = tbody.querySelectorAll('.brand-row');
 
@@ -136,13 +124,11 @@ document.addEventListener('DOMContentLoaded', function() {
             row.addEventListener('dragstart', function(e) {
                 draggedElement = this;
                 this.style.opacity = '0.5';
-                console.log('Drag started:', this.querySelector('strong').textContent);
             });
 
             row.addEventListener('dragend', function(e) {
                 this.style.opacity = '';
                 draggedElement = null;
-                console.log('Drag ended');
             });
 
             row.addEventListener('dragover', function(e) {
@@ -154,58 +140,41 @@ document.addEventListener('DOMContentLoaded', function() {
 
             row.addEventListener('drop', function(e) {
                 e.preventDefault();
+                if (!draggedElement || draggedElement === this || isUpdating) return;
 
-                if (!draggedElement || draggedElement === this || isUpdating) {
-                    return;
-                }
-
-                console.log('Drop on:', this.querySelector('strong').textContent);
-
-                // Get the bounding rectangle to determine drop position
                 const rect = this.getBoundingClientRect();
                 const midpoint = rect.top + rect.height / 2;
 
-                // Insert before or after based on drop position
                 if (e.clientY < midpoint) {
                     tbody.insertBefore(draggedElement, this);
                 } else {
                     tbody.insertBefore(draggedElement, this.nextSibling);
                 }
 
-                // Update order after a short delay
                 setTimeout(updateBrandOrder, 100);
             });
         });
     }
 
-    // Update brand order in database
     function updateBrandOrder() {
         if (isUpdating) return;
-
         isUpdating = true;
+
         const rows = tbody.querySelectorAll('.brand-row');
         const brandOrder = [];
 
-        // Update visual order badges and collect data
         rows.forEach((row, index) => {
             const orderBadge = row.querySelector('.order-badge');
-            if (orderBadge) {
-                orderBadge.textContent = index + 1;
-            }
+            if (orderBadge) orderBadge.textContent = index + 1;
 
             const brandId = row.getAttribute('data-brand-id');
             if (brandId) {
-                brandOrder.push({
-                    id: parseInt(brandId),
-                    order: index + 1
-                });
+                brandOrder.push({ id: parseInt(brandId), order: index + 1 });
             }
         });
 
-        console.log('Updating brand order:', brandOrder);
         showNotification('Updating brand order...', 'info');
 
-        // Send AJAX request
         fetch('{{ route("admin.brands.reorder") }}', {
             method: 'POST',
             headers: {
@@ -217,15 +186,13 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => response.json())
         .then(data => {
-            console.log('Server response:', data);
             if (data.success) {
-                showNotification('Brand order updated successfully!', 'success');
+                showNotification('Brand order updated!', 'success');
             } else {
                 showNotification('Error: ' + data.message, 'error');
             }
         })
         .catch(error => {
-            console.error('Error:', error);
             showNotification('Error updating brand order', 'error');
         })
         .finally(() => {
@@ -233,73 +200,25 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Simple notification system
     function showNotification(message, type = 'info') {
-        // Remove existing notifications
         document.querySelectorAll('.brand-notification').forEach(n => n.remove());
 
         const notification = document.createElement('div');
-        notification.className = 'brand-notification';
-        notification.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 1rem 1.5rem;
-            border-radius: 5px;
-            color: white;
-            font-weight: 500;
-            z-index: 10000;
-            ${type === 'success' ? 'background: #27ae60;' : ''}
-            ${type === 'error' ? 'background: #e74c3c;' : ''}
-            ${type === 'info' ? 'background: #3498db;' : ''}
-        `;
-        notification.textContent = message;
+        notification.className = 'brand-notification fixed top-5 right-5 px-6 py-3 rounded-xl font-medium z-50 shadow-lg';
 
+        if (type === 'success') notification.className += ' bg-[#93db4d] text-[#021c47]';
+        else if (type === 'error') notification.className += ' bg-red-500 text-white';
+        else notification.className += ' bg-[#021c47] text-white';
+
+        notification.textContent = message;
         document.body.appendChild(notification);
 
-        // Auto remove
-        if (type !== 'info') {
-            setTimeout(() => {
-                if (notification.parentNode) {
-                    notification.remove();
-                }
-            }, 3000);
-        } else {
-            setTimeout(() => {
-                if (notification.parentNode) {
-                    notification.remove();
-                }
-            }, 1000);
-        }
+        setTimeout(() => notification.remove(), type === 'info' ? 1000 : 3000);
     }
 
-    // Add hover effects
-    const style = document.createElement('style');
-    style.textContent = `
-        .brand-row {
-            transition: background-color 0.2s;
-        }
-        .brand-row:hover {
-            background-color: rgba(52, 152, 219, 0.05);
-        }
-        .drag-handle {
-            transition: all 0.2s;
-        }
-        .drag-handle:hover {
-            color: #3498db !important;
-            transform: scale(1.1);
-        }
-    `;
-    document.head.appendChild(style);
-
-    // Initialize the system
     initializeDragAndDrop();
-    console.log('Simple drag-and-drop system initialized for brands');
 
-    // Re-initialize if content changes (for pagination)
-    const observer = new MutationObserver(() => {
-        setTimeout(initializeDragAndDrop, 100);
-    });
+    const observer = new MutationObserver(() => setTimeout(initializeDragAndDrop, 100));
     observer.observe(tbody, { childList: true });
 });
 </script>

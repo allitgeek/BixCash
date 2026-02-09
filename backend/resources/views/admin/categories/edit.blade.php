@@ -4,227 +4,201 @@
 @section('page-title', 'Edit Category')
 
 @section('content')
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">Edit Category: {{ $category->name }}</h3>
-            <div>
-                <a href="{{ route('admin.categories.index') }}" class="btn btn-secondary">
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <h3 class="text-lg font-semibold text-[#021c47]">Edit Category: {{ $category->name }}</h3>
+            <div class="flex gap-2">
+                <a href="{{ route('admin.categories.index') }}" class="inline-flex items-center px-4 py-2 border border-gray-200 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors">
                     Back to Categories
                 </a>
-                <a href="{{ route('admin.categories.show', $category) }}" class="btn btn-info">
+                <a href="{{ route('admin.categories.show', $category) }}" class="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-700 rounded-lg font-medium hover:bg-blue-200 transition-colors">
                     View Category
                 </a>
             </div>
         </div>
-        <div class="card-body">
+        <div class="p-6">
             <form method="POST" action="{{ route('admin.categories.update', $category) }}" id="categoryForm" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
 
-                <div class="row">
-                    <div class="col-md-8">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2 space-y-6">
                         <!-- Basic Information -->
-                        <div class="form-group">
-                            <label for="name">Category Name *</label>
+                        <div>
+                            <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Category Name <span class="text-red-500">*</span></label>
                             <input type="text"
-                                   class="form-control @error('name') is-invalid @enderror"
+                                   class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-colors @error('name') border-red-500 @enderror"
                                    id="name"
                                    name="name"
                                    value="{{ old('name', $category->name) }}"
                                    required>
                             @error('name')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                                <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                             @enderror
                         </div>
 
-                        <div class="form-group">
-                            <label for="description">Description</label>
-                            <textarea class="form-control @error('description') is-invalid @enderror"
+                        <div>
+                            <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                            <textarea class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-colors @error('description') border-red-500 @enderror"
                                       id="description"
                                       name="description"
                                       rows="3">{{ old('description', $category->description) }}</textarea>
                             @error('description')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                                <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                             @enderror
                         </div>
 
-                        <div class="form-group">
-                            <label>Category Icon</label>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Category Icon</label>
 
-                            <!-- Current Icon Display -->
                             @if($category->icon_path)
-                                <div class="mb-3">
-                                    <label class="form-label"><strong>Current Icon</strong></label>
-                                    <div style="padding: 1rem; background: #f8f9fa; border-radius: 8px; text-align: center;">
-                                        <img src="{{ $category->icon_path }}" alt="{{ $category->name }}" style="max-height: 60px; max-width: 60px; object-fit: contain;">
+                                <div class="mb-4">
+                                    <p class="text-sm font-medium text-gray-600 mb-2">Current Icon</p>
+                                    <div class="p-4 bg-gray-50 rounded-xl text-center">
+                                        <img src="{{ $category->icon_path }}" alt="{{ $category->name }}" class="max-h-16 max-w-16 object-contain mx-auto">
                                     </div>
                                 </div>
                             @endif
 
-                            <!-- File Upload Option -->
-                            <div class="mb-3">
-                                <label for="icon_file" class="form-label"><strong>Upload New Icon File</strong></label>
+                            <div class="mb-4">
+                                <label for="icon_file" class="block text-sm font-medium text-gray-600 mb-2">Upload New Icon File</label>
                                 <input type="file"
-                                       class="form-control @error('icon_file') is-invalid @enderror"
+                                       class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-colors @error('icon_file') border-red-500 @enderror"
                                        id="icon_file"
                                        name="icon_file"
                                        accept="image/png,image/jpg,image/jpeg,image/svg+xml,image/webp">
                                 @error('icon_file')
-                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                                 @enderror
-                                <div class="mt-2" style="background: #e7f3ff; padding: 0.75rem; border-radius: 5px; border-left: 4px solid #0066cc;">
-                                    <strong style="color: #0066cc;">📏 Recommended Image Specifications:</strong><br>
-                                    <span style="color: #333; font-size: 0.9rem;">
-                                        <strong>• Dimensions:</strong> 60x60 pixels (square format)<br>
-                                        <strong>• File Types:</strong> PNG (recommended), JPG, SVG, WebP<br>
-                                        <strong>• File Size:</strong> Maximum 2MB, recommended 10-50KB<br>
-                                        <strong>• Background:</strong> Transparent PNG preferred for best results<br>
-                                        <strong>• Style:</strong> Simple, recognizable icon design
-                                    </span>
+                                <div class="mt-2 bg-blue-50 border-l-4 border-blue-500 p-3 rounded-r-lg">
+                                    <p class="text-sm font-semibold text-blue-800 mb-1">Recommended Image Specifications:</p>
+                                    <ul class="text-sm text-blue-700 space-y-0.5">
+                                        <li><strong>Dimensions:</strong> 60x60 pixels (square format)</li>
+                                        <li><strong>File Types:</strong> PNG (recommended), JPG, SVG, WebP</li>
+                                        <li><strong>File Size:</strong> Maximum 2MB, recommended 10-50KB</li>
+                                        <li><strong>Background:</strong> Transparent PNG preferred</li>
+                                    </ul>
                                 </div>
-                                <small class="text-muted"><em>Will replace current icon when uploaded</em></small>
+                                <p class="mt-1 text-sm text-gray-500 italic">Will replace current icon when uploaded</p>
                             </div>
 
-                            <!-- URL Option -->
-                            <div class="mb-3">
-                                <label for="icon_path" class="form-label"><strong>Or Enter Icon URL</strong></label>
+                            <div>
+                                <label for="icon_path" class="block text-sm font-medium text-gray-600 mb-2">Or Enter Icon URL</label>
                                 <input type="url"
-                                       class="form-control @error('icon_path') is-invalid @enderror"
+                                       class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-colors @error('icon_path') border-red-500 @enderror"
                                        id="icon_path"
                                        name="icon_path"
                                        value="{{ old('icon_path', $category->icon_path) }}"
                                        placeholder="https://example.com/icon.png">
                                 @error('icon_path')
-                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                                 @enderror
-                                <small class="text-muted">Enter the full URL to the category icon (if not uploading file)</small>
+                                <p class="mt-1 text-sm text-gray-500">Enter the full URL to the category icon (if not uploading file)</p>
                             </div>
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="color">Category Color</label>
-                                    <input type="color"
-                                           class="form-control @error('color') is-invalid @enderror"
-                                           id="color"
-                                           name="color"
-                                           value="{{ old('color', $category->color ?: '#3498db') }}">
-                                    @error('color')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="color" class="block text-sm font-medium text-gray-700 mb-2">Category Color</label>
+                                <input type="color"
+                                       class="w-full h-12 px-2 py-1 border border-gray-200 rounded-lg cursor-pointer @error('color') border-red-500 @enderror"
+                                       id="color"
+                                       name="color"
+                                       value="{{ old('color', $category->color ?: '#021c47') }}">
+                                @error('color')
+                                    <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                                @enderror
                             </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="order">Display Order *</label>
-                                    <input type="number"
-                                           class="form-control @error('order') is-invalid @enderror"
-                                           id="order"
-                                           name="order"
-                                           value="{{ old('order', $category->order) }}"
-                                           min="0"
-                                           required>
-                                    @error('order')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                    <small class="text-muted">Lower numbers appear first</small>
-                                </div>
+                            <div>
+                                <label for="order" class="block text-sm font-medium text-gray-700 mb-2">Display Order <span class="text-red-500">*</span></label>
+                                <input type="number"
+                                       class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-colors @error('order') border-red-500 @enderror"
+                                       id="order"
+                                       name="order"
+                                       value="{{ old('order', $category->order) }}"
+                                       min="0"
+                                       required>
+                                @error('order')
+                                    <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                                @enderror
+                                <p class="mt-1 text-sm text-gray-500">Lower numbers appear first</p>
                             </div>
                         </div>
 
                         <!-- SEO Information -->
-                        <h5 style="margin-top: 2rem; margin-bottom: 1rem; border-bottom: 1px solid #dee2e6; padding-bottom: 0.5rem;">SEO Information</h5>
+                        <div class="pt-6 border-t border-gray-200">
+                            <h4 class="text-lg font-semibold text-[#021c47] mb-4">SEO Information</h4>
 
-                        <div class="form-group">
-                            <label for="meta_title">Meta Title</label>
-                            <input type="text"
-                                   class="form-control @error('meta_title') is-invalid @enderror"
-                                   id="meta_title"
-                                   name="meta_title"
-                                   value="{{ old('meta_title', $category->meta_title) }}"
-                                   maxlength="255">
-                            @error('meta_title')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                            <small class="text-muted">Recommended: 50-60 characters</small>
-                        </div>
+                            <div class="space-y-6">
+                                <div>
+                                    <label for="meta_title" class="block text-sm font-medium text-gray-700 mb-2">Meta Title</label>
+                                    <input type="text"
+                                           class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-colors @error('meta_title') border-red-500 @enderror"
+                                           id="meta_title"
+                                           name="meta_title"
+                                           value="{{ old('meta_title', $category->meta_title) }}"
+                                           maxlength="255">
+                                    @error('meta_title')
+                                        <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                                    @enderror
+                                    <p class="mt-1 text-sm text-gray-500">Recommended: 50-60 characters</p>
+                                </div>
 
-                        <div class="form-group">
-                            <label for="meta_description">Meta Description</label>
-                            <textarea class="form-control @error('meta_description') is-invalid @enderror"
-                                      id="meta_description"
-                                      name="meta_description"
-                                      rows="3"
-                                      maxlength="500">{{ old('meta_description', $category->meta_description) }}</textarea>
-                            @error('meta_description')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                            <small class="text-muted">Recommended: 150-160 characters</small>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="form-check">
-                                <input type="checkbox"
-                                       class="form-check-input"
-                                       id="is_active"
-                                       name="is_active"
-                                       value="1"
-                                       {{ old('is_active', $category->is_active) ? 'checked' : '' }}>
-                                <label class="form-check-label" for="is_active">
-                                    Active (visible on website)
-                                </label>
+                                <div>
+                                    <label for="meta_description" class="block text-sm font-medium text-gray-700 mb-2">Meta Description</label>
+                                    <textarea class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-colors @error('meta_description') border-red-500 @enderror"
+                                              id="meta_description"
+                                              name="meta_description"
+                                              rows="3"
+                                              maxlength="500">{{ old('meta_description', $category->meta_description) }}</textarea>
+                                    @error('meta_description')
+                                        <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                                    @enderror
+                                    <p class="mt-1 text-sm text-gray-500">Recommended: 150-160 characters</p>
+                                </div>
                             </div>
                         </div>
+
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input type="checkbox"
+                                   class="w-5 h-5 rounded border-gray-300 text-[#93db4d] focus:ring-[#93db4d]"
+                                   id="is_active"
+                                   name="is_active"
+                                   value="1"
+                                   {{ old('is_active', $category->is_active) ? 'checked' : '' }}>
+                            <span class="text-sm font-medium text-gray-700">Active (visible on website)</span>
+                        </label>
                     </div>
 
                     <!-- Preview -->
-                    <div class="col-md-4">
-                        <div class="card">
-                            <div class="card-header">
-                                <h5 class="card-title">Preview</h5>
+                    <div>
+                        <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden sticky top-6">
+                            <div class="px-4 py-3 border-b border-gray-200">
+                                <h5 class="font-semibold text-[#021c47]">Preview</h5>
                             </div>
-                            <div class="card-body" style="background: #f8f9fa;">
-                                <div id="categoryPreview" style="
-                                    background: white;
-                                    border: 2px solid {{ $category->color ?: '#021c47' }};
-                                    border-radius: 8px;
-                                    padding: 1rem;
-                                    width: 120px;
-                                    height: 160px;
-                                    text-align: center;
-                                    margin: 0 auto;
-                                    display: flex;
-                                    flex-direction: column;
-                                    justify-content: center;
-                                    align-items: center;
-                                    transition: all 0.3s ease;
-                                ">
-                                    <div id="previewIcon" style="width: 60px; height: 60px; margin-bottom: 0.5rem; background: #f0f0f0; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #999;">
+                            <div class="p-4 bg-gray-50">
+                                <div id="categoryPreview" class="bg-white rounded-xl p-4 w-[120px] h-[160px] flex flex-col items-center justify-center mx-auto transition-all" style="border: 2px solid {{ $category->color ?: '#021c47' }};">
+                                    <div id="previewIcon" class="w-[60px] h-[60px] bg-gray-100 rounded flex items-center justify-center text-gray-400 text-sm mb-2">
                                         @if($category->icon_path)
-                                            <img src="{{ $category->icon_path }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 4px;" onerror="this.style.display='none';">
+                                            <img src="{{ $category->icon_path }}" class="w-full h-full object-cover rounded" onerror="this.style.display='none';">
                                         @else
                                             Icon
                                         @endif
                                     </div>
-                                    <span id="previewName" style="color: #021c47; font-weight: bold; font-size: 0.9rem;">
-                                        {{ $category->name }}
-                                    </span>
+                                    <span id="previewName" class="font-bold text-sm text-center" style="color: {{ $category->color ?: '#021c47' }};">{{ $category->name }}</span>
                                 </div>
-                                <small class="text-muted mt-2 d-block text-center">Preview updates as you type</small>
+                                <p class="text-xs text-gray-400 text-center mt-3">Preview updates as you type</p>
                             </div>
                         </div>
 
                         @if($category->brands_count > 0)
-                            <div class="card mt-3">
-                                <div class="card-header">
-                                    <h5 class="card-title">Associated Brands</h5>
+                            <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden mt-6">
+                                <div class="px-4 py-3 border-b border-gray-200">
+                                    <h5 class="font-semibold text-[#021c47]">Associated Brands</h5>
                                 </div>
-                                <div class="card-body">
-                                    <p class="text-muted">
-                                        This category has {{ $category->brands_count }} brand(s) associated with it.
-                                    </p>
-                                    <a href="{{ route('admin.brands.index', ['category_id' => $category->id]) }}" class="btn btn-sm btn-outline-primary">
+                                <div class="p-4">
+                                    <p class="text-sm text-gray-600 mb-3">This category has {{ $category->brands_count }} brand(s) associated with it.</p>
+                                    <a href="{{ route('admin.brands.index', ['category_id' => $category->id]) }}" class="inline-flex items-center px-3 py-1.5 border border-[#021c47] text-[#021c47] rounded-lg text-sm font-medium hover:bg-[#021c47] hover:text-white transition-colors">
                                         View Brands
                                     </a>
                                 </div>
@@ -233,16 +207,19 @@
                     </div>
                 </div>
 
-                <div class="form-actions" style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #dee2e6;">
-                    <button type="submit" class="btn btn-primary">Update Category</button>
-                    <a href="{{ route('admin.categories.index') }}" class="btn btn-secondary">Cancel</a>
+                <div class="flex gap-4 pt-6 mt-6 border-t border-gray-200">
+                    <button type="submit" class="px-6 py-3 bg-[#021c47] text-white rounded-lg font-medium hover:bg-[#93db4d] hover:text-[#021c47] transition-colors">
+                        Update Category
+                    </button>
+                    <a href="{{ route('admin.categories.index') }}" class="px-6 py-3 border border-gray-200 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors">
+                        Cancel
+                    </a>
                 </div>
             </form>
         </div>
     </div>
 
     <script>
-        // Live preview updates
         document.addEventListener('DOMContentLoaded', function() {
             const nameInput = document.getElementById('name');
             const iconPathInput = document.getElementById('icon_path');
@@ -255,37 +232,30 @@
 
             function updatePreview() {
                 previewName.textContent = nameInput.value || 'Category Name';
+                previewName.style.color = colorInput.value || '#021c47';
                 categoryPreview.style.borderColor = colorInput.value || '#021c47';
 
-                // Update icon - prioritize file upload over URL
                 if (iconFileInput.files && iconFileInput.files[0]) {
                     const reader = new FileReader();
                     reader.onload = function(e) {
-                        previewIcon.innerHTML = `<img src="${e.target.result}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 4px;">`;
+                        previewIcon.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover rounded">`;
                     };
                     reader.readAsDataURL(iconFileInput.files[0]);
                 } else if (iconPathInput.value) {
-                    previewIcon.innerHTML = `<img src="${iconPathInput.value}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 4px;" onerror="this.style.display='none'; this.parentNode.innerHTML='Icon'; this.parentNode.style.background='#f0f0f0'; this.parentNode.style.color='#999';">`;
+                    previewIcon.innerHTML = `<img src="${iconPathInput.value}" class="w-full h-full object-cover rounded" onerror="this.style.display='none'; this.parentNode.innerHTML='Icon'; this.parentNode.classList.add('bg-gray-100');">`;
                 } else {
                     previewIcon.innerHTML = 'Icon';
-                    previewIcon.style.background = '#f0f0f0';
-                    previewIcon.style.color = '#999';
+                    previewIcon.classList.add('bg-gray-100');
                 }
             }
 
-            // Clear URL when file is selected
             iconFileInput.addEventListener('change', function() {
-                if (this.files && this.files[0]) {
-                    iconPathInput.value = '';
-                }
+                if (this.files && this.files[0]) iconPathInput.value = '';
                 updatePreview();
             });
 
-            // Clear file when URL is entered
             iconPathInput.addEventListener('input', function() {
-                if (this.value) {
-                    iconFileInput.value = '';
-                }
+                if (this.value) iconFileInput.value = '';
                 updatePreview();
             });
 

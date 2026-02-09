@@ -4,49 +4,47 @@
 @section('page-title', 'Create Brand')
 
 @section('content')
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">Create New Brand</h3>
-            <div>
-                <a href="{{ route('admin.brands.index') }}" class="btn btn-secondary">
-                    Back to Brands
-                </a>
-            </div>
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+            <h3 class="text-lg font-semibold text-[#021c47]">Create New Brand</h3>
+            <a href="{{ route('admin.brands.index') }}" class="inline-flex items-center px-4 py-2 border border-gray-200 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors">
+                Back to Brands
+            </a>
         </div>
-        <div class="card-body">
+        <div class="p-6">
             <form method="POST" action="{{ route('admin.brands.store') }}" id="brandForm" enctype="multipart/form-data">
                 @csrf
 
-                <div class="row">
-                    <div class="col-md-8">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2 space-y-6">
                         <!-- Basic Information -->
-                        <div class="form-group">
-                            <label for="name">Brand Name *</label>
+                        <div>
+                            <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Brand Name <span class="text-red-500">*</span></label>
                             <input type="text"
-                                   class="form-control @error('name') is-invalid @enderror"
+                                   class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-colors @error('name') border-red-500 @enderror"
                                    id="name"
                                    name="name"
                                    value="{{ old('name') }}"
                                    required>
                             @error('name')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                                <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                             @enderror
                         </div>
 
-                        <div class="form-group">
-                            <label for="description">Description</label>
-                            <textarea class="form-control @error('description') is-invalid @enderror"
+                        <div>
+                            <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                            <textarea class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-colors @error('description') border-red-500 @enderror"
                                       id="description"
                                       name="description"
                                       rows="3">{{ old('description') }}</textarea>
                             @error('description')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                                <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                             @enderror
                         </div>
 
-                        <div class="form-group">
-                            <label for="category_id">Category</label>
-                            <select class="form-control @error('category_id') is-invalid @enderror"
+                        <div>
+                            <label for="category_id" class="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                            <select class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-colors @error('category_id') border-red-500 @enderror"
                                     id="category_id"
                                     name="category_id">
                                 <option value="">Select Category</option>
@@ -57,182 +55,144 @@
                                 @endforeach
                             </select>
                             @error('category_id')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                                <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                             @enderror
                         </div>
 
-                        <div class="form-group">
-                            <label>Brand Logo</label>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Brand Logo</label>
 
                             <!-- File Upload Option -->
-                            <div class="mb-3">
-                                <label for="logo_file" class="form-label"><strong>Upload Logo File</strong></label>
+                            <div class="mb-4">
+                                <label for="logo_file" class="block text-sm font-medium text-gray-600 mb-2">Upload Logo File</label>
                                 <input type="file"
-                                       class="form-control @error('logo_file') is-invalid @enderror"
+                                       class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-colors @error('logo_file') border-red-500 @enderror"
                                        id="logo_file"
                                        name="logo_file"
                                        accept="image/*">
                                 @error('logo_file')
-                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                                 @enderror
-                                <small class="text-muted">Upload PNG, JPG, or SVG file (max 2MB)</small>
+                                <p class="mt-1 text-sm text-gray-500">Upload PNG, JPG, or SVG file (max 2MB)</p>
                             </div>
 
                             <!-- URL Option -->
-                            <div class="mb-3">
-                                <label for="logo_path" class="form-label"><strong>Or Enter Logo URL</strong></label>
+                            <div>
+                                <label for="logo_path" class="block text-sm font-medium text-gray-600 mb-2">Or Enter Logo URL</label>
                                 <input type="url"
-                                       class="form-control @error('logo_path') is-invalid @enderror"
+                                       class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-colors @error('logo_path') border-red-500 @enderror"
                                        id="logo_path"
                                        name="logo_path"
                                        value="{{ old('logo_path') }}"
                                        placeholder="https://example.com/logo.png">
                                 @error('logo_path')
-                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                                 @enderror
-                                <small class="text-muted">Enter the full URL to the brand logo (if not uploading file)</small>
+                                <p class="mt-1 text-sm text-gray-500">Enter the full URL to the brand logo (if not uploading file)</p>
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <label for="website">Website URL</label>
+                        <div>
+                            <label for="website" class="block text-sm font-medium text-gray-700 mb-2">Website URL</label>
                             <input type="url"
-                                   class="form-control @error('website') is-invalid @enderror"
+                                   class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-colors @error('website') border-red-500 @enderror"
                                    id="website"
                                    name="website"
                                    value="{{ old('website') }}"
                                    placeholder="https://example.com">
                             @error('website')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                                <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                             @enderror
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="commission_rate">Commission Rate (%)</label>
-                                    <input type="number"
-                                           class="form-control @error('commission_rate') is-invalid @enderror"
-                                           id="commission_rate"
-                                           name="commission_rate"
-                                           value="{{ old('commission_rate', 0) }}"
-                                           min="0"
-                                           max="100"
-                                           step="0.01">
-                                    @error('commission_rate')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="commission_rate" class="block text-sm font-medium text-gray-700 mb-2">Commission Rate (%)</label>
+                                <input type="number"
+                                       class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-colors @error('commission_rate') border-red-500 @enderror"
+                                       id="commission_rate"
+                                       name="commission_rate"
+                                       value="{{ old('commission_rate', 0) }}"
+                                       min="0"
+                                       max="100"
+                                       step="0.01">
+                                @error('commission_rate')
+                                    <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                                @enderror
                             </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="order">Display Order *</label>
-                                    <input type="number"
-                                           class="form-control @error('order') is-invalid @enderror"
-                                           id="order"
-                                           name="order"
-                                           value="{{ old('order', 0) }}"
-                                           min="0"
-                                           required>
-                                    @error('order')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                    <small class="text-muted">Lower numbers appear first</small>
-                                </div>
+                            <div>
+                                <label for="order" class="block text-sm font-medium text-gray-700 mb-2">Display Order <span class="text-red-500">*</span></label>
+                                <input type="number"
+                                       class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-colors @error('order') border-red-500 @enderror"
+                                       id="order"
+                                       name="order"
+                                       value="{{ old('order', 0) }}"
+                                       min="0"
+                                       required>
+                                @error('order')
+                                    <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                                @enderror
+                                <p class="mt-1 text-sm text-gray-500">Lower numbers appear first</p>
                             </div>
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <div class="form-check">
-                                        <input type="checkbox"
-                                               class="form-check-input"
-                                               id="is_active"
-                                               name="is_active"
-                                               value="1"
-                                               {{ old('is_active', true) ? 'checked' : '' }}>
-                                        <label class="form-check-label" for="is_active">
-                                            Active (visible on website)
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <div class="form-check">
-                                        <input type="checkbox"
-                                               class="form-check-input"
-                                               id="is_featured"
-                                               name="is_featured"
-                                               value="1"
-                                               {{ old('is_featured') ? 'checked' : '' }}>
-                                        <label class="form-check-label" for="is_featured">
-                                            Featured brand
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <label class="flex items-center gap-3 cursor-pointer">
+                                <input type="checkbox"
+                                       class="w-5 h-5 rounded border-gray-300 text-[#93db4d] focus:ring-[#93db4d]"
+                                       id="is_active"
+                                       name="is_active"
+                                       value="1"
+                                       {{ old('is_active', true) ? 'checked' : '' }}>
+                                <span class="text-sm font-medium text-gray-700">Active (visible on website)</span>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer">
+                                <input type="checkbox"
+                                       class="w-5 h-5 rounded border-gray-300 text-[#93db4d] focus:ring-[#93db4d]"
+                                       id="is_featured"
+                                       name="is_featured"
+                                       value="1"
+                                       {{ old('is_featured') ? 'checked' : '' }}>
+                                <span class="text-sm font-medium text-gray-700">Featured brand</span>
+                            </label>
                         </div>
                     </div>
 
                     <!-- Preview -->
-                    <div class="col-md-4">
-                        <div class="card">
-                            <div class="card-header">
-                                <h5 class="card-title">Preview</h5>
+                    <div>
+                        <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden sticky top-6">
+                            <div class="px-4 py-3 border-b border-gray-200">
+                                <h5 class="font-semibold text-[#021c47]">Preview</h5>
                             </div>
-                            <div class="card-body" style="background: #f8f9fa;">
-                                <div id="brandPreview" style="
-                                    background: white;
-                                    border-radius: 10px;
-                                    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-                                    padding: 1rem;
-                                    width: 200px;
-                                    height: 120px;
-                                    display: flex;
-                                    align-items: center;
-                                    justify-content: center;
-                                    margin: 0 auto;
-                                    transition: all 0.3s ease;
-                                ">
-                                    <div id="previewLogo" style="
-                                        max-width: 150px;
-                                        max-height: 80px;
-                                        background: #f0f0f0;
-                                        border-radius: 4px;
-                                        display: flex;
-                                        align-items: center;
-                                        justify-content: center;
-                                        color: #999;
-                                        font-size: 0.9rem;
-                                        width: 150px;
-                                        height: 80px;
-                                    ">
+                            <div class="p-4 bg-gray-50">
+                                <div id="brandPreview" class="bg-white rounded-xl shadow-sm p-4 w-[200px] h-[120px] flex items-center justify-center mx-auto">
+                                    <div id="previewLogo" class="w-[150px] h-[80px] bg-gray-100 rounded flex items-center justify-center text-gray-400 text-sm">
                                         Brand Logo
                                     </div>
                                 </div>
-                                <div class="text-center mt-2">
-                                    <strong id="previewName">Brand Name</strong>
-                                    <br>
-                                    <small class="text-muted" id="previewCategory">No category</small>
+                                <div class="text-center mt-3">
+                                    <p class="font-semibold text-gray-900" id="previewName">Brand Name</p>
+                                    <p class="text-sm text-gray-500" id="previewCategory">No category</p>
                                 </div>
-                                <small class="text-muted mt-2 d-block text-center">Preview updates as you type</small>
+                                <p class="text-xs text-gray-400 text-center mt-3">Preview updates as you type</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="form-actions" style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #dee2e6;">
-                    <button type="submit" class="btn btn-primary">Create Brand</button>
-                    <a href="{{ route('admin.brands.index') }}" class="btn btn-secondary">Cancel</a>
+                <div class="flex gap-4 pt-6 mt-6 border-t border-gray-200">
+                    <button type="submit" class="px-6 py-3 bg-[#021c47] text-white rounded-lg font-medium hover:bg-[#93db4d] hover:text-[#021c47] transition-colors">
+                        Create Brand
+                    </button>
+                    <a href="{{ route('admin.brands.index') }}" class="px-6 py-3 border border-gray-200 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors">
+                        Cancel
+                    </a>
                 </div>
             </form>
         </div>
     </div>
 
     <script>
-        // Live preview updates
         document.addEventListener('DOMContentLoaded', function() {
             const nameInput = document.getElementById('name');
             const logoPathInput = document.getElementById('logo_path');
@@ -246,26 +206,25 @@
             function updatePreview() {
                 previewName.textContent = nameInput.value || 'Brand Name';
 
-                // Update category
                 const selectedCategory = categorySelect.options[categorySelect.selectedIndex];
                 previewCategory.textContent = selectedCategory.value ? selectedCategory.text : 'No category';
 
-                // Update logo - prioritize file upload over URL
                 if (logoFileInput.files && logoFileInput.files[0]) {
                     const reader = new FileReader();
                     reader.onload = function(e) {
-                        previewLogo.innerHTML = `<img src="${e.target.result}" style="max-width: 100%; max-height: 100%; object-fit: contain;">`;
+                        previewLogo.innerHTML = `<img src="${e.target.result}" class="max-w-full max-h-full object-contain">`;
+                        previewLogo.classList.remove('bg-gray-100');
                     };
                     reader.readAsDataURL(logoFileInput.files[0]);
                 } else if (logoPathInput.value) {
-                    previewLogo.innerHTML = `<img src="${logoPathInput.value}" style="max-width: 100%; max-height: 100%; object-fit: contain;" onerror="this.style.display='none'; this.parentNode.innerHTML='Brand Logo'; this.parentNode.style.background='#f0f0f0';">`;
+                    previewLogo.innerHTML = `<img src="${logoPathInput.value}" class="max-w-full max-h-full object-contain" onerror="this.style.display='none'; this.parentNode.innerHTML='Brand Logo'; this.parentNode.classList.add('bg-gray-100');">`;
+                    previewLogo.classList.remove('bg-gray-100');
                 } else {
                     previewLogo.innerHTML = 'Brand Logo';
-                    previewLogo.style.background = '#f0f0f0';
+                    previewLogo.classList.add('bg-gray-100');
                 }
             }
 
-            // Clear URL when file is selected
             logoFileInput.addEventListener('change', function() {
                 if (this.files && this.files[0]) {
                     logoPathInput.value = '';
@@ -273,7 +232,6 @@
                 updatePreview();
             });
 
-            // Clear file when URL is entered
             logoPathInput.addEventListener('input', function() {
                 if (this.value) {
                     logoFileInput.value = '';

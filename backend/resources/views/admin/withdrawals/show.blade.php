@@ -4,296 +4,289 @@
 @section('page-title', 'Withdrawal Request #' . $withdrawal->id)
 
 @section('content')
-    <div style="margin-bottom: 1rem;">
-        <a href="{{ route('admin.withdrawals.index') }}" style="color: #007bff; text-decoration: none;">
-            ← Back to Withdrawals
+    {{-- Back Button --}}
+    <div class="mb-6">
+        <a href="{{ route('admin.withdrawals.index') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-all duration-200">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+            Back to Withdrawals
         </a>
     </div>
 
-    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem;">
-        <!-- Left Column -->
-        <div>
-            <!-- Customer Details -->
-            <div class="card" style="margin-bottom: 1.5rem;">
-                <div class="card-header">
-                    <h3 class="card-title">👤 Customer Information</h3>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {{-- Left Column (2/3) --}}
+        <div class="lg:col-span-2 space-y-6">
+            {{-- Customer Information --}}
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
+                <div class="px-6 py-4 border-b border-gray-100">
+                    <h3 class="text-base font-bold text-[#021c47]">👤 Customer Information</h3>
                 </div>
-                <div class="card-body">
-                    <table style="width: 100%;">
-                        <tr>
-                            <td style="padding: 0.75rem 0; font-weight: 500; width: 150px;">Name:</td>
-                            <td style="padding: 0.75rem 0;">{{ $withdrawal->user->name }}</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 0.75rem 0; font-weight: 500;">Phone:</td>
-                            <td style="padding: 0.75rem 0;">{{ $withdrawal->user->phone }}</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 0.75rem 0; font-weight: 500;">Email:</td>
-                            <td style="padding: 0.75rem 0;">{{ $withdrawal->user->email ?? 'N/A' }}</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 0.75rem 0; font-weight: 500;">Account Age:</td>
-                            <td style="padding: 0.75rem 0;">{{ $accountAge }} days</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 0.75rem 0; font-weight: 500;">Current Balance:</td>
-                            <td style="padding: 0.75rem 0;"><strong>Rs. {{ number_format($withdrawal->user->wallet->balance ?? 0, 2) }}</strong></td>
-                        </tr>
-                    </table>
+                <div class="p-6">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="flex justify-between py-3 border-b border-gray-100">
+                            <span class="text-sm font-medium text-gray-500">Name</span>
+                            <span class="text-sm font-semibold text-[#021c47]">{{ $withdrawal->user->name }}</span>
+                        </div>
+                        <div class="flex justify-between py-3 border-b border-gray-100">
+                            <span class="text-sm font-medium text-gray-500">Phone</span>
+                            <span class="text-sm text-[#021c47]">{{ $withdrawal->user->phone }}</span>
+                        </div>
+                        <div class="flex justify-between py-3 border-b border-gray-100">
+                            <span class="text-sm font-medium text-gray-500">Email</span>
+                            <span class="text-sm text-[#021c47]">{{ $withdrawal->user->email ?? 'N/A' }}</span>
+                        </div>
+                        <div class="flex justify-between py-3 border-b border-gray-100">
+                            <span class="text-sm font-medium text-gray-500">Account Age</span>
+                            <span class="text-sm text-[#021c47]">{{ $accountAge }} days</span>
+                        </div>
+                        <div class="flex justify-between py-3 border-b border-gray-100 col-span-2">
+                            <span class="text-sm font-medium text-gray-500">Current Balance</span>
+                            <span class="text-sm font-bold text-[#93db4d]">Rs. {{ number_format($withdrawal->user->wallet->balance ?? 0, 2) }}</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Bank Details -->
-            <div class="card" style="margin-bottom: 1.5rem;">
-                <div class="card-header">
-                    <h3 class="card-title">🏦 Bank Details</h3>
+            {{-- Bank Details --}}
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
+                <div class="px-6 py-4 border-b border-gray-100">
+                    <h3 class="text-base font-bold text-[#021c47]">🏦 Bank Details</h3>
                 </div>
-                <div class="card-body">
-                    <table style="width: 100%;">
-                        <tr>
-                            <td style="padding: 0.75rem 0; font-weight: 500; width: 150px;">Bank Name:</td>
-                            <td style="padding: 0.75rem 0;">{{ $withdrawal->bank_name }}</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 0.75rem 0; font-weight: 500;">Account Title:</td>
-                            <td style="padding: 0.75rem 0;">{{ $withdrawal->account_title }}</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 0.75rem 0; font-weight: 500;">Account Number:</td>
-                            <td style="padding: 0.75rem 0; font-family: monospace; font-size: 1.1rem;"><strong>{{ $withdrawal->account_number }}</strong></td>
-                        </tr>
+                <div class="p-6">
+                    <div class="space-y-4">
+                        <div class="flex justify-between py-3 border-b border-gray-100">
+                            <span class="text-sm font-medium text-gray-500">Bank Name</span>
+                            <span class="text-sm text-[#021c47]">{{ $withdrawal->bank_name }}</span>
+                        </div>
+                        <div class="flex justify-between py-3 border-b border-gray-100">
+                            <span class="text-sm font-medium text-gray-500">Account Title</span>
+                            <span class="text-sm text-[#021c47]">{{ $withdrawal->account_title }}</span>
+                        </div>
+                        <div class="flex justify-between py-3 border-b border-gray-100">
+                            <span class="text-sm font-medium text-gray-500">Account Number</span>
+                            <span class="text-sm font-bold text-[#021c47] font-mono">{{ $withdrawal->account_number }}</span>
+                        </div>
                         @if($withdrawal->iban)
-                        <tr>
-                            <td style="padding: 0.75rem 0; font-weight: 500;">IBAN:</td>
-                            <td style="padding: 0.75rem 0; font-family: monospace;">{{ $withdrawal->iban }}</td>
-                        </tr>
+                            <div class="flex justify-between py-3 border-b border-gray-100">
+                                <span class="text-sm font-medium text-gray-500">IBAN</span>
+                                <span class="text-sm text-[#021c47] font-mono">{{ $withdrawal->iban }}</span>
+                            </div>
                         @endif
-                    </table>
+                    </div>
                 </div>
             </div>
 
-            <!-- Withdrawal History -->
+            {{-- Withdrawal History --}}
             @if($withdrawalHistory->count() > 0)
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">📜 Previous Withdrawals (Last 10)</h3>
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
+                    <div class="px-6 py-4 border-b border-gray-100">
+                        <h3 class="text-base font-bold text-[#021c47]">📜 Previous Withdrawals (Last 10)</h3>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="bg-[#021c47] text-white">
+                                    <th class="px-4 py-3 text-left text-sm font-semibold">Date</th>
+                                    <th class="px-4 py-3 text-right text-sm font-semibold">Amount</th>
+                                    <th class="px-4 py-3 text-center text-sm font-semibold">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100">
+                                @foreach($withdrawalHistory as $history)
+                                    <tr class="hover:bg-[#93db4d]/5 transition-colors">
+                                        <td class="px-4 py-3 text-sm text-[#021c47]">{{ $history->created_at->format('M d, Y') }}</td>
+                                        <td class="px-4 py-3 text-sm text-right font-medium text-[#021c47]">Rs. {{ number_format($history->amount, 2) }}</td>
+                                        <td class="px-4 py-3 text-center">
+                                            @if($history->status === 'completed')
+                                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-[#93db4d]/20 text-[#65a030]">✅</span>
+                                            @elseif($history->status === 'rejected')
+                                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-600">❌</span>
+                                            @elseif($history->status === 'cancelled')
+                                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-600">🚫</span>
+                                            @elseif($history->status === 'processing')
+                                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-600">🔄</span>
+                                            @else
+                                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-700">⏳</span>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-                <div class="card-body" style="padding: 0;">
-                    <table style="width: 100%; border-collapse: collapse;">
-                        <thead style="background: #f8f9fa;">
-                            <tr>
-                                <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #dee2e6;">Date</th>
-                                <th style="padding: 0.75rem; text-align: right; border-bottom: 2px solid #dee2e6;">Amount</th>
-                                <th style="padding: 0.75rem; text-align: center; border-bottom: 2px solid #dee2e6;">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($withdrawalHistory as $history)
-                            <tr style="border-bottom: 1px solid #dee2e6;">
-                                <td style="padding: 0.75rem;">{{ $history->created_at->format('M d, Y') }}</td>
-                                <td style="padding: 0.75rem; text-align: right;">Rs. {{ number_format($history->amount, 2) }}</td>
-                                <td style="padding: 0.75rem; text-align: center;">
-                                    @if($history->status === 'completed')
-                                        <span style="background: #28a745; color: #fff; padding: 0.25rem 0.5rem; border-radius: 8px; font-size: 0.75rem;">✅</span>
-                                    @elseif($history->status === 'rejected')
-                                        <span style="background: #dc3545; color: #fff; padding: 0.25rem 0.5rem; border-radius: 8px; font-size: 0.75rem;">❌</span>
-                                    @elseif($history->status === 'cancelled')
-                                        <span style="background: #6c757d; color: #fff; padding: 0.25rem 0.5rem; border-radius: 8px; font-size: 0.75rem;">🚫</span>
-                                    @elseif($history->status === 'processing')
-                                        <span style="background: #17a2b8; color: #fff; padding: 0.25rem 0.5rem; border-radius: 8px; font-size: 0.75rem;">🔄</span>
-                                    @else
-                                        <span style="background: #ffc107; color: #000; padding: 0.25rem 0.5rem; border-radius: 8px; font-size: 0.75rem;">⏳</span>
-                                    @endif
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            </div>
             @endif
         </div>
 
-        <!-- Right Column -->
-        <div>
-            <!-- Transaction Details -->
-            <div class="card" style="margin-bottom: 1.5rem;">
-                <div class="card-header">
-                    <h3 class="card-title">💰 Transaction Details</h3>
+        {{-- Right Column (1/3) --}}
+        <div class="space-y-6">
+            {{-- Transaction Details --}}
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
+                <div class="px-6 py-4 border-b border-gray-100">
+                    <h3 class="text-base font-bold text-[#021c47]">💰 Transaction Details</h3>
                 </div>
-                <div class="card-body">
-                    <div style="text-align: center; padding: 1rem 0; border-bottom: 1px solid #dee2e6; margin-bottom: 1rem;">
-                        <div style="color: #666; font-size: 0.875rem; margin-bottom: 0.5rem;">Withdrawal Amount</div>
-                        <div style="font-size: 2rem; font-weight: bold; color: #dc3545;">Rs. {{ number_format($withdrawal->amount, 2) }}</div>
+                <div class="p-6">
+                    <div class="text-center py-4 mb-4 border-b border-gray-200">
+                        <p class="text-sm text-gray-500 mb-1">Withdrawal Amount</p>
+                        <p class="text-3xl font-bold text-red-500">Rs. {{ number_format($withdrawal->amount, 2) }}</p>
                     </div>
-
-                    <table style="width: 100%;">
-                        <tr>
-                            <td style="padding: 0.5rem 0; font-weight: 500;">Status:</td>
-                            <td style="padding: 0.5rem 0; text-align: right;">
-                                @if($withdrawal->status === 'pending')
-                                    <span style="background: #ffc107; color: #000; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.875rem; font-weight: 500;">⏳ Pending</span>
-                                @elseif($withdrawal->status === 'processing')
-                                    <span style="background: #17a2b8; color: #fff; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.875rem; font-weight: 500;">🔄 Processing</span>
-                                @elseif($withdrawal->status === 'completed')
-                                    <span style="background: #28a745; color: #fff; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.875rem; font-weight: 500;">✅ Completed</span>
-                                @elseif($withdrawal->status === 'rejected')
-                                    <span style="background: #dc3545; color: #fff; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.875rem; font-weight: 500;">❌ Rejected</span>
-                                @else
-                                    <span style="background: #6c757d; color: #fff; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.875rem; font-weight: 500;">🚫 Cancelled</span>
-                                @endif
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 0.5rem 0; font-weight: 500;">Requested:</td>
-                            <td style="padding: 0.5rem 0; text-align: right;">{{ $withdrawal->created_at->format('M d, Y h:i A') }}</td>
-                        </tr>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm font-medium text-gray-500">Status</span>
+                            @if($withdrawal->status === 'pending')
+                                <span class="px-3 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-700">⏳ Pending</span>
+                            @elseif($withdrawal->status === 'processing')
+                                <span class="px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-700">🔄 Processing</span>
+                            @elseif($withdrawal->status === 'completed')
+                                <span class="px-3 py-1 text-xs font-semibold rounded-full bg-[#93db4d]/20 text-[#65a030]">✅ Completed</span>
+                            @elseif($withdrawal->status === 'rejected')
+                                <span class="px-3 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-600">❌ Rejected</span>
+                            @else
+                                <span class="px-3 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-600">🚫 Cancelled</span>
+                            @endif
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm font-medium text-gray-500">Requested</span>
+                            <span class="text-sm text-[#021c47]">{{ $withdrawal->created_at->format('M d, Y h:i A') }}</span>
+                        </div>
                         @if($withdrawal->fraud_score > 0)
-                        <tr>
-                            <td style="padding: 0.5rem 0; font-weight: 500;">Fraud Score:</td>
-                            <td style="padding: 0.5rem 0; text-align: right;">
-                                <span style="background: {{ $withdrawal->fraud_score >= 50 ? '#ff6b6b' : '#ffa502' }}; color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-weight: 600;">
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm font-medium text-gray-500">Fraud Score</span>
+                                <span class="px-3 py-1 text-xs font-bold rounded-full {{ $withdrawal->fraud_score >= 50 ? 'bg-red-500' : 'bg-yellow-500' }} text-white">
                                     {{ $withdrawal->fraud_score }}/100
                                 </span>
-                            </td>
-                        </tr>
+                            </div>
                         @endif
-                    </table>
+                    </div>
 
                     @if($withdrawal->fraud_flags && count(json_decode($withdrawal->fraud_flags, true)) > 0)
-                    <div style="margin-top: 1rem; padding: 1rem; background: #fff3cd; border-left: 4px solid #ffa502; border-radius: 4px;">
-                        <strong style="color: #856404;">🚩 Fraud Flags:</strong>
-                        <ul style="margin: 0.5rem 0 0 1rem; color: #856404;">
-                            @foreach(json_decode($withdrawal->fraud_flags, true) as $flag)
-                                <li>{{ ucwords(str_replace('_', ' ', $flag)) }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
+                        <div class="mt-4 p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded-r-lg">
+                            <p class="text-sm font-semibold text-yellow-700 mb-2">🚩 Fraud Flags:</p>
+                            <ul class="list-disc pl-4 text-sm text-yellow-600">
+                                @foreach(json_decode($withdrawal->fraud_flags, true) as $flag)
+                                    <li>{{ ucwords(str_replace('_', ' ', $flag)) }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
                     @endif
                 </div>
             </div>
 
-            <!-- Approval/Rejection Forms -->
+            {{-- Approval/Rejection Forms --}}
             @if($withdrawal->status === 'pending' || $withdrawal->status === 'processing')
-            <div class="card" style="margin-bottom: 1.5rem; border: 2px solid #28a745;">
-                <div class="card-header" style="background: #28a745; color: white;">
-                    <h3 class="card-title">✅ Approve Withdrawal</h3>
+                {{-- Approve Form --}}
+                <div class="bg-white rounded-xl border-2 border-[#93db4d] shadow-sm">
+                    <div class="px-6 py-3 bg-[#93db4d]">
+                        <h3 class="text-base font-bold text-[#021c47]">✅ Approve Withdrawal</h3>
+                    </div>
+                    <div class="p-6">
+                        <form method="POST" action="{{ route('admin.withdrawals.approve', $withdrawal->id) }}" enctype="multipart/form-data">
+                            @csrf
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-[#021c47] mb-2">Bank Reference *</label>
+                                    <input type="text" name="bank_reference" required placeholder="e.g., TXN123456789"
+                                           class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-[#021c47] mb-2">Payment Date *</label>
+                                    <input type="date" name="payment_date" required max="{{ date('Y-m-d') }}"
+                                           class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-[#021c47] mb-2">Proof of Payment</label>
+                                    <input type="file" name="proof_of_payment" accept=".jpg,.jpeg,.png,.pdf"
+                                           class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:border-[#93db4d]">
+                                    <p class="mt-1 text-xs text-gray-400">Optional: JPG, PNG, PDF (max 5MB)</p>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-[#021c47] mb-2">Admin Notes</label>
+                                    <textarea name="admin_notes" rows="2" placeholder="Internal notes..."
+                                              class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 resize-none"></textarea>
+                                </div>
+                                <button type="submit" onclick="return confirm('Approve this withdrawal?')"
+                                        class="w-full py-3 bg-[#93db4d] text-[#021c47] font-bold rounded-lg hover:bg-[#7fc93d] transition-all">
+                                    ✅ Approve Withdrawal
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <form method="POST" action="{{ route('admin.withdrawals.approve', $withdrawal->id) }}" enctype="multipart/form-data">
-                        @csrf
-                        <div style="margin-bottom: 1rem;">
-                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Bank Reference *</label>
-                            <input type="text" name="bank_reference" required placeholder="e.g., TXN123456789" style="width: 100%; padding: 0.5rem; border: 1px solid #dee2e6; border-radius: 4px;">
-                        </div>
-                        <div style="margin-bottom: 1rem;">
-                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Payment Date *</label>
-                            <input type="date" name="payment_date" required max="{{ date('Y-m-d') }}" style="width: 100%; padding: 0.5rem; border: 1px solid #dee2e6; border-radius: 4px;">
-                        </div>
-                        <div style="margin-bottom: 1rem;">
-                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Proof of Payment</label>
-                            <input type="file" name="proof_of_payment" accept=".jpg,.jpeg,.png,.pdf" style="width: 100%;">
-                            <small style="color: #666;">Optional: Upload receipt (JPG, PNG, PDF, max 5MB)</small>
-                        </div>
-                        <div style="margin-bottom: 1rem;">
-                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Admin Notes</label>
-                            <textarea name="admin_notes" rows="2" placeholder="Internal notes..." style="width: 100%; padding: 0.5rem; border: 1px solid #dee2e6; border-radius: 4px;"></textarea>
-                        </div>
-                        <button type="submit" onclick="return confirm('Approve this withdrawal? Customer has already been debited.')" style="width: 100%; background: #28a745; color: white; padding: 0.75rem; border: none; border-radius: 4px; font-weight: 500; cursor: pointer;">
-                            ✅ Approve Withdrawal
-                        </button>
-                    </form>
-                </div>
-            </div>
 
-            <div class="card" style="border: 2px solid #dc3545;">
-                <div class="card-header" style="background: #dc3545; color: white;">
-                    <h3 class="card-title">❌ Reject Withdrawal</h3>
+                {{-- Reject Form --}}
+                <div class="bg-white rounded-xl border-2 border-red-500 shadow-sm">
+                    <div class="px-6 py-3 bg-red-500">
+                        <h3 class="text-base font-bold text-white">❌ Reject Withdrawal</h3>
+                    </div>
+                    <div class="p-6">
+                        <form method="POST" action="{{ route('admin.withdrawals.reject', $withdrawal->id) }}">
+                            @csrf
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-[#021c47] mb-2">Rejection Reason *</label>
+                                    <textarea name="rejection_reason" rows="3" required placeholder="Explain why this withdrawal is being rejected..."
+                                              class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:border-red-300 focus:ring-2 focus:ring-red-100 resize-none"></textarea>
+                                    <p class="mt-1 text-xs text-gray-400">This will be shown to the customer</p>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-[#021c47] mb-2">Admin Notes</label>
+                                    <textarea name="admin_notes" rows="2" placeholder="Internal notes..."
+                                              class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:border-red-300 focus:ring-2 focus:ring-red-100 resize-none"></textarea>
+                                </div>
+                                <button type="submit" onclick="return confirm('Reject this withdrawal? Amount will be refunded.')"
+                                        class="w-full py-3 bg-red-500 text-white font-bold rounded-lg hover:bg-red-600 transition-all">
+                                    ❌ Reject & Refund
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <form method="POST" action="{{ route('admin.withdrawals.reject', $withdrawal->id) }}">
-                        @csrf
-                        <div style="margin-bottom: 1rem;">
-                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Rejection Reason *</label>
-                            <textarea name="rejection_reason" rows="3" required placeholder="Explain why this withdrawal is being rejected..." style="width: 100%; padding: 0.5rem; border: 1px solid #dee2e6; border-radius: 4px;"></textarea>
-                            <small style="color: #666;">This will be shown to the customer</small>
-                        </div>
-                        <div style="margin-bottom: 1rem;">
-                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Admin Notes</label>
-                            <textarea name="admin_notes" rows="2" placeholder="Internal notes..." style="width: 100%; padding: 0.5rem; border: 1px solid #dee2e6; border-radius: 4px;"></textarea>
-                        </div>
-                        <button type="submit" onclick="return confirm('Reject this withdrawal? Amount will be refunded to customer wallet.')" style="width: 100%; background: #dc3545; color: white; padding: 0.75rem; border: none; border-radius: 4px; font-weight: 500; cursor: pointer;">
-                            ❌ Reject & Refund
-                        </button>
-                    </form>
-                </div>
-            </div>
             @else
-            <!-- Completed/Rejected Info -->
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">ℹ️ Processing Information</h3>
-                </div>
-                <div class="card-body">
-                    <table style="width: 100%;">
-                        <tr>
-                            <td style="padding: 0.5rem 0; font-weight: 500;">Processed By:</td>
-                            <td style="padding: 0.5rem 0; text-align: right;">{{ $withdrawal->processedBy->name ?? 'N/A' }}</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 0.5rem 0; font-weight: 500;">Processed At:</td>
-                            <td style="padding: 0.5rem 0; text-align: right;">{{ $withdrawal->processed_at ? $withdrawal->processed_at->format('M d, Y h:i A') : 'N/A' }}</td>
-                        </tr>
+                {{-- Processing Info (Completed/Rejected) --}}
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
+                    <div class="px-6 py-4 border-b border-gray-100">
+                        <h3 class="text-base font-bold text-[#021c47]">ℹ️ Processing Information</h3>
+                    </div>
+                    <div class="p-6 space-y-4">
+                        <div class="flex justify-between py-2 border-b border-gray-100">
+                            <span class="text-sm font-medium text-gray-500">Processed By</span>
+                            <span class="text-sm text-[#021c47]">{{ $withdrawal->processedBy->name ?? 'N/A' }}</span>
+                        </div>
+                        <div class="flex justify-between py-2 border-b border-gray-100">
+                            <span class="text-sm font-medium text-gray-500">Processed At</span>
+                            <span class="text-sm text-[#021c47]">{{ $withdrawal->processed_at ? $withdrawal->processed_at->format('M d, Y h:i A') : 'N/A' }}</span>
+                        </div>
                         @if($withdrawal->status === 'completed')
-                        <tr>
-                            <td style="padding: 0.5rem 0; font-weight: 500;">Bank Reference:</td>
-                            <td style="padding: 0.5rem 0; text-align: right; font-family: monospace;"><strong>{{ $withdrawal->bank_reference }}</strong></td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 0.5rem 0; font-weight: 500;">Payment Date:</td>
-                            <td style="padding: 0.5rem 0; text-align: right;">{{ $withdrawal->payment_date ? \Carbon\Carbon::parse($withdrawal->payment_date)->format('M d, Y') : 'N/A' }}</td>
-                        </tr>
-                        @if($withdrawal->proof_of_payment)
-                        <tr>
-                            <td colspan="2" style="padding: 0.75rem 0;">
+                            <div class="flex justify-between py-2 border-b border-gray-100">
+                                <span class="text-sm font-medium text-gray-500">Bank Reference</span>
+                                <span class="text-sm font-bold text-[#021c47] font-mono">{{ $withdrawal->bank_reference }}</span>
+                            </div>
+                            <div class="flex justify-between py-2 border-b border-gray-100">
+                                <span class="text-sm font-medium text-gray-500">Payment Date</span>
+                                <span class="text-sm text-[#021c47]">{{ $withdrawal->payment_date ? \Carbon\Carbon::parse($withdrawal->payment_date)->format('M d, Y') : 'N/A' }}</span>
+                            </div>
+                            @if($withdrawal->proof_of_payment)
                                 <a href="{{ asset('storage/' . $withdrawal->proof_of_payment) }}" target="_blank"
-                                   style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                                          color: white; padding: 0.5rem 1rem; border-radius: 8px; text-decoration: none;
-                                          font-weight: 500; box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
-                                          transition: all 0.2s ease;">
+                                   class="inline-flex items-center gap-2 px-4 py-2 bg-[#021c47] text-white font-medium rounded-lg hover:bg-[#93db4d] hover:text-[#021c47] transition-all">
                                     📎 View Proof of Payment
                                 </a>
-                                <div style="margin-top: 0.5rem; font-size: 0.75rem; color: #666;">
-                                    <strong>File:</strong> {{ basename($withdrawal->proof_of_payment) }}
-                                </div>
-                            </td>
-                        </tr>
-                        @endif
+                            @endif
                         @endif
                         @if($withdrawal->status === 'rejected' && $withdrawal->rejection_reason)
-                        <tr>
-                            <td colspan="2" style="padding: 0.5rem 0;">
-                                <div style="background: #f8d7da; padding: 0.75rem; border-radius: 4px; border-left: 4px solid #dc3545;">
-                                    <strong>Rejection Reason:</strong><br>
-                                    {{ $withdrawal->rejection_reason }}
-                                </div>
-                            </td>
-                        </tr>
+                            <div class="p-4 bg-red-50 border-l-4 border-red-400 rounded-r-lg">
+                                <p class="text-sm font-semibold text-red-700">Rejection Reason:</p>
+                                <p class="text-sm text-red-600 mt-1">{{ $withdrawal->rejection_reason }}</p>
+                            </div>
                         @endif
                         @if($withdrawal->admin_notes)
-                        <tr>
-                            <td colspan="2" style="padding: 0.5rem 0;">
-                                <div style="background: #e7f3ff; padding: 0.75rem; border-radius: 4px; border-left: 4px solid #007bff;">
-                                    <strong>Admin Notes:</strong><br>
-                                    {{ $withdrawal->admin_notes }}
-                                </div>
-                            </td>
-                        </tr>
+                            <div class="p-4 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
+                                <p class="text-sm font-semibold text-blue-700">Admin Notes:</p>
+                                <p class="text-sm text-blue-600 mt-1">{{ $withdrawal->admin_notes }}</p>
+                            </div>
                         @endif
-                    </table>
+                    </div>
                 </div>
-            </div>
             @endif
         </div>
     </div>

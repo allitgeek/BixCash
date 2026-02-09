@@ -5,260 +5,237 @@
 
 @section('content')
     <!-- Quick Stats -->
-    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-bottom: 2rem;">
-        <div class="card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
-            <div class="card-body">
-                <h5 style="margin-bottom: 0.5rem; opacity: 0.9;">💰 Total Outstanding</h5>
-                <h2 style="margin-bottom: 0;">Rs {{ number_format($totalOutstanding, 2) }}</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <div class="p-5 border-l-4 border-[#021c47]">
+                <p class="text-sm font-medium text-gray-500 mb-1">Total Outstanding</p>
+                <p class="text-2xl font-bold text-[#021c47]">Rs {{ number_format($totalOutstanding, 2) }}</p>
             </div>
         </div>
 
-        <div class="card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
-            <div class="card-body">
-                <h5 style="margin-bottom: 0.5rem; opacity: 0.9;">📊 This Month</h5>
-                <h2 style="margin-bottom: 0;">Rs {{ number_format($thisMonthCommission, 2) }}</h2>
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <div class="p-5 border-l-4 border-[#93db4d]">
+                <p class="text-sm font-medium text-gray-500 mb-1">This Month</p>
+                <p class="text-2xl font-bold text-[#021c47]">Rs {{ number_format($thisMonthCommission, 2) }}</p>
             </div>
         </div>
 
-        <div class="card" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white;">
-            <div class="card-body">
-                <h5 style="margin-bottom: 0.5rem; opacity: 0.9;">⏳ Pending Settlements</h5>
-                <h2 style="margin-bottom: 0;">{{ number_format($pendingCount) }}</h2>
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <div class="p-5 border-l-4 border-yellow-400">
+                <p class="text-sm font-medium text-gray-500 mb-1">Pending Settlements</p>
+                <p class="text-2xl font-bold text-[#021c47]">{{ number_format($pendingCount) }}</p>
             </div>
         </div>
 
-        <div class="card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
-            <div class="card-body">
-                <h5 style="margin-bottom: 0.5rem; opacity: 0.9;">✅ Total Settled</h5>
-                <h2 style="margin-bottom: 0;">Rs {{ number_format($totalSettled, 2) }}</h2>
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <div class="p-5 border-l-4 border-emerald-500">
+                <p class="text-sm font-medium text-gray-500 mb-1">Total Settled</p>
+                <p class="text-2xl font-bold text-[#021c47]">Rs {{ number_format($totalSettled, 2) }}</p>
             </div>
         </div>
     </div>
 
-    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
         <!-- Recent Batches -->
-        <div class="card">
-            <div class="card-header" style="background: white; border-bottom: 2px solid #f8f9fa; padding: 1rem;">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <h5 style="margin: 0;">📦 Recent Batches</h5>
-                    <a href="{{ route('admin.commissions.batches.index') }}" class="btn btn-sm btn-primary">View All</a>
-                </div>
+        <div class="lg:col-span-2 bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                <h3 class="text-lg font-semibold text-[#021c47]">Recent Batches</h3>
+                <a href="{{ route('admin.commissions.batches.index') }}" class="text-sm font-medium text-[#021c47] hover:text-[#93db4d] transition-colors">View All →</a>
             </div>
-            <div class="card-body" style="padding: 0;">
-                <div class="table-responsive">
-                    <table class="table" style="margin: 0;">
-                        <thead style="background: #f8f9fa;">
-                            <tr>
-                                <th style="padding: 0.75rem;">Period</th>
-                                <th style="padding: 0.75rem;">Partners</th>
-                                <th style="padding: 0.75rem;">Transactions</th>
-                                <th style="padding: 0.75rem;">Commission</th>
-                                <th style="padding: 0.75rem;">Status</th>
-                                <th style="padding: 0.75rem;">Actions</th>
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-[#021c47] text-white">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Period</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Partners</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Transactions</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Commission</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Status</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        @forelse($recentBatches as $batch)
+                            <tr class="hover:bg-[#93db4d]/5 transition-colors">
+                                <td class="px-4 py-3">
+                                    <span class="font-semibold text-gray-900">{{ $batch->formatted_period }}</span>
+                                </td>
+                                <td class="px-4 py-3 text-gray-600">{{ $batch->total_partners }}</td>
+                                <td class="px-4 py-3 text-gray-600">{{ number_format($batch->total_transactions) }}</td>
+                                <td class="px-4 py-3">
+                                    <span class="font-semibold text-[#021c47]">Rs {{ number_format($batch->total_commission_calculated, 2) }}</span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    @if($batch->status === 'completed')
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#93db4d]/20 text-[#5a8a2e]">Completed</span>
+                                    @elseif($batch->status === 'processing')
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700">Processing</span>
+                                    @else
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">{{ ucfirst($batch->status) }}</span>
+                                    @endif
+                                </td>
+                                <td class="px-4 py-3">
+                                    <a href="{{ route('admin.commissions.batches.show', $batch->id) }}" class="text-sm font-medium text-[#021c47] hover:text-[#93db4d] transition-colors">View</a>
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($recentBatches as $batch)
-                                <tr>
-                                    <td style="padding: 0.75rem;">
-                                        <strong>{{ $batch->formatted_period }}</strong>
-                                    </td>
-                                    <td style="padding: 0.75rem;">{{ $batch->total_partners }}</td>
-                                    <td style="padding: 0.75rem;">{{ number_format($batch->total_transactions) }}</td>
-                                    <td style="padding: 0.75rem;">
-                                        <strong>Rs {{ number_format($batch->total_commission_calculated, 2) }}</strong>
-                                    </td>
-                                    <td style="padding: 0.75rem;">
-                                        @if($batch->status === 'completed')
-                                            <span class="badge bg-success">Completed</span>
-                                        @elseif($batch->status === 'processing')
-                                            <span class="badge bg-warning">Processing</span>
-                                        @else
-                                            <span class="badge bg-secondary">{{ ucfirst($batch->status) }}</span>
-                                        @endif
-                                    </td>
-                                    <td style="padding: 0.75rem;">
-                                        <a href="{{ route('admin.commissions.batches.show', $batch->id) }}" class="btn btn-sm btn-outline-primary">View</a>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="6" style="padding: 2rem; text-align: center; color: #6c757d;">
-                                        No batches calculated yet
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="px-4 py-8 text-center text-gray-500">No batches calculated yet</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
         </div>
 
         <!-- Quick Actions -->
-        <div class="card">
-            <div class="card-header" style="background: white; border-bottom: 2px solid #f8f9fa; padding: 1rem;">
-                <h5 style="margin: 0;">⚡ Quick Actions</h5>
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-[#021c47]">Quick Actions</h3>
             </div>
-            <div class="card-body">
-                <form action="{{ route('admin.commissions.calculate') }}" method="POST" style="margin-bottom: 1rem;">
+            <div class="p-6">
+                <form action="{{ route('admin.commissions.calculate') }}" method="POST" class="mb-6">
                     @csrf
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Calculate Commissions</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Calculate Commissions</label>
                     <input type="month" name="period" value="{{ date('Y-m', strtotime('-1 month')) }}"
-                           style="width: 100%; padding: 0.5rem; border: 1px solid #dee2e6; border-radius: 4px; margin-bottom: 0.5rem;" required>
+                           class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-colors mb-3" required>
 
-                    <div style="margin-bottom: 0.75rem;">
-                        <label style="display: flex; align-items: center; font-weight: normal; cursor: pointer;">
-                            <input type="checkbox" name="force" value="1" style="margin-right: 0.5rem;">
-                            <span style="font-size: 0.9rem;">Force recalculate (if batch exists)</span>
-                        </label>
-                    </div>
+                    <label class="flex items-center gap-2 mb-4 cursor-pointer">
+                        <input type="checkbox" name="force" value="1" class="w-4 h-4 rounded border-gray-300 text-[#93db4d] focus:ring-[#93db4d]">
+                        <span class="text-sm text-gray-600">Force recalculate (if batch exists)</span>
+                    </label>
 
-                    <button type="submit" class="btn btn-primary" style="width: 100%;">
-                        📊 Calculate Now
+                    <button type="submit" class="w-full bg-[#021c47] text-white py-2.5 px-4 rounded-lg font-medium hover:bg-[#93db4d] hover:text-[#021c47] transition-colors">
+                        Calculate Now
                     </button>
                 </form>
 
-                <hr style="margin: 1.5rem 0;">
+                <hr class="my-6 border-gray-200">
 
-                <a href="{{ route('admin.commissions.partners.index') }}" class="btn btn-outline-secondary" style="width: 100%; margin-bottom: 0.5rem;">
-                    👥 View All Partners
+                <a href="{{ route('admin.commissions.partners.index') }}" class="block w-full text-center py-2.5 px-4 border border-gray-200 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors mb-3">
+                    View All Partners
                 </a>
-                <a href="{{ route('admin.commissions.settlements.history') }}" class="btn btn-outline-secondary" style="width: 100%;">
-                    📜 Settlement History
+                <a href="{{ route('admin.commissions.settlements.history') }}" class="block w-full text-center py-2.5 px-4 border border-gray-200 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors">
+                    Settlement History
                 </a>
             </div>
         </div>
     </div>
 
     <!-- Top Outstanding Partners -->
-    <div class="card">
-        <div class="card-header" style="background: white; border-bottom: 2px solid #f8f9fa; padding: 1rem;">
-            <h5 style="margin: 0;">🔝 Top Outstanding Partners</h5>
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden mb-8">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-semibold text-[#021c47]">Top Outstanding Partners</h3>
         </div>
-        <div class="card-body" style="padding: 0;">
-            <div class="table-responsive">
-                <table class="table" style="margin: 0;">
-                    <thead style="background: #f8f9fa;">
-                        <tr>
-                            <th style="padding: 0.75rem;">Partner</th>
-                            <th style="padding: 0.75rem;">Business Name</th>
-                            <th style="padding: 0.75rem;">Outstanding Amount</th>
-                            <th style="padding: 0.75rem;">Actions</th>
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-[#021c47] text-white">
+                    <tr>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Partner</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Phone</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Outstanding Amount</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    @forelse($topOutstandingPartners as $item)
+                        @php
+                            $partner = $item->partner;
+                            $profile = $partner->partnerProfile;
+                        @endphp
+                        <tr class="hover:bg-[#93db4d]/5 transition-colors">
+                            <td class="px-4 py-3">
+                                <span class="font-semibold text-gray-900">{{ $profile->business_name ?? $partner->name }}</span><br>
+                                <span class="text-sm text-gray-500">{{ $partner->name }}</span>
+                            </td>
+                            <td class="px-4 py-3 text-gray-600">{{ $partner->phone }}</td>
+                            <td class="px-4 py-3">
+                                <span class="font-semibold text-red-600">Rs {{ number_format($item->total_outstanding, 2) }}</span>
+                            </td>
+                            <td class="px-4 py-3">
+                                <a href="{{ route('admin.commissions.partners.show', $partner->id) }}" class="text-sm font-medium text-[#021c47] hover:text-[#93db4d] transition-colors">View Details</a>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($topOutstandingPartners as $item)
-                            @php
-                                $partner = $item->partner;
-                                $profile = $partner->partnerProfile;
-                            @endphp
-                            <tr>
-                                <td style="padding: 0.75rem;">
-                                    <strong>{{ $profile->business_name ?? $partner->name }}</strong><br>
-                                    <small style="color: #6c757d;">{{ $partner->name }}</small>
-                                </td>
-                                <td style="padding: 0.75rem;">
-                                    {{ $partner->phone }}
-                                </td>
-                                <td style="padding: 0.75rem;">
-                                    <strong style="color: #f5576c;">Rs {{ number_format($item->total_outstanding, 2) }}</strong>
-                                </td>
-                                <td style="padding: 0.75rem;">
-                                    <a href="{{ route('admin.commissions.partners.show', $partner->id) }}" class="btn btn-sm btn-outline-primary">View Details</a>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="4" style="padding: 2rem; text-align: center; color: #6c757d;">
-                                    No outstanding commissions
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="px-4 py-8 text-center text-gray-500">No outstanding commissions</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
     </div>
 
     <!-- Charts Section -->
-    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-top: 1.5rem;">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
         <!-- Commission Trend Chart -->
-        <div class="card">
-            <div class="card-header" style="background: white; border-bottom: 2px solid #f8f9fa; padding: 1rem;">
-                <h5 style="margin: 0;">📈 Commission Trend (Last 12 Months)</h5>
+        <div class="lg:col-span-2 bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-[#021c47]">Commission Trend (Last 12 Months)</h3>
             </div>
-            <div class="card-body">
-                <canvas id="commissionTrendChart" style="max-height: 300px;"></canvas>
+            <div class="p-6">
+                <canvas id="commissionTrendChart" class="max-h-72"></canvas>
             </div>
         </div>
 
         <!-- Status Breakdown Chart -->
-        <div class="card">
-            <div class="card-header" style="background: white; border-bottom: 2px solid #f8f9fa; padding: 1rem;">
-                <h5 style="margin: 0;">📊 Settlement Status</h5>
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-[#021c47]">Settlement Status</h3>
             </div>
-            <div class="card-body" style="display: flex; justify-content: center; align-items: center;">
-                <canvas id="statusBreakdownChart" style="max-width: 250px; max-height: 250px;"></canvas>
+            <div class="p-6 flex justify-center items-center">
+                <canvas id="statusBreakdownChart" class="max-w-[250px] max-h-[250px]"></canvas>
             </div>
         </div>
     </div>
 
     <!-- Recent Settlements -->
-    <div class="card" style="margin-top: 1.5rem;">
-        <div class="card-header" style="background: white; border-bottom: 2px solid #f8f9fa; padding: 1rem;">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <h5 style="margin: 0;">💵 Recent Settlements</h5>
-                <a href="{{ route('admin.commissions.settlements.history') }}" class="btn btn-sm btn-primary">View All</a>
-            </div>
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+            <h3 class="text-lg font-semibold text-[#021c47]">Recent Settlements</h3>
+            <a href="{{ route('admin.commissions.settlements.history') }}" class="text-sm font-medium text-[#021c47] hover:text-[#93db4d] transition-colors">View All →</a>
         </div>
-        <div class="card-body" style="padding: 0;">
-            <div class="table-responsive">
-                <table class="table" style="margin: 0;">
-                    <thead style="background: #f8f9fa;">
-                        <tr>
-                            <th style="padding: 0.75rem;">Date</th>
-                            <th style="padding: 0.75rem;">Partner</th>
-                            <th style="padding: 0.75rem;">Period</th>
-                            <th style="padding: 0.75rem;">Amount</th>
-                            <th style="padding: 0.75rem;">Method</th>
-                            <th style="padding: 0.75rem;">Processed By</th>
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-[#021c47] text-white">
+                    <tr>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Date</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Partner</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Period</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Amount</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Method</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Processed By</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    @forelse($recentSettlements as $settlement)
+                        <tr class="hover:bg-[#93db4d]/5 transition-colors">
+                            <td class="px-4 py-3">
+                                <span class="text-gray-900">{{ $settlement->processed_at->format('M d, Y') }}</span><br>
+                                <span class="text-sm text-gray-500">{{ $settlement->processed_at->format('h:i A') }}</span>
+                            </td>
+                            <td class="px-4 py-3">
+                                <span class="font-semibold text-gray-900">{{ $settlement->partner->partnerProfile->business_name ?? $settlement->partner->name }}</span>
+                            </td>
+                            <td class="px-4 py-3 text-gray-600">{{ $settlement->ledger->formatted_period }}</td>
+                            <td class="px-4 py-3">
+                                <span class="font-semibold text-[#93db4d]">Rs {{ number_format($settlement->amount_settled, 2) }}</span>
+                            </td>
+                            <td class="px-4 py-3">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700">{{ $settlement->formatted_payment_method }}</span>
+                            </td>
+                            <td class="px-4 py-3 text-gray-600">{{ $settlement->processedByUser->name ?? 'N/A' }}</td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($recentSettlements as $settlement)
-                            <tr>
-                                <td style="padding: 0.75rem;">
-                                    {{ $settlement->processed_at->format('M d, Y') }}<br>
-                                    <small style="color: #6c757d;">{{ $settlement->processed_at->format('h:i A') }}</small>
-                                </td>
-                                <td style="padding: 0.75rem;">
-                                    <strong>{{ $settlement->partner->partnerProfile->business_name ?? $settlement->partner->name }}</strong>
-                                </td>
-                                <td style="padding: 0.75rem;">
-                                    {{ $settlement->ledger->formatted_period }}
-                                </td>
-                                <td style="padding: 0.75rem;">
-                                    <strong style="color: #00f2fe;">Rs {{ number_format($settlement->amount_settled, 2) }}</strong>
-                                </td>
-                                <td style="padding: 0.75rem;">
-                                    <span class="badge bg-info">{{ $settlement->formatted_payment_method }}</span>
-                                </td>
-                                <td style="padding: 0.75rem;">
-                                    {{ $settlement->processedByUser->name ?? 'N/A' }}
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="6" style="padding: 2rem; text-align: center; color: #6c757d;">
-                                    No settlements yet
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+                    @empty
+                        <tr>
+                            <td colspan="6" class="px-4 py-8 text-center text-gray-500">No settlements yet</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
     </div>
+
 <!-- Chart.js Library -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
@@ -272,12 +249,12 @@
             datasets: [{
                 label: 'Commission Amount (Rs)',
                 data: @json($commissionTrend['data']),
-                borderColor: 'rgb(102, 126, 234)',
-                backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                borderColor: '#021c47',
+                backgroundColor: 'rgba(2, 28, 71, 0.1)',
                 borderWidth: 3,
                 tension: 0.4,
                 fill: true,
-                pointBackgroundColor: 'rgb(102, 126, 234)',
+                pointBackgroundColor: '#021c47',
                 pointBorderColor: '#fff',
                 pointBorderWidth: 2,
                 pointRadius: 5,
@@ -288,18 +265,10 @@
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: {
-                    display: false
-                },
+                legend: { display: false },
                 tooltip: {
-                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    backgroundColor: '#021c47',
                     padding: 12,
-                    titleFont: {
-                        size: 14
-                    },
-                    bodyFont: {
-                        size: 13
-                    },
                     callbacks: {
                         label: function(context) {
                             return 'Rs ' + context.parsed.y.toLocaleString('en-PK', {minimumFractionDigits: 2, maximumFractionDigits: 2});
@@ -311,19 +280,11 @@
                 y: {
                     beginAtZero: true,
                     ticks: {
-                        callback: function(value) {
-                            return 'Rs ' + value.toLocaleString('en-PK');
-                        }
+                        callback: function(value) { return 'Rs ' + value.toLocaleString('en-PK'); }
                     },
-                    grid: {
-                        color: 'rgba(0, 0, 0, 0.05)'
-                    }
+                    grid: { color: 'rgba(0, 0, 0, 0.05)' }
                 },
-                x: {
-                    grid: {
-                        display: false
-                    }
-                }
+                x: { grid: { display: false } }
             }
         }
     });
@@ -340,16 +301,8 @@
                     @json($statusBreakdown['partial']),
                     @json($statusBreakdown['settled'])
                 ],
-                backgroundColor: [
-                    'rgba(245, 87, 108, 0.8)',
-                    'rgba(250, 112, 154, 0.8)',
-                    'rgba(76, 211, 122, 0.8)'
-                ],
-                borderColor: [
-                    'rgb(245, 87, 108)',
-                    'rgb(250, 112, 154)',
-                    'rgb(76, 211, 122)'
-                ],
+                backgroundColor: ['rgba(239, 68, 68, 0.8)', 'rgba(251, 191, 36, 0.8)', 'rgba(147, 219, 77, 0.8)'],
+                borderColor: ['#ef4444', '#fbbf24', '#93db4d'],
                 borderWidth: 2,
                 hoverOffset: 15
             }]
@@ -360,24 +313,11 @@
             plugins: {
                 legend: {
                     position: 'bottom',
-                    labels: {
-                        padding: 15,
-                        font: {
-                            size: 13
-                        },
-                        usePointStyle: true,
-                        pointStyle: 'circle'
-                    }
+                    labels: { padding: 15, usePointStyle: true, pointStyle: 'circle' }
                 },
                 tooltip: {
-                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    backgroundColor: '#021c47',
                     padding: 12,
-                    titleFont: {
-                        size: 14
-                    },
-                    bodyFont: {
-                        size: 13
-                    },
                     callbacks: {
                         label: function(context) {
                             const total = context.dataset.data.reduce((a, b) => a + b, 0);
@@ -390,5 +330,4 @@
         }
     });
 </script>
-
 @endsection
