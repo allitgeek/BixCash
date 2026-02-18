@@ -28,6 +28,8 @@ class PartnerTransaction extends Model
         'profit_calculation_details',
         'partner_device_info',
         'customer_ip_address',
+        'source',
+        'external_order_id',
     ];
 
     protected $casts = [
@@ -92,6 +94,16 @@ class PartnerTransaction extends Model
     public function scopeExpired($query)
     {
         return $query->where('status', 'expired');
+    }
+
+    public function scopeFromApi($query)
+    {
+        return $query->where('source', 'api');
+    }
+
+    public function scopeFromApp($query)
+    {
+        return $query->where('source', 'in_app');
     }
 
     public function scopeUnprocessed($query)
@@ -250,7 +262,7 @@ class PartnerTransaction extends Model
                 $transaction->transaction_date = now();
             }
 
-            if (!$transaction->confirmation_deadline) {
+            if (!$transaction->confirmation_deadline && $transaction->source !== 'api') {
                 $transaction->confirmation_deadline = now()->addSeconds(60);
             }
         });

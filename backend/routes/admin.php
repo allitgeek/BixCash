@@ -20,6 +20,7 @@ use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\WhatsAppSettingsController;
 use App\Http\Controllers\Admin\ProjectRoadmapController;
+use App\Http\Controllers\Admin\IntegrationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -202,6 +203,17 @@ Route::prefix('admin')->name('admin.')->group(function () {
                 Route::get('/export/settlements', [CommissionController::class, 'exportSettlements'])->name('export.settlements');
                 Route::get('/export/partner/{partnerId}', [CommissionController::class, 'exportPartnerReport'])->name('export.partner');
             });
+        });
+
+        // Integrations (External Partners API)
+        Route::middleware(['role.permission:manage_users'])->prefix('integrations')->name('integrations.')->group(function () {
+            Route::get('/', [IntegrationController::class, 'index'])->name('index');
+            Route::get('/create', [IntegrationController::class, 'create'])->name('create');
+            Route::post('/', [IntegrationController::class, 'store'])->name('store');
+            Route::get('/{integration}', [IntegrationController::class, 'show'])->name('show');
+            Route::post('/{integration}/regenerate-keys', [IntegrationController::class, 'regenerateKeys'])->name('regenerate-keys');
+            Route::patch('/{integration}/toggle-status', [IntegrationController::class, 'toggleStatus'])->name('toggle-status');
+            Route::get('/{integration}/transactions', [IntegrationController::class, 'transactions'])->name('transactions');
         });
 
         // Roles & Permissions Management (Super Admin & Manager only)

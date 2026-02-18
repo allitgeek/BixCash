@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\BrandController;
 use App\Http\Controllers\Api\PromotionController;
 use App\Http\Controllers\Api\Auth\CustomerAuthController;
 use App\Http\Controllers\Api\CustomerProfileController;
+use App\Http\Controllers\Api\ExternalApiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -59,3 +60,9 @@ Route::middleware('auth:sanctum')->prefix('customer')->group(function () {
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
+
+// External Partner API
+Route::prefix('external')->middleware(['check.blocked', 'external.api', 'throttle:60,1'])->group(function () {
+    Route::post('/verify-member', [ExternalApiController::class, 'verifyMember']);
+    Route::post('/report-transaction', [ExternalApiController::class, 'reportTransaction']);
+});
