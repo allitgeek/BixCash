@@ -45,8 +45,8 @@
                 @if($partner->partnerProfile && in_array($partner->partnerProfile->status, ['pending', 'rejected']))
                     <form method="POST" action="{{ route('admin.partners.approve', $partner) }}" class="inline">
                         @csrf
-                        <button type="submit" class="px-4 py-2 bg-[#93db4d] text-[#021c47] text-sm font-medium rounded-lg hover:bg-[#7fc93d] transition-all" onclick="return confirm('Approve this partner?')">
-                            {{ $partner->partnerProfile->status === 'rejected' ? 'Re-Approve' : 'Approve' }}
+                        <button type="submit" class="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 shadow-sm transition-all" onclick="return confirm('Approve this partner?')">
+                            ✓ {{ $partner->partnerProfile->status === 'rejected' ? 'Re-Approve' : 'Approve' }}
                         </button>
                     </form>
                     @if($partner->partnerProfile->status === 'pending')
