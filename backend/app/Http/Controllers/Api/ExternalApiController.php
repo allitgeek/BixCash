@@ -23,13 +23,13 @@ class ExternalApiController extends Controller
         if (!$customer) {
             return response()->json([
                 'success' => false,
-                'message' => 'Member not found',
+                'message' => 'No active BixCash member found with this membership number. Visit bixcash.com to create an account',
             ], 404);
         }
 
         return response()->json([
             'success' => true,
-            'message' => 'Member verified',
+            'message' => 'BixCash member verified successfully',
             'data' => [
                 'member_name' => $this->maskName($customer->name),
                 'is_active' => (bool) $customer->is_active,
@@ -55,7 +55,7 @@ class ExternalApiController extends Controller
         if ($existing) {
             return response()->json([
                 'success' => true,
-                'message' => 'Transaction already recorded',
+                'message' => 'This transaction has already been recorded in BixCash',
                 'data' => [
                     'transaction_code' => $existing->transaction_code,
                     'recorded_amount' => (float) $existing->invoice_amount,
@@ -68,7 +68,7 @@ class ExternalApiController extends Controller
         if (!$customer) {
             return response()->json([
                 'success' => false,
-                'message' => 'Member not found',
+                'message' => 'No active BixCash member found with this membership number. Visit bixcash.com to create an account',
             ], 404);
         }
 
@@ -78,7 +78,7 @@ class ExternalApiController extends Controller
         if (!$brand) {
             return response()->json([
                 'success' => false,
-                'message' => 'Partner brand not configured',
+                'message' => 'Partner integration is not fully configured. Please contact BixCash support at bixcash.com',
             ], 422);
         }
 
@@ -110,7 +110,7 @@ class ExternalApiController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Transaction recorded',
+            'message' => 'BixCash transaction recorded successfully',
             'data' => [
                 'transaction_code' => $transaction->transaction_code,
                 'recorded_amount' => (float) $transaction->invoice_amount,

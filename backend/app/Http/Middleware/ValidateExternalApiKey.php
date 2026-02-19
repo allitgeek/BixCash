@@ -17,7 +17,7 @@ class ValidateExternalApiKey
         if (!$key || !$secret) {
             return response()->json([
                 'success' => false,
-                'message' => 'Invalid API credentials',
+                'message' => 'Authentication failed. Please verify your BixCash API credentials',
             ], 401);
         }
 
@@ -28,7 +28,7 @@ class ValidateExternalApiKey
         if (!$integration || !$integration->verifySecret($secret)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Invalid API credentials',
+                'message' => 'Authentication failed. Please verify your BixCash API credentials',
             ], 401);
         }
 
@@ -36,7 +36,7 @@ class ValidateExternalApiKey
         if (!empty($integration->allowed_ips) && !in_array($request->ip(), $integration->allowed_ips)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Invalid API credentials',
+                'message' => 'Authentication failed. Please verify your BixCash API credentials',
             ], 401);
         }
 
