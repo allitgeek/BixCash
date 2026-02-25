@@ -91,6 +91,7 @@ class ExternalApiController extends Controller
             'status' => 'confirmed',
             'confirmed_at' => $request->delivered_at,
             'confirmed_by_customer' => false,
+            'confirmation_deadline' => $request->delivered_at,
             'source' => 'api',
             'external_order_id' => $request->order_id,
         ]);

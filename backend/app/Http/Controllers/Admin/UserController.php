@@ -16,7 +16,7 @@ class UserController extends Controller
 
         // Only show admin users (exclude customers and partners)
         $query->whereHas('role', function ($q) {
-            $q->whereIn('name', ['super_admin', 'admin', 'moderator']);
+            $q->whereNotIn('name', ['customer', 'partner']);
         });
 
         // Search functionality
