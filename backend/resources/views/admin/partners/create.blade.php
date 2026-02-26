@@ -4,167 +4,199 @@
 @section('page-title', 'Create New Partner')
 
 @section('content')
-    {{-- Back Button --}}
-    <div class="mb-6">
-        <a href="{{ route('admin.partners.index') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-all duration-200">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-            </svg>
-            Back to Partners
-        </a>
-    </div>
-
-    <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
-        <div class="px-6 py-4 border-b border-gray-100">
-            <h3 class="text-lg font-bold text-[#021c47]">Add New Partner</h3>
-            <p class="text-sm text-gray-500 mt-1">Create a new business partner account</p>
+    <div class="space-y-6">
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+                <h1 class="text-2xl font-bold text-[#021c47]">Create New Partner</h1>
+                <p class="text-gray-500 mt-1">Add a new business partner account</p>
+            </div>
+            <a href="{{ route('admin.partners.index') }}" class="inline-flex items-center px-4 py-2 border border-gray-200 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                Back to Partners
+            </a>
         </div>
-        
-        <div class="p-6">
-            @if($errors->any())
-                <div class="bg-red-50 border-l-4 border-red-400 p-4 rounded-r-lg mb-6">
-                    <p class="text-sm text-red-700 font-medium">Please fix the following errors:</p>
-                    <ul class="list-disc pl-5 mt-2 text-sm text-red-600">
-                        @foreach($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
 
-            <form method="POST" action="{{ route('admin.partners.store') }}" id="createPartnerForm" enctype="multipart/form-data">
-                @csrf
+        @if($errors->any())
+            <div class="bg-red-50 border-l-4 border-red-400 p-4 rounded-r-lg">
+                <p class="text-sm text-red-700 font-medium">Please fix the following errors:</p>
+                <ul class="list-disc pl-5 mt-2 text-sm text-red-600">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    {{-- Business Name --}}
-                    <div>
-                        <label for="business_name" class="block text-sm font-medium text-[#021c47] mb-2">
-                            Business Name <span class="text-red-500">*</span>
-                        </label>
-                        <input type="text" id="business_name" name="business_name" required
-                               value="{{ old('business_name') }}" placeholder="e.g., KFC Lahore"
-                               class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-all">
-                    </div>
+        <form method="POST" action="{{ route('admin.partners.store') }}" id="createPartnerForm" enctype="multipart/form-data">
+            @csrf
 
-                    {{-- Mobile Number --}}
-                    <div>
-                        <label for="phone" class="block text-sm font-medium text-[#021c47] mb-2">
-                            Mobile Number <span class="text-red-500">*</span>
-                        </label>
-                        <div class="flex gap-2">
-                            <div class="px-4 py-2.5 bg-gray-100 border border-gray-200 rounded-lg font-medium text-gray-600">+92</div>
-                            <input type="text" id="phone" name="phone" required maxlength="10" pattern="[0-9]{10}"
-                                   value="{{ old('phone') }}" placeholder="3001234567"
-                                   class="flex-1 px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-all">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Left: Form (2 cols) -->
+                <div class="lg:col-span-2 space-y-6">
+
+                    <!-- Business Details Card -->
+                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                        <div class="px-5 py-3 bg-gray-50 border-b border-gray-200">
+                            <h3 class="text-sm font-semibold text-[#021c47] uppercase tracking-wider">Business Details</h3>
                         </div>
-                        <div class="flex gap-2 mt-2">
-                            <button type="button" id="sendOtpBtn" onclick="sendPartnerOtp()"
-                                    class="flex-1 px-4 py-2 bg-[#021c47] text-white font-medium rounded-lg hover:bg-[#93db4d] hover:text-[#021c47] transition-all flex items-center justify-center gap-2">
-                                <span id="otpBtnIcon">📤</span>
-                                <span id="otpBtnText">Send OTP</span>
-                            </button>
-                            <button type="button" id="setPinBtn" onclick="openSetPinModal()"
-                                    class="flex-1 px-4 py-2 bg-[#93db4d] text-[#021c47] font-medium rounded-lg hover:bg-[#7fc93d] transition-all flex items-center justify-center gap-2">
-                                <span id="pinBtnIcon">🔐</span>
-                                <span id="pinBtnText">Set PIN</span>
-                            </button>
-                        </div>
-                        <p class="mt-1 text-xs text-gray-400">Enter 10-digit mobile number without +92</p>
-                    </div>
-
-                    {{-- Contact Person Name --}}
-                    <div>
-                        <label for="contact_person_name" class="block text-sm font-medium text-[#021c47] mb-2">
-                            Contact Person Name <span class="text-red-500">*</span>
-                        </label>
-                        <input type="text" id="contact_person_name" name="contact_person_name" required
-                               value="{{ old('contact_person_name') }}" placeholder="Full name"
-                               class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-all">
-                    </div>
-
-                    {{-- Email --}}
-                    <div>
-                        <label for="email" class="block text-sm font-medium text-[#021c47] mb-2">Email (Optional)</label>
-                        <input type="email" id="email" name="email"
-                               value="{{ old('email') }}" placeholder="partner@email.com"
-                               class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-all">
-                    </div>
-
-                    {{-- Business Type --}}
-                    <div>
-                        <label for="business_type" class="block text-sm font-medium text-[#021c47] mb-2">
-                            Business Type <span class="text-red-500">*</span>
-                        </label>
-                        <select id="business_type" name="business_type" required
-                                class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-all">
-                            <option value="">Select business type</option>
-                            @foreach(['Restaurant', 'Retail', 'Cafe', 'Grocery', 'Fashion', 'Electronics', 'Salon', 'Pharmacy', 'Services', 'Other'] as $type)
-                                <option value="{{ $type }}" {{ old('business_type') == $type ? 'selected' : '' }}>{{ $type }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    {{-- City --}}
-                    <div>
-                        <label for="city" class="block text-sm font-medium text-[#021c47] mb-2">City (Optional)</label>
-                        <input type="text" id="city" name="city"
-                               value="{{ old('city') }}" placeholder="e.g., Lahore"
-                               class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-all">
-                    </div>
-
-                    {{-- Commission Rate --}}
-                    <div>
-                        <label for="commission_rate" class="block text-sm font-medium text-[#021c47] mb-2">Commission Rate (%)</label>
-                        <input type="number" id="commission_rate" name="commission_rate"
-                               value="{{ old('commission_rate', 0) }}" placeholder="0.00" min="0" max="100" step="0.01"
-                               class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-all">
-                        <p class="mt-1 text-xs text-gray-400">Percentage the partner pays BixCash (0-100%)</p>
-                    </div>
-
-                    {{-- Logo --}}
-                    <div>
-                        <label for="logo" class="block text-sm font-medium text-[#021c47] mb-2">Business Logo (Optional)</label>
-                        <input type="file" id="logo" name="logo" accept="image/jpeg,image/jpg,image/png" onchange="previewLogo(event)"
-                               class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:border-[#93db4d]">
-                        <p class="mt-1 text-xs text-gray-400">JPG or PNG, max 2MB</p>
-                        <div id="logoPreview" class="mt-2 hidden">
-                            <img id="logoPreviewImg" src="" alt="Preview" class="w-16 h-16 rounded-lg object-cover border-2 border-gray-200">
+                        <div class="p-5 space-y-4">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="business_name" class="block text-sm font-medium text-gray-700 mb-1">Business Name <span class="text-red-500">*</span></label>
+                                    <input type="text" id="business_name" name="business_name" required
+                                           value="{{ old('business_name') }}" placeholder="e.g., KFC Lahore"
+                                           class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-colors">
+                                </div>
+                                <div>
+                                    <label for="business_type" class="block text-sm font-medium text-gray-700 mb-1">Business Type <span class="text-red-500">*</span></label>
+                                    <select id="business_type" name="business_type" required
+                                            class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-colors">
+                                        <option value="">Select business type</option>
+                                        @foreach(['Restaurant', 'Retail', 'Cafe', 'Grocery', 'Fashion', 'Electronics', 'Salon', 'Pharmacy', 'Services', 'Other'] as $type)
+                                            <option value="{{ $type }}" {{ old('business_type') == $type ? 'selected' : '' }}>{{ $type }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="commission_rate" class="block text-sm font-medium text-gray-700 mb-1">Commission Rate (%)</label>
+                                    <input type="number" id="commission_rate" name="commission_rate"
+                                           value="{{ old('commission_rate', 0) }}" placeholder="0.00" min="0" max="100" step="0.01"
+                                           class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-colors">
+                                    <p class="mt-1 text-xs text-gray-400">Percentage the partner pays BixCash (0-100%)</p>
+                                </div>
+                                <div>
+                                    <label for="city" class="block text-sm font-medium text-gray-700 mb-1">City</label>
+                                    <input type="text" id="city" name="city"
+                                           value="{{ old('city') }}" placeholder="e.g., Lahore"
+                                           class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-colors">
+                                </div>
+                            </div>
                         </div>
                     </div>
+
+                    <!-- Contact & Verification Card -->
+                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                        <div class="px-5 py-3 bg-gray-50 border-b border-gray-200">
+                            <h3 class="text-sm font-semibold text-[#021c47] uppercase tracking-wider">Contact & Verification</h3>
+                        </div>
+                        <div class="p-5 space-y-4">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="contact_person_name" class="block text-sm font-medium text-gray-700 mb-1">Contact Person <span class="text-red-500">*</span></label>
+                                    <input type="text" id="contact_person_name" name="contact_person_name" required
+                                           value="{{ old('contact_person_name') }}" placeholder="Full name"
+                                           class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-colors">
+                                </div>
+                                <div>
+                                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                                    <input type="email" id="email" name="email"
+                                           value="{{ old('email') }}" placeholder="partner@email.com"
+                                           class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-colors">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Mobile Number <span class="text-red-500">*</span></label>
+                                <div class="flex gap-2">
+                                    <div class="px-3 py-2 bg-gray-100 border border-gray-200 rounded-lg font-medium text-gray-600 text-sm">+92</div>
+                                    <input type="text" id="phone" name="phone" required maxlength="10" pattern="[0-9]{10}"
+                                           value="{{ old('phone') }}" placeholder="3001234567"
+                                           class="flex-1 px-3 py-2 border border-gray-200 rounded-lg focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-colors">
+                                </div>
+                                <div class="flex gap-2 mt-2">
+                                    <button type="button" id="sendOtpBtn" onclick="sendPartnerOtp()"
+                                            class="flex-1 px-3 py-2 bg-[#021c47] text-white font-medium rounded-lg hover:bg-[#93db4d] hover:text-[#021c47] transition-colors flex items-center justify-center gap-2 text-sm">
+                                        <span id="otpBtnIcon">📤</span>
+                                        <span id="otpBtnText">Send OTP</span>
+                                    </button>
+                                    <button type="button" id="setPinBtn" onclick="openSetPinModal()"
+                                            class="flex-1 px-3 py-2 bg-[#93db4d] text-[#021c47] font-medium rounded-lg hover:bg-[#7fc93d] transition-colors flex items-center justify-center gap-2 text-sm">
+                                        <span id="pinBtnIcon">🔐</span>
+                                        <span id="pinBtnText">Set PIN</span>
+                                    </button>
+                                </div>
+                                <p class="mt-1 text-xs text-gray-400">Enter 10-digit mobile number without +92</p>
+                            </div>
+
+                            <div>
+                                <label for="business_address" class="block text-sm font-medium text-gray-700 mb-1">Business Address</label>
+                                <input type="text" id="business_address" name="business_address"
+                                       value="{{ old('business_address') }}" placeholder="Complete business address"
+                                       class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-colors">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Logo Card -->
+                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                        <div class="px-5 py-3 bg-gray-50 border-b border-gray-200">
+                            <h3 class="text-sm font-semibold text-[#021c47] uppercase tracking-wider">Logo</h3>
+                        </div>
+                        <div class="p-5 space-y-4">
+                            <div>
+                                <label for="logo" class="block text-sm font-medium text-gray-700 mb-1">Business Logo</label>
+                                <input type="file" id="logo" name="logo" accept="image/jpeg,image/jpg,image/png" onchange="previewLogo(event)"
+                                       class="w-full text-sm text-gray-500 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-[#021c47] file:text-white hover:file:bg-[#93db4d] hover:file:text-[#021c47] file:cursor-pointer file:transition-colors border border-gray-200 rounded-lg">
+                                <p class="mt-1 text-xs text-gray-400">JPG or PNG, max 2MB</p>
+                                <div id="logoPreview" class="mt-2 hidden">
+                                    <img id="logoPreviewImg" src="" alt="Preview" class="w-16 h-16 rounded-lg object-cover border-2 border-gray-200">
+                                </div>
+                            </div>
+
+                            <!-- Auto-approve -->
+                            <label class="flex items-center gap-3 cursor-pointer pt-2 border-t border-gray-100">
+                                <input type="checkbox" name="auto_approve" value="1" {{ old('auto_approve', '1') ? 'checked' : '' }}
+                                       class="w-4 h-4 rounded border-gray-300 text-green-500 focus:ring-green-400">
+                                <span class="text-sm font-medium text-gray-700">Auto-approve partner <span class="text-gray-400 font-normal">(immediately active)</span></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Hidden PIN Field -->
+                    <input type="hidden" id="partner_pin" name="partner_pin" value="">
+
+                    <!-- Submit -->
+                    <div class="flex gap-3">
+                        <button type="submit" class="px-6 py-2.5 bg-[#021c47] text-white rounded-lg font-medium hover:bg-[#93db4d] hover:text-[#021c47] transition-colors">
+                            Create Partner
+                        </button>
+                        <a href="{{ route('admin.partners.index') }}" class="px-6 py-2.5 border border-gray-200 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors">
+                            Cancel
+                        </a>
+                    </div>
                 </div>
 
-                {{-- Business Address --}}
-                <div class="mb-6">
-                    <label for="business_address" class="block text-sm font-medium text-[#021c47] mb-2">Business Address (Optional)</label>
-                    <input type="text" id="business_address" name="business_address"
-                           value="{{ old('business_address') }}" placeholder="Complete business address"
-                           class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-all">
-                </div>
+                <!-- Right: Sidebar (1 col) -->
+                <div class="space-y-6">
+                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden sticky top-4">
+                        <div class="px-5 py-3 bg-gray-50 border-b border-gray-200">
+                            <h3 class="text-sm font-semibold text-[#021c47] uppercase tracking-wider">What Happens Next?</h3>
+                        </div>
+                        <div class="p-5">
+                            <div class="space-y-4 text-sm">
+                                <div class="flex gap-3">
+                                    <div class="flex-shrink-0 w-6 h-6 bg-[#021c47] text-white rounded-full flex items-center justify-center text-xs font-bold">1</div>
+                                    <p class="text-gray-600">Partner account is created with the details you provide.</p>
+                                </div>
+                                <div class="flex gap-3">
+                                    <div class="flex-shrink-0 w-6 h-6 bg-[#021c47] text-white rounded-full flex items-center justify-center text-xs font-bold">2</div>
+                                    <p class="text-gray-600">If auto-approved, partner can log in immediately. Otherwise, requires manual approval.</p>
+                                </div>
+                                <div class="flex gap-3">
+                                    <div class="flex-shrink-0 w-6 h-6 bg-[#021c47] text-white rounded-full flex items-center justify-center text-xs font-bold">3</div>
+                                    <p class="text-gray-600">Partner can start accepting transactions from customers.</p>
+                                </div>
+                            </div>
 
-                {{-- Auto-Approve --}}
-                <div class="mb-6 p-4 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
-                    <label class="flex items-center gap-3 cursor-pointer">
-                        <input type="checkbox" name="auto_approve" value="1" {{ old('auto_approve', '1') ? 'checked' : '' }}
-                               class="w-5 h-5 text-[#93db4d] rounded focus:ring-[#93db4d]">
-                        <span class="text-sm font-medium text-[#021c47]">Auto-approve this partner (Partner will be immediately active)</span>
-                    </label>
-                    <p class="mt-1 ml-8 text-xs text-gray-500">If unchecked, partner will be created with "Pending" status.</p>
+                            <div class="mt-4 pt-4 border-t border-gray-100">
+                                <p class="text-xs text-gray-400">OTP verification and PIN setup are optional but recommended for security.</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-
-                {{-- Hidden PIN Field --}}
-                <input type="hidden" id="partner_pin" name="partner_pin" value="">
-
-                {{-- Submit --}}
-                <div class="flex justify-end gap-3 pt-6 border-t border-gray-200">
-                    <a href="{{ route('admin.partners.index') }}" class="px-5 py-2.5 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-all duration-200">
-                        Cancel
-                    </a>
-                    <button type="submit" class="px-5 py-2.5 bg-[#021c47] text-white font-medium rounded-lg hover:bg-[#93db4d] hover:text-[#021c47] transition-all duration-200">
-                        Create Partner
-                    </button>
-                </div>
-            </form>
-        </div>
+            </div>
+        </form>
     </div>
 
     {{-- OTP Modal --}}

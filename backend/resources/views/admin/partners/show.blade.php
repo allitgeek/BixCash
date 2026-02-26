@@ -50,7 +50,7 @@
                         </button>
                     </form>
                     @if($partner->partnerProfile->status === 'pending')
-                        <button type="button" class="px-4 py-2 bg-red-500 text-white text-sm font-medium rounded-lg hover:bg-red-600 transition-all" onclick="document.getElementById('reject-modal').style.display='flex'">
+                        <button type="button" class="px-4 py-2 bg-red-500 text-white text-sm font-medium rounded-lg hover:bg-red-600 transition-all" onclick="document.getElementById('reject-modal').classList.remove('hidden')">
                             Reject
                         </button>
                     @endif
@@ -64,11 +64,11 @@
                     </button>
                 </form>
                 @if($partner->pin_hash)
-                    <button type="button" class="px-4 py-2 bg-yellow-500 text-white text-sm font-medium rounded-lg hover:bg-yellow-600 transition-all" onclick="document.getElementById('reset-pin-modal').style.display='flex'">
+                    <button type="button" class="px-4 py-2 bg-yellow-500 text-white text-sm font-medium rounded-lg hover:bg-yellow-600 transition-all" onclick="document.getElementById('reset-pin-modal').classList.remove('hidden')">
                         Reset PIN
                     </button>
                 @else
-                    <button type="button" class="px-4 py-2 bg-[#021c47] text-white text-sm font-medium rounded-lg hover:bg-[#93db4d] hover:text-[#021c47] transition-all" onclick="document.getElementById('set-pin-modal').style.display='flex'">
+                    <button type="button" class="px-4 py-2 bg-[#021c47] text-white text-sm font-medium rounded-lg hover:bg-[#93db4d] hover:text-[#021c47] transition-all" onclick="document.getElementById('set-pin-modal').classList.remove('hidden')">
                         Set PIN
                     </button>
                 @endif
@@ -109,10 +109,10 @@
                         <span class="flex items-center gap-2">
                             @if($partner->partnerProfile && $partner->partnerProfile->logo)
                                 <img src="{{ asset('storage/' . $partner->partnerProfile->logo) }}" alt="Logo" class="w-10 h-10 rounded-lg object-cover border">
-                                <button type="button" onclick="document.getElementById('logo-modal').style.display='flex'" class="text-xs text-blue-600 hover:underline">Update</button>
+                                <button type="button" onclick="document.getElementById('logo-modal').classList.remove('hidden')" class="text-xs text-blue-600 hover:underline">Update</button>
                             @else
                                 <span class="text-gray-400">No logo</span>
-                                <button type="button" onclick="document.getElementById('logo-modal').style.display='flex'" class="text-xs text-blue-600 hover:underline">Upload</button>
+                                <button type="button" onclick="document.getElementById('logo-modal').classList.remove('hidden')" class="text-xs text-blue-600 hover:underline">Upload</button>
                             @endif
                         </span>
                     </div>
@@ -206,7 +206,7 @@
     </div>
 
     {{-- Reject Modal --}}
-    <div id="reject-modal" class="hidden fixed inset-0 bg-black/50 z-50 items-center justify-center">
+    <div id="reject-modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
         <div class="bg-white rounded-xl shadow-xl max-w-md w-full mx-4 p-6">
             <h3 class="text-lg font-bold text-[#021c47] mb-4">Reject Partner Application</h3>
             <form method="POST" action="{{ route('admin.partners.reject', $partner) }}">
@@ -217,7 +217,7 @@
                               class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20"></textarea>
                 </div>
                 <div class="flex justify-end gap-3">
-                    <button type="button" onclick="document.getElementById('reject-modal').style.display='none'" class="px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200">Cancel</button>
+                    <button type="button" onclick="document.getElementById('reject-modal').classList.add('hidden')" class="px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200">Cancel</button>
                     <button type="submit" class="px-4 py-2 bg-red-500 text-white font-medium rounded-lg hover:bg-red-600">Confirm Rejection</button>
                 </div>
             </form>
@@ -225,7 +225,7 @@
     </div>
 
     {{-- Set PIN Modal --}}
-    <div id="set-pin-modal" class="hidden fixed inset-0 bg-black/50 z-50 items-center justify-center">
+    <div id="set-pin-modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
         <div class="bg-white rounded-xl shadow-xl max-w-md w-full mx-4 p-6">
             <h3 class="text-lg font-bold text-[#021c47] mb-2">🔑 Set Partner PIN</h3>
             <p class="text-sm text-gray-500 mb-4">Set a 4-digit PIN for partner login</p>
@@ -242,7 +242,7 @@
                            class="w-full px-4 py-3 border border-gray-200 rounded-lg text-center text-2xl tracking-widest focus:outline-none focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20">
                 </div>
                 <div class="flex justify-end gap-3">
-                    <button type="button" onclick="document.getElementById('set-pin-modal').style.display='none'" class="px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200">Cancel</button>
+                    <button type="button" onclick="document.getElementById('set-pin-modal').classList.add('hidden')" class="px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200">Cancel</button>
                     <button type="submit" class="px-4 py-2 bg-[#021c47] text-white font-medium rounded-lg hover:bg-[#93db4d] hover:text-[#021c47]">Set PIN</button>
                 </div>
             </form>
@@ -250,7 +250,7 @@
     </div>
 
     {{-- Reset PIN Modal --}}
-    <div id="reset-pin-modal" class="hidden fixed inset-0 bg-black/50 z-50 items-center justify-center">
+    <div id="reset-pin-modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
         <div class="bg-white rounded-xl shadow-xl max-w-md w-full mx-4 p-6">
             <h3 class="text-lg font-bold text-[#021c47] mb-2">🔄 Reset Partner PIN</h3>
             <p class="text-sm text-gray-500 mb-4">Enter a new 4-digit PIN</p>
@@ -267,7 +267,7 @@
                            class="w-full px-4 py-3 border border-gray-200 rounded-lg text-center text-2xl tracking-widest focus:outline-none focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20">
                 </div>
                 <div class="flex justify-end gap-3">
-                    <button type="button" onclick="document.getElementById('reset-pin-modal').style.display='none'" class="px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200">Cancel</button>
+                    <button type="button" onclick="document.getElementById('reset-pin-modal').classList.add('hidden')" class="px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200">Cancel</button>
                     <button type="submit" class="px-4 py-2 bg-yellow-500 text-white font-medium rounded-lg hover:bg-yellow-600">Reset PIN</button>
                 </div>
             </form>
@@ -275,7 +275,7 @@
     </div>
 
     {{-- Logo Modal --}}
-    <div id="logo-modal" class="hidden fixed inset-0 bg-black/50 z-50 items-center justify-center">
+    <div id="logo-modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
         <div class="bg-white rounded-xl shadow-xl max-w-md w-full mx-4 p-6">
             <h3 class="text-lg font-bold text-[#021c47] mb-2">📷 {{ $partner->partnerProfile && $partner->partnerProfile->logo ? 'Update' : 'Upload' }} Logo</h3>
             <p class="text-sm text-gray-500 mb-4">JPG or PNG, max 2MB</p>
@@ -287,7 +287,7 @@
                            class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:border-[#93db4d]">
                 </div>
                 <div class="flex justify-end gap-3">
-                    <button type="button" onclick="document.getElementById('logo-modal').style.display='none'" class="px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200">Cancel</button>
+                    <button type="button" onclick="document.getElementById('logo-modal').classList.add('hidden')" class="px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200">Cancel</button>
                     <button type="submit" class="px-4 py-2 bg-[#021c47] text-white font-medium rounded-lg hover:bg-[#93db4d] hover:text-[#021c47]">Upload</button>
                 </div>
             </form>
@@ -300,7 +300,7 @@
     // Close modals when clicking outside
     document.querySelectorAll('[id$="-modal"]').forEach(modal => {
         modal.addEventListener('click', function(e) {
-            if (e.target === this) this.style.display = 'none';
+            if (e.target === this) this.classList.add('hidden');
         });
     });
     // PIN input validation

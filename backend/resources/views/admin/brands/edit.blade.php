@@ -70,10 +70,11 @@
 
                             <!-- Current Logo Display -->
                             @if($brand->logo_path)
-                                <div class="mb-4">
-                                    <p class="text-sm font-medium text-gray-600 mb-2">Current Logo</p>
-                                    <div class="p-4 bg-gray-50 rounded-xl text-center">
-                                        <img src="{{ $brand->logo_path }}" alt="{{ $brand->name }}" class="max-h-20 max-w-[150px] object-contain mx-auto">
+                                <div class="mb-4" id="currentLogoWrapper">
+                                    <p class="text-sm font-medium text-gray-600 mb-1">Current Logo</p>
+                                    <div class="inline-flex items-center gap-3 px-3 py-2 bg-gray-50 rounded-lg border border-gray-200">
+                                        <img src="{{ $brand->logo_path }}" alt="{{ $brand->name }}" class="h-10 w-auto max-w-[100px] object-contain">
+                                        <span class="text-xs text-gray-500">{{ $brand->name }}</span>
                                     </div>
                                 </div>
                             @endif
@@ -90,12 +91,17 @@
                                     <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                                 @enderror
                                 <p class="mt-1 text-sm text-gray-500">Upload PNG, JPG, or SVG file (max 2MB) - will replace current logo</p>
+                                <!-- New file preview -->
+                                <div id="newLogoPreview" class="hidden mt-2 inline-flex items-center gap-3 px-3 py-2 bg-green-50 rounded-lg border border-green-200">
+                                    <img id="newLogoPreviewImg" src="" alt="New logo" class="h-10 w-auto max-w-[100px] object-contain">
+                                    <span class="text-xs text-green-700">New logo selected</span>
+                                </div>
                             </div>
 
                             <!-- URL Option -->
                             <div>
                                 <label for="logo_path" class="block text-sm font-medium text-gray-600 mb-2">Or Enter Logo URL</label>
-                                <input type="url"
+                                <input type="text"
                                        class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-colors @error('logo_path') border-red-500 @enderror"
                                        id="logo_path"
                                        name="logo_path"
@@ -228,11 +234,14 @@
         document.addEventListener('DOMContentLoaded', function() {
             const nameInput = document.getElementById('name');
             const logoPathInput = document.getElementById('logo_path');
+            const logoFileInput = document.getElementById('logo_file');
             const categorySelect = document.getElementById('category_id');
 
             const previewName = document.getElementById('previewName');
             const previewLogo = document.getElementById('previewLogo');
             const previewCategory = document.getElementById('previewCategory');
+            const newLogoPreview = document.getElementById('newLogoPreview');
+            const newLogoPreviewImg = document.getElementById('newLogoPreviewImg');
 
             function updatePreview() {
                 previewName.textContent = nameInput.value || 'Brand Name';
@@ -248,6 +257,28 @@
                     previewLogo.classList.add('bg-gray-100');
                 }
             }
+
+            // When a file is selected, clear the logo_path URL field to prevent validation conflict
+            logoFileInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    // Clear the URL field so it doesn't cause validation issues
+                    logoPathInput.value = '';
+
+                    // Show compact preview of selected file
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        newLogoPreviewImg.src = e.target.result;
+                        newLogoPreview.classList.remove('hidden');
+
+                        // Update the right-side preview panel too
+                        previewLogo.innerHTML = `<img src="${e.target.result}" class="max-w-full max-h-full object-contain">`;
+                        previewLogo.classList.remove('bg-gray-100');
+                    };
+                    reader.readAsDataURL(this.files[0]);
+                } else {
+                    newLogoPreview.classList.add('hidden');
+                }
+            });
 
             nameInput.addEventListener('input', updatePreview);
             logoPathInput.addEventListener('input', updatePreview);

@@ -79,7 +79,7 @@
                             <!-- URL Option -->
                             <div>
                                 <label for="logo_path" class="block text-sm font-medium text-gray-600 mb-2">Or Enter Logo URL</label>
-                                <input type="url"
+                                <input type="text"
                                        class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:border-[#93db4d] focus:ring-2 focus:ring-[#93db4d]/20 transition-colors @error('logo_path') border-red-500 @enderror"
                                        id="logo_path"
                                        name="logo_path"

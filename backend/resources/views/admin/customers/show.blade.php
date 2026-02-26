@@ -4,233 +4,251 @@
 @section('page-title', 'Customer Details')
 
 @section('content')
-    {{-- Back Button --}}
-    <div class="mb-6">
-        <a href="{{ route('admin.customers.index') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-all duration-200">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-            </svg>
-            Back to Customers
-        </a>
-    </div>
-
-    {{-- Customer Basic Info Card --}}
-    <div class="bg-white rounded-xl border border-gray-200 shadow-sm mb-6">
-        <div class="px-6 py-4 border-b border-gray-100 flex flex-wrap items-center justify-between gap-4">
+    <div class="space-y-6">
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-                <h3 class="text-lg font-bold text-[#021c47]">Customer Information</h3>
-                <p class="text-sm text-gray-500 mt-1">Account #{{ $customer->id }}</p>
+                <h1 class="text-2xl font-bold text-[#021c47]">{{ $customer->name }}</h1>
+                <p class="text-gray-500 mt-1">Customer #{{ $customer->id }}</p>
             </div>
-            <div class="flex flex-wrap gap-2">
-                <a href="{{ route('admin.customers.edit', $customer) }}" class="px-4 py-2 bg-[#021c47] text-white font-medium rounded-lg hover:bg-[#93db4d] hover:text-[#021c47] transition-all duration-200">
-                    Edit Customer
-                </a>
-                <form method="POST" action="{{ route('admin.customers.destroy', $customer) }}" class="inline" onsubmit="return confirm('Are you sure you want to delete this customer? This action cannot be undone.')">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="px-4 py-2 bg-red-500 text-white font-medium rounded-lg hover:bg-red-600 transition-all duration-200">
-                        Delete
-                    </button>
-                </form>
-            </div>
+            <a href="{{ route('admin.customers.index') }}" class="inline-flex items-center px-4 py-2 border border-gray-200 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                Back to Customers
+            </a>
         </div>
-        
-        <div class="p-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {{-- Left Column --}}
-                <div class="space-y-4">
-                    <div class="flex justify-between items-center py-3 border-b border-gray-100">
-                        <span class="text-sm font-medium text-gray-500">Customer ID</span>
-                        <span class="text-sm font-semibold text-[#021c47]">#{{ $customer->id }}</span>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Left: Content (2 cols) -->
+            <div class="lg:col-span-2 space-y-6">
+
+                <!-- Account Details Card -->
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                    <div class="px-5 py-3 bg-gray-50 border-b border-gray-200">
+                        <h3 class="text-sm font-semibold text-[#021c47] uppercase tracking-wider">Account Details</h3>
                     </div>
-                    <div class="flex justify-between items-center py-3 border-b border-gray-100">
-                        <span class="text-sm font-medium text-gray-500">Name</span>
-                        <span class="text-sm font-semibold text-[#021c47]">{{ $customer->name }}</span>
-                    </div>
-                    @if($customer->customerProfile && $customer->customerProfile->full_name)
-                        <div class="flex justify-between items-center py-3 border-b border-gray-100">
-                            <span class="text-sm font-medium text-gray-500">Full Name</span>
-                            <span class="text-sm font-semibold text-[#021c47]">{{ $customer->customerProfile->full_name }}</span>
-                        </div>
-                    @endif
-                    <div class="flex justify-between items-center py-3 border-b border-gray-100">
-                        <span class="text-sm font-medium text-gray-500">Email</span>
-                        <span class="text-sm text-[#021c47]">{{ $customer->email ?? 'Not provided' }}</span>
-                    </div>
-                    <div class="flex justify-between items-center py-3 border-b border-gray-100">
-                        <span class="text-sm font-medium text-gray-500">Phone</span>
-                        <span class="text-sm text-[#021c47] flex items-center gap-2">
-                            {{ $customer->phone }}
-                            @if($customer->hasVerifiedPhone())
-                                <span class="px-2 py-0.5 text-xs font-medium rounded bg-[#93db4d]/20 text-[#65a030]">Verified</span>
-                            @else
-                                <span class="px-2 py-0.5 text-xs font-medium rounded bg-red-100 text-red-600">Unverified</span>
+                    <div class="p-5">
+                        <dl class="space-y-3 text-sm">
+                            <div class="flex justify-between items-center">
+                                <dt class="text-gray-500">Customer ID</dt>
+                                <dd class="font-medium text-gray-900">#{{ $customer->id }}</dd>
+                            </div>
+                            <div class="border-t border-gray-100"></div>
+                            <div class="flex justify-between items-center">
+                                <dt class="text-gray-500">Name</dt>
+                                <dd class="font-medium text-gray-900">{{ $customer->name }}</dd>
+                            </div>
+                            @if($customer->customerProfile && $customer->customerProfile->full_name)
+                                <div class="border-t border-gray-100"></div>
+                                <div class="flex justify-between items-center">
+                                    <dt class="text-gray-500">Full Name</dt>
+                                    <dd class="font-medium text-gray-900">{{ $customer->customerProfile->full_name }}</dd>
+                                </div>
                             @endif
-                        </span>
+                            <div class="border-t border-gray-100"></div>
+                            <div class="flex justify-between items-center">
+                                <dt class="text-gray-500">Email</dt>
+                                <dd class="font-medium text-gray-900">{{ $customer->email ?? 'Not provided' }}</dd>
+                            </div>
+                            <div class="border-t border-gray-100"></div>
+                            <div class="flex justify-between items-center">
+                                <dt class="text-gray-500">Phone</dt>
+                                <dd class="font-medium text-gray-900 flex items-center gap-2">
+                                    {{ $customer->phone }}
+                                    @if($customer->hasVerifiedPhone())
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">Verified</span>
+                                    @else
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">Unverified</span>
+                                    @endif
+                                </dd>
+                            </div>
+                            @if($customer->phone_verified_at)
+                                <div class="border-t border-gray-100"></div>
+                                <div class="flex justify-between items-center">
+                                    <dt class="text-gray-500">Phone Verified</dt>
+                                    <dd class="font-medium text-gray-900">{{ $customer->phone_verified_at->format('M j, Y g:i A') }}</dd>
+                                </div>
+                            @endif
+                            <div class="border-t border-gray-100"></div>
+                            <div class="flex justify-between items-center">
+                                <dt class="text-gray-500">Status</dt>
+                                <dd>
+                                    @if($customer->is_active)
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">Active</span>
+                                    @else
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">Inactive</span>
+                                    @endif
+                                </dd>
+                            </div>
+                            <div class="border-t border-gray-100"></div>
+                            <div class="flex justify-between items-center">
+                                <dt class="text-gray-500">Registered</dt>
+                                <dd class="font-medium text-gray-900">{{ $customer->created_at->format('M j, Y g:i A') }}</dd>
+                            </div>
+                            <div class="border-t border-gray-100"></div>
+                            <div class="flex justify-between items-center">
+                                <dt class="text-gray-500">Last Login</dt>
+                                <dd class="font-medium text-gray-900">{{ $customer->last_login_at ? $customer->last_login_at->format('M j, Y g:i A') : 'Never' }}</dd>
+                            </div>
+                        </dl>
                     </div>
-                    @if($customer->phone_verified_at)
-                        <div class="flex justify-between items-center py-3 border-b border-gray-100">
-                            <span class="text-sm font-medium text-gray-500">Phone Verified At</span>
-                            <span class="text-sm text-[#021c47]">{{ $customer->phone_verified_at->format('M j, Y g:i A') }}</span>
-                        </div>
-                    @endif
                 </div>
 
-                {{-- Right Column --}}
-                <div class="space-y-4">
-                    <div class="flex justify-between items-center py-3 border-b border-gray-100">
-                        <span class="text-sm font-medium text-gray-500">Status</span>
-                        <span>
-                            @if($customer->is_active)
-                                <span class="px-3 py-1 text-xs font-semibold rounded-full bg-[#93db4d]/20 text-[#65a030]">Active</span>
-                            @else
-                                <span class="px-3 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-600">Inactive</span>
-                            @endif
-                        </span>
+                <!-- Profile Details Card -->
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                    <div class="px-5 py-3 bg-gray-50 border-b border-gray-200">
+                        <h3 class="text-sm font-semibold text-[#021c47] uppercase tracking-wider">Profile Details</h3>
                     </div>
-                    <div class="flex justify-between items-center py-3 border-b border-gray-100">
-                        <span class="text-sm font-medium text-gray-500">PIN Status</span>
-                        <span>
-                            @if($customer->pin_hash)
-                                @if($customer->isPinLocked())
-                                    <span class="px-3 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-700">
-                                        Locked ({{ $customer->getPinLockoutTimeRemaining() }} min)
-                                    </span>
-                                @else
-                                    <span class="px-3 py-1 text-xs font-semibold rounded-full bg-[#93db4d]/20 text-[#65a030]">Set</span>
+                    <div class="p-5">
+                        @if($customer->customerProfile && ($customer->customerProfile->date_of_birth || $customer->customerProfile->gender || $customer->customerProfile->address || $customer->customerProfile->city || $customer->customerProfile->cnic))
+                            <dl class="space-y-3 text-sm">
+                                @if($customer->customerProfile->date_of_birth)
+                                    <div class="flex justify-between items-center">
+                                        <dt class="text-gray-500">Date of Birth</dt>
+                                        <dd class="font-medium text-gray-900">{{ \Carbon\Carbon::parse($customer->customerProfile->date_of_birth)->format('M j, Y') }}</dd>
+                                    </div>
+                                    <div class="border-t border-gray-100"></div>
                                 @endif
-                            @else
-                                <span class="text-sm text-gray-400">Not Set</span>
-                            @endif
-                        </span>
-                    </div>
-                    @if($customer->pin_hash)
-                        <div class="flex justify-between items-center py-3 border-b border-gray-100">
-                            <span class="text-sm font-medium text-gray-500">PIN Attempts</span>
-                            <span class="text-sm text-[#021c47]">{{ $customer->pin_attempts }}/5</span>
-                        </div>
-                    @endif
-                    <div class="flex justify-between items-center py-3 border-b border-gray-100">
-                        <span class="text-sm font-medium text-gray-500">Registered</span>
-                        <span class="text-sm text-[#021c47]">{{ $customer->created_at->format('M j, Y g:i A') }}</span>
-                    </div>
-                    <div class="flex justify-between items-center py-3 border-b border-gray-100">
-                        <span class="text-sm font-medium text-gray-500">Last Login</span>
-                        <span class="text-sm text-[#021c47]">{{ $customer->last_login_at ? $customer->last_login_at->format('M j, Y g:i A') : 'Never' }}</span>
+                                @if($customer->customerProfile->gender)
+                                    <div class="flex justify-between items-center">
+                                        <dt class="text-gray-500">Gender</dt>
+                                        <dd class="font-medium text-gray-900">{{ ucfirst($customer->customerProfile->gender) }}</dd>
+                                    </div>
+                                    <div class="border-t border-gray-100"></div>
+                                @endif
+                                @if($customer->customerProfile->cnic)
+                                    <div class="flex justify-between items-center">
+                                        <dt class="text-gray-500">CNIC</dt>
+                                        <dd class="font-medium text-gray-900 flex items-center gap-2">
+                                            {{ $customer->customerProfile->cnic }}
+                                            @if($customer->customerProfile->cnic_verified)
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">Verified</span>
+                                            @endif
+                                        </dd>
+                                    </div>
+                                    <div class="border-t border-gray-100"></div>
+                                @endif
+                                @if($customer->customerProfile->address)
+                                    <div class="flex justify-between items-center">
+                                        <dt class="text-gray-500">Address</dt>
+                                        <dd class="font-medium text-gray-900 text-right max-w-[60%]">{{ $customer->customerProfile->address }}</dd>
+                                    </div>
+                                    <div class="border-t border-gray-100"></div>
+                                @endif
+                                @if($customer->customerProfile->city)
+                                    <div class="flex justify-between items-center">
+                                        <dt class="text-gray-500">City</dt>
+                                        <dd class="font-medium text-gray-900">{{ $customer->customerProfile->city }}</dd>
+                                    </div>
+                                    <div class="border-t border-gray-100"></div>
+                                @endif
+                                @if($customer->customerProfile->postal_code)
+                                    <div class="flex justify-between items-center">
+                                        <dt class="text-gray-500">Postal Code</dt>
+                                        <dd class="font-medium text-gray-900">{{ $customer->customerProfile->postal_code }}</dd>
+                                    </div>
+                                @endif
+                            </dl>
+                        @else
+                            <div class="text-center py-8">
+                                <svg class="w-12 h-12 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                </svg>
+                                <p class="text-gray-400">Customer has not completed their profile yet.</p>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
 
-            {{-- PIN Management Section --}}
-            @if($customer->pin_hash)
-                <div class="mt-8 pt-6 border-t border-gray-200">
-                    <h4 class="text-base font-bold text-[#021c47] mb-4">PIN Management</h4>
-                    <div class="flex flex-wrap gap-3">
-                        @if($customer->isPinLocked())
-                            <form method="POST" action="{{ route('admin.customers.unlock-pin', $customer) }}" class="inline">
+            <!-- Right: Sidebar (1 col) -->
+            <div class="space-y-6">
+                <!-- Quick Actions -->
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden sticky top-4">
+                    <div class="px-5 py-3 bg-gray-50 border-b border-gray-200">
+                        <h3 class="text-sm font-semibold text-[#021c47] uppercase tracking-wider">Quick Actions</h3>
+                    </div>
+                    <div class="p-5 space-y-3">
+                        <a href="{{ route('admin.customers.edit', $customer) }}" class="w-full inline-flex items-center justify-center px-4 py-2.5 bg-[#021c47] text-white font-medium rounded-lg hover:bg-[#93db4d] hover:text-[#021c47] transition-colors">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                            Edit Customer
+                        </a>
+
+                        <form method="POST" action="{{ route('admin.customers.toggle-status', $customer) }}">
+                            @csrf
+                            @method('PATCH')
+                            @if($customer->is_active)
+                                <button type="submit" class="w-full px-4 py-2.5 bg-yellow-500 text-white font-medium rounded-lg hover:bg-yellow-600 transition-colors" onclick="return confirm('Deactivate this customer account?')">
+                                    Deactivate Account
+                                </button>
+                            @else
+                                <button type="submit" class="w-full px-4 py-2.5 bg-[#93db4d] text-[#021c47] font-medium rounded-lg hover:bg-[#7fc93d] transition-colors" onclick="return confirm('Activate this customer account?')">
+                                    Activate Account
+                                </button>
+                            @endif
+                        </form>
+                        <p class="text-xs text-gray-400">
+                            {{ $customer->is_active ? 'Deactivating will prevent login.' : 'Activating will allow login again.' }}
+                        </p>
+
+                        <div class="border-t border-gray-100 pt-3">
+                            <form method="POST" action="{{ route('admin.customers.destroy', $customer) }}" onsubmit="return confirm('Are you sure you want to delete this customer? This action cannot be undone.')">
                                 @csrf
-                                <button type="submit" class="px-4 py-2 bg-yellow-500 text-white font-medium rounded-lg hover:bg-yellow-600 transition-all duration-200" onclick="return confirm('Unlock PIN for this customer?')">
-                                    Unlock PIN
+                                @method('DELETE')
+                                <button type="submit" class="w-full px-4 py-2.5 border border-red-200 text-red-600 font-medium rounded-lg hover:bg-red-50 transition-colors">
+                                    Delete Customer
                                 </button>
                             </form>
-                        @endif
-                        <form method="POST" action="{{ route('admin.customers.reset-pin', $customer) }}" class="inline">
-                            @csrf
-                            <button type="submit" class="px-4 py-2 bg-red-500 text-white font-medium rounded-lg hover:bg-red-600 transition-all duration-200" onclick="return confirm('Reset PIN? Customer will need to set a new PIN.')">
-                                Reset PIN
-                            </button>
-                        </form>
+                        </div>
                     </div>
                 </div>
-            @endif
 
-            {{-- Status Toggle Section --}}
-            <div class="mt-8 pt-6 border-t border-gray-200">
-                <h4 class="text-base font-bold text-[#021c47] mb-4">Account Status</h4>
-                <form method="POST" action="{{ route('admin.customers.toggle-status', $customer) }}" class="inline">
-                    @csrf
-                    @method('PATCH')
-                    @if($customer->is_active)
-                        <button type="submit" class="px-4 py-2 bg-yellow-500 text-white font-medium rounded-lg hover:bg-yellow-600 transition-all duration-200" onclick="return confirm('Deactivate this customer account?')">
-                            Deactivate Account
-                        </button>
-                    @else
-                        <button type="submit" class="px-4 py-2 bg-[#93db4d] text-[#021c47] font-medium rounded-lg hover:bg-[#7fc93d] transition-all duration-200" onclick="return confirm('Activate this customer account?')">
-                            Activate Account
-                        </button>
-                    @endif
-                </form>
-                <p class="mt-3 text-sm text-gray-500">
-                    {{ $customer->is_active ? 'Deactivating will prevent the customer from logging in.' : 'Activating will allow the customer to log in again.' }}
-                </p>
-            </div>
-        </div>
-    </div>
-
-    {{-- Customer Profile Card --}}
-    @if($customer->customerProfile)
-        <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
-            <div class="px-6 py-4 border-b border-gray-100">
-                <h3 class="text-lg font-bold text-[#021c47]">Profile Details</h3>
-            </div>
-            <div class="p-6">
-                @if($customer->customerProfile->date_of_birth || $customer->customerProfile->gender || $customer->customerProfile->address || $customer->customerProfile->city || $customer->customerProfile->cnic)
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div class="space-y-4">
-                            @if($customer->customerProfile->date_of_birth)
-                                <div class="flex justify-between items-center py-3 border-b border-gray-100">
-                                    <span class="text-sm font-medium text-gray-500">Date of Birth</span>
-                                    <span class="text-sm text-[#021c47]">{{ \Carbon\Carbon::parse($customer->customerProfile->date_of_birth)->format('M j, Y') }}</span>
-                                </div>
-                            @endif
-                            @if($customer->customerProfile->gender)
-                                <div class="flex justify-between items-center py-3 border-b border-gray-100">
-                                    <span class="text-sm font-medium text-gray-500">Gender</span>
-                                    <span class="text-sm text-[#021c47]">{{ ucfirst($customer->customerProfile->gender) }}</span>
-                                </div>
-                            @endif
-                            @if($customer->customerProfile->cnic)
-                                <div class="flex justify-between items-center py-3 border-b border-gray-100">
-                                    <span class="text-sm font-medium text-gray-500">CNIC</span>
-                                    <span class="text-sm text-[#021c47] flex items-center gap-2">
-                                        {{ $customer->customerProfile->cnic }}
-                                        @if($customer->customerProfile->cnic_verified)
-                                            <span class="px-2 py-0.5 text-xs font-medium rounded bg-[#93db4d]/20 text-[#65a030]">Verified</span>
+                <!-- PIN Management -->
+                @if($customer->pin_hash)
+                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                        <div class="px-5 py-3 bg-gray-50 border-b border-gray-200">
+                            <h3 class="text-sm font-semibold text-[#021c47] uppercase tracking-wider">PIN Management</h3>
+                        </div>
+                        <div class="p-5">
+                            <dl class="space-y-3 text-sm mb-4">
+                                <div class="flex justify-between items-center">
+                                    <dt class="text-gray-500">PIN Status</dt>
+                                    <dd>
+                                        @if($customer->isPinLocked())
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700">
+                                                Locked ({{ $customer->getPinLockoutTimeRemaining() }} min)
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">Set</span>
                                         @endif
-                                    </span>
+                                    </dd>
                                 </div>
-                            @endif
+                                <div class="border-t border-gray-100"></div>
+                                <div class="flex justify-between items-center">
+                                    <dt class="text-gray-500">PIN Attempts</dt>
+                                    <dd class="font-medium text-gray-900">{{ $customer->pin_attempts }}/5</dd>
+                                </div>
+                            </dl>
+
+                            <div class="space-y-2">
+                                @if($customer->isPinLocked())
+                                    <form method="POST" action="{{ route('admin.customers.unlock-pin', $customer) }}">
+                                        @csrf
+                                        <button type="submit" class="w-full px-4 py-2 bg-yellow-500 text-white font-medium rounded-lg hover:bg-yellow-600 transition-colors text-sm" onclick="return confirm('Unlock PIN for this customer?')">
+                                            Unlock PIN
+                                        </button>
+                                    </form>
+                                @endif
+                                <form method="POST" action="{{ route('admin.customers.reset-pin', $customer) }}">
+                                    @csrf
+                                    <button type="submit" class="w-full px-4 py-2 border border-red-200 text-red-600 font-medium rounded-lg hover:bg-red-50 transition-colors text-sm" onclick="return confirm('Reset PIN? Customer will need to set a new PIN.')">
+                                        Reset PIN
+                                    </button>
+                                </form>
+                            </div>
                         </div>
-                        <div class="space-y-4">
-                            @if($customer->customerProfile->address)
-                                <div class="flex justify-between items-center py-3 border-b border-gray-100">
-                                    <span class="text-sm font-medium text-gray-500">Address</span>
-                                    <span class="text-sm text-[#021c47] text-right">{{ $customer->customerProfile->address }}</span>
-                                </div>
-                            @endif
-                            @if($customer->customerProfile->city)
-                                <div class="flex justify-between items-center py-3 border-b border-gray-100">
-                                    <span class="text-sm font-medium text-gray-500">City</span>
-                                    <span class="text-sm text-[#021c47]">{{ $customer->customerProfile->city }}</span>
-                                </div>
-                            @endif
-                            @if($customer->customerProfile->postal_code)
-                                <div class="flex justify-between items-center py-3 border-b border-gray-100">
-                                    <span class="text-sm font-medium text-gray-500">Postal Code</span>
-                                    <span class="text-sm text-[#021c47]">{{ $customer->customerProfile->postal_code }}</span>
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-                @else
-                    <div class="text-center py-8">
-                        <svg class="w-12 h-12 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                        </svg>
-                        <p class="text-gray-400">Customer has not completed their profile yet.</p>
                     </div>
                 @endif
             </div>
         </div>
-    @endif
+    </div>
 @endsection
