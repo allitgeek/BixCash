@@ -41,7 +41,14 @@ class PromotionController extends Controller
 
         $promotions = $query->ordered()->paginate(15);
 
-        return view('admin.promotions.index', compact('promotions'));
+        $stats = [
+            'total' => Promotion::count(),
+            'active' => Promotion::where('is_active', true)->count(),
+            'inactive' => Promotion::where('is_active', false)->count(),
+            'coming_soon' => Promotion::where('discount_type', 'coming_soon')->count(),
+        ];
+
+        return view('admin.promotions.index', compact('promotions', 'stats'));
     }
 
     /**
@@ -170,13 +177,21 @@ class PromotionController extends Controller
     /**
      * Toggle the active status of a promotion.
      */
-    public function toggleStatus(Promotion $promotion)
+    public function toggleStatus(Request $request, Promotion $promotion)
     {
         $promotion->update([
             'is_active' => !$promotion->is_active
         ]);
 
         $status = $promotion->is_active ? 'activated' : 'deactivated';
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'is_active' => $promotion->is_active,
+                'message' => "Promotion {$status} successfully."
+            ]);
+        }
 
         return redirect()->back()
             ->with('success', "Promotion {$status} successfully.");
