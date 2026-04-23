@@ -9489,4 +9489,44 @@ Modified: 3 files
 **Consistency**: 100% identical back arrows across all pages  
 **Accessibility**: WCAG 2.1 Level AA compliant  
 **User Feedback**: Issue resolved, back arrows now prominent  
+
+---
+
+## Session 14: Explore Partners Homepage Section (2026-04-24)
+
+**Summary:** Replaced the legacy "Explore Brands" Swiper carousel on the homepage with a new "Explore Partners" section built from a product-owner-supplied design spec. Online/Offline are split with a toggle that reveals cards only on click — default state shows just the two tab buttons. Rich media per card (carousels, mock video, banners, logo fallback), branch drawer for offline partners, never shows a profit %.
+
+**Backup taken first** (before any change) at `/home/faisal/backups/bixcash-2026-04-23-2340/` — full project tarball + DB dump + git tag `backup/pre-explore-partners-2026-04-23` pushed to origin.
+
+**Behavior (final):**
+- Default: only `Online Stores` / `Offline Stores` buttons visible. No cards, no indicator pill, no view-all button.
+- Click an inactive tab → spring-eased indicator slides in, icon keyframe fires (globeSpin / pinDrop), section fades in with 6 cards (2×3 grid) staggered, + "View all N Partners" button.
+- Click the active tab → collapses everything back to default empty state.
+- Clicking the opposite tab swaps.
+
+**Product rule honored:** no profit percentage anywhere on cards. Only the neutral "Earn with BixCash" chip. Optional `Featured` (amber) / `New` (blue) merch chips under admin control.
+
+**Files:**
+- NEW `backend/resources/views/partials/explore-partners.blade.php` — self-contained partial (scoped via `.explore-partners-root` wrapper, renamed `.btn-primary`→`.ep-btn-primary` and `.btn-outline`→`.ep-btn-outline` to avoid clashing with global app.css, Poppins via scoped `@import`)
+- MODIFIED `backend/resources/views/welcome.blade.php` — replaced the Explore Brands `<h2>` + Swiper container (former lines 1458-1465) with `@include('partials.explore-partners')`. Patent-pending banner and Categories carousel preserved.
+- NEW `backend/public/preview/bixcash-explore-partners.html` — standalone preview served at https://bixcash.com/preview/bixcash-explore-partners.html
+- NEW `bixcash-explore-partners.html` (project root) — local design file for offline review
+
+**Stack notes:**
+- Tailwind is bundled via Vite (`@tailwind base/components/utilities` in `resources/css/app.css`); content glob already picks up `resources/**/*.blade.php` so new utilities used in the partial get bundled on next `npm run build`. Ran the build; new bundle is `app-CraZhRoU.css`.
+- Both sample data AND branch data are inline in the partial for now — TODO comment at the top flags where to swap in DB-driven data when admin-panel wiring lands (future session).
+
+**Security (partial remediation):**
+- Stripped embedded GitHub PAT from `.git/config` remote URL (was `https://ghp_XJQSa…@github.com/…`, now clean).
+- Token still lives in `~/.git-credentials` (how future pushes still work) and is still valid on GitHub — **user must revoke the exposed PAT at https://github.com/settings/tokens and generate a new one (or switch to SSH) to fully close the leak**.
+
+**Deliberately out of scope for this session:**
+- Admin-panel wiring to drive partners from DB (future phase)
+- Real "Visit Store" / "Directions" outbound links (buttons inert)
+- Real search filter inside drawer
+- Real Maps integration
+- Real video playback (click = mock "Playing…" state)
+- Real-time open/closing-soon status (hardcoded)
+- New dedicated overflow pages for "View all 24/38 Partners" (future phase)
+
 **Last Updated**: November 12, 2025 - End of Session 5

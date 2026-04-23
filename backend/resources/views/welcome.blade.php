@@ -1453,17 +1453,10 @@
     </section>
 
     <section id="brands" class="brands-section">
-        <div class="brands-container">
-            <!-- Brands slider (moved above categories) -->
-            <h2><span class="green-text">Explore</span> Brands</h2>
-            <div class="swiper brands-carousel-container">
-                <div class="swiper-wrapper">
-                    <!-- Brands will be injected by JavaScript -->
-                </div>
-                <div class="swiper-button-next"></div>
-                <div class="swiper-button-prev"></div>
-            </div>
+        {{-- Explore Partners (replaces legacy Explore Brands carousel) --}}
+        @include('partials.explore-partners')
 
+        <div class="brands-container">
             <!-- Patent-Pending Banner -->
             <div class="patent-pending-banner">
                 <div class="banner-content">
