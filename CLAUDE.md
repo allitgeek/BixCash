@@ -9529,4 +9529,83 @@ Modified: 3 files
 - Real-time open/closing-soon status (hardcoded)
 - New dedicated overflow pages for "View all 24/38 Partners" (future phase)
 
+---
+
+## Session 15: Site-wide Favicon Fix (2026-04-24)
+
+**Summary:** Replaced the green-circle "B" SVG data-URI favicon (used across 18 Blade templates) and the empty `/favicon.ico` with a proper cropped globe+Bix icon. Admin panel now also resolves to the real logo via `/favicon.ico` (previously relied on browser cache).
+
+**Flow:**
+- Cropped `images/logos/old-logos-01.png` (1500×1500 full BixCash logo) down to just the dotted green globe + "Bix" wordmark via ImageMagick → saved as `images/logos/favicon-bix.png` (256×256).
+- Built a proper multi-resolution `favicon.ico` (6 sizes embedded: 16, 32, 48, 64, 128, 256) using `convert -define icon:auto-resize=...`.
+- Python-scripted replacement of `<link rel="icon" ...>` tag in 18 Blade templates (auth/*, customer/*, partner/*, welcome, layouts/partner) pointing at the new PNG.
+- Admin layout has no `<link rel="icon">` — so `/favicon.ico` fallback now serves the same icon; both panels look identical.
+
+**Files:** `backend/public/favicon.ico`, `backend/public/images/logos/favicon-bix.png` (new), 18 Blade templates. No DB changes.
+
+---
+
+## Session 16: Explore Partners Admin Module + DB Wiring (2026-04-24)
+
+**Summary:** Stopped hardcoding the homepage "Explore Partners" section and built a full admin CRUD to manage it. Partners, per-slide media, and per-branch weekly schedules all live in the DB and flow through to the public homepage.
+
+**Schema (3 new tables, purely additive — zero changes to existing tables):**
+- `explore_partners` — name, slug (auto), type (online/offline), category_tag (free text), logo, description, visit_url, branch_count_label, is_featured/is_new/is_active (all manual), display_order, created_by
+- `explore_partner_media` — 1–5 slides per partner; each is `kind='image'` (uploaded file) OR `kind='video'` (YouTube/Vimeo URL); caption, order, active toggle
+- `explore_partner_branches` — name, address, city, phone, lat/lng, optional directions_url (auto-generates from lat/lng if blank), `weekly_schedule` JSON (mon–sun open/close/closed), order, active
+
+**Models:**
+- `ExplorePartner::cardStatus()` / `cardHoursLabel()` — card-level pill reflects the first active branch's live status (Open / Closing soon / Closed) and today's hours
+- `ExplorePartnerBranch::currentStatus()` — supports overnight schedules (e.g., 11pm–1am next day); 30-minute "closing soon" window
+- `ExplorePartnerMedia::embedUrl()` — converts YouTube/Vimeo watch URLs to proper embed URLs so clicking the thumb actually plays
+- Auto slug generation in `booted()` hook on create; auto-update on rename if admin hasn't manually set slug
+
+**Admin UI (`/admin/explore-partners`):**
+- New sidebar menu "Explore Partners" between Brands and Promotions (desktop + mobile sidebars in `layouts/admin.blade.php`)
+- Permission: `manage_content` (reused — no new permission needed)
+- Single-page form (`admin/explore-partners/_form.blade.php`) for every setting — no hunting around
+  - Basics (name, type, category tag, description, logo upload + remove)
+  - Visibility & chips (Active / Featured / New — all manual toggles, no auto-expire)
+  - Online-only: Visit Store URL
+  - Offline-only: branch count label
+  - **Media slides repeater** (1–5, Alpine.js-managed; each row: image file OR video URL, caption, order, active)
+  - **Branches repeater** (offline-only, Alpine.js) with per-branch **weekly schedule** (7 day rows × open/close/closed checkbox each)
+- Index page has search + type/status filters + inline Active and Featured toggles
+- `ActivityLog::createLog()` called on create / update / delete
+
+**Homepage wiring:**
+- `/` route switched from closure to `HomeController@index` — queries `ExplorePartner::active()->ordered()` by type, takes 6 each, injects pre-computed branch drawer data as `@json`
+- Card rendering extracted to 2 sub-partials (`_explore-partner-card-online.blade.php`, `_explore-partner-card-offline.blade.php`) — loop over `$onlinePartners` / `$offlinePartners` in the main partial
+- Main partial shrank from ~1,850 lines to ~1,143 lines
+- Video thumbs now actually play (iframe embed replaces mock "Playing…" state)
+- Directions button on offline cards auto-builds a Google Maps URL from branch lat/lng when admin hasn't pasted one
+- Tab counts ("Online 24 / Offline 38") now reflect real DB counts
+
+**Seeder (`ExplorePartnerSeeder`):** 12 partners (6 online + 6 offline) + 21 branches with realistic Pakistani-city lat/lng seeded. Replaces the previously-hardcoded sample data. Admin uploads real banner images/videos via the new UI — cards auto-switch from logo fallback to rich carousel/video.
+
+**Routes (in `manage_content` middleware group):**
+```
+GET    /admin/explore-partners                   index
+GET    /admin/explore-partners/create            create
+POST   /admin/explore-partners                   store
+GET    /admin/explore-partners/{id}              show
+GET    /admin/explore-partners/{id}/edit         edit
+PUT    /admin/explore-partners/{id}              update
+DELETE /admin/explore-partners/{id}              destroy
+PATCH  /admin/explore-partners/{id}/toggle-status
+PATCH  /admin/explore-partners/{id}/toggle-featured
+POST   /admin/explore-partners/reorder
+```
+
+**Files:** 3 migrations (new), 3 models (new), `Admin\ExplorePartnerController` (new), `HomeController` (new), `ExplorePartnerSeeder` (new), 5 admin views in `admin/explore-partners/` (new), 2 card sub-partials (new), `routes/admin.php` + `routes/web.php` edits, `layouts/admin.blade.php` sidebar link, `partials/explore-partners.blade.php` rewritten as DB-driven.
+
+**Polish pass (bundled in this commit):** Section background made flush white (removed tinted gradients + grid overlay), top padding tightened (py-16→pt-4 mobile / py-24→pt-6 desktop), replaced busy green breathing-glow + shimmer with a single relaxed navy shimmer (4.6s cadence) that stops on first click.
+
+**Gotchas respected (from the earlier admin-panel audit):**
+- Used `manage_content` permission (matches Brands/Slides/Promotions — sidebar gate aligns with route gate).
+- Called `ActivityLog::createLog()` manually on destructive ops (audit trail).
+- Purely additive DB changes — no existing tables touched.
+- No `Cache::forget()` calls needed — no cache wraps explore-partners data.
+- Slug uniqueness enforced at model level via `booted()` hook.
+
 **Last Updated**: November 12, 2025 - End of Session 5

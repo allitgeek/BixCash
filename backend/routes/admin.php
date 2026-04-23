@@ -21,6 +21,7 @@ use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\WhatsAppSettingsController;
 use App\Http\Controllers\Admin\ProjectRoadmapController;
 use App\Http\Controllers\Admin\IntegrationController;
+use App\Http\Controllers\Admin\ExplorePartnerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -70,6 +71,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::resource('promotions', PromotionController::class);
             Route::patch('promotions/{promotion}/toggle-status', [PromotionController::class, 'toggleStatus'])->name('promotions.toggle-status');
             Route::post('promotions/reorder', [PromotionController::class, 'reorder'])->name('promotions.reorder');
+
+            // Explore Partners (homepage "Explore Partners" section — online/offline cards)
+            Route::post('explore-partners/reorder', [ExplorePartnerController::class, 'reorder'])->name('explore-partners.reorder');
+            Route::patch('explore-partners/{explore_partner}/toggle-status', [ExplorePartnerController::class, 'toggleStatus'])->name('explore-partners.toggle-status');
+            Route::patch('explore-partners/{explore_partner}/toggle-featured', [ExplorePartnerController::class, 'toggleFeatured'])->name('explore-partners.toggle-featured');
+            Route::resource('explore-partners', ExplorePartnerController::class);
         });
 
         // Brand Management

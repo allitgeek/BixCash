@@ -19,22 +19,8 @@
 
   /* ---------- Section background ---------- */
   .section-bg {
-    background:
-      radial-gradient(circle at 12% 10%, rgba(139, 195, 74, 0.08) 0%, transparent 45%),
-      radial-gradient(circle at 90% 90%, rgba(26, 51, 82, 0.06) 0%, transparent 45%),
-      #ffffff;
+    background: #ffffff;
     position: relative;
-  }
-  .section-bg::before {
-    content: '';
-    position: absolute; inset: 0;
-    background-image:
-      linear-gradient(rgba(26, 51, 82, 0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(26, 51, 82, 0.03) 1px, transparent 1px);
-    background-size: 48px 48px;
-    mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
-    -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
-    pointer-events: none;
   }
 
   /* ---------- Sticky tab nav ---------- */
@@ -58,6 +44,40 @@
     border-radius: 999px;
     position: relative;
     display: inline-flex;
+    overflow: hidden;
+  }
+  /* Invite-click animation: a single elegant navy shimmer sweeps across the
+     tabs at a relaxed cadence. No outer ring, no breathing — just the sweep.
+     Stops on first click so it doesn't distract once the user has engaged. */
+  .tab-wrap::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -40%;
+    width: 38%;
+    height: 100%;
+    background: linear-gradient(
+      100deg,
+      transparent 0%,
+      rgba(42, 74, 111, 0.22) 50%,
+      transparent 100%
+    );
+    transform: skewX(-14deg);
+    animation: tabShimmer 4.6s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 1;
+  }
+  .tab-wrap.has-active::after {
+    animation: none;
+    opacity: 0;
+  }
+  @keyframes tabShimmer {
+    0%   { left: -40%; }
+    55%  { left: 110%; }
+    100% { left: 110%; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tab-wrap::after { animation: none; opacity: 0; }
   }
   .tab-indicator {
     position: absolute;
@@ -766,7 +786,7 @@
 
 <div class="explore-partners-root">
 
-<section class="section-bg py-16 md:py-24 relative overflow-hidden">
+<section class="section-bg pt-4 pb-12 md:pt-6 md:pb-16 relative overflow-hidden">
   <div class="max-w-7xl mx-auto px-5 md:px-8 relative z-10">
 
     <!-- ============ Heading ============ -->
@@ -798,7 +818,7 @@
             </svg>
           </span>
           Online Stores
-          <span class="tab-count">24</span>
+          <span class="tab-count">{{ $onlineTotal ?? 0 }}</span>
         </button>
 
         <button data-tab="offline" data-target="#offline-partners" class="tab-btn">
@@ -809,7 +829,7 @@
             </svg>
           </span>
           Offline Stores
-          <span class="tab-count">38</span>
+          <span class="tab-count">{{ $offlineTotal ?? 0 }}</span>
         </button>
       </div>
     </div>
@@ -836,296 +856,15 @@
 
       <div class="card-grid">
 
-        <!-- ONLINE 1: Khaadi — carousel -->
-        <div class="partner-card" style="animation-delay: 0.05s">
-          <div class="card-inner">
-            <div class="card-top-bar">
-              <span class="type-badge type-badge-online">
-                <span class="live-dot"></span> Online Store
-              </span>
-              <div class="brand-logo-chip">
-                <span class="text-[10px] font-extrabold text-[#1a3352] tracking-wider">KHAADI</span>
-              </div>
-            </div>
+        @foreach($onlinePartners as $partner)
+          @include('partials._explore-partner-card-online', ['partner' => $partner])
+        @endforeach
 
-            <div class="media-area" data-carousel data-interval="4000">
-              <div class="media-slide active banner-promo">
-                <div class="text-center">
-                  <div class="text-[10px] font-bold tracking-widest uppercase opacity-80 mb-1">Summer Lawn 2026</div>
-                  <div class="text-2xl font-extrabold mb-1">Now Live</div>
-                  <div class="text-xs opacity-80">Free shipping nationwide</div>
-                </div>
-              </div>
-              <div class="media-slide banner-sale">
-                <div class="text-center">
-                  <div class="text-[10px] font-bold tracking-widest uppercase mb-1">Limited Offer</div>
-                  <div class="text-3xl font-extrabold mb-1">Up to 40% OFF</div>
-                  <div class="text-xs opacity-80">Selected pret collection</div>
-                </div>
-              </div>
-              <div class="media-slide banner-green">
-                <div class="text-center">
-                  <div class="text-[10px] font-bold tracking-widest uppercase opacity-90 mb-1">New Arrival</div>
-                  <div class="text-2xl font-extrabold mb-1">Eid Edit</div>
-                  <div class="text-xs opacity-90">Premium festive wear</div>
-                </div>
-              </div>
-              <div class="carousel-dots">
-                <span class="carousel-dot active" data-slide="0"></span>
-                <span class="carousel-dot" data-slide="1"></span>
-                <span class="carousel-dot" data-slide="2"></span>
-              </div>
-            </div>
-
-            <div class="card-content">
-              <div class="meta-row">
-                <span class="category-tag">Fashion & Apparel</span>
-                <span class="dot-sep"></span>
-                <span class="earn-chip">
-                  <svg fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-2.21 0-4-1.79-4-4s1.79-4 4-4a4 4 0 0 1 4 4"/></svg>
-                  Earn with BixCash
-                </span>
-              </div>
-              <h3 class="brand-name">Khaadi</h3>
-              <p class="brand-desc">Premium fusion wear blending traditional Pakistani craft with modern silhouettes. Free nationwide shipping on all orders.</p>
-              <button class="ep-btn-primary w-full">
-                Visit Store
-                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2.2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- ONLINE 2: Sapphire — video + Featured -->
-        <div class="partner-card" style="animation-delay: 0.10s">
-          <div class="card-inner">
-            <div class="card-top-bar">
-              <span class="type-badge type-badge-online">
-                <span class="live-dot"></span> Online Store
-              </span>
-              <div class="brand-logo-chip">
-                <span class="text-[10px] font-extrabold text-[#1a3352] tracking-wider">SAPPHIRE</span>
-              </div>
-            </div>
-
-            <div class="media-area">
-              <div class="video-thumb" data-video>
-                <div class="play-button">
-                  <svg class="w-6 h-6 text-[#1a3352] ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M5 3.5v17l15-8.5L5 3.5Z"/></svg>
-                </div>
-                <span class="video-label">
-                  <svg class="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z"/></svg>
-                  Brand Story · 1:24
-                </span>
-              </div>
-            </div>
-
-            <div class="card-content">
-              <div class="meta-row">
-                <span class="category-tag">Fashion & Apparel</span>
-                <span class="dot-sep"></span>
-                <span class="earn-chip">
-                  <svg fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-2.21 0-4-1.79-4-4s1.79-4 4-4a4 4 0 0 1 4 4"/></svg>
-                  Earn with BixCash
-                </span>
-                <span class="merchandise-chip chip-featured">
-                  <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l2.4 7.2H22l-6 4.4 2.3 7.2L12 16.4 5.7 20.8 8 13.6 2 9.2h7.6L12 2z"/></svg>
-                  Featured
-                </span>
-              </div>
-              <h3 class="brand-name">Sapphire</h3>
-              <p class="brand-desc">Elegant everyday luxury — unstitched, ready-to-wear, and accessories from Pakistan's leading lifestyle brand.</p>
-              <button class="ep-btn-primary w-full">
-                Visit Store
-                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2.2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- ONLINE 3: Junaid Jamshed — single banner -->
-        <div class="partner-card" style="animation-delay: 0.15s">
-          <div class="card-inner">
-            <div class="card-top-bar">
-              <span class="type-badge type-badge-online">
-                <span class="live-dot"></span> Online Store
-              </span>
-              <div class="brand-logo-chip">
-                <span class="text-[9px] font-extrabold text-[#1a3352] tracking-wider leading-none text-center">J.<br/>JAMSHED</span>
-              </div>
-            </div>
-
-            <div class="media-area">
-              <div class="media-slide active banner-light">
-                <div class="text-center">
-                  <div class="text-[10px] font-bold tracking-widest uppercase text-[#558B2F] mb-2">Wedding Festival</div>
-                  <div class="text-2xl font-extrabold text-[#1a3352] mb-1">The J. Edit</div>
-                  <div class="text-xs text-gray-500">Formal menswear · unstitched · accessories</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="card-content">
-              <div class="meta-row">
-                <span class="category-tag">Fashion & Apparel</span>
-                <span class="dot-sep"></span>
-                <span class="earn-chip">
-                  <svg fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-2.21 0-4-1.79-4-4s1.79-4 4-4a4 4 0 0 1 4 4"/></svg>
-                  Earn with BixCash
-                </span>
-              </div>
-              <h3 class="brand-name">Junaid Jamshed</h3>
-              <p class="brand-desc">Timeless menswear and formal eastern collections trusted by professionals across Pakistan.</p>
-              <button class="ep-btn-primary w-full">
-                Visit Store
-                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2.2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- ONLINE 4: Fresh Box — carousel + New -->
-        <div class="partner-card" style="animation-delay: 0.20s">
-          <div class="card-inner">
-            <div class="card-top-bar">
-              <span class="type-badge type-badge-online">
-                <span class="live-dot"></span> Online Store
-              </span>
-              <div class="brand-logo-chip">
-                <span class="text-[9px] font-extrabold text-[#1a3352] tracking-wider leading-none text-center">FRESH<br/>BOX</span>
-              </div>
-            </div>
-
-            <div class="media-area" data-carousel data-interval="4500">
-              <div class="media-slide active banner-green">
-                <div class="text-center">
-                  <div class="text-[10px] font-bold tracking-widest uppercase opacity-90 mb-1">Farm-to-Door</div>
-                  <div class="text-2xl font-extrabold mb-1">Fresh in 24h</div>
-                  <div class="text-xs opacity-90">Fruits · Veg · Pantry</div>
-                </div>
-              </div>
-              <div class="media-slide banner-promo">
-                <div class="text-center">
-                  <div class="text-[10px] font-bold tracking-widest uppercase opacity-80 mb-1">First Order</div>
-                  <div class="text-3xl font-extrabold mb-1">Free Delivery</div>
-                  <div class="text-xs opacity-80">On orders above Rs 1500</div>
-                </div>
-              </div>
-              <div class="carousel-dots">
-                <span class="carousel-dot active" data-slide="0"></span>
-                <span class="carousel-dot" data-slide="1"></span>
-              </div>
-            </div>
-
-            <div class="card-content">
-              <div class="meta-row">
-                <span class="category-tag">Groceries</span>
-                <span class="dot-sep"></span>
-                <span class="earn-chip">
-                  <svg fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-2.21 0-4-1.79-4-4s1.79-4 4-4a4 4 0 0 1 4 4"/></svg>
-                  Earn with BixCash
-                </span>
-                <span class="merchandise-chip chip-new">
-                  <svg fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/></svg>
-                  New
-                </span>
-              </div>
-              <h3 class="brand-name">Fresh Box</h3>
-              <p class="brand-desc">Farm-fresh fruits, vegetables, and pantry staples delivered to your doorstep within 24 hours.</p>
-              <button class="ep-btn-primary w-full">
-                Visit Store
-                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2.2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- ONLINE 5: Almirah — logo fallback -->
-        <div class="partner-card" style="animation-delay: 0.25s">
-          <div class="card-inner">
-            <div class="card-top-bar">
-              <span class="type-badge type-badge-online">
-                <span class="live-dot"></span> Online Store
-              </span>
-              <div class="brand-logo-chip">
-                <span class="text-[10px] font-extrabold text-[#1a3352] tracking-wider">ALMIRAH</span>
-              </div>
-            </div>
-
-            <div class="media-area">
-              <div class="media-slide active banner-logo-fallback">
-                <div class="text-center">
-                  <div class="logo-fallback-mark">Almirah</div>
-                  <div class="logo-fallback-sub">Classic · Contemporary</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="card-content">
-              <div class="meta-row">
-                <span class="category-tag">Fashion & Apparel</span>
-                <span class="dot-sep"></span>
-                <span class="earn-chip">
-                  <svg fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-2.21 0-4-1.79-4-4s1.79-4 4-4a4 4 0 0 1 4 4"/></svg>
-                  Earn with BixCash
-                </span>
-              </div>
-              <h3 class="brand-name">Almirah</h3>
-              <p class="brand-desc">Classic fabrics with contemporary cuts. Unstitched collections for every season and occasion.</p>
-              <button class="ep-btn-primary w-full">
-                Visit Store
-                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2.2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- ONLINE 6: Al Gardd Jewelers — single dark banner -->
-        <div class="partner-card" style="animation-delay: 0.30s">
-          <div class="card-inner">
-            <div class="card-top-bar">
-              <span class="type-badge type-badge-online">
-                <span class="live-dot"></span> Online Store
-              </span>
-              <div class="brand-logo-chip">
-                <span class="text-[9px] font-extrabold text-[#1a3352] tracking-wider leading-none text-center">AL GARDD</span>
-              </div>
-            </div>
-
-            <div class="media-area">
-              <div class="media-slide active banner-dark">
-                <div class="text-center">
-                  <div class="text-[10px] font-bold tracking-widest uppercase mb-2 opacity-70" style="color:#FDE68A">Bridal Edit 2026</div>
-                  <div class="text-2xl font-extrabold mb-1" style="color:#FDE68A">Heirloom Gold</div>
-                  <div class="text-xs opacity-80">Certified · Insured delivery</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="card-content">
-              <div class="meta-row">
-                <span class="category-tag">Jewelry</span>
-                <span class="dot-sep"></span>
-                <span class="earn-chip">
-                  <svg fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-2.21 0-4-1.79-4-4s1.79-4 4-4a4 4 0 0 1 4 4"/></svg>
-                  Earn with BixCash
-                </span>
-              </div>
-              <h3 class="brand-name">Al Gardd Jewelers</h3>
-              <p class="brand-desc">Handcrafted gold and diamond jewelry with certified authenticity. Nationwide insured delivery.</p>
-              <button class="ep-btn-primary w-full">
-                Visit Store
-                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2.2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg>
-              </button>
-            </div>
-          </div>
-        </div>
-
-      </div><!-- /.card-grid -->
+            </div><!-- /.card-grid -->
 
       <div class="view-all-wrap">
         <a href="#" class="view-all-btn" data-view-all="online">
-          View all 24 Online Partners
+          View all {{ $onlineTotal ?? 0 }} Online Partners
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2.2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/></svg>
         </a>
       </div>
@@ -1154,428 +893,15 @@
 
       <div class="card-grid">
 
-        <!-- OFFLINE 1: KFC — carousel + Featured -->
-        <div class="partner-card" style="animation-delay: 0.05s">
-          <div class="card-inner">
-            <div class="card-top-bar">
-              <span class="type-badge type-badge-offline">
-                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke-width="2.2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/></svg>
-                Offline Store
-              </span>
-              <div class="brand-logo-chip">
-                <span class="text-[11px] font-extrabold text-[#1a3352] tracking-wider">KFC</span>
-              </div>
-            </div>
+        @foreach($offlinePartners as $partner)
+          @include('partials._explore-partner-card-offline', ['partner' => $partner])
+        @endforeach
 
-            <div class="media-area" data-carousel data-interval="4000">
-              <div class="media-slide active banner-promo">
-                <div class="text-center">
-                  <div class="text-[10px] font-bold tracking-widest uppercase opacity-80 mb-1">Lunch Deals</div>
-                  <div class="text-2xl font-extrabold mb-1">Mid-Day Crunch</div>
-                  <div class="text-xs opacity-80">Starting Rs 399</div>
-                </div>
-              </div>
-              <div class="media-slide banner-sale">
-                <div class="text-center">
-                  <div class="text-[10px] font-bold tracking-widest uppercase mb-1">Family Meal</div>
-                  <div class="text-3xl font-extrabold mb-1">Family Pack</div>
-                  <div class="text-xs opacity-80">12 pcs · 2 sides · 4 drinks</div>
-                </div>
-              </div>
-              <div class="media-slide banner-green">
-                <div class="text-center">
-                  <div class="text-[10px] font-bold tracking-widest uppercase opacity-90 mb-1">Now in stores</div>
-                  <div class="text-2xl font-extrabold mb-1">Peri Peri Zinger</div>
-                  <div class="text-xs opacity-90">Flame-grilled · African spice</div>
-                </div>
-              </div>
-              <div class="carousel-dots">
-                <span class="carousel-dot active" data-slide="0"></span>
-                <span class="carousel-dot" data-slide="1"></span>
-                <span class="carousel-dot" data-slide="2"></span>
-              </div>
-            </div>
-
-            <div class="card-content">
-              <div class="meta-row">
-                <span class="category-tag">Food & Beverage</span>
-                <span class="dot-sep"></span>
-                <span class="earn-chip">
-                  <svg fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-2.21 0-4-1.79-4-4s1.79-4 4-4a4 4 0 0 1 4 4"/></svg>
-                  Earn with BixCash
-                </span>
-                <span class="merchandise-chip chip-featured">
-                  <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l2.4 7.2H22l-6 4.4 2.3 7.2L12 16.4 5.7 20.8 8 13.6 2 9.2h7.6L12 2z"/></svg>
-                  Featured
-                </span>
-              </div>
-              <h3 class="brand-name">KFC</h3>
-
-              <div class="offline-info">
-                <span class="offline-info-item">
-                  <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/></svg>
-                  <strong class="text-[#1a3352]">42</strong> branches
-                </span>
-                <span class="offline-info-sep"></span>
-                <span class="offline-info-item">
-                  <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
-                  11am – 12am
-                </span>
-                <span class="open-status">
-                  <span class="live-dot"></span> Open
-                </span>
-              </div>
-
-              <div class="grid grid-cols-2 gap-2">
-                <button class="ep-btn-outline" data-drawer data-brand="KFC" data-count="42">
-                  <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z"/></svg>
-                  All Branches
-                </button>
-                <button class="ep-btn-primary">
-                  <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z"/><path stroke-linecap="round" stroke-linejoin="round" d="m15.2 8.8-2.1 5.5-5.5 2.1 2.1-5.5 5.5-2.1Z"/></svg>
-                  Directions
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- OFFLINE 2: Khaadi — single banner -->
-        <div class="partner-card" style="animation-delay: 0.10s">
-          <div class="card-inner">
-            <div class="card-top-bar">
-              <span class="type-badge type-badge-offline">
-                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke-width="2.2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/></svg>
-                Offline Store
-              </span>
-              <div class="brand-logo-chip">
-                <span class="text-[10px] font-extrabold text-[#1a3352] tracking-wider">KHAADI</span>
-              </div>
-            </div>
-
-            <div class="media-area">
-              <div class="media-slide active banner-light">
-                <div class="text-center">
-                  <div class="text-[10px] font-bold tracking-widest uppercase text-[#558B2F] mb-2">In-Store Now</div>
-                  <div class="text-2xl font-extrabold text-[#1a3352] mb-1">Summer Collection</div>
-                  <div class="text-xs text-gray-500">Visit your nearest outlet</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="card-content">
-              <div class="meta-row">
-                <span class="category-tag">Fashion & Apparel</span>
-                <span class="dot-sep"></span>
-                <span class="earn-chip">
-                  <svg fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-2.21 0-4-1.79-4-4s1.79-4 4-4a4 4 0 0 1 4 4"/></svg>
-                  Earn with BixCash
-                </span>
-              </div>
-              <h3 class="brand-name">Khaadi</h3>
-
-              <div class="offline-info">
-                <span class="offline-info-item">
-                  <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/></svg>
-                  <strong class="text-[#1a3352]">68</strong> outlets
-                </span>
-                <span class="offline-info-sep"></span>
-                <span class="offline-info-item">
-                  <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
-                  10am – 10pm
-                </span>
-                <span class="open-status">
-                  <span class="live-dot"></span> Open
-                </span>
-              </div>
-
-              <div class="grid grid-cols-2 gap-2">
-                <button class="ep-btn-outline" data-drawer data-brand="Khaadi" data-count="68">
-                  <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z"/></svg>
-                  All Branches
-                </button>
-                <button class="ep-btn-primary">
-                  <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z"/><path stroke-linecap="round" stroke-linejoin="round" d="m15.2 8.8-2.1 5.5-5.5 2.1 2.1-5.5 5.5-2.1Z"/></svg>
-                  Directions
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- OFFLINE 3: Sapphire — video -->
-        <div class="partner-card" style="animation-delay: 0.15s">
-          <div class="card-inner">
-            <div class="card-top-bar">
-              <span class="type-badge type-badge-offline">
-                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke-width="2.2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/></svg>
-                Offline Store
-              </span>
-              <div class="brand-logo-chip">
-                <span class="text-[10px] font-extrabold text-[#1a3352] tracking-wider">SAPPHIRE</span>
-              </div>
-            </div>
-
-            <div class="media-area">
-              <div class="video-thumb" data-video>
-                <div class="play-button">
-                  <svg class="w-6 h-6 text-[#1a3352] ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M5 3.5v17l15-8.5L5 3.5Z"/></svg>
-                </div>
-                <span class="video-label">
-                  <svg class="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z"/></svg>
-                  Store Walkthrough · 0:48
-                </span>
-              </div>
-            </div>
-
-            <div class="card-content">
-              <div class="meta-row">
-                <span class="category-tag">Fashion & Apparel</span>
-                <span class="dot-sep"></span>
-                <span class="earn-chip">
-                  <svg fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-2.21 0-4-1.79-4-4s1.79-4 4-4a4 4 0 0 1 4 4"/></svg>
-                  Earn with BixCash
-                </span>
-              </div>
-              <h3 class="brand-name">Sapphire</h3>
-
-              <div class="offline-info">
-                <span class="offline-info-item">
-                  <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/></svg>
-                  <strong class="text-[#1a3352]">52</strong> stores
-                </span>
-                <span class="offline-info-sep"></span>
-                <span class="offline-info-item">
-                  <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
-                  11am – 11pm
-                </span>
-                <span class="open-status">
-                  <span class="live-dot"></span> Open
-                </span>
-              </div>
-
-              <div class="grid grid-cols-2 gap-2">
-                <button class="ep-btn-outline" data-drawer data-brand="Sapphire" data-count="52">
-                  <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z"/></svg>
-                  All Branches
-                </button>
-                <button class="ep-btn-primary">
-                  <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z"/><path stroke-linecap="round" stroke-linejoin="round" d="m15.2 8.8-2.1 5.5-5.5 2.1 2.1-5.5 5.5-2.1Z"/></svg>
-                  Directions
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- OFFLINE 4: Al Gardd Jewelers — single dark banner -->
-        <div class="partner-card" style="animation-delay: 0.20s">
-          <div class="card-inner">
-            <div class="card-top-bar">
-              <span class="type-badge type-badge-offline">
-                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke-width="2.2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/></svg>
-                Offline Store
-              </span>
-              <div class="brand-logo-chip">
-                <span class="text-[9px] font-extrabold text-[#1a3352] tracking-wider leading-none text-center">AL GARDD</span>
-              </div>
-            </div>
-
-            <div class="media-area">
-              <div class="media-slide active banner-dark">
-                <div class="text-center">
-                  <div class="text-[10px] font-bold tracking-widest uppercase mb-2 opacity-70" style="color:#FDE68A">Bridal Consultation</div>
-                  <div class="text-2xl font-extrabold mb-1" style="color:#FDE68A">By Appointment</div>
-                  <div class="text-xs opacity-80">Private showroom experience</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="card-content">
-              <div class="meta-row">
-                <span class="category-tag">Jewelry</span>
-                <span class="dot-sep"></span>
-                <span class="earn-chip">
-                  <svg fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-2.21 0-4-1.79-4-4s1.79-4 4-4a4 4 0 0 1 4 4"/></svg>
-                  Earn with BixCash
-                </span>
-              </div>
-              <h3 class="brand-name">Al Gardd Jewelers</h3>
-
-              <div class="offline-info">
-                <span class="offline-info-item">
-                  <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/></svg>
-                  <strong class="text-[#1a3352]">8</strong> showrooms
-                </span>
-                <span class="offline-info-sep"></span>
-                <span class="offline-info-item">
-                  <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
-                  11am – 9pm
-                </span>
-                <span class="open-status">
-                  <span class="live-dot"></span> Open
-                </span>
-              </div>
-
-              <div class="grid grid-cols-2 gap-2">
-                <button class="ep-btn-outline" data-drawer data-brand="Al Gardd Jewelers" data-count="8">
-                  <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z"/></svg>
-                  All Branches
-                </button>
-                <button class="ep-btn-primary">
-                  <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z"/><path stroke-linecap="round" stroke-linejoin="round" d="m15.2 8.8-2.1 5.5-5.5 2.1 2.1-5.5 5.5-2.1Z"/></svg>
-                  Directions
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- OFFLINE 5: Jeeva Supermart — carousel + New -->
-        <div class="partner-card" style="animation-delay: 0.25s">
-          <div class="card-inner">
-            <div class="card-top-bar">
-              <span class="type-badge type-badge-offline">
-                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke-width="2.2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/></svg>
-                Offline Store
-              </span>
-              <div class="brand-logo-chip">
-                <span class="text-[9px] font-extrabold text-[#1a3352] tracking-wider leading-none text-center">JEEVA</span>
-              </div>
-            </div>
-
-            <div class="media-area" data-carousel data-interval="4500">
-              <div class="media-slide active banner-green">
-                <div class="text-center">
-                  <div class="text-[10px] font-bold tracking-widest uppercase opacity-90 mb-1">Weekly Deals</div>
-                  <div class="text-2xl font-extrabold mb-1">Supermart Savings</div>
-                  <div class="text-xs opacity-90">Fresh · Pantry · Household</div>
-                </div>
-              </div>
-              <div class="media-slide banner-light">
-                <div class="text-center">
-                  <div class="text-[10px] font-bold tracking-widest uppercase text-[#558B2F] mb-2">Member Offers</div>
-                  <div class="text-2xl font-extrabold text-[#1a3352] mb-1">Bulk Buy Club</div>
-                  <div class="text-xs text-gray-500">Save more on family packs</div>
-                </div>
-              </div>
-              <div class="carousel-dots dark-dots">
-                <span class="carousel-dot active" data-slide="0"></span>
-                <span class="carousel-dot" data-slide="1"></span>
-              </div>
-            </div>
-
-            <div class="card-content">
-              <div class="meta-row">
-                <span class="category-tag">Groceries</span>
-                <span class="dot-sep"></span>
-                <span class="earn-chip">
-                  <svg fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-2.21 0-4-1.79-4-4s1.79-4 4-4a4 4 0 0 1 4 4"/></svg>
-                  Earn with BixCash
-                </span>
-                <span class="merchandise-chip chip-new">
-                  <svg fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/></svg>
-                  New
-                </span>
-              </div>
-              <h3 class="brand-name">Jeeva Supermart</h3>
-
-              <div class="offline-info">
-                <span class="offline-info-item">
-                  <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/></svg>
-                  <strong class="text-[#1a3352]">24</strong> stores
-                </span>
-                <span class="offline-info-sep"></span>
-                <span class="offline-info-item">
-                  <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
-                  8am – 11pm
-                </span>
-                <span class="open-status">
-                  <span class="live-dot"></span> Open
-                </span>
-              </div>
-
-              <div class="grid grid-cols-2 gap-2">
-                <button class="ep-btn-outline" data-drawer data-brand="Jeeva Supermart" data-count="24">
-                  <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z"/></svg>
-                  All Branches
-                </button>
-                <button class="ep-btn-primary">
-                  <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z"/><path stroke-linecap="round" stroke-linejoin="round" d="m15.2 8.8-2.1 5.5-5.5 2.1 2.1-5.5 5.5-2.1Z"/></svg>
-                  Directions
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- OFFLINE 6: Fresh Box Express — logo fallback + Closing soon -->
-        <div class="partner-card" style="animation-delay: 0.30s">
-          <div class="card-inner">
-            <div class="card-top-bar">
-              <span class="type-badge type-badge-offline">
-                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke-width="2.2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/></svg>
-                Offline Store
-              </span>
-              <div class="brand-logo-chip">
-                <span class="text-[8px] font-extrabold text-[#1a3352] tracking-wider leading-none text-center">FRESH BOX<br/>EXPRESS</span>
-              </div>
-            </div>
-
-            <div class="media-area">
-              <div class="media-slide active banner-logo-fallback">
-                <div class="text-center">
-                  <div class="logo-fallback-mark">Fresh Box Express</div>
-                  <div class="logo-fallback-sub">Neighborhood Grocer</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="card-content">
-              <div class="meta-row">
-                <span class="category-tag">Groceries</span>
-                <span class="dot-sep"></span>
-                <span class="earn-chip">
-                  <svg fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-2.21 0-4-1.79-4-4s1.79-4 4-4a4 4 0 0 1 4 4"/></svg>
-                  Earn with BixCash
-                </span>
-              </div>
-              <h3 class="brand-name">Fresh Box Express</h3>
-
-              <div class="offline-info">
-                <span class="offline-info-item">
-                  <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/></svg>
-                  <strong class="text-[#1a3352]">15</strong> stores
-                </span>
-                <span class="offline-info-sep"></span>
-                <span class="offline-info-item">
-                  <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
-                  9am – 10pm
-                </span>
-                <span class="closing-status">
-                  <span class="closing-dot"></span> Closing soon
-                </span>
-              </div>
-
-              <div class="grid grid-cols-2 gap-2">
-                <button class="ep-btn-outline" data-drawer data-brand="Fresh Box Express" data-count="15">
-                  <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z"/></svg>
-                  All Branches
-                </button>
-                <button class="ep-btn-primary">
-                  <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z"/><path stroke-linecap="round" stroke-linejoin="round" d="m15.2 8.8-2.1 5.5-5.5 2.1 2.1-5.5 5.5-2.1Z"/></svg>
-                  Directions
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div><!-- /.card-grid -->
+            </div><!-- /.card-grid -->
 
       <div class="view-all-wrap">
         <a href="#" class="view-all-btn" data-view-all="offline">
-          View all 38 Offline Partners
+          View all {{ $offlineTotal ?? 0 }} Offline Partners
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2.2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/></svg>
         </a>
       </div>
@@ -1718,11 +1044,12 @@
   /* ---------- Video (mock play) ---------- */
   document.querySelectorAll('[data-video]').forEach((v) => {
     v.addEventListener('click', () => {
-      v.style.background = 'linear-gradient(135deg,#0a1628 0%,#1a3352 100%)';
-      const playBtn = v.querySelector('.play-button');
-      playBtn.innerHTML = '<div class="flex gap-[3px]"><div class="w-[5px] h-[18px] bg-[#1a3352] rounded-sm"></div><div class="w-[5px] h-[18px] bg-[#1a3352] rounded-sm"></div></div>';
-      const label = v.querySelector('.video-label');
-      if (label) label.innerHTML = '<span class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span> Playing...';
+      const embed = v.getAttribute('data-embed-url');
+      if (embed) {
+        const sep = embed.includes('?') ? '&' : '?';
+        v.innerHTML = `<iframe src="${embed}${sep}autoplay=1" style="position:absolute;inset:0;width:100%;height:100%;border:0;background:#000;" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+        v.style.cursor = 'default';
+      }
     });
   });
 
@@ -1734,44 +1061,10 @@
   const drawerSubtitle = document.getElementById('drawer-subtitle');
   const drawerBody = document.getElementById('drawer-body');
 
-  const sampleBranches = {
-    'KFC': [
-      { name: 'KFC F-10 Markaz', address: 'Plaza 7, F-10 Markaz, Islamabad', city: 'Islamabad', hours: '11am – 12am', phone: '051-111-532-532' },
-      { name: 'KFC MM Alam Road', address: 'MM Alam Road, Gulberg III, Lahore', city: 'Lahore', hours: '11am – 1am', phone: '042-111-532-532' },
-      { name: 'KFC Dolmen Clifton', address: 'Dolmen Mall, Clifton Block 4, Karachi', city: 'Karachi', hours: '11am – 12am', phone: '021-111-532-532' },
-      { name: 'KFC Saddar', address: 'The Mall Road, Saddar, Rawalpindi', city: 'Rawalpindi', hours: '11am – 11pm', phone: '051-111-532-532' },
-      { name: 'KFC Jail Road', address: 'Jail Road, Gulberg, Lahore', city: 'Lahore', hours: '11am – 1am', phone: '042-111-532-532' },
-      { name: 'KFC Blue Area', address: 'Jinnah Avenue, Blue Area, Islamabad', city: 'Islamabad', hours: '10am – 12am', phone: '051-111-532-532' }
-    ],
-    'Khaadi': [
-      { name: 'Khaadi Centaurus Mall', address: 'The Centaurus Mall, Islamabad', city: 'Islamabad', hours: '10am – 10pm', phone: '051-111-542-342' },
-      { name: 'Khaadi Dolmen Mall', address: 'Dolmen Mall Clifton, Karachi', city: 'Karachi', hours: '10am – 10pm', phone: '021-111-542-342' },
-      { name: 'Khaadi Emporium Lahore', address: 'Emporium Mall, Johar Town, Lahore', city: 'Lahore', hours: '10am – 10pm', phone: '042-111-542-342' },
-      { name: 'Khaadi Giga Mall', address: 'Giga Mall, DHA Phase II, Islamabad', city: 'Islamabad', hours: '10am – 10pm', phone: '051-111-542-342' }
-    ],
-    'Sapphire': [
-      { name: 'Sapphire Packages Mall', address: 'Packages Mall, Walton Road, Lahore', city: 'Lahore', hours: '11am – 11pm', phone: '0800-22772' },
-      { name: 'Sapphire Centaurus', address: 'The Centaurus Mall, Islamabad', city: 'Islamabad', hours: '11am – 11pm', phone: '0800-22772' },
-      { name: 'Sapphire Dolmen Karachi', address: 'Dolmen Mall Clifton, Karachi', city: 'Karachi', hours: '11am – 11pm', phone: '0800-22772' }
-    ],
-    'Al Gardd Jewelers': [
-      { name: 'Al Gardd Tariq Road', address: 'Tariq Road, Karachi', city: 'Karachi', hours: '11am – 9pm', phone: '021-3456-7890' },
-      { name: 'Al Gardd Liberty Market', address: 'Liberty Market, Gulberg, Lahore', city: 'Lahore', hours: '11am – 9pm', phone: '042-3456-7890' },
-      { name: 'Al Gardd F-7 Markaz', address: 'F-7 Markaz, Islamabad', city: 'Islamabad', hours: '11am – 9pm', phone: '051-3456-7890' }
-    ],
-    'Jeeva Supermart': [
-      { name: 'Jeeva Supermart Johar Town', address: 'Johar Town Block H, Lahore', city: 'Lahore', hours: '8am – 11pm', phone: '0304-111-5555' },
-      { name: 'Jeeva Supermart Bahria', address: 'Bahria Town Phase 4, Rawalpindi', city: 'Rawalpindi', hours: '8am – 11pm', phone: '0304-111-5555' },
-      { name: 'Jeeva Supermart Hayatabad', address: 'Hayatabad Phase 3, Peshawar', city: 'Peshawar', hours: '8am – 11pm', phone: '0304-111-5555' }
-    ],
-    'Fresh Box Express': [
-      { name: 'Fresh Box G-11', address: 'G-11 Markaz, Islamabad', city: 'Islamabad', hours: '9am – 10pm', phone: '0312-888-6666' },
-      { name: 'Fresh Box DHA Phase 5', address: 'Y-Block, DHA Phase 5, Lahore', city: 'Lahore', hours: '9am – 10pm', phone: '0312-888-6666' }
-    ]
-  };
+  const sampleBranches = @json($branchesByPartner ?? new \stdClass);
 
-  function renderBranches(brand) {
-    const branches = sampleBranches[brand] || [];
+  function renderBranches(slug) {
+    const branches = sampleBranches[slug] || [];
     drawerBody.innerHTML = branches.map(b => `
       <div class="branch-item">
         <div class="branch-item-header">
@@ -1786,7 +1079,7 @@
         <div class="branch-meta">
           <span class="branch-meta-item">
             <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
-            ${b.hours}
+            ${b.hours}${b.status === 'closing_soon' ? ' <span style=\"color:#C2410C;font-weight:600;\">(closing soon)</span>' : ''}
           </span>
           <span class="branch-meta-item">
             <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z"/></svg>
@@ -1798,19 +1091,19 @@
             <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z"/></svg>
             Call
           </button>
-          <button class="branch-btn branch-btn-filled">
+          <a ${b.directions ? `href="${b.directions}" target="_blank" rel="noopener"` : 'href="#"'} class="branch-btn branch-btn-filled">
             <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0 0V3"/><path stroke-linecap="round" stroke-linejoin="round" d="m8 11 4-4 4 4"/></svg>
             Directions
-          </button>
+          </a>
         </div>
       </div>
     `).join('');
   }
 
-  function openDrawer(brand, count) {
+  function openDrawer(slug, brand, count) {
     drawerTitle.textContent = brand;
     drawerSubtitle.textContent = `${count} branches across Pakistan`;
-    renderBranches(brand);
+    renderBranches(slug);
     drawer.classList.add('open');
     overlay.classList.add('open');
     document.body.style.overflow = 'hidden';
@@ -1822,7 +1115,7 @@
   }
 
   document.querySelectorAll('[data-drawer]').forEach((btn) => {
-    btn.addEventListener('click', () => openDrawer(btn.dataset.brand, btn.dataset.count));
+    btn.addEventListener('click', () => openDrawer(btn.dataset.slug, btn.dataset.brand, btn.dataset.count));
   });
   drawerClose.addEventListener('click', closeDrawer);
   overlay.addEventListener('click', closeDrawer);
